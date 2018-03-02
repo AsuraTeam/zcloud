@@ -227,7 +227,7 @@ func WriteMountDataToDb(configname string, dataName string, cluster string, name
 	sql.Raw(sql.SearchSql(mountData, SelectCloudConfigureMount, searchMap)).QueryRows(&mounts)
 	var action string
 	if len(mounts) > 0 {
-		action = sql.UpdateSql(mountData, UpdateCloudConfigureMount, searchMap, "CreateTime")
+		action = sql.UpdateSql(mountData, UpdateCloudConfigureMount, searchMap, "CreateTime,MountId")
 	}else{
 		action = sql.InsertSql(mountData, InsertCloudConfigureMount)
 	}

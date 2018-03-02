@@ -57,6 +57,7 @@ auth:
 func getParam(registryParam RegistryParam) ServiceParam {
 	param := ServiceParam{}
 	param.Name = registryParam.Name
+	param.ServiceName = registryParam.Name
 	param.Cpu = 1
 	param.ClusterName = registryParam.ClusterName
 	param.PortData = "5000"
@@ -67,7 +68,7 @@ func getParam(registryParam RegistryParam) ServiceParam {
 	param.Image = "registry:2"
 	param.MinReady = 1
 	param.HealthData = ""
-	param.StorageData = `[{"ContainerPath":"/etc/localtime","Volume":"","HostPath":"/etc/localtime"}]`
+	//param.StorageData = `[{"ContainerPath":"/etc/localtime","Volume":"","HostPath":"/etc/localtime"}]`
 	param.Command = `["sh","/start/start-cmd"]`
 	// deployment
 	c1, _ := GetYamlClient(registryParam.ClusterName, "apps", "v1beta1", "/apis")
@@ -115,6 +116,7 @@ func getParam(registryParam RegistryParam) ServiceParam {
 // 创建镜像仓库
 func CreateRegistry(param RegistryParam) (error) {
 	if !strings.Contains(param.AuthServer, "https://") || !strings.Contains(param.AuthServer, "/auth") {
+		logs.Error("认证服务失败", param.AuthServer)
 		return errors.InvalidArgumentError("认证服务器失败")
 	}
 	tr := &http.Transport{
@@ -124,8 +126,8 @@ func CreateRegistry(param RegistryParam) (error) {
 	r, err := client.Get(param.AuthServer)
 	defer r.Body.Close()
 	logs.Info("验证服务器返回信息", r, err)
-	if err != nil || r.StatusCode != 401 {
-		return errors.InvalidArgumentError("认证服务器失败")
+	if err != nil  {
+		return errors.InvalidArgumentError("认证服务器失败" + err.Error())
 	}
 	yaml, err := CreateServicePod(getParam(param))
 	logs.Info(yaml, err)

@@ -65,6 +65,8 @@ type CloudRegistryServer struct {
     Name string
     // 访问信息
     Access string
+    // 环境名称
+    Entname string
 }
 
 //2018-01-19 22:15:41.9929294 +0800 CST

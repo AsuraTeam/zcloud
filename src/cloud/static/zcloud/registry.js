@@ -12,13 +12,21 @@ function addRegistry(serverId) {
 
 
 /**
- * 删除用户弹出框
+ * 删除仓库弹出框
  * 2018-01-20 18:09
  */
 function deleteRegistrySwal(id) {
     Swal("删除该仓库", "warning", "确认操作", "不操作", "成功", "失败", " deleteRegistry("+id+")", "loadRegistryData()");
 }
 
+
+/**
+ * 重建仓库弹出框
+ * 2018-03-02 10:36
+ */
+function recreateRegistrySwal(id) {
+    Swal("重新部署仓库<br>该操作在仓库服务不存在时生效", "warning", "确认操作", "不操作", "成功", "失败", " recreateRegistry("+id+")", "loadRegistryData()");
+}
 
 /**
  * 加载数据
@@ -52,21 +60,24 @@ function loadRegistryData(key) {
             "type": 'get'
         },
         "columns": [ // 数据映射
+            {"data": "Entname","sWidth":"9%"},
             {"data": "Name","sWidth":"10%","mRender":function (data,type, full) {
                 return "<div style='word-wrap:break-word'><a  target='_self' href='/image/registry/group/list?registryName="+full["ServerDomain"]+"'>"+data+"</a></div>";
             }},
-            {"data": "AuthServer","sWidth":"20%", "mRender":function (data) {
+            {"data": "AuthServer","sWidth":"11%", "mRender":function (data) {
                 return "<div style='word-wrap:break-word'><a  target='_blank' href="+data+">"+data+"</a></div>";
             }},
-            {"data": "ClusterName","sWidth":"12%","mRender":function (data) {
+            {"data": "ClusterName","sWidth":"7%","mRender":function (data) {
                 data = data.replace(/"/g,"")
                 return "<a href='/base/cluster/detail/"+data+"'>"+data+"</a>";
             }},
             {"data": "CreateTime","sWidth":"11%"},
             {"data": "Access","sWidth":"20%"},
-            {"data": "ServerId", "sWidth":"5%","mRender": function (data) {
+            {"data": "ServerId", "sWidth":"6%","mRender": function (data) {
                 return '<button type="button" title="更新" onclick="addRegistry(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
-                '<button type="button"  title="删除" onClick="deleteRegistrySwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
+                '<button type="button"  title="删除" onClick="deleteRegistrySwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>&nbsp;'+
+                '<button type="button"  title="重建" onClick="recreateRegistrySwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-undo"></i></button>';
+
             }
             },
         ],
@@ -84,12 +95,24 @@ function loadRegistryData(key) {
  * @return {*}
  */
 function deleteRegistry(id) {
-    var url = "/api/registry/"+id
-    var result = del({}, url)
-    result = JSON.stringify(result)
+    var url = "/api/registry/"+id;
+    var result = del({}, url);
+    result = JSON.stringify(result);
     return result
 }
 
+/**
+ * 2018-03-02 10:38
+ * 重新部署仓库服务
+ * @param id
+ * @return {string}
+ */
+function recreateRegistry(id) {
+    var url = "/api/registry/recreate";
+    var result = post({ServerId:id}, url);
+    result = JSON.stringify(result);
+    return result
+}
 
 
 /**
@@ -101,7 +124,7 @@ function saveRegistry(serverId) {
     }
     var data = get_form_data();
     data["ServerId"] = parseInt(serverId);
-    if(!checkValue(data,"Name,Admin,ClusterName,Password,AuthServer,ServerDomain")){
+    if(!checkValue(data,"Name,Admin,ClusterName,Entname,Password,AuthServer,ServerDomain")){
         return
     }
     var url = "/api/registry";

@@ -703,7 +703,7 @@ func CreateServicePod(param ServiceParam) (string, error) {
 							"resources": map[string]interface{}{
 								"limits": map[string]interface{}{
 									"memory": param.Memory + "Mi",
-									"cpu":    param.Cpu.(float32) * float32(param.ReplicasMax),
+									"cpu":    param.Cpu,
 								},
 								"requests": map[string]interface{}{
 									"memory": param.Memory + "Mi",

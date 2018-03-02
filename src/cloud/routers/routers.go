@@ -431,6 +431,9 @@ func init() {
 				beego.NSRouter("/:id:int", &registry.ImageController{}, "delete:RegistryServerDelete"),
 				// 获取仓库配置数据单条数据,
 				beego.NSRouter("/:id:int", &registry.ImageController{}, "get:RegistryServer"),
+				// 重新部署仓库服务器
+				beego.NSRouter("/recreate", &registry.ImageController{}, "post:RecreateRegistry"),
+				// 权限配置
 				beego.NSNamespace("/perm",
 					// 仓库权限配置保存,
 					beego.NSRouter("", &registry.RegistryPermController{}, "post:RegistryPermSave"),

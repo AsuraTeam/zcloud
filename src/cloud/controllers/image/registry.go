@@ -5,13 +5,13 @@ import (
 	"cloud/sql"
 	"cloud/util"
 	"cloud/models/registry"
-	"github.com/cesanta/docker_auth/auth_server/server"
 	"strings"
 	"cloud/k8s"
 	"cloud/controllers/base/hosts"
 	"github.com/astaxie/beego/logs"
 	"cloud/controllers/base/cluster"
 	"strconv"
+	"cloud/controllers/ent"
 )
 
 type ImageController struct {
@@ -26,26 +26,61 @@ func (this *ImageController) RegistryServerList() {
 
 // @router /image/registry/add [get]
 func (this *ImageController) RegistryServerAdd() {
-	this.Data["cluster"] = cluster.GetClusterSelect()
+	var entHtml string
+	var clusterHtml string
+	entData := ent.GetEntnameSelect()
+
+	update := registry.CloudRegistryServer{}
+
 	id := this.GetString("ServerId")
 	// 更新操作
 	if id != "0" {
+
 		searchMap := sql.GetSearchMap("UserId", *this.Ctx)
-		update := registry.CloudRegistryServer{}
 		q := sql.SearchSql(registry.CloudRegistryServer{}, registry.SelectCloudRegistryServer, searchMap)
 		sql.Raw(q).QueryRow(&update)
-		this.Data["data"] = update
+
 		this.Data["readonly"] = "readonly"
-		this.Data["cluster"] = util.GetSelectOptionName(update.ClusterName)
+		entHtml = util.GetSelectOptionName(update.Entname)
+		clusterHtml = util.GetSelectOptionName(update.ClusterName)
 	}
-	cf := util.AuthServerConfigFile()
-	c, err := server.LoadConfig(cf)
-	if err == nil {
-		host := strings.Split(this.Ctx.Request.Host, ":")[0]
-		this.Data["AuthServer"] = "https://" + host + c.Server.ListenAddress + "/auth"
-	}
+
+	this.Data["entname"] = entHtml + entData
+	this.Data["data"] = update
+	this.Data["cluster"] = clusterHtml + cluster.GetClusterSelect()
+	host := strings.Split(this.Ctx.Request.Host, ":")[0]
+	this.Data["AuthServer"] = "https://" + host + ":5001/auth"
 	this.TplName = "image/registry/add.html"
 }
+
+// 2018-03-02 10:29
+// 部署仓库服务
+func deployRegistry(d registry.CloudRegistryServer) error {
+	master, port := hosts.GetMaster(d.ClusterName)
+	param := k8s.RegistryParam{
+		Master:      master,
+		Port:        port,
+		ClusterName: d.ClusterName,
+		AuthServer:  d.AuthServer,
+		Name:        d.Name}
+	err := k8s.CreateRegistry(param)
+	return err
+}
+
+// 2018-03-02 10:21
+// 重建仓库服务
+// @param ServerId
+// @router /api/registry/recreate [post]
+func (this *ImageController) RecreateRegistry() {
+	data, _ := getRegistryData(this)
+	err := deployRegistry(data)
+	var status bool
+	if err == nil {
+		status = true
+	}
+	setRegistryServerJson(this, util.ApiResponse(status, err))
+}
+
 
 // json
 // @router /api/registry [post]
@@ -56,6 +91,7 @@ func (this *ImageController) RegistryServerSave() {
 		this.Ctx.WriteString("参数错误" + err.Error())
 		return
 	}
+
 	d.Password = util.Base64Encoding(d.Password)
 	searchMap := sql.SearchMap{}
 	searchMap.Put("ServerId", d.ServerId)
@@ -68,32 +104,23 @@ func (this *ImageController) RegistryServerSave() {
 
 	this.ServeJSON(false)
 	if d.ServerId > 0 {
-		q = sql.UpdateSql(d,
-			registry.UpdateCloudRegistryServer,
-			searchMap,
-			registry.UpdateRegistryServerExclude)
+		q = sql.UpdateSql(d, registry.UpdateCloudRegistryServer,
+			searchMap, registry.UpdateRegistryServerExclude)
 		_, err = sql.Raw(q).Exec()
 	} else {
-		registryData := []registry.CloudRegistryServer{}
+		serverData := []registry.CloudRegistryServer{}
 		search := sql.GetSearchMapV("Name", d.Name, "ClusterName", d.ClusterName)
 		q := sql.SearchSql(
 			registry.CloudRegistryServer{},
 			registry.SelectCloudRegistryServer,
 			search)
 
-		sql.Raw(q).QueryRows(&registryData)
-		if len(registryData) > 0 {
+		sql.Raw(q).QueryRows(&serverData)
+		if len(serverData) > 0 {
 			this.Data["json"], _ = util.SaveResponse(err, "服务名已经被占用")
 			return
 		}
-		master, port := hosts.GetMaster(d.ClusterName)
-		param := k8s.RegistryParam{
-			Master:      master,
-			Port:        port,
-			ClusterName: d.ClusterName,
-			AuthServer:  d.AuthServer,
-			Name:        d.Name}
-		err = k8s.CreateRegistry(param)
+		err = deployRegistry(d)
 		if err == nil {
 			q = sql.InsertSql(d, registry.InsertCloudRegistryServer)
 			_, err = sql.Raw(q).Exec()
@@ -149,6 +176,7 @@ func GetRegistryServer(name string) []registry.CloudRegistryServer {
 		registry.SelectCloudRegistryServer,
 		searchMap)
 	sql.Raw(searchSql).QueryRows(&data)
+
 	result := []registry.CloudRegistryServer{}
 	for _, v := range data {
 		if name == "" {
@@ -166,13 +194,11 @@ func GetRegistrySelect() string {
 	data := GetRegistryServer("")
 	for _, v := range data {
 		if v.ServerDomain != "" {
-			html = append(html, util.GetSelectOption(v.ServerDomain, v.ServerDomain, v.ServerAddress))
+			html = append(html, util.GetSelectOptionName(v.ServerDomain))
 		}
 	}
 	return strings.Join(html, "")
 }
-
-// 选择仓库组
 
 // 仓库服务器数据
 // @router /api/registry [get]
@@ -184,10 +210,8 @@ func (this *ImageController) RegistryServer() {
 	if id != "" {
 		searchMap.Put("UserId", id)
 	}
-	clusterName := this.GetString("ClusterName")
-	if clusterName != "" {
-		searchMap.Put("ClusterName", clusterName)
-	}
+
+	searchMap = sql.GetSearchMapValue([]string{"ClusterName"}, *this.Ctx, searchMap)
 
 	searchSql := sql.SearchSql(
 		registry.CloudRegistryServer{},
@@ -201,13 +225,12 @@ func (this *ImageController) RegistryServer() {
 
 	num, _ := sql.Raw(searchSql).QueryRows(&data)
 	clusterMap := cluster.GetClusterMap()
-
 	result := []registry.CloudRegistryServer{}
 	namespace := util.Namespace("registryv2", "registryv2")
 	for _, v := range data {
 		if len(v.Access) > 10 {
 			v.Password = "******"
-			v.ClusterName = util.ObjToString(clusterMap.GetV(v.ClusterName))
+			//v.ClusterName = util.ObjToString(clusterMap.GetV(v.ClusterName))
 			result = append(result, v)
 			continue
 		}
@@ -219,9 +242,11 @@ func (this *ImageController) RegistryServer() {
 			v.Access = "容器内&nbsp;<br>" + v.Name + "." + namespace + ":" + port + "<br>"
 			hostdata := hosts.GetClusterHosts(v.ClusterName)
 			if len(hostdata) > 0 {
-				h := hostdata[0].HostIp + ":" + strings.Replace(port, "<br>", "", -1)
+				h := v.ServerDomain + ":" + strings.Replace(port, "<br>", "", -1)
+				logs.Info(h)
 				v.Access += strings.Replace(registry.SelectRegistryAccess, "?", h, -1)
-				v.ServerAddress = hostdata[0].HostIp + ":" + port
+				v.ServerAddress = v.ServerDomain + ":" + port
+				logs.Info(v.ServerAddress)
 				searchMap = sql.GetSearchMapV("Serverid", strconv.FormatInt(v.ServerId, 10))
 				u := sql.UpdateSql(v,
 					registry.UpdateCloudRegistryServer,
@@ -238,24 +263,29 @@ func (this *ImageController) RegistryServer() {
 		sql.Count("cloud_registry_server", int(num), key),
 		this.GetString("draw"))
 	setRegistryServerJson(this, r)
-
 }
+
+// 2018-03-02 10:23
+// 获取仓库服务数据
+func getRegistryData(this *ImageController) (registry.CloudRegistryServer, sql.SearchMap)  {
+	searchMap := sql.GetSearchMap("ServerId", *this.Ctx)
+	data := registry.CloudRegistryServer{}
+	q := sql.SearchSql(data, registry.SelectCloudRegistryServer, searchMap)
+	sql.Raw(q).QueryRow(&data)
+	return data,searchMap
+}
+
 
 // @router /api/registry/delete [*]
 func (this *ImageController) RegistryServerDelete() {
-	searchMap := sql.GetSearchMap("ServerId", *this.Ctx)
-
-	registrData := registry.CloudRegistryServer{}
-	q := sql.SearchSql(registrData, registry.SelectCloudRegistryServer, searchMap)
-	sql.Raw(q).QueryRow(&registrData)
-
+	registrData,searchMap := getRegistryData(this)
 	err := k8s.DeletelDeployment(
 		util.Namespace(
 			"registryv2",
 			"registryv2"),
 		true,
 		registrData.Name, registrData.ClusterName)
-	q = sql.DeleteSql(registry.DeleteCloudRegistryServer, searchMap)
+	q := sql.DeleteSql(registry.DeleteCloudRegistryServer, searchMap)
 	r, _ := sql.Raw(q).Exec()
 	data := util.DeleteResponse(err, *this.Ctx,
 		"删除仓库服务,名称:"+registrData.Name,
