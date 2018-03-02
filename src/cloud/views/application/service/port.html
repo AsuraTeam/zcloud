@@ -1,0 +1,72 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">修改容器端口</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="field-9" class="col-md-3 fw100 control-label">集群名称</label>
+                                    <div class="col-md-9" id="field-9">
+                                        <input class="form-control" readonly
+                                               value="{{.data.ClusterName}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="field-11" class="col-md-3 fw100 control-label">服务名称</label>
+                                    <div class="col-md-9" id="field-11">
+                                        <input class="form-control" type="hidden" id="update_service_port_id" readonly
+                                               name="ServiceId"
+                                               value="{{.data.ServiceId}}"/>
+                                        <input class="form-control" readonly name="ServiceName"
+                                               value="{{.data.ServiceName}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label
+                                            class="col-md-3 fw100 control-label">容器暴露端口<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9 tags-default">
+                                        <input type="text" nullmsg="不能为空"
+                                               errmsg="必须为数字"
+                                               id="ports_change_id"
+                                               onchange="checkChange('ContainerPort');"
+                                               class="form-control" value="80" name="ContainerPort"
+                                               data-role="tagsinput" placeholder="添加端口"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10"><p></div>
+                            <div class="col-sm-10 top15" style="color: rgb(160, 160, 160); text-align: left;margin-top: 20px">
+                                <label for="field-9" class="col-md-3 fw100 control-label">&nbsp;&nbsp;</label>
+                                <div class="col-sm-9"> Tips: 如果修改端口配置 , 保存后系统将重启该服务的所有实例。
+                                    将进行滚动升级，并且服务端口会随机变动和更新。
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                    class="fa fa-times"></i>&nbsp;&nbsp;取消
+                            </button>
+                            <button type="button" onclick="portSave()"
+                                    class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;
+                                保存
+                            </button>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/plugins/bootstrap-tagsinput/js/bootstrap-tagsinput.min.js"></script>

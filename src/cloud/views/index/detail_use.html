@@ -1,0 +1,116 @@
+
+<script src="/static/plugins/raphael/raphael-min.js"></script>
+<script src="/static/plugins/justgage/justgage.js"></script>
+<input id="MemUsePercentId" type="hidden" value="{{.data.MemUsePercent}}">
+<input id="CpuUsePercentId" type="hidden" value="{{.data.CpuUsePercent}}">
+<div class="col-md-7 top10">
+    <div class="col-sm-6 text-center">
+        <div class="card-box cluster-detai-height150" onmousemove="setBorderMove($(this))"
+             onmouseout="setBorderOut($(this))">
+            <div id="g7" class="gauge-chart col-sm-7 cluster-cpu"></div>
+            <div class="col-sm-5 left10">
+                <strong>{{.data.CpuFree}}</strong><br>
+                <span class="cluster-text-default">剩余CPU</span><br>
+                <br>
+                <strong>{{.data.ClusterCpu}}</strong><br>
+                <span class="cluster-text-default">CPU总数(核)</span>
+            </div>
+        </div>
+    </div><!-- end col-->
+    <div class="col-sm-6 text-center">
+        <div class="card-box cluster-detai-height150" onmousemove="setBorderMove($(this))"
+             onmouseout="setBorderOut($(this))">
+            <div id="g8" class="gauge-chart col-sm-7 cluster-cpu"></div>
+            <div class="col-sm-5 left10">
+                <strong>{{.data.MemFree}}</strong><br>
+                <span class="cluster-text-default">剩余内存</span><br>
+                <br>
+                <strong>{{.data.ClusterMem}}</strong><br>
+                <span class="cluster-text-default">内存总量(GB)</span>
+            </div>
+        </div>
+    </div><!-- end col-->
+
+</div><!-- end col -->
+<div class="col-md-5 top10 cluster-text-center">
+    <div class="col-md-4">
+        <div class="panel cluster-detai-height150" onmousemove="setBorderMove($(this))"
+             onmouseout="setBorderOut($(this))">
+            <div class="panel-body">
+                <i class="fa fa-laptop cluster-li-icon"></i>
+            </div>
+            <div class="col-sm-12 cluster-text-center">
+                <strong>{{.data.ClusterNode}}</strong>
+            </div>
+            <div class="panel-footer cluster-text-footer">
+                节点数量
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel cluster-detai-height150" onmousemove="setBorderMove($(this))"
+             onmouseout="setBorderOut($(this))">
+            <div class="panel-body">
+                <i class="fa fa fa-mixcloud cluster-li-icon"></i>
+            </div>
+            <div class="col-sm-12 cluster-text-center">
+                <strong>{{.data.Services}}</strong>
+            </div>
+            <div class="panel-footer cluster-text-footer">
+                服务数量
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel cluster-detai-height150" onmousemove="setBorderMove($(this))"
+             onmouseout="setBorderOut($(this))">
+            <div class="panel-body">
+                <i class="fa  fa-slideshare cluster-li-icon"></i>
+            </div>
+            <div class="col-sm-12 cluster-text-center">
+                <strong>{{.data.ClusterPods}}</strong>
+            </div>
+            <div class="panel-footer cluster-text-footer">
+                Pod数量
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+<script>
+
+    /**
+     * Theme: Adminox Admin Template
+     * Author: Coderthemes
+     * Module/App: Justgage
+     */
+    document.addEventListener("DOMContentLoaded", function (event) {
+
+        var g7, g8;
+
+        var g7 = new JustGage({
+            id: "g7",
+            value: parseFloat($("#CpuUsePercentId").val()),
+            min: 0,
+            max: 100,
+            label: "%",
+            donut: true,
+            gaugeWidthScale: 0.4,
+            counter: true,
+            decimals: 2,
+            hideInnerShadow: true
+        });
+        var g8 = new JustGage({
+            id: "g8",
+            value: parseFloat($("#MemUsePercentId").val()),
+            min: 0,
+            max: 100,
+            label: "%",
+            donut: true,
+            gaugeWidthScale: 0.4,
+            counter: true,
+            decimals: 2,
+            hideInnerShadow: true
+        });
+    });
+</script>

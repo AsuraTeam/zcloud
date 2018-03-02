@@ -1,0 +1,113 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">添加修改代码仓库</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label  class="col-md-2 fw100 control-label">仓库类型<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <select   class="form-control"  name="CodeSource">
+                                            <option value="gitlab">gitlab</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="col-md-2 fw100 control-label">url<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.CodeUrl}}"
+                                               onchange="checkChange('CodeUrl')" name="CodeUrl" id="CodeUrl"
+                                               class="form-control" id="field-3" placeholder="必须填写,代码仓库路径,一般为 https://xxxx/xx/xx.git ">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-13" class="col-md-2 fw100 control-label">用户名</label>
+                                    <div class="col-md-10">
+                                        <input type="text"  value="{{.data.Username}}"
+                                             name="Username" id="Username"
+                                               class="form-control" id="field-13" placeholder="代码仓库登录用户地址">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-14" class="col-md-2 fw100 control-label">密码</label>
+                                    <div class="col-md-10">
+                                        <input type="password"  value="{{.data.Password}}"
+                                               name="Password" id="Password"
+                                               class="form-control" id="field-14" placeholder="如果为开放项目不用填写">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-12" class="col-md-2 fw100 control-label">gitlab token</label>
+                                    <div class="col-md-10">
+                                        <input type="text" value="{{.data.GitlabToken}}" name="GitlabToken"
+                                               class="form-control" id="field-12" placeholder="gitlab  Runners token">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="禁用该账号登录平台">
+                            <div class="col-md-10">
+                                <div class="form-group">
+                                    <label class="col-md-2 fw100 control-label top10">是否公开</label>
+                                    <div class="col-md-8 left10">
+                                        <div class="checkbox checkbox-primary left10">
+                                            <input id="checkbox10" {{.userchecked}} onchange="changeStatus($(this))" type="checkbox"
+                                                   name="Type" value="{{.data.Type}}">
+                                            <label for="checkbox10" class="fw100 control-label">公开后其他人可以看到该项目
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-2 fw100 control-label">描述信息</label>
+                                    <div class="col-md-10">
+                                        <input type="text" value="{{.data.Description}}" name="Description"
+                                               class="form-control" id="field-2" placeholder="描述信息">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveCode('{{.data.RepostitoryId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;创建
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

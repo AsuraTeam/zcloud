@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <div class="container">
+    <!-- Start content -->
+    <div class="content">
+            <div id="add_code_html"></div>
+            <div class="row ">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">监控中心</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">自动伸缩</a>
+                            </li>
+                            <li>
+                                <a href="#">伸缩配置</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row ">
+                <div class="col-sm-12 top-10">
+                    <button type="button" onclick="addAutoScale()"
+                            class="btn btn-primary btn-sm waves-effect waves-light">
+                        创建自动伸缩
+                    </button>
+                    <div class="col-sm-1 cluster-search pull-right">
+                        <button type="button" class="btn btn-default waves-effect waves-light"
+                                onclick="loadAutoScale()"
+                                style="border-radius: 5px;">
+                            <i class="fa fa fa-refresh"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-3 pull-right">
+                        <input type="text" onchange="loadAutoScale($(this).val())" class="form-control" id="search_user_id"
+                               placeholder="搜索名称,描述信息,自定义规则">
+                        <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                    </div>
+                </div>
+                <br>
+                <div class="col-sm-12 app-table" >
+                    <table id="scale-data-table" class="table table-hover" >
+                        <thead>
+                        <tr>
+                            <th>环境/集群</th>
+                            <th>应用/服务</th>
+                            <th>阈值配置</th>
+                            <th>操作间隔</th>
+                            <th>数值范围</th>
+                            <th>步长</th>
+                            <th>创建时间</th>
+                            <th>描述信息</th>
+                            <th><span class="m-l-15">操作</span></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end col -->
+{{template "template/bottom.html" .}}
+</body>
+</div>
+<script src="/static/zcloud/registrySelect.js"></script>
+<script src="/static/zcloud/autoScale.js"></script>
+<script>
+    loadAutoScale();
+</script>
+</html>

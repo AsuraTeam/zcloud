@@ -1,0 +1,26 @@
+golang-gopkg-asn1-ber.v1 (1.1-2) unstable; urgency=medium
+
+  [ Paul Tagliamonte ]
+  * Team upload.
+  * Use a secure transport for the Vcs-Git and Vcs-Browser URL
+
+  [ David Lazăr ]
+  * Add skip-64-bit-tests-on-32-bit-platforms.patch. (Closes: #860633)
+  * Add myself to uploaders.
+
+ -- David Lazăr <dlazar@gmail.com>  Thu, 11 May 2017 12:05:11 +0200
+
+golang-gopkg-asn1-ber.v1 (1.1-1) unstable; urgency=medium
+
+  * New upstream snapshot
+  * Changed my email to @debian.org
+  * Now use XS-Go-Import-Path
+  * Install .ber files for tests
+
+ -- Alexandre Viau <aviau@debian.org>  Sun, 06 Dec 2015 15:27:02 -0500
+
+golang-gopkg-asn1-ber.v1 (1-1) unstable; urgency=medium
+
+  * Initial release (Closes: #797852)
+
+ -- Alexandre Viau <alexandre@alexandreviau.net>  Wed, 02 Sep 2015 21:14:30 -0400

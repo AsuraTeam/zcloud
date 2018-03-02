@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <div class="container">
+        <!-- Start content -->
+        <div class="content">
+            {%include ci/job/dockerfile.html%}
+            <div id="add_job_html"></div>
+            <div class="row ">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">应用交付中心</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="/ci/service/list">服务发布</a>
+                            </li>
+                            <li>
+                                <a href="#">操作日志</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row ">
+                <div class="col-sm-12 top-10">
+                    <div class="col-sm-1 cluster-search pull-right">
+                        <button type="button" class="btn btn-default waves-effect waves-light"
+                                onclick="loadReleaseLogData()"
+                                style="border-radius: 5px;">
+                            <i class="fa fa fa-refresh"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-3 pull-right">
+                        <input type="text" onchange="loadReleaseLogData($(this).val())" class="form-control"
+                               id="search_user_id"
+                               placeholder="项目描述,服务名称,操作信息">
+                        <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                    </div>
+                </div>
+                <br>
+                <div class="col-sm-12 app-table">
+                    <br>
+                    <table id="history-data-table" class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>环境/集群名称</th>
+                            <th>域名</th>
+                            <th>应用/服务名称</th>
+                            <th>操作人</th>
+                            <th>操作时间</th>
+                            <th>操作IP</th>
+                            <th>操作信息</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end col -->
+{{template "template/bottom.html" .}}
+</body>
+</div>
+<script>
+    /**
+     * 加载数据
+     * @param key
+     */
+    function loadReleaseLogData(key) {
+        if (!key) {
+            key = $("#search_user_id").val();
+        } else {
+            if (key.length < 4) {
+                return
+            }
+        }
+        if (!key) {
+            key = "";
+        }
+
+        $("#history-data-table").dataTable({
+            "filter": false,//去掉搜索框
+            "ordering": false, // 是否允许排序
+            "paginationType": "full_numbers", // 页码类型
+            "destroy": true,
+            "processing": true,
+            "bPaginate": true, //是否显示（应用）分页器
+            "serverSide": true,
+            "bLengthChange": false,
+            "bInfo": true, //是否显示页脚信息，DataTables插件左下角显示记录数
+            "scrollX": true, // 是否允许左右滑动
+            "displayLength": 10, // 默认长度
+            "ajax": { // 请求地址
+                "url": "/api/ci/service/logs?t=" + new Date().getTime() + "&search=" + key + "&domain={{.data.Domain}}",
+                "type": 'get'
+            },
+            "columns": [ // 数据映射
+                {
+                    "data": "Entname", "sWidth": "10%", "mRender": function (data, type, full) {
+                    return data + "<br><a class='th-top-8'>" + full["ClusterName"] + "</a>";
+                }
+                },
+                {
+                    "data": "Domain", "sWidth": "10%", "mRender": function (data) {
+                    return data ;
+                }
+                },
+                {
+                    "data": "AppName", "sWidth": "10%", "mRender": function (data, type, full) {
+                    return data + "<br><a class='th-top-8' href='/application/service/list?name=" + full["ServiceName"] + "'>" + full["ServiceName"] + "</a>";
+                }
+                },
+
+                {"data": "CreateUser", "sWidth": "8%"},
+                {"data": "CreateTime", "sWidth": "8%"},
+                {"data": "Ip", "sWidth": "10%"},
+                {"data": "Messages", "sWidth": "19%"},
+            ],
+            "fnRowCallback": function (row, data) { // 每行创建完毕的回调
+                $(row).data('recordId', data.recordId);
+            }
+        });
+    }
+    loadReleaseLogData();
+</script>
+</html>

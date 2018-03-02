@@ -1,0 +1,72 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">添加存储卷</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-11" class="col-md-3 fw100 control-label">容器路径<span class="text-danger">*</span></label>
+                                    <div class="col-md-9" id="field-11">
+                                        <input class="form-control" name="ContainerPath"  placeholder="卷磁盘挂载到容器内的路径" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-12" class="col-md-3 fw100 control-label">存储卷<span class="text-danger">*</span></label>
+                                    <div class="col-md-9" id="field-12">
+                                        <select class="form-control" name="Volume" id="storage-volume-id" onchange="setStorageStatus($(this).val())">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" id="host-path-id">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="HostPath" class="col-md-3 fw100 control-label">宿主机路径<span class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" name="HostPath" id="HostPath" placeholder="宿主机提供的路径" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="StorageId">
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="setStorageData()"  class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;创建
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("#storage-volume-id").html("{{.storage}}");
+    var storage = "{{.storage}}";
+    if(!storage){
+        $("#storage-volume-id").prop("disabled","true");
+    }
+
+    function setStorageStatus(val) {
+        if(!val){
+            $("#host-path-id").show();
+            return
+        }
+        $("#HostPath").val("");
+        $("#host-path-id").hide();
+    }
+</script>

@@ -1,0 +1,159 @@
+<div id="add_post_html" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog" style="width: 60%;">
+        <div class="modal-content p-0 b-0">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">创建集群</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12">
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-1" class="col-md-3 fw100 control-label">集群名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9" id="CluseterNameDiv">
+                                        <input type="text" nullmsg="必须填写" validFunc="checkClusterName"
+                                               errmsg="小写字母/数字/下划线(不包括横线), 不超过36个字符" value="{{.data.ClusterName}}"
+                                               onchange="checkChange('ClusterName')" name="ClusterName" id="ClusterName"
+                                               class="form-control" id="field-1" placeholder="必须为全英文">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-11" class="col-md-3 fw100 control-label">集群类型<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9" id="field-11">
+                                        <select class="form-control" name="ClusterType">
+                                            <option value="kubernetes">kubernetes</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-3 fw100 control-label">显示名称</label>
+                                    <div class="col-md-9">
+                                        <input type="text" name="ClusterAlias" class="form-control" id="field-2" value="{{.data.ClusterAlias}}"
+                                               placeholder="集群描述">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label  class="col-md-3 fw100 control-label">ca证书公钥文件</label>
+                                    <div class="col-md-9">
+                                        <textarea rows="6" name="CaData" class="form-control"
+                                                  placeholder="ca证书公钥文件,ca.pem">{{.data.CaData}}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label  class="col-md-3 fw100 control-label">node证书私钥内容</label>
+                                    <div class="col-md-9">
+                                        <textarea name="KeyData" rows="6" class="form-control"
+                                                  placeholder="node证书公钥内容,worker-key.pem">{{.data.KeyData}}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label  class="col-md-3 fw100 control-label">node证书公钥内容</label>
+                                    <div class="col-md-9">
+                                        <textarea  name="CertData" rows="6" class="form-control"
+                                                  placeholder="node证书公钥内容,worker.pem">{{.data.CertData}}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--<div class="row top10">-->
+                            <!--<div class="col-md-12">-->
+                                <!--<div class="form-group">-->
+                                    <!--<label for="field-3" class="col-md-3 fw100 control-label">Docker版本<span-->
+                                            <!--class="text-danger">*</span></label>-->
+                                    <!--<div class="col-md-9" id="field-3">-->
+                                        <!--<select class="form-control" name="DockerVersion">-->
+                                            <!--<option value="1.12.6">1.12.6</option>-->
+                                            <!--<option value="17.03">17.03</option>-->
+                                        <!--</select>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="row top10">-->
+                            <!--<div class="col-md-12">-->
+                                <!--<div class="form-group">-->
+                                    <!--<label for="field-4" class="col-md-3 fw100 control-label">Docker安装目录<span-->
+                                            <!--class="text-danger">*</span></label>-->
+                                    <!--<div class="col-md-9">-->
+                                        <!--<input type="text" validFunc="checkDockerInstallDir"-->
+                                               <!--errmsg="docker安装的路径,一般为 /var/lib/docker"-->
+                                               <!--onchange="checkChange('DockerInstallDir')" class="form-control"-->
+                                               <!--id="field-4" placeholder="/var/lib/docker" value="{{.data.DockerInstallDir}}"-->
+                                               <!--name="DockerInstallDir">-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-5" class="col-md-3 fw100 control-label">内网网卡名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="text" errmsg="网卡名称,一般为eth0" validFunc="checkNetworkCart"
+                                               onchange="checkChange('NetworkCart')" class="form-control" id="field-5"
+                                               placeholder="eth0" value="{{.data.NetworkCart}}"
+                                               name="NetworkCart">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="ClusterId" value="{{.data.ClusterId}}">
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveCluster('{{.data.ClusterId}}')" id="save_cluster"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;创建
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function saveCluster() {
+        var data = get_form_data();
+        if (!checkValue(data, "ClusterName,CaData,CertData,KeyData,NetworkCart")) {
+            return
+        }
+        var url = "/api/cluster";
+        var result = post(data, url)
+        result = JSON.stringify(result);
+        if (result.indexOf("保存成功") != -1) {
+            $("#add_post_html").modal("toggle")
+            success(result)
+            setCluster()
+        } else {
+            faild(result)
+        }
+
+    }
+</script>

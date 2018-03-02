@@ -1,0 +1,283 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 60%;">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">添加修改构建任务</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 " title="">
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label">镜像项目名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.ItemName}}" validFunc="checkImageTag"
+                                               onchange="checkChange('ItemName')" name="ItemName" id="ItemName"
+                                               class="form-control" id="field-13" placeholder="一般已应用名命名,不能带点.比如 www sms zmc">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" id="select-reigstry-server-id">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label">基础镜像<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" name="BaseImage" data-style="btn-pink" style="border-radius: 5px;" id="base-image-select">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label">构建超时时间<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="number" min="10" max="3600" nullmsg="必须填写" value="{{.data.TimeOut}}"
+                                               onchange="checkChange('TimeOut')" name="TimeOut"
+                                               class="form-control" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="权限选择,pull 可以下载, push 可以上传">
+                            <div class="col-md-10">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label top10">Dockerfile<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-3 left10" style="margin-left: 20px;">
+                                        <div class="radio radio-info left10">
+                                            <input id="setSelectDockerfile1" checked type="radio" onchange="setSelectDockerfile();"
+                                                   name="DockerfileType">
+                                            <label for="setSelectDockerfile1" class="fw100 control-label">选择已有
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 ">
+                                        <div class="radio radio-info left10">
+                                            <input id="setSelectDockerfile2" type="radio"  onchange="setSelectDockerfile();"
+                                                   name="DockerfileType">
+                                            <label for="setSelectDockerfile2" class="fw100 control-label">手动编写
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="dockerfile 可以选择已有的,也可以自定义" id="docker-file-1">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label"></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker"  onchange="$('input[name=\'DockerFile\']').val($(this).val())" data-live-search="true" data-style="btn-default"
+                                                id="select-docker-file">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input name="DockerFile" type="hidden">
+
+                        <div class="row top10" id="docker-file-2" style="display: none">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-113" class="col-md-3 fw100 control-label"></label>
+                                    <div class="col-md-9">
+                                        <textarea type="text"  rows="7" value="{{.data.Content}}" nullmsg="不能为空"
+                                                  name="Content" id="Content" onchange="checkChange('Content')"
+                                                  class="form-control" id="field-113" placeholder="dockerfile内容,一个能打包完整应用的dockerfile">{{.data.Content}}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="择构建生成的Docker镜像的tag命名规范，支持时间戳和手动俩种方式">
+                            <div class="col-md-10">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label top10">镜像版本<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-3 left10" style="margin-left: 20px;">
+                                        <div class="radio radio-info left10">
+                                            <input id="selectImageTag1" {{.ImageTag1}} type="radio" onchange="setImageStatus();"
+                                                   name="ImageTag1">
+                                            <label for="selectImageTag1" class="fw100 control-label">时间戳
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 ">
+                                        <div class="radio radio-info left10">
+                                            <input id="selectImageTag2" {{.ImageTag2}} type="radio"  onchange="setImageStatus();"
+                                                   name="ImageTag1">
+                                            <label for="selectImageTag2" class="fw100 control-label">手动
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" id="imageTag1" style="display: none">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label"></label>
+                                    <div class="col-md-9">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.ImageTag}}" validFunc="checkImageTag"
+                                               onchange="checkChange('ImageTag')" name="ImageTag" id="ImageTag" errmsg="格式错误"
+                                               class="form-control" placeholder="必须填写,有数字和英文字符组成,不带特殊字符">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-3 fw100 control-label"></label>
+                                    <div class="col-md-9">
+                                        <pre>警告! 构建集群和仓库组选择后不可修改</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row top10" title="集群选择后不可修改">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">构建集群<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="ClusterName" onchange="getRegistryGroup($(this).val())" data-live-search="true" data-style="btn-default"
+                                                id="select-cluster-id">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row top10" title="仓库组选择后不可修改">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label">仓库组选择<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select id="select-registry-server" class="form-control" name="RegistryServer">
+                                            {{.registryGroup}}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-3 fw100 control-label">描述信息</label>
+                                    <div class="col-md-9">
+                                        <input type="text" value="{{.data.Description}}" name="Description"
+                                               class="form-control" id="field-2" placeholder="描述信息">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveJob('{{.data.JobId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("#select-registry-server").html("{{.registryGroup}}");
+    $("#select-docker-file").html("{{.dockerfile}}");
+    $("#select-cluster-id").html("{{.cluster}}");
+    $("#base-image-select").html("{{.baseImage}}");
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 3
+    });
+
+    /**
+     * 2018-01-26 12:26
+     */
+    function setSelectDockerfile() {
+        var select = $("#setSelectDockerfile1").is(":checked");
+        var custom = $("#setSelectDockerfile2").is(":checked");
+        if(select){
+            $("#docker-file-2").hide();
+            $("#docker-file-1").show();
+            $("input[name='Content']").val("")
+        }
+        if(custom){
+            $("input[name='DockerFile']").val("0")
+            $("#docker-file-1").hide();
+            $("#docker-file-2").show();
+        }
+    }
+
+    function setImageStatus() {
+        var custom = $("#selectImageTag2").is(":checked");
+        if(custom){
+            $("#imageTag1").show();
+            $("input[name='ImageTag']").val("");
+        }else{
+            $("input[name='ImageTag']").val("000");
+            $("#imageTag1").hide();
+        }
+    }
+
+    function initValue() {
+        var imgTag = "{{.data.ImageTag}}";
+        if(imgTag && imgTag != "0"){
+            $("#selectImageTag2").show();
+        }
+
+        var id = "{{.data.JobId}}";
+        if(id==0){
+            $("input[name='TimeOut']").val(60);
+        }
+        var dockerFiile = "{{.data.DockerFile}}";
+        if(dockerFiile=="0"){
+            $("input[name='DockerFile']").val("0");
+            $("#setSelectDockerfile2").prop("checked","true");
+            $("#docker-file-1").hide();
+            $("#docker-file-2").show();
+        }
+    }
+    initValue();
+
+    /**
+     * 选择仓库组
+     * @param clustername
+     */
+    function getRegistryGroup(clustername) {
+        var url = "/api/registry/group";
+        var result = get({ClusterName:clustername}, url);
+        var data = result["data"];
+        var html = "<option value=''>--请选择--</option>";
+        for(var i=0;i<=data.length;i++){
+            if(data[i]){
+                html += "<option value='"+data[i]["GroupName"]+"'>"+data[i]["GroupName"]+"</option>";
+            }
+        }
+        $("#select-registry-server").html(html);
+    }
+
+</script>

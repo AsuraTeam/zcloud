@@ -1,0 +1,121 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 60%;">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">滚动升级</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10">
+                            <div class="col-md-6 top10">
+                                <div class="form-group">
+                                    <label for="field-9" class="col-md-4 fw100 control-label">环境名称</label>
+                                    <div class="col-md-7" id="field-9">
+                                        <input class="form-control" readonly
+                                               value="{{.data.Entname}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 top10">
+                                <div class="form-group">
+                                    <label for="field-111" class="col-md-4 fw100 control-label">应用名称</label>
+                                    <div class="col-md-7" id="field-111">
+                                        <input class="form-control" readonly name="AppName"
+                                               value="{{.data.AppName}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 top10">
+                                <div class="form-group">
+                                    <label for="field-11" class="col-md-4 fw100 control-label">服务名称</label>
+                                    <div class="col-md-7" id="field-11">
+                                        <input class="form-control" readonly name="ServiceName"
+                                               value="{{.data.ServiceName}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="field-13" class="col-md-2 fw100 control-label">升级镜像</label>
+                                    <div class="col-md-9" id="field-13">
+                                        <input class="form-control" readonly
+                                               value="{{.data.ImageName}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 top10">
+                                <div class="form-group">
+                                    <label for="field-115" class="col-md-4 fw100 control-label">服务就绪时间</label>
+                                    <div class="col-md-7" id="field-115">
+                                        <input type="number" min="2" max="60" name="MinReadySeconds"
+                                               placeholder="滚动升级时60s后认为该pod就绪 2~60s" class="form-control"
+                                               value="60"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 top10">
+                                <div class="form-group">
+                                    <label for="field-116" class="col-md-4 fw100 control-label">应用关闭时间</label>
+                                    <div class="col-md-7" id="field-116">
+                                        <input type="number" min="2" max="60" placeholder="应用关闭时间 2~60s"
+                                               class="form-control" name="TerminationGracePeriodSeconds"
+                                               value="10"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12"></div>
+                            <div class="col-md-6 top10">
+                                <div class="form-group">
+                                    <label for="field-135" class="col-md-4 fw100 control-label">最大不可用</label>
+                                    <div class="col-md-7" id="field-135">
+                                        <input type="number" min="2" max="60" name="MaxUnavailable" placeholder=""
+                                               class="form-control"
+                                               value="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 top10">
+                                <div class="form-group">
+                                    <label class="col-md-4 fw100 control-label">最大超过</label>
+                                    <div class="col-md-7" id="field-125">
+                                        <input type="number" min="2" max="60" name="MaxSurge" placeholder=""
+                                               class="form-control"
+                                               value="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label  class="col-md-2 fw100 control-label"></label>
+                                    <div class="col-md-10 pre text-default" style="line-height: 25px;padding: 15px;color: #030404;background-color: #fefefe;">
+                                        服务就绪时间:用来设置确认运行状态的最短等待时间。Pod就绪后会等待配置的时间之后再触发下一批Pod的更新。<br>
+                                        应用关闭时间:k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒<br>
+                                        <br>
+                                       最大超过:用来控制超过期望数量的Pod数量最大值，从而在创建新Pod时限制总量。
+                                        如配置为1，且replicas为3。则更新过着中会保证Pod总数量最多有4个。默认为1。<br>
+                                        <br>
+                                        最大不可用:用来控制不可用Pod数量的最大值，从而在删除旧Pod时保证一定数量的可用Pod。如果配置为1，且replicas为3。则更新过程中会保证至少有2个可用Pod。,默认为1,如果副本数为1,设为0从而保证始终有可用的Pod。
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="updateBlueServiceSwal('{{.data.ServiceId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;
+                            开始升级
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

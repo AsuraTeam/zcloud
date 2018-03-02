@@ -1,0 +1,159 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">修改添加仓库组</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="col-md-12 top10"></div>
+                        <div class="row top10" title="在创建k8s仓库时的服务名称,不要带特殊字符和下划线等">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="col-md-3 fw100 control-label">仓库组名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.GroupName}}"
+                                               onchange="checkChange('GroupName');" name="GroupName" {{.readonly}}
+                                               validfunc="checkProject"
+                                               class="form-control" id="field-3" placeholder="必须为全英文, 不能以/开头和结尾">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top15" title="集群选择后不可修改">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">所属集群<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="ClusterName"
+                                                onchange="setGroupsServer($(this).val());"
+                                                data-live-search="true" data-style="btn-default"
+                                                id="select-cluster-id">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="请注意仓库域名必须在dns服务器解析">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label">所属仓库<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select id="select-registry-server" class="selectpicker" name="ServerDomain"
+                                                data-live-search="true" data-style="btn-default">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="">
+                            <div class="col-md-10">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label top10">仓库组类型<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-3 left10" style="margin-left: 20px;">
+                                        <div class="radio radio-info left10">
+                                            <input id="selectGroupType1" {{.GroupType1}} type="radio"
+                                                   onchange="setGroupStatus();"
+                                                   name="GroupType1">
+                                            <label for="selectGroupType1" class="fw100 control-label">私有
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 ">
+                                        <div class="radio radio-info left10">
+                                            <input id="selectGroupType2" {{.GroupType2}} type="radio"
+                                                   onchange="setGroupStatus();"
+                                                   name="GroupType1">
+
+                                            <label for="selectGroupType2" class="fw100 control-label">公开
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10">
+                                <div class="left80">
+                                    <div class="left40">
+                                        <div class="left20">把仓库组设为公开后，所有人都有读取该仓库组内镜像的权限。<br>在命令行操作下无需 "docker
+                                            login" <br>就可以拉取该仓库组内的所有镜像
+                                            <br>
+                                            <br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" value="{{.data.GroupType}}"
+                                   name="GroupType">
+
+                        </div>
+                        <div class="panel-footer">
+                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                    class="fa fa-times"></i>&nbsp;&nbsp;取消
+                            </button>
+                            <button type="button" onclick="saveRegistryGroup('{{.data.GroupId}}')"
+                                    class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> <!-- end col -->
+</body>
+<script>
+
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 5
+    });
+
+    function init() {
+        $("#select-cluster-id").html("{{.cluster}}");
+        var html = "{{.registryHtml}}";
+        $("#select-registry-server").html(html);
+        $(".selectpicker").selectpicker('refresh');
+    }
+    init();
+
+    /**
+     * 设置组类型
+     * 2018-01-27 16:10
+     */
+    function setGroupStatus() {
+        if ($("#selectGroupType2").is(":checked")) {
+            $("input[name='GroupType']").val("公开");
+        } else {
+            $("input[name='GroupType']").val("私有");
+        }
+    }
+
+    /**
+     * 2018-01-27 18:18
+     * @param cluster
+     */
+    function setGroupsServer(cluster, target) {
+        var url = "/api/registry";
+        var result = get({ClusterName: cluster}, url);
+        var data = result["data"];
+        var html = "<option>--请选择--</option>";
+        for (var i = 0; i < data.length; i++) {
+            var domain = data[i]["ServerDomain"];
+            html += "<option value='" + domain + "'>" + domain + "</option>"
+        }
+        var id = "select-registry-server";
+        $("#" + id).html(html);
+        $("#" + id).selectpicker('refresh');
+    }
+
+
+</script>

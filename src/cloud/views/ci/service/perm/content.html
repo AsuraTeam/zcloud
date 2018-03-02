@@ -1,0 +1,38 @@
+<div class="row ">
+    <div class="col-sm-12 top-10">
+        <button type="button" onclick="addCiPerm()"
+                class="btn btn-primary btn-sm waves-effect waves-light">
+            添加权限
+        </button>
+        <div class="col-sm-1 cluster-search pull-right">
+            <button type="button" class="btn btn-default waves-effect waves-light"
+                    onclick="loadCiPermData()"
+                    style="border-radius: 5px;">
+                <i class="fa fa fa-refresh"></i>
+            </button>
+        </div>
+        <div class="col-md-3 pull-right">
+            <input type="text" onchange="loadCiPermData($(this).val())" class="form-control" id="search_user_id"
+                   placeholder="搜索域名,用户名">
+            <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+        </div>
+    </div>
+    <br>
+    <div class="col-sm-12 app-table" >
+        <table id="ci-perm-data-table" class="table table-hover" >
+            <thead>
+            <tr>
+                <th>授权用户</th>
+                <th>授权组</th>
+                <th>拥有权限</th>
+                <th>最近修改人</th>
+                <th>最近修改时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <br>
+    </div>
+</div>

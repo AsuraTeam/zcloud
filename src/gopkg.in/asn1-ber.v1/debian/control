@@ -1,0 +1,23 @@
+Source: golang-gopkg-asn1-ber.v1
+Section: devel
+Priority: extra
+Maintainer: pkg-go <pkg-go-maintainers@lists.alioth.debian.org>
+Uploaders: Alexandre Viau <aviau@debian.org>, David Lazăr <dlazar@gmail.com>
+Build-Depends: debhelper (>= 9),
+               dh-golang,
+               golang-go
+Standards-Version: 3.9.6
+Homepage: https://github.com/go-asn1-ber/asn1-ber
+Vcs-Browser: https://anonscm.debian.org/cgit/pkg-go/packages/golang-gopkg-asn1-ber.v1.git
+Vcs-Git: https://anonscm.debian.org/git/pkg-go/packages/golang-gopkg-asn1-ber.v1.git
+XS-Go-Import-Path: gopkg.in/asn1-ber.v1
+
+Package: golang-gopkg-asn1-ber.v1-dev
+Architecture: all
+Depends: ${misc:Depends},
+         golang-go
+Built-Using: ${misc:Built-Using}
+Description: ASN1 BER Encoding / Decoding Library for the GO programming language
+ Package ber provides ASN1 BER Encoding / Decoding Library for the
+ GO programming language. It provides basic encoding / decoding
+ needed for the LDAP protocol.

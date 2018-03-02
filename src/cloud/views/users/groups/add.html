@@ -1,0 +1,114 @@
+<style>
+
+    ::-webkit-scrollbar {
+        width: 0.11em;
+    }
+
+    ::-webkit-scrollbar:horizontal
+    {
+        height: 0.11em;
+    }
+    select[multiple], select[size] {
+        height: 230px;
+    }
+</style>
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 60%;">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">修改添加部门</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-1" class="col-md-2 fw100 control-label">部门名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.GroupsName}}"
+                                               onchange="checkChange('GroupsName')" name="GroupsName" id="GroupsName"
+                                               class="form-control" id="field-1" placeholder="必须为全英文">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label class="col-sm-3 fw100 control-label" style="margin-left: -20px;">用户选择<span
+                                        class="text-danger">*</span></label>
+                                <label class="col-sm-4"><input placeholder="搜索用户"
+                                                               onkeyup="searchUser($(this).val(),'undo_contact_group_redo')"
+                                                               class="fa-border form-control"
+                                                               style="margin-top:-5px;margin-left:-40%;"></label>
+                                <label class="col-sm-3 fw100 control-label">已选择用户</label>
+                            </div>
+                            <div class="col-md-12" style="margin-top: 5px;"></div>
+                            <div class="col-xs-5">
+                                <select name="from" id="undo_contact_group_redo" class="form-control" size="10"
+                                        multiple="multiple">
+                                </select>
+                            </div>
+
+                            <div class="col-xs-2">
+                                <div style="margin-top: 45px;">&nbsp;</div>
+                                <button type="button" id="undo_contact_group_redo_rightSelected"
+                                        class="btn btn-primary btn-block"><i
+                                        class="glyphicon glyphicon-chevron-right"></i></button
+                                >
+                                <button type="button" id="undo_contact_group_redo_leftSelected"
+                                        class="btn btn-warning btn-block"><i
+                                        class="glyphicon glyphicon-chevron-left"></i></button>
+                            </div>
+
+                            <div class="col-xs-5">
+                                <select name="to" id="undo_contact_group_redo_to" class="form-control" size="10"
+                                        multiple="multiple"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-2 fw100 control-label">描述信息</label>
+                                    <div class="col-md-10">
+                                        <input type="text" value="{{.data.Description}}" name="Description"
+                                               class="form-control" id="field-2" placeholder="描述信息">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveGroups('{{.data.GroupsId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/js/multiselect.min.js"></script>
+<textarea id="select_user_id" style="display: none"> </textarea>
+<script>
+    jQuery(document).ready(function ($) {
+        $('#undo_contact_group_redo').multiselect({
+            keepRenderingSort: true,
+        });
+    });
+
+
+    setUserData();
+    searchUser("",'undo_contact_group_redo');
+    setSelectUser("{{.data.Users}}");
+
+</script>

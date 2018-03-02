@@ -1,0 +1,151 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 900px;">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">创建应用</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-0" class="col-md-3 fw100 control-label">所属集群<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="text" value="{{.data.ClusterName}}" name="ClusterName"
+                                               class="form-control" id="field-0" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-1" class="col-md-3 fw100 control-label">应用名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.AppName}}"
+                                               validFunc="checkAppName" errmsg="接受 A-Za-z0-9-_.() 并且最大长度不超过32,最小4个字符"
+                                               onchange="checkChange('AppName')" name="AppName" id="AppName"
+                                               class="form-control" id="field-1" placeholder="必须为全英文加数字加中杠">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-11" class="col-md-3 fw100 control-label">资源空间<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9" id="field-11">
+                                        <select nullmsg="必须选择" class="form-control" name="ResourceName"
+                                                id="ResourceName">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row top10" title="service主要是使用k8s的负载均衡机制,如果是微服务或soa的项目则不需要创建service">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-14" class="col-md-3 fw100 control-label">创建Service</label>
+                                    <div class="col-md-9" id="field-14">
+                                        <div class="checkbox checkbox-primary">
+                                            <input id="checkbox0" type="checkbox" name="IsService">
+                                            <label for="checkbox0">
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <label for="field-5" class="col-md-3 fw100 control-label">k8s编排文件<span
+                                        class="text-danger">*</span></label>
+                                <div class="checkbox checkbox-primary col-md-9" style="margin-top: -1px;">
+                                   &nbsp;&nbsp; <input onclick="showTemplate()" id="check_template_show" type="checkbox" style="margin-left: 3px;">
+                                    <label for="check_template_show">
+                                        从模板选择
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row top10" id="show_templateid" style="display: none">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="field-12" class="col-md-3 fw100 control-label">&nbsp;</label>
+                                        <div class="col-md-9" id="field-12">
+                                            <select class="form-control" id="TemplateId"
+                                                    onchange="setYaml($(this).val())">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-12" class="col-md-3 fw100 control-label">&nbsp;</label>
+                                    <div class="col-md-9">
+                                    <textarea nullmsg="k8s编排文件必须填写" rows="10" validFunc="checkYaml" errmsg="编排文件检查错误"
+                                              onchange="checkChange('Yaml','textarea')"
+                                              class="form-control color-scroll visible-always-scroll"
+                                              style="width: 100% !important;" id="field-5"
+                                              placeholder="请使用标准的k8s yaml文件格式,
+支持k8s
+apiVersion: apps/v1beta1
+kind: Deployment"
+                                              name="Yaml">{{.data.Yaml}}</textarea>
+                                        <a href="javascripv:void(0)" onclick="setTemplate()">显示Deployment应用模板</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveApp('{{.data.AppId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;创建
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/js/jquery.slimscroll.js"></script>
+<script src="/static/pages/jquery.scrollbar.js" type="text/javascript"></script>
+<textarea id="yaml_template" style="display: none;">apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: deploymentexample
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.10
+        ports:
+        - containerPort: 80
+          protocol: TCP</textarea>
+
+<script>
+    setQuotaName("{{.data.ResourceName}}", "ResourceName")
+    setTemplateData("TemplateId")
+    setTimeout(function () {
+        $("#field-5").css("width", "100%")
+        $("#field-5").css("height", "180px")
+    }, 100)
+</script>

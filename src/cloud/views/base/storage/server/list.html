@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<!-- ION Slider -->
+<link href="/static/plugins/ion-rangeslider/ion.rangeSlider.css" rel="stylesheet" type="text/css"/>
+<link href="/static/plugins/ion-rangeslider/ion.rangeSlider.skinModern.css" rel="stylesheet" type="text/css"/>
+<div class="content-page">
+    <div class="container">
+        <!-- Start content -->
+        <div class="content">
+            <div id="add_groups_html"></div>
+
+            <div class="row ">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">基础设施</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">存储管理</a>
+                            </li>
+                            <li>
+                                <a href="#">存储卷管理</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row ">
+                <div class="col-sm-12 top-10">
+                    <button type="button" onclick="addStorageServer()"
+                            class="btn btn-primary btn-sm waves-effect waves-light">
+                        创建存储服务器
+                    </button>
+                    <div class="col-sm-1 cluster-search pull-right">
+                        <button type="button" class="btn btn-default waves-effect waves-light"
+                                onclick="loadStorageServerData()"
+                                style="border-radius: 5px;">
+                            <i class="fa fa fa-refresh"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-3 pull-right">
+                        <input type="text" onchange="loadStorageServerData($(this).val())" class="form-control" id="search_user_id"
+                               placeholder="搜索名称">
+                        <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                    </div>
+                </div>
+                <br>
+                <div class="col-sm-12 app-table" >
+                    <br>
+                    <table id="storage-data-table" class="table table-hover" >
+                        <thead>
+                        <tr>
+                            <th>环境名称</th>
+                            <th>集群</th>
+                            <th>存储类型</th>
+                            <th>创建时间</th>
+                            <th>描述信息</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end col -->
+{{template "template/bottom.html" .}}
+</body>
+</div>
+<script src="/static/zcloud/storageServer.js"></script>
+<script>
+    loadStorageServerData();
+    function setPulibc(v) {
+        if(v=="公开"){
+            $("#private").css("cssText","background-color:#ffffff !important")
+            $("#public").css("cssText","background-color:#f0f0f0 !important")
+            loadStorageServerData("","公开");
+        }
+        if(v=="我的"){
+            $("#private").css("cssText","background-color:#f0f0f0 !important")
+            $("#public").css("cssText","background-color:#ffffff !important")
+            loadStorageServerData("","我的");
+        }
+    }
+</script>
+<!-- Range slider js -->
+<script src="/static/plugins/ion-rangeslider/ion.rangeSlider.min.js"></script>
+</html>

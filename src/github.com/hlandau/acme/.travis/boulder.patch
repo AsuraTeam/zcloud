@@ -1,0 +1,96 @@
+diff --git a/start.py b/start.py
+index 347883e..448295f 100755
+--- a/start.py
++++ b/start.py
+@@ -18,6 +18,7 @@ import startservers
+ if not startservers.start(race_detection=False):
+     sys.exit(1)
+ try:
++    open('/tmp/boulder-has-started','wb').write('x')
+     os.wait()
+ 
+     # If we reach here, a child died early. Log what died:
+diff --git a/test/config-next/va.json b/test/config-next/va.json
+index 374ff68..4e701da 100644
+--- a/test/config-next/va.json
++++ b/test/config-next/va.json
+@@ -4,7 +4,7 @@
+     "userAgent": "boulder",
+     "debugAddr": "localhost:8004",
+     "portConfig": {
+-      "httpPort": 5002,
++      "httpPort": 80,
+       "httpsPort": 5001,
+       "tlsPort": 5001
+     },
+diff --git a/test/config/ca.json b/test/config/ca.json
+index eb6a2c1..7c6c0e3 100644
+--- a/test/config/ca.json
++++ b/test/config/ca.json
+@@ -5,11 +5,11 @@
+     "ecdsaProfile": "ecdsaEE",
+     "debugAddr": ":8001",
+     "Issuers": [{
+-      "ConfigFile": "test/test-ca.key-pkcs11.json",
++      "File": "test/test-ca.key",
+       "CertFile": "test/test-ca2.pem",
+       "NumSessions": 2
+     }, {
+-      "ConfigFile": "test/test-ca.key-pkcs11.json",
++      "File": "test/test-ca.key",
+       "CertFile": "test/test-ca.pem",
+       "NumSessions": 2
+     }],
+diff --git a/test/config/va.json b/test/config/va.json
+index 8d0fcef..4da51fc 100644
+--- a/test/config/va.json
++++ b/test/config/va.json
+@@ -4,7 +4,7 @@
+     "userAgent": "boulder",
+     "debugAddr": "localhost:8004",
+     "portConfig": {
+-      "httpPort": 5002,
++      "httpPort": 80,
+       "httpsPort": 5001,
+       "tlsPort": 5001
+     },
+diff --git a/test/hostname-policy.json b/test/hostname-policy.json
+index 6397ee9..15ad50c 100644
+--- a/test/hostname-policy.json
++++ b/test/hostname-policy.json
+@@ -1,12 +1,6 @@
+ {
+   "Blacklist": [
+     "in-addr.arpa",
+-    "example",
+-    "example.net",
+-    "example.org",
+-    "invalid",
+-    "local",
+-    "localhost",
+-    "test"
++    "invalid"
+   ]
+ }
+diff --git a/test/rate-limit-policies.yml b/test/rate-limit-policies.yml
+index 41aadd3..66c2662 100644
+--- a/test/rate-limit-policies.yml
++++ b/test/rate-limit-policies.yml
+@@ -4,7 +4,7 @@ totalCertificates:
+   threshold: 100000
+ certificatesPerName:
+   window: 2160h
+-  threshold: 2
++  threshold: 10000
+   overrides:
+     ratelimit.me: 1
+     lim.it: 0
+@@ -30,7 +30,7 @@ pendingAuthorizationsPerAccount:
+   threshold: 3
+ certificatesPerFQDNSet:
+   window: 24h
+-  threshold: 5
++  threshold: 5000
+   overrides:
+     le.wtf: 10000
+     le1.wtf: 10000

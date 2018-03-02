@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <div class="container">
+        <!-- Start content -->
+        <div class="content">
+            <div id="add_app_html"></div>
+            <div class="row ">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">应用交付中心</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">容器治理</a>
+                            </li>
+                            <li>
+                                <a href="#">应用管理</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row ">
+                <div class="col-sm-12 top-10">
+                    <button type="button" onclick="addApp()"
+                                          class="btn btn-primary btn-sm waves-effect waves-light">
+                    创建应用
+                </button>
+                    <button type="button" disabled onclick="startApp();"
+                            class="btn btn-default btn-sm button-select radius3  waves-effect waves-light"><i
+                            class="fa fa-play"></i><span>&nbsp;启 动</span></button>
+                    <button type="button" onclick="stopAppSwal();" disabled
+                            class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                            class="fa fa-stop"></i><span>&nbsp;停 止</span></button>
+                    <button type="button" disabled title="重启应用,所有容器都会重启" onclick="restartAppSwal()"
+                            class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                            class="fa fa-bolt"></i><span>&nbsp;重启</span></button>
+                    <button type="button" disabled onclick="deleteAppSwal();"
+                            class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                            class="fa fa-trash-o"></i><span>&nbsp;删 除</span></button>
+                    <button type="button" disabled title="如果应用不存在则重新创建该应用" onclick="restartAppSwal()"
+                            class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                            class="fa fa-undo"></i><span>&nbsp;重建</span></button>
+                    <div class="col-sm-1 cluster-search pull-right">
+                        <button type="button" class="btn btn-default waves-effect waves-light"
+                                onclick="loadAppData()"
+                                style="border-radius: 5px;">
+                            <i class="fa fa fa-refresh"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-3 pull-right">
+                    <input type="text" onkeyup="loadAppData($(this).val())" class="form-control"
+                    placeholder="搜索名称">
+                    <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                    </div>
+                </div>
+                <br>
+                <div class="col-sm-12 app-table top10">
+                    <br>
+                    <table id="app-data-table" class="table table-hover ">
+                        <thead>
+                        <tr>
+                            <th>
+                                <div class="checkbox checkbox-primary " style="margin-left: 10px;    margin-bottom: -5px;">
+                                    <input id="checkbox0" type="checkbox" class="all-select">
+                                    <label for="checkbox0">
+                                    </label>
+                                </div>
+                            </th>
+                            <th>环境名称</th>
+                            <th>集群名称</th>
+                            <th>应用名称</th>
+                            <th>运行状态</th>
+                            <th>容器数量</th>
+                            <th>访问地址</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end col -->
+{{template "template/bottom.html" .}}
+</body>
+</div>
+<input id="delete_app_force_id" type="hidden">
+<input id="delete_app_id" type="hidden">
+<script src="/static/zcloud/app.js"></script>
+<script>
+
+
+    function loadAppData(ip) {
+        if (!ip) {
+            ip = ""
+        } else {
+            if (ip.length < 4) {
+                return
+            }
+        }
+
+        $("#app-data-table").dataTable({
+            "filter": false,//去掉搜索框
+            "ordering": false, // 是否允许排序
+            "paginationType": "full_numbers", // 页码类型
+            "destroy": true,
+            "processing": false,
+            "bPaginate": true, //是否显示（应用）分页器
+            "serverSide": true,
+            "bInfo": false, //是否显示页脚信息，DataTables插件左下角显示记录数
+            "scrollX": true, // 是否允许左右滑动
+            "bLengthChange":false,
+            "displayLength": 10, // 默认长度
+            "ajax": { // 请求地址
+                "url": "/api/app?t=" + new Date().getTime() + "&ip=" + ip + "&cluster=" + getClusterName(),
+                "type": 'get'
+            },
+            "columns": [ // 数据映射
+                {
+                    "data": "AppId", "sWidth": "4%", "mRender": function (data) {
+                    var html = '<div class="checkbox checkbox-primary ">' +
+                        '<input id="checkbox0" onchange="checkBoxChange($(this))" type="checkbox" class="all" value="' + data + '">' +
+                        '<label for="checkbox0">' +
+                        '</label>' +
+                        '</div>';
+                    html = html.replace(/checkbox0/g, "checkbox" + data);
+                    return html;
+                }
+                },
+                {"data": "Entname","sWidth": "6%"},
+                {"data": "ClusterName","sWidth": "6%"},
+                {
+                    "data": "AppName","sWidth": "10%", "mRender": function (data,type,full) {
+                    return "<div style='height:10px;margin-top: -5px;'>&nbsp;</div><a href='javascript:void(0)' onclick='toAppDetail(\"" + full["AppId"] + "\")'>" + data + "</a>";
+                }
+                },
+
+                {
+                    "data": "Status", "sWidth": "8%","mRender": function (data, type, full) {
+                        if (full["ContainerNumber"] == "0"){
+                            return  '<div class="Fail"><div><i class="fa fa-circle"></i><span>&nbsp;已停止</span>&nbsp;</div></div>'
+                        }
+                    if (data == "True") {
+                        var r = '<div class="Running"><div><i class="fa fa-circle"></i><span>&nbsp;运行中</span>' +
+                            "<div class='text-default'>" + full["ServiceNumber"] + "/" + full["ServiceNumber"] + "&nbsp;共" + full["ServiceNumber"] + "个服务</div>"
+                            + '</div></div>'
+                    } else {
+                        var r = '<div class="Fail"><div><i class="fa fa-circle"></i><span>&nbsp;故障中</span>&nbsp;</div></div>'
+                    }
+                    var errmsg = full["ErrorMsg"];
+                    if (errmsg) {
+                        return "<span title='" + full["ErrorMsg"] + "'>" + r + "</span>"
+                    } else {
+                        return "<span>" + r + "</span>"
+                    }
+                }
+                },
+                {
+                    "data": "ContainerNumber", "sWidth": "6%","mRender": function (data) {
+                    return "<div style='height: 10px;margin-top: -5px;margin-left: 10px;'>&nbsp;"+data+"</div>";
+                }
+                },
+                {"data": "Access","sWidth": "15%",},
+                {
+                    "data": "CreateTime", "sWidth": "8%","mRender": function (data) {
+                    return "<div style='height: 10px;margin-top: -8px;'>&nbsp;</div>"+data;
+                }
+                },
+
+                {
+                    "sWidth": "6%", "data": "AppId", "mRender": function (data, type, full) {
+                    return '<button type="button"  title="强制删除,无法连接到k8s集群时可用" onClick="deleteAppSwal(' + data + ',1)" class="delete-template btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>&nbsp;' +
+                        '<button type="button"  title="查看yaml文件" onClick="toAppDetail(\'' + full["AppName"] + '\',1)" class="delete-template btn btn-xs rb-btn-oper"><i class="fa fa-usb"></i></button>';
+                }
+                },
+            ],
+            "fnRowCallback": function (row, data) { // 每行创建完毕的回调
+                $(row).data('recordId', data.recordId);
+            }
+        });
+        setTimeout(function () {
+            $("#app-data-table_wrapper").css("cssText", "margin-top:-40px !important;");
+        },1)
+    }
+    loadAppData();
+
+</script>
+</html>

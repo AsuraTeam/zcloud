@@ -1,0 +1,80 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true" data-backdrop="false"
+     style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">水平扩展</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="field-9" class="col-md-3 fw100 control-label">集群名称</label>
+                                    <div class="col-md-9" id="field-9">
+                                        <input class="form-control" readonly
+                                               value="{{.data.ClusterName}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="field-11" class="col-md-3 fw100 control-label">服务名称</label>
+                                    <div class="col-md-9" id="field-11">
+                                        <input class="form-control" type="hidden" id="scale_service_id" readonly
+                                               name="ServiceId"
+                                               value="{{.data.ServiceId}}"/>
+                                        <input class="form-control" readonly name="ServiceName"
+                                               value="{{.data.ServiceName}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-12" class="col-md-3 fw100 control-label">当前实例量</label>
+                                    <div class="col-md-9" id="field-12">
+                                        <input class="form-control" readonly name="ServiceName"
+                                               value="{{.data.Replicas}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="range_01" class="col-md-3 fw100 control-label">扩展到</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="range_01">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="serviceScale()"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp; 保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $("#range_01").ionRangeSlider({
+        min: 1,
+        max: parseInt("{{.MaxReplicas}}"),
+        from: parseInt("{{.data.Replicas}}")
+    });
+
+</script>

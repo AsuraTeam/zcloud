@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<link href="/static/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput.css" rel="stylesheet"/>
+<style>
+
+    ::-webkit-scrollbar {
+        width: 0.11em;
+    }
+
+    ::-webkit-scrollbar:horizontal {
+        height: 0.11em;
+    }
+</style>
+<div class="content-page">
+    <div class="container">
+        <div class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">应用交付中心</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">容器治理</a>
+                            </li>
+                            <li>
+                                <a href="/application/app/list" target="_self">应用</a>
+                            </li>
+                            <li>
+                                <a href="#">创建应用</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- end row -->
+                <div id="add_storage_html"></div>
+                <div id="add_health_html"></div>
+                <div id="add_configure_html"></div>
+                <div id="show_configure_id_pop" class="modal fade " tabindex="-1" role="dialog"
+                     aria-labelledby="myModalLabel" aria-hidden="true"
+                     style="display: none;">
+                    <div class="modal-dialog ">
+                        <div class="modal-content p-0 b-0 ">
+                            <div class="panel panel-color panel-default">
+                                <div class="panel-heading">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                                    </button>
+                                    <span class="modal-title">配置文件内容查看</span>
+                                </div>
+                                <div class="panel-body font-12 ">
+                                    <div class="col-md-10 top10">
+                                        <div class="form-group">
+                                            <label class="col-md-3 fw100 control-label">配置组</label>
+                                            <div class="col-md-9">
+                                                <input type="text" value="1.10"
+                                                       class="form-control" readonly id="show_configure_data_group">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10 top10">
+                                        <div class="form-group">
+                                            <label class="col-md-3 fw100 control-label">配置项目
+                                            </label>
+                                            <div class="col-md-9">
+                                                <input type="text" value="1.10"
+                                                       class="form-control" readonly id="show_configure_data_name">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <textarea class="top10" id="show_configure_id" rows="16" readonly
+                                              style='border: none;background-color: #333;width: 100%;color: #F0F0F0;overflow-y: scroll'></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="portlet">
+                        <!-- Clickable Wizard -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card-box">
+                                    <form id="wizard-clickable" onsubmit="false">
+                                        <fieldset title="1">
+                                            <legend>镜像选择</legend>
+                                            <div class="row m-t-20 left80">
+                                                <div class="col-md-6 top10">
+                                                    <div class="form-group">
+                                                        <label for="select-entname-id"
+                                                               class="col-md-3 fw100 control-label">环境选择<span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="col-md-9">
+                                                            <select class="selectpicker" name="Entname"
+                                                                    onchange="getEntClusterData($(this).val())"
+                                                                    data-live-search="true" data-style="btn-default"
+                                                                    id="select-entname-id">
+                                                                <option>请选择</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 top10">
+                                                    <div class="form-group">
+                                                        <label for="select-cluster-id"
+                                                               class="col-md-3 fw100 control-label">选择集群<span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="col-md-9">
+                                                            <select class="selectpicker" name="ClusterName"
+                                                                    onchange="setAppRegistryServer($(this).val())"
+                                                                    data-live-search="true" data-style="btn-default"
+                                                                    id="select-cluster-id">
+                                                                <option>请选择</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <br>
+                                                <div class="row m-t-20">
+                                                    {%include application/app/image.html%}
+                                                </div>
+                                                <div class="row top10"></div>
+                                        </fieldset>
+
+                                        <fieldset title="2" id="base-set-id">
+                                            <legend>基本设置</legend>
+
+                                            <div class="row m-t-20 left80">
+                                                <div class="col-md-10 top10">
+                                                    <div class="form-group">
+                                                        <label for="AppName-1"
+                                                               class="col-md-3 fw100 control-label">应用名称<span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="col-md-9">
+                                                            <input type="text" nullmsg="必须填写" value="{{.data.AppName}}"
+                                                                   validFunc="checkAppNameService"
+                                                                   errmsg="接受 A-Za-z0-9-_.() 并且最大长度不超过32,最小4个字符"
+                                                                   onchange="checkChange('AppName')"
+                                                                   name="AppName" id="AppName"
+                                                                   class="form-control" id="AppName-1"
+                                                                   placeholder="必须为全英文加数字加中杠">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-10 top10" title=" 不能带 _ 或 特殊字符, 只能英文开头加 - 和数字">
+                                                    <div class="form-group">
+                                                        <label for="field-1"
+                                                               class="col-md-3 fw100 control-label">服务名称<span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="col-md-9">
+                                                            <input type="text" nullmsg="必须填写"
+                                                                   value="{{.data.ServiceName}}"
+                                                                   validFunc="checkAppNameService"
+                                                                   errmsg="接受 A-Za-z0-9-_.() 并且最大长度不超过32,最小4个字符"
+                                                                   onchange="checkChange('ServiceName')"
+                                                                   name="ServiceName" id="ServiceName"
+                                                                   class="form-control" id="field-1"
+                                                                   placeholder="必须为全英文加数字加中杠">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-10 top10">
+                                                    <div class="form-group">
+                                                        <label for="field-11"
+                                                               class="col-md-3 fw100 control-label"></label>
+                                                        <div class="col-md-9" id="field-11">
+                                                            <pre class="pre">如果没有可用资源空间,请联系管理员分配资源空间</pre>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-10 top10" title="同一个应用只能使用同一个资源空间">
+                                                    <div class="form-group">
+                                                        <label for="field-11"
+                                                               class="col-md-3 fw100 control-label">资源空间<span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="col-md-9">
+                                                            <select nullmsg="必须选择" class="form-control"
+                                                                    name="ResourceName"
+                                                                    id="ResourceName">
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-10 top10" title="">
+                                                    <div class="form-group">
+                                                        <label for="field-11"
+                                                               class="col-md-3 fw100 control-label">镜像名称<span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="col-md-9">
+                                                            <input nullmsg="必须选择" class="form-control"
+                                                                   name="ImageRegistry" readonly
+                                                                   id="ImageRegistry"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-10 top10" title="">
+                                                    <div class="form-group">
+                                                        <label for="field-11"
+                                                               class="col-md-3 fw100 control-label">选择版本<span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="col-md-9" id="field-111">
+                                                            <select nullmsg="必须选择" class="form-control"
+                                                                    name="Version"
+                                                                    id="select-version-id">
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-10 top10">
+                                                    <div class="form-group col-sm-12">
+                                                        <label class="col-md-3 fw100 -control-label">部署类型:</label>
+                                                        <input value="Deployment" name="serviceType" type="hidden">
+                                                        <div class="col-sm-9">
+                                                            <span id="deployment_border"
+                                                                  onclick="setDeploy('deployment','Deployment')"
+                                                                  style="background-color: #eeeeee !important;"
+                                                                  class="btn-class btn btn-asura-default btn-bordered waves-effect w-xs waves-light service-mode-select"><span
+                                                                    class="statusd" id="deployment"
+                                                                    style="float: left;display: block;"> &nbsp;&nbsp;<i
+                                                                    class="fa fa-check "></i></span>Deployment</span>
+                                                            <span id="daemonset_border"
+                                                                  onclick="setDeploy('daemonset','DaemonSet')"
+                                                                  class="btn-class btn btn-asura-default btn-bordered waves-effect w-xs waves-light service-mode-select">
+                                                                         <span class="statusd" id="daemonset"
+                                                                               style="float: left;display: none;"> &nbsp;&nbsp;<i
+                                                                                 class="fa fa-check "></i>
+                                                                         </span>DaemonSet</span>
+                                                            <span id="statefulset_border"
+                                                                  onclick="setDeploy('statefulset','StatefulSet')"
+                                                                  style="  border-right: 1px solid #ccc !important;"
+                                                                  class="btn-class btn btn-asura-default btn-bordered waves-effect w-xs waves-light service-mode-select">
+                                                                         <span class="statusd" id="statefulset"
+                                                                               style="float: left;display: none;"> &nbsp;&nbsp;<i
+                                                                                 class="fa fa-check "></i>
+                                                                         </span>StatefulSet</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {%include application/service/cpu_mem.html%}
+                                                <div class="col-md-10" id="show_labels_id">
+                                                    <div class="form-group">
+                                                        <label for="Replicas"
+                                                               class="col-md-3 fw100 control-label top10">服务标签</label>
+                                                        <div class="col-md-9 service-storage">
+                                                            <div class="row top10">
+                                                                <div class="form-group">
+                                                                    <label class="col-md-4 fw100 control-label">键</label>
+                                                                    <label class="col-md-4 fw100 control-label">值</label>
+                                                                    <label class="col-md-2 fw100 control-label">Kubernetes</label>
+                                                                    <label class="col-md-2 fw100 control-label">操作</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 top10">
+                                                    <div class="form-group">
+                                                        <label
+                                                                class="col-md-3 fw100 control-label top10">&nbsp;</label>
+                                                        <div class="col-md-9 service-storage">
+                                                            <div class="col-md-3"
+                                                                 style="    margin-left: -50px;">
+                                                                <input type="text" errmsg="不能为空,至少3个字符,字母开头"
+                                                                       name="LabelsKey" uniquemsg="环境变量已经存在"
+                                                                       class="form-control radius3" value=""
+                                                                       placeholder=""/>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="text" errmsg="不能为空,至少2个字符,字母开头"
+                                                                       name="LabelsValue"
+                                                                       class="form-control radius3 left10" value=""
+                                                                       placeholder=""/>
+                                                            </div>
+                                                            <div class="col-md-2 left40">
+                                                                <div class="checkbox checkbox-primary left10">
+                                                                    <input id="checkbox0" type="checkbox"
+                                                                           name="LabelsK8s">
+                                                                    <label for="checkbox0">注入
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-2" style="margin-left: -70px;">
+                                                                <button type="button" onclick="addLabels()"
+                                                                        class="btn btn-default btn-xs waves-effect waves-light pull-right top10">
+                                                                    添加
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="add_labels_html_value" class="col-md-10">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+
+                                        <fieldset title="3">
+                                            <legend>网络设置</legend>
+                                            <div class="row m-t-20 left80">
+                                                <div class="col-md-12 top10">
+                                                    <div class="form-group">
+                                                        <label
+                                                                class="col-md-3 fw100 control-label">容器暴露端口<span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="col-md-9 tags-default">
+                                                            <input type="text" nullmsg="不能为空"
+                                                                   errmsg="必须为数字"
+                                                                   onchange="checkChange('ContainerPort');"
+                                                                   class="form-control" value="80" name="ContainerPort"
+                                                                   data-role="tagsinput" placeholder="添加端口"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--<div class="col-md-12 top10">-->
+                                                <!--<div class="form-group">-->
+                                                <!--<label for="ImageName-0" class="col-md-3 fw100 control-label">负载均衡配置<span-->
+                                                <!--class="text-danger">*</span></label>-->
+                                                <!--<div class="col-md-9 tags-default">-->
+                                                <!--<input type="text" nullmsg="不能为空" validFunc="checkPort"-->
+                                                <!--errmsg="必须为数字"-->
+                                                <!--onchange="checkChange('ContainerPort');"-->
+                                                <!--class="form-control" value="80" name="ContainerPort"-->
+                                                <!--data-role="tagsinput" placeholder="添加端口"/>-->
+                                                <!--</div>-->
+                                                <!--</div>-->
+                                                <!--</div>-->
+                                                <div class="col-md-12" id="show_health_id">
+                                                    <div class="form-group">
+                                                        <label for="Replicas"
+                                                               class="col-md-3 fw100 control-label top10">健康检查<span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="col-md-9 service-storage">
+                                                            <div class="row top10">
+                                                                <div class="form-group">
+                                                                    <label class="col-md-1 fw100 control-label">类型</label>
+                                                                    <label class="col-md-1 fw100 control-label">端口</label>
+                                                                    <label class="col-md-3 fw100 control-label">路径或命令</label>
+                                                                    <label class="col-md-2 fw100 control-label">启动预估</label>
+                                                                    <label class="col-md-1 fw100 control-label">间隔</label>
+                                                                    <label class="col-md-2 fw100 control-label">不健康阈值</label>
+                                                                    <label class="col-md-1 fw100 control-label">超时</label>
+                                                                    <label class="col-md-1 fw100 control-label">操作</label>
+                                                                </div>
+                                                            </div>
+                                                            <div id="add_health_html_value">
+                                                            </div>
+                                                            <button type="button" onclick="addHealth()"
+                                                                    class="btn btn-default btn-xs waves-effect waves-light pull-right top10">
+                                                                添加健康检查项
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        <fieldset title="4">
+                                            <legend>高级设置</legend>
+                                            <div class="row m-t-20 left80">
+                                                <div class="col-sm-10 top10">
+                                                    <div class="form-group col-sm-8">
+                                                        <label class="col-md-3 fw100 -control-label">服务类型:</label>
+                                                        <div class="col-sm-7">
+                                                            <span id="no_status_border" onclick="setServiceStatus(0)"
+                                                                  style="background-color: #eeeeee !important;"
+                                                                  class="btn-class btn btn-asura-default btn-bordered waves-effect w-xs waves-light service-type-select"><span
+                                                                    class="status" id="no_status"
+                                                                    style="float: left;display: block;"> &nbsp;&nbsp;<i
+                                                                    class="fa fa-check "></i></span>无状态</span>
+                                                            <span id="is_status_border" onclick="setServiceStatus(1)"
+                                                                  class="btn-class btn btn-asura-default btn-bordered waves-effect w-xs waves-light service-type-select">
+                                                                         <span class="status" id="is_status"
+                                                                               style="float: left;display: none;"> &nbsp;&nbsp;<i
+                                                                                 class="fa fa-check "></i>
+                                                                         </span>有状态</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-10" id="show_storage_id" style="display: none">
+                                                    <div class="form-group">
+                                                        <label for="Replicas"
+                                                               class="col-md-2 fw100 control-label top10">存储卷<span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="col-md-10 service-storage">
+                                                            <div class="row top10">
+                                                                <div class="form-group">
+                                                                    <label class="col-md-4 fw100 control-label">容器路径</label>
+                                                                    <label class="col-md-2 fw100 control-label">存储卷</label>
+                                                                    <label class="col-md-5 fw100 control-label">主机路径</label>
+                                                                    <label class="col-md-1 fw100 control-label">操作</label>
+                                                                </div>
+                                                            </div>
+                                                            <div id="add_storage_html_value">
+                                                            </div>
+                                                            <button type="button" onclick="addStorage()"
+                                                                    class="btn btn-default btn-xs waves-effect waves-light pull-right top10">
+                                                                创建
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-10 top10">
+                                                    <div class="form-group col-sm-8">
+                                                        <label class="col-md-3 fw100 -control-label">调节模式:</label>
+                                                        <div class="col-sm-7">
+                                                            <span id="update_model_custom" onclick="setUpdateMode(0)"
+                                                                  style="background-color: #eeeeee !important;"
+                                                                  class="btn-class btn btn-asura-default btn-bordered waves-effect w-xs waves-light service-type-select"><span
+                                                                    class="status" id="model_custom"
+                                                                    style="float: left;display: block;"> &nbsp;&nbsp;<i
+                                                                    class="fa fa-check "></i></span>手动</span>
+                                                            <span id="update_model_auto" onclick="setUpdateMode(1)"
+                                                                  class="btn-class btn btn-asura-default btn-bordered waves-effect w-xs waves-light service-type-select">
+                                                                         <span class="status" id="model_auto"
+                                                                               style="float: left;display: none;"> &nbsp;&nbsp;<i
+                                                                                 class="fa fa-check "></i>
+                                                                         </span>自动</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-10 top10">
+                                                    <div class="form-group">
+                                                        <label for="Replicas" class="col-md-2 fw100 control-label">容器实例数量<span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="col-md-10">
+                                                            <input type="number" value="1"
+                                                                   name="Replicas"
+                                                                   class="form-control" id="Replicas">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-10 top10">
+                                                    <div class="form-group">
+                                                        <label for="ReplicasMin" class="col-md-2 fw100 control-label">实例最小值<span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="col-md-10">
+                                                            <input type="number" value="1"
+                                                                   name="ReplicasMin"
+                                                                   onchange="checkReplicas()"
+                                                                   class="form-control" id="ReplicasMin">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-10 top10">
+                                                    <div class="form-group">
+                                                        <label for="ReplicasMax" class="col-md-2 fw100 control-label">实例最大值<span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="col-md-10">
+                                                            <input type="number" value="1"
+                                                                   name="ReplicasMax"
+                                                                   class="form-control" id="ReplicasMax">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <div class="form-group">
+                                                        <label for="Replicas"
+                                                               class="col-md-2 fw100 control-label top10">配置文件</label>
+                                                        <div class="col-md-9 ">
+                                                            <div class="row top10">
+                                                                <div class="form-group">
+                                                                    <label class="col-md-4 fw100 control-label">容器路径</label>
+                                                                    <label class="col-md-4 fw100 control-label">配置项目</label>
+                                                                    <label class="col-md-2 fw100 control-label">操作</label>
+                                                                </div>
+                                                            </div>
+                                                            <div id="add_config_html_value">
+                                                            </div>
+                                                            <button type="button" onclick="addServiceConfig()"
+                                                                    class="btn btn-default btn-xs waves-effect waves-light pull-right top10">
+                                                                添加配置文件
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-10 top10">
+                                                    <div class="form-group">
+                                                        <label for="EnvVar"
+                                                               class="col-md-2 fw100 control-label">环境变量</label>
+                                                        <div class="col-md-10">
+                                                            <textarea type="number"
+                                                                      name="Envs" placeholder="变量名=变量值
+evn=prod"
+                                                                      class="form-control" id="EnvVar"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        <button type="button" onclick="saveService()" id="saveServiceSubmit"
+                                                class="btn btn-primary stepy-finish">提交
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input id="select-registry-group" type="hidden">
+{{template "template/bottom.html" .}}
+<script src="/static/zcloud/registryGroup.js"></script>
+<script src="/static/zcloud/service.js" type="text/javascript"></script>
+<!--Form Wizard-->
+<script src="/static/plugins/jquery.stepy/jquery.stepy.min.js" type="text/javascript"></script>
+<!--wizard initialization-->
+<script src="/static/pages/jquery.wizard-init.js" type="text/javascript"></script>
+<script src="/static/plugins/bootstrap-tagsinput/js/bootstrap-tagsinput.min.js"></script>
+<script src="/static/zcloud/registrySelect.js"></script>
+<textarea id="storage_template_id" style="display: none;">
+         <div class="row top10" id="TEMPLATEID">
+
+             <div class="col-md-4 fw100 control-label wrap storagediv containerPath">CONTAINER_PATH</div>
+             <div class="col-md-2 fw100 control-label storagediv">STORAGE_PATH</div>
+             <div class="col-md-4 fw100 control-label wrap storagediv">HOST_PATH</div>
+             <div class="col-md-1 fw100 control-label pull-right">
+                 <a><i class="fa fa-edit waves-light" onclick="editStorageData('TEMPLATEID')"></i>
+                 </a>&nbsp;&nbsp;<a><i onclick="removeData('TEMPLATEID')" class="fa fa-remove waves-light"></i></a>
+             </div>
+         </div>
+</textarea>
+<textarea id="labels_template_id" style="display: none;">
+    <div class="row col-md-12 " id="TEMPLATEIDL">
+               <div class="form-group">
+                      <label class="col-md-3 fw100 control-label">&nbsp;&nbsp;</label>
+                   <div class="col-md-9 service-storage">
+                       <div class="form-group">
+                           <div class="col-md-4 fw100 control-label labelsdiv lableskey">键</div>
+                           <div class="col-md-4 fw100 control-label labelsdiv">值</div>
+                           <div class="col-md-2 fw100 control-label labelsdiv left20">Kubernetes</div>
+                           <div class="col-md-1 fw100 control-label">
+                           <a>
+                               <i onclick="removeData('TEMPLATEIDL')" class="fa fa-remove waves-light"></i>
+                           </a>
+                       </div>
+                   </div>
+          </div>
+       </div>
+    </div>
+</textarea>
+
+<textarea id="configure_template_id" style="display: none;">
+    <div class="col-md-12 " id="TEMPLATEIDC">
+               <div class="form-group">
+                   <div class="col-md-12" style="margin-left: -25px;">
+                       <div class="form-group" id="TEMPLATEIDCDDATA">
+                           <div class="col-md-5 fw100 control-label configuresdiv configuresKey">ContainerPath</div>
+                           <div class="col-md-4 fw100 control-label configuresdiv">DataName</div>
+                           <div class="col-md-4 fw100 control-label configuresdiv" style="display: none;">DataId</div>
+                           <div class="col-md-3 fw100 control-label">
+                               <a><i onclick="showConfigure('DataId')" class="fa fa-eye waves-light"></i></a>&nbsp;&nbsp;
+                              <a><i class="fa fa-edit waves-light" onclick="editConfigureData('TEMPLATEIDCDDATA')"></i></a>&nbsp;&nbsp;
+                              <a><i onclick="removeData('TEMPLATEIDC')" class="fa fa-remove waves-light"></i></a>
+                       </div>
+                   </div>
+          </div>
+       </div>
+    </div>
+</textarea>
+
+
+<textarea id="health_template_id" style="display: none;">
+         <div class="row top10" id="TEMPLATEIDH">
+              <div class="col-md-1 fw100 control-label healthdiv">协议</div>
+              <div class="col-md-1 fw100 control-label healthdiv port">端口</div>
+              <div class="col-md-3 fw100 control-label healthdiv healthpath">路径</div>
+              <div class="col-md-2 fw100 control-label healthdiv">启动预估</div>
+              <div class="col-md-1 fw100 control-label healthdiv">间隔</div>
+              <div class="col-md-2 fw100 control-label healthdiv">不健康阈值</div>
+              <div class="col-md-1 fw100 control-label healthdiv">超时</div>
+              <div class="col-md-1 fw100 control-label">
+              <a><i class="fa fa-edit waves-light" onclick="editHealthData('TEMPLATEIDH')"></i></a>&nbsp;&nbsp;
+              <a><i onclick="removeData('TEMPLATEIDH')" class="fa fa-remove waves-light"></i></a>
+                  </div>
+         </div>
+</textarea>
+<script>
+
+    // 2018-02-07 09:49
+    // 环境选择
+    $("#select-entname-id").html("{{.entname}}");
+
+    // 在已有应用添加
+    var cluster = "{{.cluster}}";
+    if(cluster){
+        $("#select-cluster-id").html(cluster);
+        setAppRegistryServer(cluster);
+    }
+    $('.selectpicker').selectpicker("refresh");
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 3
+    });
+
+    // 初始化镜像名称 2018-02-01 08:04
+    var imageName = "{{.data.ImageRegistry}}";
+    if (imageName) {
+        $("input[name='ImageName']").val(imageName);
+        $("input[name='ImageRegistry']").val(imageName);
+        $("#select-version-id").html("{{.data.ImageTag}}");
+        $("#select-version").show();
+        $("#input-version").hide();
+    }
+
+    $("input[name='ClusterName']").val(getClusterName());
+    var appName = "{{.data.AppName}}";
+    var cluster = "{{.data.ClusterName}}";
+    if (!cluster) {
+        $("input[name='ClusterAlias']").val(getClusterName(1));
+
+    }
+    if (appName) {
+        $("input[name='AppName']").attr("readonly", "true");
+    }
+
+    $("#ResourceName").html("{{.quotas}}");
+
+    $(document).ready(function () {
+        $("form").submit(function (e) {
+            e.preventDefault();
+        });
+    });
+    $("#ImageRegistry").change(function () {
+        $("#ImageName-0").val($(this).val())
+    });
+    $("#app_docker_show").addClass("active collapse in");
+
+    // 检查副本数量
+    function checkReplicas() {
+        var replicas = $('input[name="Replicas"]').val();
+        var replicasMin = $('input[name="ReplicasMin"]').val();
+        var replicasMax = $('input[name="ReplicasMax"]').val();
+        if (parseInt(replicasMin) < parseInt(replicas)) {
+            $('input[name="ReplicasMin"]').val(replicas);
+        }
+        if (parseInt(replicasMin) > parseInt(replicasMax)) {
+            $('input[name="ReplicasMin"]').val(replicasMax);
+        }
+    }
+    /**
+     * 2018-01-27 18:18
+     * @param cluster
+     */
+    function setAppRegistryServer(cluster) {
+        var url = "/api/registry";
+        var result = get({ClusterName: cluster}, url);
+        var data = result["data"];
+        var html = "<option>--请选择--</option>";
+        for (var i = 0; i < data.length; i++) {
+            var servers = data[i]["ServerAddress"].split(":");
+            var reg = data[i]["ServerDomain"] + ":" + servers[1];
+            html += "<option value='" + data[i]["ServerId"] + "'>" + reg + "</option>"
+        }
+        var id = "select-registry-server";
+        $("#" + id).html(html);
+        $("#" + id).selectpicker('refresh');
+        loadImageData("", cluster);
+    }
+
+
+</script>
+</body>
+</div>
+</html>

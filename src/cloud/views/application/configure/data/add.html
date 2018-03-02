@@ -1,0 +1,60 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">创建配置项</span>
+                </div>
+                <form class="cluster-form">
+                <div class="panel-body font-12 ">
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-0" class="col-md-3 fw100 control-label">所属配置组</label>
+                                <div class="col-md-9">
+                                    <input type="hidden" value="{{.ConfigureId}}" readonly name="ConfigureId" >
+                                    <input type="text" value="{{.ConfigureName}}" readonly name="ConfigureName" class="form-control" id="field-0" placeholder="所属组">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-1" class="col-md-3 fw100 control-label">配置键<span class="text-danger">*</span></label>
+                                <div class="col-md-9" >
+                                    <input type="text" nullmsg="必须填写" {{.readonly}} value="{{.data.DataName}}"  validFun="checkClusterName" onchange="checkChange('DataName')" name="DataName" id="DataName" class="form-control" id="field-1" placeholder="字母开头,不能带中文和特殊字符">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-2" class="col-md-3 fw100 control-label">配置内容</label>
+                                <div class="col-md-9">
+                                    <textarea type="text" rows="14" onchange="checkChange('Data')" name="Data" class="form-control" id="field-2" placeholder="配置描述信息">{{.data.Data}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                            class="fa fa-times"></i>&nbsp;&nbsp;取消
+                    </button>
+                    <button type="button" onclick="saveConfigureData('{{.data.DataId}}')"  class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i><span class="saveConfigure">&nbsp;&nbsp;创建</span>
+                    </button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+//    setQuotaName("", "ResourceName")
+    $("input[name='ClusterName']").val(getClusterName());
+</script>

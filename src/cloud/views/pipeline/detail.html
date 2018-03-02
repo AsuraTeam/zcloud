@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <div class="container">
+        <!-- Start content -->
+        <div class="content">
+            <div class="row ">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">应用交付中心</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">流水线</a>
+                            </li>
+                            <li>
+                                <a href="/pipeline/list">流水线项目</a>
+                            </li>
+                            <li>
+                                <a href="#">详情</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <link href="/static/css/responsive.css" rel="stylesheet" type="text/css"/>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="portlet">
+                        <div class="portlet-heading portlet-default ">
+                            <a href="#" class="pull-right  waves-effect waves-light "><i style="color: #89d3eb;"
+                                    class="fa fa-mixcloud"></i></a>
+                            <h4 class="text-dark header-title m-t-0">流水线详情</h4>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="bg-default" class="panel-collapse collapse in " style="font-size: 10px;">
+                            <div class="portlet-body col-sm-12">
+                                <div class="col-sm-2 ">
+                                    <img class="app-detail-img" src="/static/img/default.png"
+                                         style="margin-top: -10px;margin-left: -25px;"/>
+                                </div>
+                                <div class="col-sm-10">
+                                    <table class="table tablesaw  m-b-0 tablesaw-swipe">
+                                        <tbody>
+                                        <tr>
+                                            <th class="noborder">集群</th>
+                                            <th class="noborder">{{.data.ClusterName}}</th>
+                                            <th class="noborder">创建人</th>
+                                            <th class="noborder">{{.data.CreateUser}}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="noborder">应用</th>
+                                            <th class="noborder">{{.data.AppName}}</th>
+                                            <th class="noborder">服务</th>
+                                            <th class="noborder">{{.data.ServiceName}}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="noborder">创建时间</th>
+                                            <th class="noborder">{{.data.CreateTime}}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="noborder">构建任务名称</th>
+                                            <th class="noborder">{{.data.JobName}}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="noborder">构建开始时间</th>
+                                            <th class="noborder">{{.data.StartJobTime}}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="noborder">构建状态</th>
+                                            <th class="noborder" id="build_status_id">{{.data.Status}}</th>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card-box">
+                        <h4 class="text-dark header-title m-t-0">执行详情</h4>
+                        <p class="text-muted m-b-30 font-13">
+                        </p>
+
+                        <ul class="sortable-list taskList list-unstyled" id="completed">
+                            <li class="task-warning" id="task14">
+                                <div class="primary pull-right">
+                                    <i class="fa fa-mixcloud"></i>
+                                    <label></label>
+                                </div>
+                                添加流水线任务
+                                <div class="clearfix"></div>
+                                <div class="m-t-15">
+                                    <p class="pull-right m-b-0 m-t-10">
+                                    <p class="m-b-0"><a href="" class="text-muted">添加人:&nbsp;{{.data.CreateUser}}<br>{{.data.CreateTime}}<span
+                                                class="font-bold font-secondary text-success pull-right">完成</span></a>
+                                        <br>
+                                    </p>
+                                    </p>
+                                </div>
+                            </li>
+                            <li class="task-success" id="task15">
+                                <div class="primary pull-right">
+                                    <i class="fa fa-mixcloud"></i>
+                                    <label></label>
+                                </div>
+                                执行流水线任务
+                                <div class="clearfix"></div>
+                                <div class="m-t-15">
+                                    <p class="pull-right m-b-0 m-t-10">
+                                    <p class="m-b-0"><a href="" class="text-muted">添加人:&nbsp;{{.data.CreateUser}}<br>{{.data.StartTime}}<span
+                                                class="font-bold font-secondary text-success pull-right">完成</span></a>
+                                        <br>
+                                    </p>
+                                    </p>
+                                </div>
+                            </li>
+                            <li id="task16" class="task-success">
+                                <div class="primary pull-right">
+                                    <i class="fa fa-mixcloud"></i>
+                                    <label></label>
+                                </div>
+                                构建任务开始
+                                <div class="clearfix"></div>
+                                <div class="m-t-15">
+                                    <p class="pull-right m-b-0 m-t-10">
+                                    <p class="m-b-0"><a href="" class="text-muted">添加人:&nbsp;{{.data.CreateUser}}<br>{{.data.StartJobTime}}<span
+                                                class="font-bold font-secondary text-success pull-right">完成</span></a>
+                                        <br>
+                                    </p>
+                                    </p>
+                                </div>
+                            </li>
+                            <li id="task20" class="task-success">
+                                <div class="primary pull-right">
+                                    <i class="fa fa-mixcloud"></i>
+                                    <label></label>
+                                </div>
+                                构建任务结束
+                                <div class="clearfix"></div>
+                                <div class="m-t-15">
+                                    <p class="pull-right m-b-0 m-t-10">
+                                    <p class="m-b-0"><a href="" class="text-muted">添加人:&nbsp;{{.data.CreateUser}}<br>{{.data.EndJobTime}}<span
+                                                class="font-bold font-secondary text-success pull-right">完成</span></a>
+                                        <br>
+                                    </p>
+                                    </p>
+                                </div>
+                            </li>
+                            <li id="task21" class="task-success">
+                                <div class="primary pull-right">
+                                    <i class="fa fa-mixcloud"></i>
+                                    <label></label>
+                                </div>
+                                构建成功/失败
+                                <div class="clearfix"></div>
+                                <div class="m-t-15">
+                                    <p class="pull-right m-b-0 m-t-10">
+                                    <p class="m-b-0"><a href="" class="text-muted">添加人:&nbsp;{{.data.CreateUser}}<br>{{.data.JobStatus}}<span
+                                                class="font-bold font-secondary text-success pull-right">完成</span></a>
+                                        <br>
+                                    </p>
+                                    </p>
+                                </div>
+                            </li>
+                            <li class="task-success" id="task17">
+                                <div class="primary pull-right">
+                                    <i class="fa fa-mixcloud"></i>
+                                    <label></label>
+                                </div>
+                                提交镜像成功
+                                <div class="clearfix"></div>
+                                <div class="m-t-15">
+                                    <p class="pull-right m-b-0 m-t-10">
+                                    <p class="m-b-0"><a href="" class="text-muted">添加人:&nbsp;{{.data.CreateUser}}<br>{{.data.PushImageEndTime}}<span
+                                                class="font-bold font-secondary text-success pull-right">完成</span></a>
+                                        <br>
+                                    </p>
+                                    </p>
+                                </div>
+                            </li>
+                            <li class="task-success" id="task18">
+                                <div class="primary pull-right">
+                                    <i class="fa fa-mixcloud"></i>
+                                    <label></label>
+                                </div>
+                                更新服务开始
+                                <div class="clearfix"></div>
+                                <div class="m-t-15">
+                                    <p class="pull-right m-b-0 m-t-10">
+                                    <p class="m-b-0"><a href="" class="text-muted">添加人:&nbsp;{{.data.CreateUser}}<br>{{.data.UpdateServiceStartTime}}<span
+                                                class="font-bold font-secondary text-info pull-right">成功</span></a>
+                                        <br>
+                                    </p>
+                                    </p>
+                                </div>
+                            </li>
+                            <li class="task-danger" id="task118">
+                                <div class="primary pull-right">
+                                    <i class="fa fa-mixcloud"></i>
+                                    <label></label>
+                                </div>
+                                更新服务完成
+                                <div class="clearfix"></div>
+                                <div class="m-t-15">
+                                    <p class="pull-right m-b-0 m-t-20">
+                                    <p class="m-b-0"><a href="" class="text-muted">添加人:&nbsp;{{.data.CreateUser}}<br>{{.data.UpdateServiceEndTime}}<br>{{.data.UpdateServiceErrormsg}}<span
+                                            class="font-bold font-secondary text-danger pull-right">失败</span></a>
+                                        <br>
+                                    </p>
+                                    </p>
+                                </div>
+                            </li>
+                            <li class="task-info" id="task19">
+                                <div class="primary pull-right">
+                                    <i class="fa fa-mixcloud"></i>
+                                    <label></label>
+                                </div>
+                                流水线任务结束
+                                <div class="clearfix"></div>
+                                <div class="m-t-15">
+                                    <p class="pull-right m-b-0 m-t-10">
+                                    <p class="m-b-0"><a href="" class="text-muted">添加人:&nbsp;{{.data.CreateUser}}<br>{{.data.EndTime}}<span
+                                                class="font-bold font-secondary text-info pull-right">完成</span></a>
+                                        <br>
+                                    </p>
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <!-- end row -->
+
+
+            <!-- Modal -->
+            <div id="task-detail-modal" class="modal fade" tabindex="-1" role="dialog"
+                 aria-labelledby="full-width-modalLabel" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <div class="modal-body p-t-0">
+
+                            <div class="p-10 task-detail">
+                                <div class="dropdown pull-right">
+                                    <a href="#" class="dropdown-toggle card-drop" data-toggle="dropdown"
+                                       aria-expanded="false">
+                                        <i class="zmdi zmdi-more-vert"></i>
+                                    </a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="#">Action</a></li>
+                                        <li><a href="#">Another action</a></li>
+                                        <li><a href="#">Something else here</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="#">Separated link</a></li>
+                                    </ul>
+                                </div>
+                                <div class="media m-t-0 m-b-20">
+                                    <div class="media-left">
+                                        <a href="#"> <img class="media-object img-circle" alt="64x64"
+                                                          src="/static/images/users/avatar-2.jpg"
+                                                          style="width: 48px; height: 48px;"> </a>
+                                    </div>
+                                    <div class="media-body">
+
+                                        <h4 class="media-heading m-b-5">Michael Zenaty</h4>
+                                        <span class="label label-danger">Urgent</span>
+                                    </div>
+                                </div>
+
+                                <h4 class="font-600 m-b-20">Code HTML email template for welcome email</h4>
+
+                                <p class="text-muted">
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates, illo, iste
+                                    itaque voluptas corrupti ratione reprehenderit magni similique? Tempore, quos
+                                    delectus asperiores libero voluptas quod perferendis! Voluptate, quod illo
+                                    rerum? Lorem ipsum dolor sit amet.
+                                </p>
+
+                                <ul class="list-inline task-dates m-b-0 m-t-20">
+                                    <li>
+                                        <h5 class="font-600 m-b-5">Start Date</h5>
+                                        <p> 22 March 2017
+                                            <small class="text-muted">1:00 PM</small>
+                                        </p>
+                                    </li>
+
+                                    <li>
+                                        <h5 class="font-600 m-b-5">Due Date</h5>
+                                        <p> 17 April 2017
+                                            <small class="text-muted">12:00 PM</small>
+                                        </p>
+                                    </li>
+                                </ul>
+                                <div class="clearfix"></div>
+
+                                <div class="task-tags m-t-20">
+                                    <h5 class="font-600">Tags</h5>
+                                    <input type="text" value="Amsterdam,Washington,Sydney" data-role="tagsinput"
+                                           placeholder="add tags"/>
+                                </div>
+
+                                <div class="assign-team m-t-30">
+                                    <h5 class="font-600 m-b-5">Followers</h5>
+                                    <div>
+                                        <a href="#"> <img class="img-circle thumb-sm" alt="64x64"
+                                                          src="/static/images/users/avatar-2.jpg"> </a>
+                                        <a href="#"> <img class="img-circle thumb-sm" alt="64x64"
+                                                          src="/static/images/users/avatar-3.jpg"> </a>
+                                        <a href="#"> <img class="img-circle thumb-sm" alt="64x64"
+                                                          src="/static/images/users/avatar-5.jpg"> </a>
+                                        <a href="#"> <img class="img-circle thumb-sm" alt="64x64"
+                                                          src="/static/images/users/avatar-8.jpg"> </a>
+                                    </div>
+                                </div>
+
+                                <div class="attached-files m-t-30">
+                                    <h5 class="font-600">Attached Files </h5>
+                                    <div class="files-list">
+                                        <div class="file-box">
+                                            <a href=""><img src="/static/images/attached-files/img-1.jpg"
+                                                            class="img-responsive img-thumbnail" alt="attached-img"></a>
+                                            <p class="font-13 m-b-5 text-muted">
+                                                <small>File one</small>
+                                            </p>
+                                        </div>
+                                        <div class="file-box">
+                                            <a href=""><img src="/static/images/attached-files/img-2.jpg"
+                                                            class="img-responsive img-thumbnail" alt="attached-img"></a>
+                                            <p class="font-13 m-b-5 text-muted">
+                                                <small>Attached-2</small>
+                                            </p>
+                                        </div>
+                                        <div class="file-box">
+                                            <a href=""><img src="/static/images/attached-files/img-3.png"
+                                                            class="img-responsive img-thumbnail" alt="attached-img"></a>
+                                            <p class="font-13 m-b-5 text-muted">
+                                                <small>Dribbble shot</small>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success waves-effect waves-light">Save Changes
+                            </button>
+                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cancel
+                            </button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+            {{template "template/bottom.html" .}}
+            </body>
+        </div>
+    </div>
+</div>
+        <script>
+
+            var status = "{{.data.Status}}";
+            if(status == "执行成功"){
+                    $("#build_status_id").css("cssText","color:#27d858 !important;");
+            }else{
+                $("#build_status_id").css("cssText","color:#f96a74; !important;");
+            }
+        </script>

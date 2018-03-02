@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+<link rel="stylesheet" href="/static/plugins/tooltipster/tooltipster.bundle.min.css">
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <!-- Start content -->
+    <div class="content">
+        <div class="container">
+            <div id="add_hosts_html"></div>
+            <div id="add_cluster_html"></div>
+            <div id="img_html"></div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">集群管理</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">基础设施</a>
+                            </li>
+                            <li>
+                                <a href="/base/cluster/list">集群管理</a>
+                            </li>
+                            <li>
+                                <a href="#">详情</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row">
+                <div class="col-sm-12 top-10">
+                    <i class="fa fa-server font-18"><span class="left10"><strong>{{.data.ClusterAlias}}</strong></span></i>
+                    <button type="button"
+                            class="btn btn-success btn-rounded w-xs waves-effect waves-light cluster-runing">运行中
+                    </button>
+                    <div class="col-sm-1  pull-right m-r-15" style="margin-left: -10px;margin-right: 22px !important;">
+                        <span class="cluster-detail-select">
+                            <button id="deleteClusterId" class="btn btn-sm btn-danger"><i class="fa  fa-trash-o">&nbsp;&nbsp;</i>删除集群</button>
+                        </span>
+                    </div>
+                    <div class="col-sm-1  pull-right">
+                        <span class="cluster-detail-select right15">
+                            <button onclick="addCluster('{{.data.ClusterId}}')" class="btn btn-sm btn-default"><i class="fa  fa-edit">&nbsp;&nbsp;</i>修改</button>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-7 top10">
+                    <div class="col-sm-6 text-center">
+                        <div class="card-box cluster-detai-height150" onmousemove="setBorderMove($(this))"
+                             onmouseout="setBorderOut($(this))">
+                            <div id="g7" class="gauge-chart col-sm-7 cluster-cpu"></div>
+                            <div class="col-sm-5 left10">
+                                <strong>{{.data.CpuFree}}</strong><br>
+                                <span class="cluster-text-default">剩余CPU</span><br>
+                                <br>
+                                <strong>{{.data.ClusterCpu}}</strong><br>
+                                <span class="cluster-text-default">CPU总数(核)</span>
+                            </div>
+                        </div>
+                    </div><!-- end col-->
+                    <div class="col-sm-6 text-center">
+                        <div class="card-box cluster-detai-height150" onmousemove="setBorderMove($(this))"
+                             onmouseout="setBorderOut($(this))">
+                            <div id="g8" class="gauge-chart col-sm-7 cluster-cpu"></div>
+                            <div class="col-sm-5 left10">
+                                <strong>{{.data.MemFree}}</strong><br>
+                                <span class="cluster-text-default">剩余内存</span><br>
+                                <br>
+                                <strong>{{.data.ClusterMem}}</strong><br>
+                                <span class="cluster-text-default">内存总量(GB)</span>
+                            </div>
+                        </div>
+                    </div><!-- end col-->
+
+                </div><!-- end col -->
+                <div class="col-md-5 top10 cluster-text-center">
+                    <div class="col-md-4">
+                        <div class="panel cluster-detai-height150" onmousemove="setBorderMove($(this))"
+                             onmouseout="setBorderOut($(this))">
+                            <div class="panel-body">
+                                <i class="fa fa-laptop cluster-li-icon"></i>
+                            </div>
+                            <div class="col-sm-12 cluster-text-center">
+                                <strong>{{.data.ClusterNode}}</strong>
+                            </div>
+                            <div class="panel-footer cluster-text-footer">
+                                节点数量
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="panel cluster-detai-height150" onmousemove="setBorderMove($(this))"
+                             onmouseout="setBorderOut($(this))">
+                            <div class="panel-body">
+                                <i class="fa fa fa-mixcloud cluster-li-icon"></i>
+                            </div>
+                            <div class="col-sm-12 cluster-text-center">
+                                <strong>{{.data.Services}}</strong>
+                            </div>
+                            <div class="panel-footer cluster-text-footer">
+                                服务数量
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="panel cluster-detai-height150" onmousemove="setBorderMove($(this))"
+                             onmouseout="setBorderOut($(this))">
+                            <div class="panel-body">
+                                <i class="fa  fa-slideshare cluster-li-icon"></i>
+                            </div>
+                            <div class="col-sm-12 cluster-text-center">
+                                <strong>{{.data.ClusterPods}}</strong>
+                            </div>
+                            <div class="panel-footer cluster-text-footer">
+                                Pod数量
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end row -->
+            </div>
+            <div class="col-lg-12">
+                <div class="portlet" onmousemove="setBorderMove($(this))"
+                     onmouseout="setBorderOut($(this))">
+                    <div class="portlet-heading portlet-default">
+                        <h3 class="portlet-title text-dark">
+                            基本信息
+                        </h3>
+                        <div class="portlet-widgets">
+                            <a data-toggle="collapse" data-parent="#accordion1" href="#bg-default"><i
+                                    class="mdi mdi-minus"></i></a>
+                            <a href="#" data-toggle="remove"><i class="mdi mdi-close"></i></a>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="bg-default" class="panel-collapse collapse in">
+                        <div class="portlet-body">
+                            <table class="table tablesaw  m-b-0 tablesaw-swipe">
+                                <tbody>
+                                <tr>
+                                    <th class="noborder">集群</th>
+                                    <th class="noborder">{{.data.ClusterName}}</th>
+                                    <th class="noborder">集群类型</th>
+                                    <th class="noborder">{{.data.ClusterType}}</th>
+                                </tr>
+                                <tr>
+                                    <th class="noborder">创建时间</th>
+                                    <th class="noborder">{{.data.CreateTime}}</th>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="card-box" id="cart-box" style="min-height: 500px;height: 800px;">
+                    <ul class="nav nav-tabs tabs-bordered">
+                        <li class="active">
+                            <a href="#host-b1" data-toggle="tab" aria-expanded="false"
+                               onclick="setBoxHeight('host-b1')">
+                                <span class="visible-xs"><i class="fa fa-home"></i></span>
+                                <span class="hidden-xs">主机</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#plugin-b1" data-toggle="tab" aria-expanded="false"
+                               onclick="setBoxHeight('plugin-b1')">
+                                <span class="visible-xs"><i class="fa fa-user"></i></span>
+                                <span class="hidden-xs">插件信息</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#monitor-b1" data-toggle="tab" aria-expanded="false"
+                               onclick="setBoxHeight('monitor-b1')">
+                                <span class="visible-xs"><i class="fa fa-envelope-o"></i></span>
+                                <span class="hidden-xs">监控</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#logs-b1" data-toggle="tab" aria-expanded="false"
+                               onclick="setBoxHeight('logs-b1')">
+                                <span class="visible-xs"><i class="fa fa-cog"></i></span>
+                                <span class="hidden-xs">日志</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="host-b1">
+                            <div class="col-sm-12 top-10">
+                                <button type="button" onclick="addHosts()"
+                                        class="btn btn-primary btn-sm waves-effect waves-light">
+                                    添加主机
+                                </button>
+                                <div class="col-sm-1 cluster-search pull-right">
+                                    <button type="button" class="btn btn-default waves-effect waves-light"
+                                            onclick="loadData()"
+                                            style="border-radius: 5px;">
+                                        <i class="fa fa fa-refresh"></i>
+                                    </button>
+                                </div>
+                                <div class="col-md-3 pull-right">
+                                    <input type="text" onkeyup="loadData($(this).val())" class="form-control"
+                                           placeholder="按ip搜索">
+                                    <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <table id="host-data-table" class="table table-hover font-detaul">
+                                    <thead>
+                                    <tr>
+                                        <th>主机IP</th>
+                                        <th>主机标签</th>
+                                        <th>状态</th>
+                                        <th>创建时间</th>
+                                        <th>Pod</th>
+                                        <th>Cpu</th>
+                                        <th>内存大小</th>
+                                        <th>Images</th>
+                                        <th>主机类型</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane " id="plugin-b1">
+                            紧张开发中
+                            <div class="tooltip top" role="tooltip">
+                                <div class="tooltip-arrow"></div>
+                                <div class="tooltip-inner"> Tooltip on the top</div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="monitor-b1">
+                            紧张开发中
+                        </div>
+                        <div class="tab-pane" id="logs-b1">
+                            紧张开发中
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- end col -->
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+
+
+    {{template "template/bottom.html" .}}
+    </body>
+</div>
+<input id="MemUsePercentId" type="hidden" value="{{.data.MemUsePercent}}">
+<input id="CpuUsePercentId" type="hidden" value="{{.data.CpuUsePercent}}">
+<script src="/static/plugins/raphael/raphael-min.js"></script>
+<script src="/static/plugins/justgage/justgage.js"></script>
+<script src="/static/zcloud/cluster.js"></script>
+<script>
+
+    /**
+     *
+     * 添加主机
+     * */
+    function addHosts() {
+        var url = "/base/cluster/hosts/add"
+        var result = post({ClusterName: "{{.data.ClusterName}}"}, url)
+        $("#add_hosts_html").html(result)
+        $("#add_post_html").modal("toggle")
+    }
+
+    /**
+     * 2018-02=12 18:34
+     * 停止调度
+     */
+    function noSchudlerSwal(id) {
+        Swal("将停止调度", "warning", "确认操作", "不操作", "成功", "失败", " noSchedulable(\'" + id + "\')", "loadData()");
+    }
+
+    /**
+     * 2018-02-12 18:44
+     * 删除主机
+     * */
+    function deleteHostSwal(id) {
+        Swal("将删除该主机,删除后该主机会被从集群中移除", "warning", "确认操作", "不操作", "成功", "失败", " deleteHost(\'" + id + "\')", "loadData()");
+    }
+
+    /**
+     * 2018-02-12 18:47
+     * 停止调度
+     * */
+    function noSchedulable(id) {
+        var url = "/api/cluster/hosts/" + id + "?cordon=0";
+        var result = post({}, url);
+        result = JSON.stringify(result);
+        return result;
+    }
+
+    /**
+     * 2018-02-12 18:34
+     * 恢复调度
+     */
+    function schduler(id) {
+        var url = "/api/cluster/hosts/" + id + "?cordon=1";
+        var result = post({}, url);
+        result = JSON.stringify(result);
+        if (result.indexOf("成功")) {
+            success(result);
+        } else {
+            faild(result);
+        }
+    }
+
+    // 添加主机标签
+    // 2018-01-18 21:09
+    function addHostLabel(id) {
+        var url = "/base/cluster/label/add"
+        var result = post({hostId: id}, url)
+        $("#add_hosts_html").html(result)
+        $("#add_post_html").modal("toggle")
+    }
+
+
+    // 删除集群
+    function deleteCluster() {
+        var clusterId = "{{.data.ClusterId}}"
+        var url = "/api/cluster/" + clusterId
+        var result = del({}, url)
+        result = JSON.stringify(result)
+        return result
+    }
+
+    // 设置box高低
+    function setBoxHeight(id) {
+        var active = $("#" + id).attr("class");
+        if (active.indexOf("active") != -1) {
+            return
+        }
+        var height = $("#" + id).outerHeight()
+        height = height + 400;
+        setTimeout(function () {
+            $("#cart-box").css("height", height + "px")
+        }, 100)
+    }
+
+    /**
+     * Theme: Adminox Admin Template
+     * Author: Coderthemes
+     * Module/App: Justgage
+     */
+    document.addEventListener("DOMContentLoaded", function (event) {
+
+        var g7, g8;
+
+        var g7 = new JustGage({
+            id: "g7",
+            value: parseFloat($("#CpuUsePercentId").val()),
+            min: 0,
+            max: 100,
+            label: "%",
+            donut: true,
+            gaugeWidthScale: 0.4,
+            counter: true,
+            decimals: 2,
+            hideInnerShadow: true
+        });
+        var g8 = new JustGage({
+            id: "g8",
+            value: parseFloat($("#MemUsePercentId").val()),
+            min: 0,
+            max: 100,
+            label: "%",
+            donut: true,
+            gaugeWidthScale: 0.4,
+            counter: true,
+            decimals: 2,
+            hideInnerShadow: true
+        });
+    });
+
+    function loadData(ip) {
+        if (!ip) {
+            ip = ""
+        } else {
+            if (ip.length < 4) {
+                return
+            }
+        }
+
+        $("#host-data-table").dataTable({
+            "filter": false,//去掉搜索框
+            "ordering": false, // 是否允许排序
+            "paginationType": "full_numbers", // 页码类型
+            "destroy": true,
+            "processing": true,
+            "bLengthChange": false,
+            "bPaginate": true, //是否显示（应用）分页器
+            "serverSide": true,
+            "bInfo": false, //是否显示页脚信息，DataTables插件左下角显示记录数
+            "scrollX": true, // 是否允许左右滑动
+            "displayLength": 10, // 默认长度
+            "ajax": { // 请求地址
+                "url": "/api/cluster/hosts?t=" + new Date().getTime() + "&ip=" + ip + "&cluster={{.data.ClusterName}}",
+                "type": 'get'
+            },
+            "columns": [ // 数据映射
+                {"data": "HostIp"},
+                {
+                    "data": "HostLabel", "mRender": function (data) {
+                    if (data) {
+                        if (data.length > 10) {
+                            return "<span title='" + data + "'>" + data.substring(0, 10) + "</span>";
+                        }
+                        return data;
+                    }
+                    return ""
+                }
+                },
+                {
+                    "data": "Status", "mRender": function (data, type, full) {
+                    if (data.indexOf("不可调度") != -1) {
+                        var r = '<button type="button"  class="btn btn-danger btn-rounded btn-xs waves-effect waves-light">' + data + '</button>'
+                        return r;
+                    }
+                    if (data == "运行中") {
+                        var r = '<button type="button" class="btn btn-success btn-rounded btn-xs waves-effect waves-light">运行中</button>'
+                    } else {
+                        var r = '<button type="button"  class="btn btn-danger btn-rounded btn-xs waves-effect waves-light">错误</button>'
+                    }
+                    return "<span title='" + full["ErrorMsg"] + "'>" + r + "</span>"
+                }
+                },
+                {"data": "CreateTime"},
+                {"data": "PodNum"},
+                {"data": "CpuNum"},
+                {
+                    "data": "MemSize", "mRender": function (data) {
+                    return data + "GB"
+                }
+                },
+                {
+                    "data": "ImageNum", "mRender": function (data, type, full) {
+                    var html = '<a onClick="showImg(' + full["HostId"] + ')">' + data + '</a>';
+                    return html;
+                }
+                },
+                {"data": "HostType"},
+                {
+                    "data": "HostId", "mRender": function (data, type, full) {
+                    var html = '<button type="button"  title="添加标签" onClick="addHostLabel(\'' + data + '\',1)" class="delete-template btn btn-xs rb-btn-oper"><i class="fa  fa-tasks"></i></button>&nbsp;';
+
+                    if ("master" != full["HostType"]) {
+                        html += '<button type="button"  title="删除该主机" onClick="deleteHostSwal(' + data + ',1)" class="delete-template btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>&nbsp;';
+                        if (full["status"] == "停止调度") {
+                            html += '<button type="button"  title="恢复调度" onClick="schduler(' + data + ')" class="delete-template btn btn-xs rb-btn-oper"><i class="mdi mdi-reload"></i></button>&nbsp;';
+                        } else {
+                            html += '<button type="button"  title="停止调度" onClick="noSchudlerSwal(' + data + ',1)" class="delete-template btn btn-xs rb-btn-oper"><i class="mdi mdi-stop-circle-outline"></i></button>&nbsp;';
+                        }
+                    }
+                    return html;
+                }
+                },
+            ],
+            "fnRowCallback": function (row, data) { // 每行创建完毕的回调
+                $(row).data('recordId', data.recordId);
+            }
+        });
+        setTimeout(function () {
+            setBoxHeight("host-b1");
+        }, 500);
+    }
+
+    loadData();
+
+
+
+    // 2018-02-28 12:25
+    // 插件信息显示
+    var health = "{{.data.Health}}";
+    if (health) {
+        health = JSON.parse(health);
+        health = health.reverse();
+        var html = "<table class='table table-hover ' style='table-layout: unset;'>";
+        html += "<tr><th><span class='m-l-15'>插件名称</span></th><th><span class='m-l-15'>信息</span></th><th><span class='m-l-15'>状态</span></th></tr>";
+        for (var i = 0; i < health.length; i++) {
+            html += "<tr>";
+            html += "<td><span class='m-l-15'>" + health[i]["Name"] + "</span></td>";
+            html += "<td><span class='m-l-15'>" + health[i]["Message"] + "</span></td>";
+            var status =  health[i]["Status"].replace(/"/g,"");
+            if(status=="True"){
+                html += "<td><span class='m-l-15 Running'><i class='fa fa-circle m-r-10'></i>" + status + "</span></td>";
+            }else{
+                html += "<td><span class='m-l-15 Fail'><i class='fa fa-circle m-r-10'></i>" + status + "</span></td>";
+            }
+            html += "</tr>"
+        }
+        html += "</table>";
+        $("#plugin-b1").html(html);
+    }
+
+    function addCluster(id) {
+        if(!id){
+            id = 0;
+        }
+        var url = "/base/cluster/add"
+        var result = post({ClusterId:id}, url)
+        $("#add_cluster_html").html(result)
+        $("#add_post_html").modal("toggle")
+    }
+
+    /**
+     * 2018-03-01 16:35
+     * 查看镜像详情弹出页面
+     * @param id
+     */
+    function showImg(id) {
+        if(!id){
+            id = 0;
+        }
+        var url = "/base/cluster/image/"+id;
+        var result = get({ClusterId:id}, url)
+        $("#img_html").html(result)
+        $("#images_show_html").modal("toggle");
+    }
+</script>
+</html>

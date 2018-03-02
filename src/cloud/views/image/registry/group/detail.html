@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+<link rel="stylesheet" href="/static/plugins/tooltipster/tooltipster.bundle.min.css">
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <!-- Start content -->
+    <div id="add_groups_html"></div>
+    {%include image/registry/group/tags.html%}
+    <div class="content">
+        <div id="show_upload_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true"
+             style="display: none;">
+
+            <div class="modal-dialog ">
+                <div class="modal-content p-0 b-0 ">
+                    <div class="panel panel-color panel-default">
+                        <div class="panel-heading">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <span class="modal-title">上传镜像</span>
+                        </div>
+                        <div class="panel-body font-12 ">
+                            <code>
+                                1. 在本地 docker 环境中输入以下命令进行登录<br>
+                                <pre class="top10 pre">docker login {{.data.ServerDomain}}</pre>
+                                <br>
+                                2. 然后，对本地需要 push 的 image 进行标记，比如：<br>
+                                <pre class="top10 pre">docker tag redis:latest {{.data.ServerDomain}}/{{.data.GroupName}}/redis:latest</pre>
+                                <br>
+                                3. 最后在命令行输入如下命令，就可以 push 这个 image 到镜像仓库中了<br>
+                                <pre class="top10 pre">docker push {{.data.ServerDomain}}/{{.data.GroupName}}/redis:latest</pre>
+                                <br>
+                            </code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="show_download_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true"
+             style="display: none;">
+            <div class="modal-dialog " style="width: 55%;">
+                <div class="modal-content p-0 b-0 ">
+                    <div class="panel panel-color panel-default">
+                        <div class="panel-heading">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <span class="modal-title">下载镜像</span>
+                        </div>
+                        <div class="panel-body font-12 ">
+                            <code>
+                                1、在本地 docker 环境中输入以下命令，就可以 pull 一个镜像到本地了<br>
+                                私有镜像需要先 login 后才能拉取<br>
+                                <pre class="top10 pre">docker pull {{.data.ServerDomain}}/{{.data.GroupName}}/hello:latest</pre>
+                                <br>
+                                2、为了在本地方便使用，下载后可以修改tag为短标签，比如：<br>
+                                <pre class="top10 pre">docker tag  {{.data.ServerDomain}}/{{.data.GroupName}}/hello:latest {{.data.GroupName}}/hello:latest</pre>
+                                <br>
+                            </code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container" >
+            <div id="add_hosts_html"></div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">镜像中心</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="/image/registry/group/list">镜像仓库组</a>
+                            </li>
+                            <li>
+                                <a href="#">{{.data.GroupName}}</a>
+                            </li>
+                            <li>
+                                <a href="#">详情</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 top-10">
+                <button type="button" onclick="addRegistryGroup()"
+                        class="btn btn-primary btn-sm waves-effect waves-light">
+                    添加建仓库组
+                </button>
+                <button type="button" onclick="setPulibc('我的');" id="private"
+                        class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                        class="fa fa-user-o"></i><span>&nbsp;我的仓库组</span></button>
+                <button type="button" onclick="setPulibc('公开');" id="public"
+                        class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                        class="fa  fa-mars-double"></i><span>&nbsp;公开仓库组</span></button>
+
+            </div>
+            <div class="col-md-12 top10">
+                <div class="card-box" id="cart-box" style="height: 900px;">
+                    <ul class="nav nav-tabs tabs-bordered">
+                        <li class="active">
+                            <a href="#image-b1" data-toggle="tab" aria-expanded="false"
+                               onclick="setBoxHeight('image-b1')">
+                                <span class="visible-xs"><i class="fa fa-home"></i></span>
+                                <span class="hidden-xs">镜像仓库</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#log-b1" data-toggle="tab" aria-expanded="false"
+                               onclick="loadRegistryImageLog();setBoxHeight('log-b1')">
+                                <span class="visible-xs"><i class="fa fa-user"></i></span>
+                                <span class="hidden-xs">审计日志</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#perm-b1" data-toggle="tab" aria-expanded="false"
+                               onclick=" loadRegistryPermData();setBoxHeight('perm-b1')">
+                                <span class="visible-xs"><i class="fa fa-envelope-o"></i></span>
+                                <span class="hidden-xs">权限管理</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="image-b1">
+                            <div class="col-sm-12 ">
+                                <button type="button" onclick="showUpload();"
+                                        class="btn btn-primary btn-sm button-select radius3 waves-effect waves-light"><i
+                                        class="dripicons-cloud-upload"></i><span>&nbsp;上传镜像</span></button>
+                                <button type="button" onclick="showDownload();"
+                                        class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                                        class="dripicons-cloud-download"></i><span>&nbsp;下载镜像</span></button>
+                                <div class="col-md-3 pull-right">
+                                    <input type="text" onkeyup="loadRegistryImageData($(this).val())"
+                                           class="form-control"
+                                           placeholder="搜索镜像名称">
+                                    <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                                </div>
+                                <table id="image-data-table" class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane col-sm-12" id="log-b1">
+                            <div class="col-sm-12 ">
+                                <div class="col-md-3 pull-right">
+                                    <input type="text" onkeyup="loadRegistryImageLog($(this).val())"
+                                           class="form-control"
+                                           placeholder="搜索镜像名称或成员名称">
+                                    <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                                </div>
+                                <table id="image-log-table" class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>成员名称</th>
+                                        <th>镜像名称</th>
+                                        <th>镜像组</th>
+                                        <th>集群</th>
+                                        <th>仓库名</th>
+                                        <th>操作地址</th>
+                                        <th>操作</th>
+                                        <th>时间</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                                <br><br>
+                            </div>
+                        </div>
+                        <div class="tab-pane " id="perm-b1">
+                            <div class="col-sm-12 ">
+                                <input type="hidden" value="{{.data.GroupName}}" id="project-value">
+                                <input type="hidden" value="{{.data.ServerDomain}}" id="select-registry-server-value">
+                                {%include image/permissions/content.html%}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- end col -->
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+    {{template "template/bottom.html" .}}
+    </body>
+</div>
+<script src="/static/zcloud/registryPerm.js"></script>
+<script src="/static/zcloud/registryGroup.js"></script>
+<script>
+    /**
+     * 加载镜像数据
+     * 2018-01-28 10:46
+     * @param key
+     * @param grouptype
+     */
+    function loadRegistryImageData(key, grouptype) {
+        if (!key) {
+            key = $("#search_user_id").val();
+        } else {
+            if (key.length < 4) {
+                return
+            }
+        }
+        key = getValue(key);
+
+        $("#image-data-table").dataTable({
+            "filter": false,//去掉搜索框
+            "ordering": false, // 是否允许排序
+            "paginationType": "full_numbers", // 页码类型
+            "destroy": true,
+            "processing": true,
+            "bPaginate": true, //是否显示（应用）分页器
+            "serverSide": true,
+            "bLengthChange": false,
+            "bInfo": true, //是否显示页脚信息，DataTables插件左下角显示记录数
+            "scrollX": true, // 是否允许左右滑动
+            "displayLength": 10, // 默认长度
+            "ajax": { // 请求地址
+                "url": "/api/registry/group/images?t=" + new Date().getTime() + "&search=" + key + "&GroupName={{.data.GroupName}}&ClusterName={{.data.ClusterName}}",
+                "type": 'get'
+            },
+            "columns": [ // 数据映射
+                {
+                    "data": "Name", "sWidth": "12%", "mRender": function (data, type, full) {
+                        var name = full["ImageId"];
+                    return "<a target='_self' href='/application/app/add?AppId=0&imageId=" + name + "'>" + data + "</a>";
+                }
+                },
+                {
+                    "data": "Download", "sWidth": "8%", "mRender": function (data) {
+                    return "下载量:&nbsp;" + data;
+                }
+                },
+                {
+                    "data": "LayersNumber", "sWidth": "9%", "mRender": function (data) {
+                    return "镜像层数:&nbsp;" + data;
+                }
+                },
+                {
+                    "data": "TagNumber", "sWidth": "8%", "mRender": function (data,type,full) {
+                    return "<a onclick='showTags(\""+full["ImageId"]+"\")'>版本量:&nbsp;" + data+"</a>";
+                }
+                },
+                {
+                    "data": "Size", "sWidth": "12%", "mRender": function (data) {
+                    if (data) {
+                        data = (data * 3.15 / 1000 / 1000).toFixed(2) + "MB"
+                    }
+                    return "镜像大小:&nbsp;" + data;
+                }
+                },
+                {
+                    "data": "Access", "sWidth": "20%", "mRender": function (data, type, full) {
+                    return full["Access"] + "/" + full["Name"];
+                }
+                },
+                {
+                    "data": "ImageId", "sWidth": "6%", "mRender": function (data) {
+                      return  '<button type="button"  title="删除" onClick="deleteRegistryGroupImageSwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
+                }
+                },
+            ],
+            "fnRowCallback": function (row, data) { // 每行创建完毕的回调
+                $(row).data('recordId', data.recordId);
+            }
+        });
+    }
+    loadRegistryImageData();
+
+
+    /**
+     * 2018-01-28 11:38
+     * 显示上传帮助信息
+     * */
+    function showUpload() {
+        $("#show_upload_html").show();
+        $("#show_upload_html").modal("toggle");
+        $("#show_download_html").hide();
+    }
+
+    /**
+     * 显示下载帮助信息
+     * 2018--1-28 11:38
+     */
+    function showDownload() {
+        $("#show_download_html").show();
+        $("#show_download_html").modal("toggle");
+        $("#show_upload_html").hide();
+    }
+
+    function loadRegistryImageLog(key, grouptype) {
+        if (!key) {
+            key = $("#search_user_id").val();
+        } else {
+            if (key.length < 4) {
+                return
+            }
+        }
+        key = getValue(key);
+        $("#image-log-table").dataTable({
+            "filter": false,//去掉搜索框
+            "ordering": false, // 是否允许排序
+            "paginationType": "full_numbers", // 页码类型
+            "destroy": true,
+            "processing": true,
+            "bPaginate": true, //是否显示（应用）分页器
+            "serverSide": true,
+            "bLengthChange": false,
+            "bInfo": true, //是否显示页脚信息，DataTables插件左下角显示记录数
+            "scrollX": true, // 是否允许左右滑动
+            "displayLength": 10, // 默认长度
+            "ajax": { // 请求地址
+                "url": "/api/registry/group/images/log?t=" + new Date().getTime() + "&search=" + key + "&GroupName={{.data.GroupName}}&ClusterName={{.data.ClusterName}}",
+                "type": 'get'
+            },
+            "columns": [ // 数据映射
+                {"data": "CreateUser", "sWidth": "8%"},
+                {"data": "Name", "sWidth": "10%"},
+                {"data": "RepositoriesGroup", "sWidth": "8%"},
+                {"data": "ClusterName", "sWidth": "8%"},
+                {"data": "Repositories", "sWidth": "8%"},
+                {"data": "Ip", "sWidth": "8%"},
+                {"data": "OperType", "sWidth": "8%"},
+                {"data": "CreateTime", "sWidth": "10%"}
+            ],
+            "fnRowCallback": function (row, data) { // 每行创建完毕的回调
+                $(row).data('recordId', data.recordId);
+            }
+        });
+    }
+
+
+    // 添加直接
+    function addRegistryPerm(permissionsId) {
+        if(!permissionsId){
+            permissionsId = 0
+        }
+        var url = "/image/registry/perm/add";
+        var result = get({PermissionsId:permissionsId,ClusterName:"{{.data.ClusterName}}","Project":"{{.data.GroupName}}","ServiceName":"{{.ServiceName}}"}, url);
+        $("#add_groups_html").html(result);
+        $("#add_post_html").modal("toggle");
+        $("#select-cluster-id").hide();
+        $("#select-reigstry-server-id").hide();
+        $("#registry-perm-registry-select").val("{{.ServiceName}}")
+    }
+
+</script>
+</html>

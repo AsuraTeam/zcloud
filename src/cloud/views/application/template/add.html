@@ -1,0 +1,86 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">创建应用模板</span>
+                </div>
+                <form class="cluster-form">
+                <div class="panel-body font-12 ">
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-1" class="col-md-3 fw100 control-label">模板名称<span class="text-danger">*</span></label>
+                                <div class="col-md-9" >
+                                    <input type="text" nullmsg="必须填写" value="{{.data.TemplateName}}" validFunc="checkTemplateName" errmsg="接受 A-Za-z0-9-_.() 并且最大长度不超过32,最小4个字符" onchange="checkChange('TemplateName')" name="TemplateName" id="TemplateName" class="form-control" id="field-1" placeholder="必须为全英文">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-11" class="col-md-3 fw100 control-label">资源空间<span class="text-danger">*</span></label>
+                                <div class="col-md-9" id="field-11">
+                                    <select class="form-control" name="ResourceName" id="ResourceName">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-2" class="col-md-3 fw100 control-label">模板描述</label>
+                                <div class="col-md-9">
+                                    <input type="text" value="{{.data.Description}}"  name="Description" class="form-control" id="field-2" placeholder="模板描述信息">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-5" class="col-md-3 fw100 control-label">k8s编排文件<span class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <a href="javascripv:void(0)" onclick="setTemplate()">显示Deployment模板</a>
+                                    <textarea nullmsg="k8s编排文件必须填写"  rows="10" errmsg="编排文件检查错误"  onchange="checkChange('Yaml','textarea')"  class="form-control" id="field-5" placeholder="请使用标准的k8s yaml文件格式"
+                                              name="Yaml">{{.data.Yaml}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                            class="fa fa-times"></i>&nbsp;&nbsp;取消
+                    </button>
+                    <button type="button" onclick="saveTemplate('{{.data.TemplateId}}')"  class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;创建
+                    </button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<textarea id="yaml_template" style="display: none;">apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: deploymentexample
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.10</textarea>
+
+<script>
+    setQuotaName("{{.data.ResourceName}}", "ResourceName")
+</script>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <div class="container">
+    <!-- Start content -->
+    <div class="content">
+            <div id="add_groups_html"></div>
+            <div class="row ">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">应用交付中心</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">持续集成</a>
+                            </li>
+                            <li>
+                                <a href="#">服务部署</a>
+                            </li>
+                            <li>
+                                <a href="#">权限配置</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+        {{template "ci/service/perm/content.html" .}}
+        </div>
+    </div>
+</div> <!-- end col -->
+{{template "template/bottom.html" .}}
+</body>
+</div>
+<script src="/static/zcloud/ciPerm.js"></script>
+<script>
+    loadCiPermData();
+</script>
+</html>

@@ -1,0 +1,223 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 60%;">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">修改添加存储卷</span>
+                </div>
+
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="col-md-12 top10"></div>
+                        <div class="row top10" title="">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="select-entname-id"
+                                           class="col-md-3 fw100 control-label">环境选择<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="Entname"
+                                                onchange="getEntClusterData($(this).val())"
+                                                data-live-search="true" data-style="btn-default"
+                                                id="select-entname-id">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="每个集群只能有一个nfs存储和一个glusterfs存储">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">存储集群选择<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="ClusterName" data-live-search="true"
+                                                data-style="btn-default"
+                                                id="select-cluster-id">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="每个集群只能有一个存储服务器">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="col-md-3 fw100 control-label">存储名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.Name}}"
+                                               onchange="checkChange('Name');" name="Name" {{.readonly}}
+                                               validfunc="checkProject"
+                                               class="form-control" id="field-3" placeholder="必须为全英文, 不能以/开头和结尾">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label top10">&nbsp;</label>
+                                    <div class="col-md-9 pre" style="padding: 10px;line-height: 22px;">
+ 共享型存储nfs不受资源限制
+ 独享型存储给定空间后不可更改
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="">
+                            <div class="col-md-10">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label top10">存储类型<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-3 left10" style="margin-left: 20px;">
+                                        <div class="radio radio-info left10">
+                                            <input id="selectStorageType1" {{.selectStorageType1}} type="radio"
+                                                   onchange="setStorageType();"
+                                                   value="1"
+                                                   name="SharedType">
+                                            <label for="selectStorageType1" class="fw100 control-label">独享型
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 ">
+                                        <div class="radio radio-info left10">
+                                            <input id="selectStorageType2" {{.selectStorageType2}} type="radio"
+                                                   onchange="setStorageType();"
+                                                   value="0"
+                                                   name="SharedType">
+
+                                            <label for="selectStorageType2" class="fw100 control-label">共享型
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" value="{{.data.StorageType}}" name="StorageType">
+                        <div class="row top10" id="select-storage-size">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="range_01" class="col-md-3 fw100 control-label">存储大小</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" id="range_01"
+                                               onchange="$('#change-storage-value').val($(this).val());">
+                                    </div>
+                                    <div class="col-sm-2 left10">
+                                        <input type="number" min="1024" max="102400" name="StorageSize"
+                                               value="{{.data.StorageSize}}" id="change-storage-value"
+                                               style="height: 30px;margin-top: 15px;" class="form-control">
+                                    </div>
+                                    <div class="col-sm-1 top10" style="margin-left: -18px;">
+                                        <label for="change-storage-value"
+                                               class="col-md-12 fw100 control-label top10">MB</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top20" title="">
+                            <div class="col-md-10">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label top10">存储类型<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-2 left20" id="nfs-id">
+                                        <div class="radio radio-info ">
+                                            <input id="sselectStorageType1" type="radio"
+                                                   value="Nfs" {{.StorageType1}}
+                                                   name="StorageType">
+                                            <label for="sselectStorageType1" class="fw100 control-label">Nfs
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div id="no_shared_fs"  class="left10" style="display: none;">
+                                        <div class="col-md-3 left20">
+                                            <div class="radio radio-info ">
+                                                <input id="sselectStorageType2" {{.StorageType2}} type="radio"
+                                                       value="Glusterfs"
+                                                       name="StorageType">
+
+                                                <label for="sselectStorageType2" class="fw100 control-label">Glusterfs
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="radio radio-info ">
+                                                <input id="sselectStorageType3" {{.StorageType3}} type="radio"
+                                                       value="Ceph"
+                                                       name="StorageType">
+
+                                                <label for="sselectStorageType3" class="fw100 control-label">Ceph
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row top10">
+                                <div class="col-md-12 top10">
+                                    <div class="form-group">
+                                        <label for="field-2" class="col-md-3 fw100 control-label">存储卷描述</label>
+                                        <div class="col-md-9">
+                                            <input type="text" value="{{.data.Description}}" name="Description"
+                                                   class="form-control" id="field-2" placeholder="存储卷描述信息">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="panel-footer top10">
+                                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                        class="fa fa-times"></i>&nbsp;&nbsp;取消
+                                </button>
+                                <button type="button" onclick="saveStorage('{{.data.StorageId}}')"
+                                        class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                                </button>
+                            </div>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#select-registry-server").html("{{.registryHtml}}");
+    $("#select-entname-id").html("{{.entname}}");
+    $("#select-cluster-id").html("{{.cluster}}");
+
+    /**
+     * 设置存储类型
+     * 2018-01-31 07:58
+     */
+    function setStorageType(v) {
+        if(!v) {
+            v = $("input[name='SharedType']:checked").val();
+        }
+        if (v == "0") {
+            $("#nfs-id").show();
+            $("#no_shared_fs").hide();
+        } else {
+            $("#no_shared_fs").show();
+            $('#nfs-id').hide();
+        }
+    }
+    setStorageType("{{.data.SharedType}}");
+
+    $("#range_01").ionRangeSlider({
+        min: 1024,
+        max: parseInt("102400"),
+        from: parseInt("{{.data.StorageSize}}"),
+        step: 1024
+    });
+
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 5
+    });
+</script>

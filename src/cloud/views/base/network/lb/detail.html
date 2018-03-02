@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+<link rel="stylesheet" href="/static/plugins/tooltipster/tooltipster.bundle.min.css">
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <!-- Start content -->
+    <div class="content">
+        <div class="container">
+            <div id="add_lb_service_html"></div>
+            {%include base/network/lb/nginx.html%}
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">基础设施</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">网络管理</a>
+                            </li>
+                            <li>
+                                <a href="/base/network/lb/list">负载均衡</a>
+                            </li>
+                            <li>
+                                <a href="#">详情</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row">
+                <div class="col-sm-12 top-10">
+                    <i class="fa fa-sitemap font-18"><strong class="left10">{{.data.LbName}}</strong></i>
+                    <button type="button"
+                            class="btn btn-success btn-rounded w-xs waves-effect waves-light cluster-runing">运行中
+                    </button>
+                    <div class="col-sm-3 pull-right" style="margin-right: -130px;">
+                        <button id="updateAppId" class="btn btn-sm btn-default"><i
+                                class="fa  fa-edit">&nbsp;&nbsp;</i>更新
+                        </button>
+                        <button id="deleteAppId1" class="btn btn-sm btn-default"><i
+                                class="fa  fa-trash-o">&nbsp;&nbsp;</i>删除
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 top10">
+                    <div class="portlet">
+                        <div class="portlet-heading portlet-default border-bottom">
+                            <h3 class="portlet-title text-dark">
+                                基本信息
+                            </h3>
+                            <div class="portlet-widgets">
+                                <a data-toggle="collapse" data-parent="#accordion1" href="#bg-default"><i
+                                        class="mdi mdi-minus"></i></a>
+                                <a href="#" data-toggle="remove"><i class="mdi mdi-close"></i></a>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="bg-default" class="panel-collapse collapse in">
+                            <div class="portlet-body col-sm-12">
+                                <div class="col-sm-3 ">
+                                    <i class="app-detail-img fa fa-sitemap lb-sitemap"></i>
+                                </div>
+                                <div class="col-sm-9">
+                                    <table class="table tablesaw  m-b-0 tablesaw-swipe">
+                                        <tbody>
+                                        <tr>
+                                            <th class="noborder">集群</th>
+                                            <th class="noborder">{{.data.ClusterName}}</th>
+                                            <th class="noborder">创建人</th>
+                                            <th class="noborder">{{.data.CreateUser}}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="noborder">创建时间</th>
+                                            <th class="noborder">{{.data.CreateTime}}</th>
+                                            <th class="noborder">更新时间</th>
+                                            <th class="noborder">{{.data.LastModifyTime}}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="noborder">类型</th>
+                                            <th class="noborder">{{.data.LbType}}</th>
+                                            <th class="noborder">域名后缀</th>
+                                            <th class="noborder">{{.data.LbDomainSuffix}}</th>
+                                        </tr>
+                                        <tr>
+                                            <th><br></th>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 top10">
+                    <div class="portlet">
+                        <div class="portlet-heading portlet-default border-bottom">
+                            <h3 class="portlet-title text-dark">
+                                负载均衡
+                            </h3>
+                            <div class="portlet-widgets">
+                                <a data-toggle="collapse" data-parent="#accordion1" href="#bg-default-1"><i
+                                        class="mdi mdi-minus"></i></a>
+                                <a href="#" data-toggle="remove"><i class="mdi mdi-close"></i></a>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="bg-default-1" class="panel-collapse collapse in">
+                            <div class="portlet-body col-sm-12">
+                                <button type="button" onclick="addLbService(0,'{{.data.LbId}}')"
+                                        class="btn btn-primary btn-sm waves-effect waves-light">
+                                    添加服务
+                                </button>
+                                <button type="button" class="btn btn-default waves-effect waves-light pull-right"
+                                        onclick="loadLbDetailData()"
+                                        style="border-radius: 5px;">
+                                    <i class="fa fa fa-refresh"></i>
+                                </button>
+                                <div class="col-md-3 pull-right">
+                                    <input type="text" onkeyup="loadLbDetailData($(this).val())" class="form-control"
+                                           placeholder="按名称过滤">
+                                    <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                                </div>
+                                <table id="svc-data-table" class="table table-hover table-striped ">
+                                    <thead>
+                                    <tr>
+                                        <th>服务名称</th>
+                                        <th>容器端口</th>
+                                        <th>协议</th>
+                                        <th>域名</th>
+                                        <th>负载</th>
+                                        <th>证书</th>
+                                        <th>创建时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- content -->
+            {{template "template/bottom.html" .}}
+            </body>
+        </div>
+        <script src="/static/zcloud/lb.js"></script>
+        <script>
+            function loadLbDetailData(ip) {
+                if (!ip) {
+                    ip = ""
+                } else {
+                    if (ip.length < 4) {
+                        return
+                    }
+                }
+
+                $("#svc-data-table").dataTable({
+                    "filter": false,//去掉搜索框
+                    "ordering": false, // 是否允许排序
+                    "paginationType": "full_numbers", // 页码类型
+                    "destroy": true,
+                    "processing": true,
+                    "bLengthChange": false,
+                    "bPaginate": true, //是否显示（应用）分页器
+                    "serverSide": true,
+                    "bInfo": false, //是否显示页脚信息，DataTables插件左下角显示记录数
+                    "scrollX": true, // 是否允许左右滑动
+                    "displayLength": 10, // 默认长度
+                    "ajax": { // 请求地址
+                        "url": "/api/lb/service/{{.data.LbName}}?t=" + new Date().getTime() + "&=" + ip + "&clusterName={{.data.ClusterName}}",
+                        "type": 'get'
+                    },
+                    "columns": [ // 数据映射
+                        {"data": "ServiceName"},
+                        {"data": "ContainerPort"},
+                        {"data": "LbType"},
+                        {"data": "Domain"},
+                        {"data": "LbMethod"},
+                        {"data": "CertFile","mRender":function (data) {
+                            if(data && data=="0"){
+                                return ""
+                            }
+                            return data;
+                        }},
+                        {"data": "CreateTime"},
+                        {
+                            "sWidth": "150px", "data": "ServiceId", "mRender": function (data, type, full) {
+                            var r = '<button type="button" title="更新" onclick="addLbService(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
+                                '<button type="button"  title="删除" onClick="deleteLbServiceSwal(' + data + ')" class="delete-template btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>&nbsp;';
+                            if (full["LbType"] != "Nginx") {
+                                return r
+                            }
+                            r += '<button type="button" title="更新nginx配置" onclick="updateLbConf(' + data + ',\''+full["Domain"]+'\')" class="btn btn-xs rb-btn-oper"><i class=" dripicons-document-edit"></i></button>&nbsp;';
+                           return r;
+                            }
+                        },
+                    ],
+                    "fnRowCallback": function (row, data) { // 每行创建完毕的回调
+                        $(row).data('recordId', data.recordId);
+                    }
+                });
+            }
+
+            loadLbDetailData();
+
+            /**
+             * 添加服务
+             */
+            function addLbService(serviceId, lbName) {
+                if (!serviceId) {
+                    serviceId = 0
+                }
+                lbName = getValue(lbName);
+                var url = "/base/network/lb/service/add"
+                var result = get({ClusterName: "{{.data.ClusterName}}", ServiceId: serviceId, LbId: lbName}, url)
+                $("#add_lb_service_html").html(result)
+                $("#add_post_html").modal("toggle")
+                $("#check-faild-success").html("");
+            }
+
+            // 更新nginx配置
+            // 2018-02-01 21:36
+            function updateLbConf(serviceId, domain) {
+              $("#show_nginxconf_html").modal("toggle");
+              var url = "/api/network/lb/nginx/"+serviceId;
+              var result = get({}, url);
+              $("#nginx_service_id").val(serviceId);
+              $("#nginx_title").html(domain);
+              $("#show_nginxconf_content_html").val(result);
+            }
+
+            function setCheckMsg() {
+                $("#check-faild-success").html("<span class='Running'>配置文件检查中...</span>" );
+                setTimeout(function () {
+                    saveNginxConf();
+                },100)
+            }
+
+            /**
+             * 保存nginx配置
+             * 2018-02-01 22:04
+             */
+            function saveNginxConf() {
+                var vhost = $("#show_nginxconf_content_html").val();
+                var serviceId = $("#nginx_service_id").val();
+                var data = {};
+                data["ServiceId"] = serviceId;
+                data["Vhost"] = vhost;
+                var url = "/api/network/lb/nginx/"+serviceId;
+                var resultdata = post(data, url);
+                var result = JSON.stringify(resultdata);
+                if(result.indexOf("成功") != -1){
+                    success(result)
+                    $("#check-faild-success").html("<span class='Running'>配置检查成功<br>保存成功</span>");
+                }else{
+                    if(resultdata["data"]) {
+                        var msg =  resultdata["data"].replace(/\n/g,"<br>").replace(/\/usr\/local\/nginx\/conf/g,"");
+                        msg = msg.replace(/检查失败/,"<br>");
+                        $("#check-faild-success").html("<span class='Fail'>" + msg + "</span>");
+                    }
+                }
+            }
+
+        </script>
+    </div>
+</div>
+</html>

@@ -1,0 +1,101 @@
+<style>
+    tr th{
+        font-weight: 100;
+    }
+</style>
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 60%">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">{{.data.Domain}}  服务信息清单</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10 " class="text-default">
+                            <div class="col-sm-1"></div>
+                            <div class="col-sm-10">
+                                <table class="table tablesaw table-hover table-bordered  m-b-0 tablesaw-swipe text-default" style="color: #313a46;font-weight: 100;">
+                                    <tbody>
+                                    <tr>
+                                        <th class="th-p-15" style="width: 25%;padding: 15px !important;">镜像名称</th>
+                                        <th class="th-p-15" style="width: 75%;font-weight: 100;padding: 15px !important;">{{.data.ImageName}}</a>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th  class="th-p-15" style="width: 25%;padding: 15px !important;">蓝版镜像版本</th>
+                                        <th class="th-p-15" style="width: 75%;font-weight: 100;padding: 15px !important;"><a id="blue-id"></a>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th style="padding: 15px !important;">绿版镜像版本</th>
+                                        <th style="padding: 15px !important;"><a id="green-id"></a>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th style="padding: 15px !important;">应用名称</th>
+                                        <th style="padding: 15px !important;">{{.data.AppName}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="padding: 15px !important;">服务名称</th>
+                                        <th style="padding: 15px !important;">{{.data.ServiceName}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="padding: 15px !important;">负载均衡域名</th>
+                                        <th style="padding: 15px !important;">{{.data.Domain}}
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th style="padding: 15px !important;">蓝版本指向pod</th>
+                                        <th style="padding: 15px !important;"><span  id="blue_pod_id"></span></th>
+                                    </tr>
+                                    <tr>
+                                        <th style="padding: 15px !important;">负载均衡指向服务</th>
+                                        <th style="padding: 15px !important;"><span id="lb-service-id">{{.data.LbService}}</span><span title="绿版在线率，表示新旧版本一起工作,在线率越高,接入新版的几率越大" class="text-danger pull-right">绿版在线率:{{.data.Percent}}&nbsp;%</span></th>
+                                    </tr>
+                                    <tr>
+                                        <th style="padding: 15px !important;color: #4489e4a6;">蓝版集群内部访问</th>
+                                        <th style="padding: 15px !important;color: #4489e4a6;">{{.data.BlueAccess}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="padding: 15px !important;color: #33b867;">绿版集群内部访问</th>
+                                        <th style="padding: 15px !important;color: #33b867;">{{.data.GreenAccess}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="padding: 15px !important;">外部访问</th>
+                                        <th style="padding: 15px !important;"><a href="http://{{.data.Domain}}">http://{{.data.Domain}}</a></th>
+                                    </tr>
+                                    <tr>
+                                        <th style="padding: 15px !important;">灰度测试访问</th>
+                                        <th style="padding: 15px !important;"><a href="http://www.test.gg.com">http://www.test.gg.com</a></th>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("#blue-id").html("{{.data.ImageInfoBlue}}");
+    $("#green-id").html("{{.data.ImageInfoGreen}}");
+    $("#lb-service-id").html("{{.data.LbService}}");
+    var bluePod = "{{.data.BluePod}}";
+    var greenPod = "{{.data.GreenAccess}}";
+    var lbService = "{{.data.LbService}}";
+    $("#blue_pod_id").html(bluePod);
+    if(greenPod.indexOf(bluePod) != -1){
+        $("#blue_pod_id").html(bluePod + "<span class='m-l-15 pull-right text-danger' title='目前版本有偏差,蓝版没有更新到最新'>非稳定版本</span>");
+    }
+    if(lbService == greenPod){
+        $("#lb-service-id").html(lbService + "<span class='m-l-15 pull-right text-danger' title='目前版本有偏差,蓝版没有更新到最新'>非稳定版本</span>");
+    }
+</script>

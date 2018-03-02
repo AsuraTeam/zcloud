@@ -1,0 +1,162 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">添加健康检查项</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10">
+                            <div class="col-sm-12 top10">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 -control-label">检查类型:</label>
+                                    <div class="col-sm-6 left10">
+                                                            <span id="http_border"
+                                                                  onclick="setDeploy('http')"
+                                                                  style="background-color: #eeeeee !important;"
+                                                                  class="btn-class btn btn-asura-default btn-bordered waves-effect w-xs waves-light health-check-select"><span
+                                                                    class="status" id="http"
+                                                                    style="float: left;display: block;"> &nbsp;&nbsp;<i
+                                                                    class="fa fa-check "></i></span>HTTP</span>
+                                        <span id="tcp_border" onclick="setDeploy('tcp')" style="border-right: 1px solid #CCCCCC;"
+                                              class="btn-class btn btn-asura-default btn-bordered waves-effect w-xs waves-light health-check-select">
+                                                                         <span class="status" id="tcp"
+                                                                               style="float: left;display: none;"> &nbsp;&nbsp;<i
+                                                                                 class="fa fa-check "></i>
+                                                                         </span>TCP</span>
+                                        <span id="cmd_border" onclick="setDeploy('cmd')" style="border-right: 1px solid #CCCCCC;"
+                                              class="btn-class btn btn-asura-default btn-bordered waves-effect w-xs waves-light health-check-select">
+                                                                         <span class="status" id="cmd"
+                                                                               style="float: left;display: none;"> &nbsp;&nbsp;<i
+                                                                                 class="fa fa-check "></i>
+                                                                         </span>CMD</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10 porthide">
+                                <div class="form-group">
+                                    <label for="HealthPort" class="col-md-3 fw100 control-label">端口<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-6 left10">
+                                        <input class="form-control" max="65535" min="10" name="HealthPort"
+                                               id="HealthPort" errmsg="端口格式错误" value="80" type="number" placeholder="健康检查端口"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10 cmd_hide" style="display: none; ">
+                                <div class="form-group">
+                                    <label for="HealthPath" class="col-md-3 fw100 control-label">健康检查命令<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-6 left10">
+                                        <input class="form-control" name="HealthCmd" id="HealthCmd" value="ls /tmp/"
+                                               type="text" title="健康检查的命令,返回状态为0即可"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10" id="tcp_hidden">
+                                <div class="form-group">
+                                    <label for="HealthPath" class="col-md-3 fw100 control-label">页面路径<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-6 left10">
+                                        <input class="form-control" name="HealthPath" id="HealthPath" value="/"
+                                               type="text" title="健康检查url地址"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10" title="服务启动时间，在这个时间后再做健康检查,在这段时间内健康检查失败将会被忽略至首次健康检查状态">
+                                <label
+                                        class="col-md-3 fw100 control-label">首次检查延时</label>
+                                <span class="col-md-7">
+                                                        <div class="col-md-9">
+                                                                <input errmsg="必须为数字" nullmsg="不能为空"
+                                                                       name="HealthInitialDelay"
+                                                                       value="100"
+                                                                       placeholder=""
+                                                                       type="number"
+                                                                       max="500"
+                                                                       min="1"
+                                                                       class="form-control noright-radius">
+                                                            </div>
+                                                            <div class="col-md-3" style="margin-left: -20px;">
+                                                                <button class="floatleft form-control noleft-radius">秒</button>
+                                                            </div>
+                                                        </span>
+                            </div>
+                            <div class="col-md-12 top10" title="进行监控检查的时间间隔，1-120秒，默认为60秒">
+                                <label
+                                        class="col-md-3 fw100 control-label">间隔</label>
+                                <span class="col-md-7">
+                                                        <div class="col-md-9">
+                                                                <input errmsg="必须为数字" nullmsg="不能为空"
+                                                                       name="HealthInterval"
+                                                                       value="60"
+                                                                       placeholder=""
+                                                                       type="number"
+                                                                       max="120"
+                                                                       min="1"
+                                                                       class="form-control noright-radius">
+                                                            </div>
+                                                            <div class="col-md-3" style="margin-left: -20px;">
+                                                                <button class="floatleft form-control noleft-radius">秒</button>
+                                                            </div>
+                                                        </span>
+                            </div>
+                            <div class="col-md-12 top10" title="表示如果云服务器健康检查失败的次数，对于TCP或HTTP，若不为0，失败后系统会重启实例">
+                                <label
+                                        class="col-md-3 fw100 control-label">失败次数阈值</label>
+                                <span class="col-md-7">
+                                                        <div class="col-md-9">
+                                                                <input errmsg="必须为数字" nullmsg="不能为空"
+                                                                       name="HealthFailureThreshold"
+                                                                       value="0"
+                                                                       placeholder=""
+                                                                       type="number"
+                                                                       max="100"
+                                                                       min="0"
+                                                                       class="form-control noright-radius">
+                                                            </div>
+                                                            <div class="col-md-3" style="margin-left: -20px;">
+                                                                <button class="floatleft form-control noleft-radius">次</button>
+                                                            </div>
+                                                        </span>
+                            </div>
+                            <div class="col-md-12 top10" title="每次健康检查最大超时时间，默认为20,范围为1-300">
+                                <label
+                                        class="col-md-3 fw100 control-label">超时</label>
+                                <span class="col-md-7">
+                                                        <div class="col-md-9">
+                                                                <input errmsg="必须为数字" nullmsg="不能为空"
+                                                                       name="HealthTimeout"
+                                                                       value="20"
+                                                                       placeholder=""
+                                                                       type="number"
+                                                                       max="300"
+                                                                       min="1"
+                                                                       class="form-control noright-radius">
+                                                            </div>
+                                                            <div class="col-md-3" style="margin-left: -20px;">
+                                                                <button class="floatleft form-control noleft-radius">秒</button>
+                                                            </div>
+                                                        </span>
+                            </div>
+                        </div>
+                        <input type="hidden" name="HealthId">
+                        <input type="hidden" name="HealthType" value="HTTP">
+                    </div>
+                </form>
+                <div class="panel-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                            class="fa fa-times"></i>&nbsp;&nbsp;取消
+                    </button>
+                    <button type="button" onclick="setHealthData()"  class="btn btn-info waves-effect waves-light"><i
+                            class="fa fa-save"></i>&nbsp;&nbsp;创建
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

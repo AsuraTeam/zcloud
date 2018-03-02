@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <!-- Start content -->
+    <div class="content">
+        <div class="container">
+            <div id="add_cluster_html"></div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">全局大盘</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">概览</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- end row -->
+                <div id="detail_used_id">
+
+                </div>
+                <div class="col-sm-12 top-10">
+                </div>
+                <div class="col-md-12 top10">
+                    <div id="cluster_html_content_id">
+                    </div>
+                    <!-- end row -->
+                </div><!-- end col -->
+                <!-- end row -->
+            </div>
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+
+    {{template "template/bottom.html" .}}
+    </body>
+</div>
+
+<script src="/static/zcloud/cluster.js"></script>
+<script>
+
+    function loadDetail(cluster) {
+        var url = "/index/detail/" + cluster
+        var html = get({}, url)
+        $("#detail_used_id").html(html)
+    }
+
+    loadDetail("")
+
+    $("#head-cluster-select").change(function () {
+        loadDetail($("#head-cluster-select").val())
+    });
+
+    function clusterDetail(clusterName) {
+        var url = "/base/cluster/detail/" + clusterName
+        window.location.href = url
+    }
+
+    function setCluster(key) {
+        $('.cluster_data_html').remove();
+        if (!key) {
+            key = ""
+        } else {
+            if (key.length < 3) {
+                return
+            }
+        }
+
+        var template = '   <div class="col-sm-4 cluster_data_html">' +
+            '                            <div onclick="clusterDetail(\'CLUSTER_NAME\')" class="card-box div-radius5 widget-box-four" onmousemove="setBorderMove($(this))" onmouseout="setBorderOut($(this))">' +
+            '                                <div id="dashboard-1" class="widget-box-four-chart"></div>' +
+            '                                <div class="wigdet-four-content pull-left">' +
+            '                                    <h4 class="m-t-0 font-16 m-b-5 text-overflow" title="Total Revenue">CLUSTER_ALIAS<i class="pull-right fa fa-mixcloud cluster-cloud"></i></h4>' +
+            '<div class="sol-sm-12 top10" style="border-top:2px solid #f0f0f0"></div>' +
+            '                                    <sapn class="font-secondary top10 text-muted col-sm-12">集群名称:&nbsp;&nbsp;CLUSTER_NAME</sapn>' +
+            '                                    <sapn class="font-secondary top10 text-muted col-sm-12">集群类型:&nbsp;&nbsp;CLUSTER_TYPE</sapn>' +
+            '                                    <sapn class="font-secondary top10 text-muted col-sm-6">节点数:&nbsp;&nbsp;CLUSTER_NODE</sapn>' +
+            '                                    <span class="font-secondary top10 text-muted col-sm-6">服务数:&nbsp;&nbsp;CLUSTER_SERVICE</span>' +
+            '                                    <span class="font-secondary top10 text-muted col-sm-6">cpu数量:&nbsp;&nbsp;CLUSTER_CPU(核心)</span>' +
+            '                                    <span class="font-secondary top10 text-muted col-sm-6">内&nbsp;&nbsp;&nbsp;&nbsp;存:&nbsp;&nbsp;&nbsp;CLUSTER_MEMG</span>' +
+            '                                </div>' +
+            '                                <div class="clearfix"></div>' +
+            '                            </div>' +
+            '                        </div>';
+        var url = "/api/cluster?key=" + key
+        var data = get({}, url)
+        data = data["data"]
+        var obj = $("#cluster_html_content_id")
+        for (var i = 0; i < data.length; i++) {
+            var html = template.replace(/CLUSTER_NAME/g, data[i]["ClusterName"])
+            html = html.replace("CLUSTER_ALIAS", data[i]["ClusterAlias"])
+            html = html.replace("CLUSTER_TYPE", data[i]["ClusterType"])
+            html = html.replace("CLUSTER_SERVICE", data[i]["Services"])
+            html = html.replace("CLUSTER_NODE", data[i]["Nodes"])
+            html = html.replace("CLUSTER_CPU", data[i]["CpuNum"])
+            html = html.replace("CLUSTER_MEM", data[i]["MemSize"])
+            obj.append(html)
+        }
+    }
+    setCluster()
+
+</script>
+</html>

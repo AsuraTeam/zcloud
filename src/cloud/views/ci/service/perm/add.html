@@ -1,0 +1,160 @@
+<style>
+
+    ::-webkit-scrollbar {
+        width: 0.11em;
+    }
+
+    ::-webkit-scrollbar:horizontal {
+        height: 0.11em;
+    }
+
+    select[multiple], select[size] {
+        height: 170px;
+    }
+</style>
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 60%">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">添加/修改发布权限</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="col-md-12 top15">
+                            <div class="form-group">
+                                <label for="select_user_id"
+                                       class="col-md-3 fw100 control-label">授权用户<span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <select class="selectpicker" name="Username" data-live-search="true"
+                                            data-style="btn-default"
+                                            id="select_user_id">
+                                        <option>请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 top15">
+                            <div class="form-group">
+                                <label for="select_group_id"
+                                       class="col-md-3 fw100 control-label">授权组<span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <select class="selectpicker" name="GroupsName" data-live-search="true"
+                                            data-style="btn-default"
+                                            id="select_group_id">
+                                        <option>请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin-top: 5px;"><span class="col-sm-2"></span> <label class="col-sm-9 fw100 control-label" style="margin-left: -10px;color:#ccc;"></label></div>
+                        <div class="col-md-12 top10" title="ctrl + 点击单选, shift 加点击可多选">
+                            <div class="col-md-12">
+                                <label class="col-sm-3 fw100 control-label" style="margin-left: -20px;">授权域名<span
+                                        class="text-danger">*</span></label>
+                                <label class="col-sm-4"><input placeholder="搜索域名"
+                                                               onkeyup="searchUser($(this).val(),'domain_redo','select_domain_id')"
+                                                               class="fa-border form-control"
+                                                               style="margin-top:-5px;margin-left:-40%;"></label>
+                                <label class="col-sm-3 fw100 control-label">已选择域名</label>
+                            </div>
+                            <div class="col-md-12" style="margin-top: 5px;"></div>
+                            <div class="col-xs-5">
+                                <select name="from" id="domain_redo" class="form-control" size="7"
+                                        multiple="multiple">
+                                </select>
+                            </div>
+
+                            <div class="col-xs-2">
+                                <div style="margin-top: 45px;">&nbsp;</div>
+                                <button type="button" id="domain_redo_rightSelected"
+                                        class="btn btn-primary btn-block"><i
+                                        class="glyphicon glyphicon-chevron-right"></i></button
+                                >
+                                <button type="button" id="domain_redo_leftSelected"
+                                        class="btn btn-warning btn-block"><i
+                                        class="glyphicon glyphicon-chevron-left"></i></button>
+                            </div>
+
+                            <div class="col-xs-5">
+                                <select name="to" id="domain_redo_to" class="form-control" size="7"
+                                        multiple="multiple"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveCiPerm('{{.data.PermId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<textarea id="select_domain_id" style="display: none"> </textarea>
+<script src="/static/js/multiselect.min.js"></script>
+<script>
+
+    jQuery(document).ready(function ($) {
+        $('#domain_redo').multiselect({
+            keepRenderingSort: true,
+        });
+    });
+
+
+    /**
+     * 2018-02-18 19:15
+     * 设置组数据
+     */
+    function setPermGroupsData(id, select) {
+        var url = "/api/groups/name";
+        var result = eval(get({}, url));
+        if(select){
+            var html = "<option value='"+select+"'>"+select+"</option>"
+        }else {
+            var html = "<option>--请选择--</option>";
+        }
+        for (var i = 0; i < result.length; i++) {
+            html += "<option  value=" + result[i]["GroupsName"] + ">" + result[i]["GroupsName"] + "</option>";
+        }
+        $('#'+id).html(select + html);
+    }
+
+    /**
+     * 2018-02-18 19:20
+     * 设置用户数据
+     */
+    function setPermUserData(id, select) {
+        var url = "/api/users/name";
+        var result = eval(get({}, url));
+        if(select){
+            var html = "<option value='"+select+"'>"+select+"</option>"
+        }else {
+            var html = "<option>--请选择--</option>";
+        }
+        for (var i = 0; i < result.length; i++) {
+            html += "<option  value=" + result[i]["UserName"] + ">" + result[i]["UserName"] + "</option>\n";
+        }
+        $('#'+id).html(select + html);
+    }
+    $("#domain_redo").html("{{.domains}}");
+    $("#domain_redo_to").html("{{.domainSelect}}");
+    $("#select_domain_id").html("{{.domains}}");
+    setPermUserData("select_user_id","{{.data.Username}}");
+    setPermGroupsData("select_group_id","{{.data.GroupsName}}");
+
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 7
+    });
+</script>

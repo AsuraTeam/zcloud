@@ -1,0 +1,8 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ --buildsystem=golang --with=golang --builddirectory=_build
+
+override_dh_auto_configure:
+	dh_auto_configure
+	cp -r tests _build/src/gopkg.in/asn1-ber.v1/

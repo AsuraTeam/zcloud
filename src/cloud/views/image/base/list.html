@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <div class="container">
+        <!-- Start content -->
+        <div class="content">
+            <div id="add_base_html"></div>
+            <div class="row ">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">应用交付中心</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">镜像中心</a>
+                            </li>
+                            <li>
+                                <a href="#">基础镜像</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="upload_help_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                 aria-hidden="true"
+                 style="display: none;">
+                <div class="modal-dialog " style="width: 60%;">
+                    <div class="modal-content p-0 b-0 ">
+                        <div class="panel panel-color panel-default">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <span class="modal-title">上传基础镜像</span>
+                            </div>
+                            <div class="panel-body font-12 ">
+                                <code>
+                                    1. 在本地 docker 环境中输入以下命令进行登录,使用管理员账号登录<br>
+                                    <pre class="top10 pre">docker login reg1.zcloud.com:49000</pre>
+                                    <br>
+                                    2. 然后，对本地需要 push 的 image 进行标记，比如：<br>
+                                    <pre class="top10 pre">docker tag java8:latest reg1.zcloud.com:49000/template/java8:latest</pre>
+                                    <br>
+                                    3. 最后在命令行输入如下命令，就可以 push 这个 image 到镜像仓库中了<br>
+                                    <pre class="top10 pre">docker push reg1.zcloud.com:49000/template/java8:latest</pre>
+                                    <br>
+                                    <pre class="top10 pre">需要在镜像中安装docker服务,并且安装基础环境,比如java8, maven,git等工具<br>请注意替换仓库域名</pre>
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+        {%include image/base/content.html%}
+    </div>
+</div>
+</div> <!-- end col -->
+{{template "template/bottom.html" .}}
+</body>
+</div>
+<script src="/static/zcloud/baseImage.js"></script>
+<script>
+    loadBaseData();
+</script>
+</html>

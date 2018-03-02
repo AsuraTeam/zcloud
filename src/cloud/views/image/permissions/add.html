@@ -1,0 +1,231 @@
+<style>
+
+    ::-webkit-scrollbar {
+        width: 0.11em;
+    }
+
+    ::-webkit-scrollbar:horizontal
+    {
+        height: 0.11em;
+    }
+    select[multiple], select[size] {
+        height: 230px;
+    }
+</style>
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 60%">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">修改添加仓库权限</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="col-md-12 top10"></div>
+
+                        <div class="row top10">
+                            <div class="col-md-12" id="select-cluster-id">
+                                <div class="form-group">
+                                    <label class="col-md-2 fw100 control-label">选择集群</label>
+                                    <div class="col-md-10">
+                                        <select class="form-control" name="ClusterName" onchange="setRegistrySelect($(this).val(), $(this).find('option:selected').text())" data-style="btn-pink" style="border-radius: 5px;" id="registry-perm-cluster-select">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" id="select-reigstry-server-id">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-2 fw100 control-label">仓库名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <select class="form-control" name="ServiceName" data-style="btn-pink" style="border-radius: 5px;" id="registry-perm-registry-select">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="一般仓库开头URL开头的前缀，">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-15" class="col-md-2 fw100 control-label">项目名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.Project}}" {{.project}} errmsg="不能已/开头和结束"
+                                               onchange="checkChange('Project')" name="Project"  validFunc="checkProject"
+                                               class="form-control" id="field-15" placeholder="比如 project1 或者 project2, 或 project1/zhangshan 可以多级, 所有项目权限写 * ">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="权限选择,pull 可以下载, push 可以上传">
+                            <div class="col-md-10">
+                                <div class="form-group">
+                                    <label class="col-md-2 fw100 control-label">权限选择</label>
+                                    <div class="col-md-4 left10">
+                                        <div class="checkbox checkbox-primary left10">
+                                            <input id="checkbox10" checked type="checkbox"
+                                                   name="Pull">
+                                            <label for="checkbox10" class="fw100 control-label">PULL/下载
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 ">
+                                        <div class="checkbox checkbox-warning left10">
+                                            <input id="checkbox20" type="checkbox" {{.push}}
+                                                   name="Push">
+                                            <label for="checkbox20" class="fw100 control-label">PUSH/上传
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin-top: 5px;"><span class="col-sm-2"></span> <label class="col-sm-9 fw100 control-label" style="margin-left: -10px;color:#ccc;">提示:如果不选择用户,那么改项目为公共项目,所有可以登录的人都具有操作权限!<br></label></div>
+                        <div class="col-md-12 top10" title="ctrl + 点击单选, shift 加点击可多选">
+                            <div class="col-md-12">
+                                <label class="col-sm-3 fw100 control-label" style="margin-left: -20px;">用户选择<span
+                                        class="text-danger">*</span></label>
+                                <label class="col-sm-4"><input placeholder="搜索用户"
+                                                               onkeyup="searchUser($(this).val(),'undo_contact_group_redo')"
+                                                               class="fa-border form-control"
+                                                               style="margin-top:-5px;margin-left:-40%;"></label>
+                                <label class="col-sm-3 fw100 control-label">已选择用户</label>
+                            </div>
+                            <div class="col-md-12" style="margin-top: 5px;"></div>
+                            <div class="col-xs-5">
+                                <select name="from" id="undo_contact_group_redo" class="form-control" size="7"
+                                        multiple="multiple">
+                                </select>
+                            </div>
+
+                            <div class="col-xs-2">
+                                <div style="margin-top: 45px;">&nbsp;</div>
+                                <button type="button" id="undo_contact_group_redo_rightSelected"
+                                        class="btn btn-primary btn-block"><i
+                                        class="glyphicon glyphicon-chevron-right"></i></button
+                                >
+                                <button type="button" id="undo_contact_group_redo_leftSelected"
+                                        class="btn btn-warning btn-block"><i
+                                        class="glyphicon glyphicon-chevron-left"></i></button>
+                            </div>
+
+                            <div class="col-xs-5">
+                                <select name="to" id="undo_contact_group_redo_to" class="form-control" size="7"
+                                        multiple="multiple"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                        <div class="col-md-12" title="ctrl + 点击单选, shift 加点击可多选">
+                            <div class="col-md-12">
+                                <label class="col-sm-3 fw100 control-label" style="margin-left: -20px;">组选择<span
+                                        class="text-danger">*</span></label>
+                                <label class="col-sm-4"><input placeholder="搜索组"
+                                                               onkeyup="searchUser($(this).val(),'undo_perm_group_redo')"
+                                                               class="fa-border form-control"
+                                                               style="margin-top:-5px;margin-left:-40%;"></label>
+                                <label class="col-sm-3 fw100 control-label">已选择组</label>
+                            </div>
+                            <div class="col-md-12" style="margin-top: 5px;"></div>
+                            <div class="col-xs-5">
+                                <select name="from" id="undo_perm_group_redo" class="form-control" size="7"
+                                        multiple="multiple">
+                                </select>
+                            </div>
+
+                            <div class="col-xs-2">
+                                <div style="margin-top: 45px;">&nbsp;</div>
+                                <button type="button" id="undo_perm_group_redo_rightSelected"
+                                        class="btn btn-primary btn-block"><i
+                                        class="glyphicon glyphicon-chevron-right"></i></button
+                                >
+                                <button type="button" id="undo_perm_group_redo_leftSelected"
+                                        class="btn btn-warning btn-block"><i
+                                        class="glyphicon glyphicon-chevron-left"></i></button>
+                            </div>
+
+                            <div class="col-xs-5">
+                                <select name="to" id="undo_perm_group_redo_to" class="form-control" size="7"
+                                        multiple="multiple"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-2 fw100 control-label">描述信息</label>
+                                    <div class="col-md-10">
+                                        <input type="text" value="{{.data.Description}}" name="Description"
+                                               class="form-control" id="field-2" placeholder="描述信息">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveRegistryPerm('{{.data.PermissionsId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<textarea id="select_groups_id" style="display: none"> </textarea>
+<textarea id="select_user_id" style="display: none"> </textarea>
+<script src="/static/js/multiselect.min.js"></script>
+<script>
+    var cluster = "{{.data.ClusterName}}";
+    if(!cluster){
+        loadClusterSelect("registry-perm-cluster-select","1");
+    }else{
+        loadClusterSelect("registry-perm-cluster-select","", cluster);
+        setRegistrySelect(cluster, "{{.data.ServiceName}}");
+    }
+    console.log(cluster)
+
+    // 获取某个集群下面的仓库服务
+    function setRegistrySelect(name, select) {
+        var url = "/api/registry?clusterName="+name;
+        var result = get({}, url);
+        var data = result["data"];
+        var html ="";
+        if(select){
+            html += "<option value='"+select+"'>"+select+"</option>";
+        }else{
+            html += "<option>--请选择--</option>";
+        }
+        for (var i=0; i<=data.length; i++){
+            if(data[i]){
+                html += "<option value='"+data[i]["Name"]+"'>"+data[i]["Name"]+"</option>"
+            }
+        }
+        $("#registry-perm-registry-select").html(html);
+    }
+
+    jQuery(document).ready(function ($) {
+        $('#undo_contact_group_redo').multiselect({
+            keepRenderingSort: true,
+        });
+        $('#undo_perm_group_redo').multiselect({
+            keepRenderingSort: true,
+        });
+    });
+
+
+    setUserData();
+    searchUser("",'undo_contact_group_redo');
+    setSelectUser("{{.data.UserName}}");
+
+    setGroupsData();
+    searchGroups("",'undo_perm_group_redo');
+    setSelectGroups("{{.data.GroupsName}}")
+</script>

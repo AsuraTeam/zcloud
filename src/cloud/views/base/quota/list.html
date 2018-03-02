@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <div class="container">
+    <!-- Start content -->
+    <div class="content">
+            <div id="add_quota_html"></div>
+            <div class="row ">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">基础设施</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">资源配置</a>
+                            </li>
+                            <li>
+                                <a href="#">资源空间</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row ">
+                <div class="col-sm-12 top-10">
+
+                    <button type="button" onclick="addQuota()"
+                            class="btn btn-primary btn-sm waves-effect waves-light">
+                        创建资源配额
+                    </button>
+
+                    <div class="col-sm-1 cluster-search pull-right">
+                        <button type="button" class="btn btn-default waves-effect waves-light"
+                                onclick="setQuota()"
+                                style="border-radius: 5px;">
+                            <i class="fa fa fa-refresh"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-3 pull-right">
+                        <input type="text" onkeyup="setQuota($(this).val())" class="form-control"
+                               placeholder="搜索名称或描述信息">
+                        <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                    </div>
+                    <div class="col-sm-3 pull-right">
+                        <pre>点击配额面板可到详情页面</pre>
+                    </div>
+                </div>
+                <br>
+                <div class="col-md-12 top10">
+                    <div class="row" id="quota_html_content_id">
+                    </div>
+                    <!-- end row -->
+                </div><!-- end col -->
+            </div>
+        </div>
+    </div>
+</div> <!-- end col -->
+{{template "template/bottom.html" .}}
+</body>
+</div>
+
+<input id="delete_quota_id" title="hidden">
+<script src="/static/zcloud/quota.js"></script>
+<script>
+
+    /**
+     * 查看配额的详细情况
+     * */
+    function quotaDetail(id) {
+        var url = "/base/quota/detail/"+id
+        window.location.href = url
+    }
+
+    /**
+     * 设置quota的页面
+     * @param key
+     */
+    function setQuota(key) {
+        $('.quota_data_html').remove();
+        if(!key){
+            key = ""
+        }else{
+            if(key.length < 4){
+                return
+            }
+        }
+        var template = '   <div class="col-sm-4 quota_data_html">' +
+            '                            <div class="card-box div-radius5 widget-box-four" onmousemove="setBorderMove($(this))" onmouseout="setBorderOut($(this))">' +
+            '                                <div id="dashboard-1" class="widget-box-four-chart"></div>' +
+            '                                <div class="wigdet-four-content pull-left text-default" >' +
+            '                                    <h4 class="m-t-0 font-16 m-b-5 text-overflow" title="Total Revenue">QUOTA_NAME<i title="删除" onclick="deleteQuotaSwal(QUOTA_ID)" class="cluster-cloud fa fa-trash-o pull-right"></i><i title="编辑" onclick="addQuota(QUOTA_ID)" class="fa fa-edit cluster-cloud pull-right"></i></h4>' +
+            '<div class="sol-sm-12 top10" style="border-top:2px solid #f0f0f0"></div><div  onclick="quotaDetail(\'QUOTA_ID\')">' +
+            '                                    <sapn class="font-secondary top10 text-muted col-sm-12">创建用户:&nbsp;&nbsp;CREATE_USER</sapn>' +
+            '                                    <sapn class="font-secondary top10 text-muted col-sm-12">状态:&nbsp;&nbsp;STATUS</sapn>' +
+            '                                    <sapn class="font-secondary top10 text-muted col-sm-6">CPU配额:&nbsp;&nbsp;QUOTA_CPU</sapn>' +
+            '                                    <span class="font-secondary top10 text-muted col-sm-6">内存配额:&nbsp;&nbsp;QUOTA_MEMORY</span>' +
+            '                                    <span class="font-secondary top10 text-muted col-sm-12">创建时间:&nbsp;&nbsp;CREATE_TIME</span></div>' +
+            '                                </div>' +
+            '                                <div class="clearfix"></div>' +
+            '                            </div>' +
+            '                        </div>';
+        var url = "/api/quota?key="+key
+        var data = get({},url)
+        data = data["data"]
+        var obj = $("#quota_html_content_id")
+        for (var i=0;i<data.length;i++){
+            var html = template.replace("QUOTA_NAME", data[i]["QuotaName"])
+            html = html.replace("QUOTA_ALIAS", data[i]["QuotaAlias"])
+            html = html.replace("STATUS", data[i]["Status"])
+            html = html.replace(/QUOTA_ID/g, data[i]["QuotaId"])
+            html = html.replace("CREATE_USER", data[i]["CreateUser"])
+            html = html.replace("CREATE_TIME", data[i]["CreateTime"])
+            var cpu = data[i]["QuotaCpu"]
+            html = html.replace("QUOTA_CPU", cpu ? cpu : "无限制")
+            var mem = data[i]["QuotaMemory"]
+            html = html.replace("QUOTA_MEMORY", mem ? mem : "无限制")
+            obj.append(html)
+        }
+    }
+    setQuota()
+</script>
+</html>

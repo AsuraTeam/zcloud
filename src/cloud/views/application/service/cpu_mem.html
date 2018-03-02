@@ -1,0 +1,136 @@
+<div class="col-md-10 top10">
+    <div class="form-group">
+        <label class="col-md-3 fw100 control-label">实例配置<span
+                class="text-danger">*</span></label>
+        <div class="col-md-9">
+            <div class="col-md-3 panel service-config-height"
+                 onclick="setSelectConfig(0.5,1,'c05m1g')">
+                <div class="panel-header service-header" id="c05m1g">
+                    S <span class="showfa" id="c05m1gfa"
+                            style="margin-left: 20px;display: none;"> <i
+                        class="fa fa-check "></i></span>
+                </div>
+                <div class="panel-body" >
+                    0.5&nbsp;核<br>
+                    1&nbsp;GB
+                </div>
+            </div>
+            <div class="col-md-3 panel service-config-height"
+                 onclick="setSelectConfig(1,2,'c1m2g')">
+                <div class="panel-header service-header" id="c1m2g"
+                     style="background-color:#eeeeee  !important;">
+                    M <span class="showfa" id="c1m2gfa"
+                            style="margin-left: 20px;"> <i
+                        class="fa fa-check "></i></span>
+                </div>
+                <div class="panel-body">
+                    1&nbsp;核<br>
+                    2&nbsp;GB
+                </div>
+            </div>
+            <div class="col-md-3 panel service-config-height"
+                 onclick="setSelectConfig(2,4,'c2m4g')">
+                <div class="panel-header service-header" id="c2m4g">
+                    L <span class="showfa" id="c2m4gfa"
+                            style="margin-left: 20px;display: none;"> <i
+                        class="fa fa-check "></i></span>
+                </div>
+                <div class="panel-body">
+                    2&nbsp;核<br>
+                    4&nbsp;GB
+                </div>
+            </div>
+            <div class="col-md-3 panel service-config-height"
+
+                 onclick="setSelectConfig(2,8,'c2m8g')">
+                <div class="panel-header service-header" id="c2m8g">
+                    XL <span class="showfa" id="c2m8gfa"
+                             style="margin-left: 20px;display: none;"> <i
+                        class="fa fa-check "></i></span>
+                </div>
+                <div class="panel-body">
+                    2&nbsp;核<br>
+                    8&nbsp;GB
+                </div>
+            </div>
+            <div class="col-md-3 panel service-config-height"
+                 onclick="setSelectConfig(4,8,'c4m8g')">
+                <div class="panel-header service-header" id="c4m8g">
+                    XXL <span class="showfa" id="c4m8gfa"
+                              style="margin-left: 20px;display: none;"> <i
+                        class="fa fa-check "></i></span>
+                </div>
+                <div class="panel-body">
+                    4&nbsp;核<br>
+                    8&nbsp;GB
+                </div>
+            </div>
+            <div class="col-md-3 panel service-config-height"
+                 onclick="setSelectConfig(4,16,'c4m16g')">
+                <div class="panel-header service-header" id="c4m16g">
+                    XXXL <span class="showfa" id="c4m16gfa"
+                               style="margin-left: 20px;display: none;"> <i
+                        class="fa fa-check "></i></span>
+                </div>
+                <div class="panel-body">
+                    4&nbsp;核<br>
+                    16&nbsp;GB
+                </div>
+            </div>
+            <div class="col-md-3 panel service-config-height"
+                 onclick="setSelectConfig(4,16,'customconfig',1)">
+                <div class="panel-header service-header"
+                     id="customconfig">
+                    自定义 <span class="showfa" id="customconfigfa"
+                              style="margin-left: 20px;display: none;"> <i
+                        class="fa fa-check "></i></span>
+                </div>
+                <div class="panel-body">
+                    4&nbsp;核<br>
+                    16&nbsp;GB
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="show-custom-config" class="col-sm-12 left20"
+     style="display: none">
+    <div class="col-md-9 top10">
+        <label class="col-md-3 fw100 control-label">&nbsp;</label>
+        <span class="col-md-3">CPU使用量</span>
+        <span class="col-md-6">
+                                                        <div class="col-md-9">
+                                                                <input errmsg="必须为数字" nullmsg="不能为空" name="Cpu"
+                                                                       value="1"
+                                                                       placeholder="CPU分配"
+                                                                       type="number"
+                                                                       max="128"
+                                                                       min="0.1"
+                                                                       class="form-control noright-radius">
+                                                            </div>
+                                                            <div class="col-md-3" style="margin-left: -20px;">
+                                                                <button class="floatleft form-control noleft-radius">核</button>
+                                                            </div>
+                                                        </span>
+    </div>
+    <div class="col-md-9 top10">
+        <label class="col-md-3 fw100 control-label">&nbsp;</label>
+        <span class="col-md-3">
+                                                             服务内存使用量
+                                                     </span>
+        <div class="col-md-6">
+            <div class="col-md-9">
+                <input type="number" errmsg="必须为数字" nullmsg="不能为空"
+                       name="Memory"
+                       max="262144"
+                       min="256"
+                       value="2048" placeholder="内存分配"
+                       class="form-control noright-radius">
+            </div>
+            <div class="col-md-3" style="margin-left: -20px;">
+                <button class="floatleft form-control noleft-radius">M
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

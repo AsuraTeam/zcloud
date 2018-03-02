@@ -1,0 +1,76 @@
+<style>
+    .modal-content .panel {
+        border: 1px solid #e2e2e2 !important;
+    }
+</style>
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 76%">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">修改资源配置</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10">
+                            <div class="col-md-10 top10">
+                                <div class="form-group">
+                                    <label for="field-9" class="col-md-3 fw100 control-label">集群名称</label>
+                                    <div class="col-md-9" id="field-9">
+                                        <input class="form-control" readonly
+                                               value="{{.data.ClusterName}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-10 top10">
+                                <div class="form-group">
+                                    <label for="field-11" class="col-md-3 fw100 control-label">服务名称</label>
+                                    <div class="col-md-9" id="field-11">
+                                        <input class="form-control" type="hidden" id="scale_service_id" readonly
+                                               name="ServiceId"
+                                               value="{{.data.ServiceId}}"/>
+                                        <input class="form-control" readonly name="ServiceName"
+                                               value="{{.data.ServiceName}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row top15">
+                                <div class="top15 left10">
+                                    {%include application/service/cpu_mem.html%}
+                                </div>
+                            </div>
+                            <div class="col-sm-10 top15" style="color: rgb(160, 160, 160); text-align: left;margin-top: 20px">
+                                <label for="field-9" class="col-md-3 fw100 control-label">&nbsp;&nbsp;</label>
+                                <div class="col-sm-9"> Tips: 重新选择配置 , 保存后系统将重启该服务的所有实例。
+                                    将进行滚动升级。
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                    class="fa fa-times"></i>&nbsp;&nbsp;取消
+                            </button>
+                            <button type="button" onclick="serviceCpuSave('{{.data.ServiceId}}')"
+                                    class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;
+                                保存
+                            </button>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function setOldCpu(){
+        var cpu = "{{.data.Cpu}}";
+        var mem = "{{.data.Memory}}";
+        setSelectConfig(cpu.replace(/./g,""),mem,'c'+cpu+'m'+parseInt(mem)/1024+'g');
+        $("input[name='Cpu']").val(cpu);
+        $("input[name='Memory']").val(mem);
+        $("#show-custom-config").show();
+    }
+    setOldCpu();
+</script>

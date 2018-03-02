@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <!-- Start content -->
+    <div class="content">
+        <div class="container">
+            <div id="add_cluster_html"></div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">集群管理</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">基础设施</a>
+                            </li>
+                            <li>
+                                <a href="#">集群管理</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row">
+                <div class="col-sm-12 top-10">
+                    <button type="button" onclick="addCluster()" class="btn btn-primary  w-md waves-effect waves-light">
+                        创建集群
+                    </button>
+                    <div class="col-sm-1 cluster-search pull-right">
+                        <button type="button" class="btn btn-default waves-effect waves-light" onclick="setCluster()"
+                                style="border-radius: 5px;">
+                            <i class="fa fa fa-refresh"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-3 pull-right">
+                        <input type="text" onkeyup="setCluster($(this).val())" class="form-control" placeholder="按名称搜索">
+                        <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                    </div>
+                </div>
+                <div class="col-md-12 top10">
+                    <div class="row" id="cluster_html_content_id">
+                    </div>
+                    <!-- end row -->
+                </div><!-- end col -->
+
+                <!-- end row -->
+            </div>
+
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+
+
+    {{template "template/bottom.html" .}}
+    </body>
+</div>
+<script>
+    function addCluster() {
+        var url = "/base/cluster/add"
+        var result = post({}, url)
+        $("#add_cluster_html").html(result)
+        $("#add_post_html").modal("toggle")
+    }
+
+    function clusterDetail(clusterName) {
+        var url = "/base/cluster/detail/"+clusterName
+        window.location.href = url
+    }
+
+    function setCluster(key) {
+        $('.cluster_data_html').remove();
+        if(!key){
+            key = ""
+        }else{
+            if(key.length < 3){
+                return
+            }
+        }
+
+        var template = '   <div class="col-sm-4 cluster_data_html">' +
+            '                            <div onclick="clusterDetail(\'CLUSTER_NAME\')" class="card-box div-radius5 widget-box-four" onmousemove="setBorderMove($(this))" onmouseout="setBorderOut($(this))">' +
+            '                                <div id="dashboard-1" class="widget-box-four-chart"></div>' +
+            '                                <div class="wigdet-four-content pull-left text-default">' +
+            '                                    <h4 class="m-t-0 font-16 m-b-5 text-overflow" title="Total Revenue">CLUSTER_ALIAS<i class="pull-right fa fa-mixcloud cluster-cloud"></i></h4>' +
+            '<div class="sol-sm-12 top10" style="border-top:2px solid #f0f0f0"></div>' +
+            '                                    <sapn class="font-secondary top10 text-muted col-sm-12">集群名称:&nbsp;&nbsp;CLUSTER_NAME</sapn>' +
+            '                                    <sapn class="font-secondary top10 text-muted col-sm-12">集群类型:&nbsp;&nbsp;CLUSTER_TYPE</sapn>' +
+            '                                    <sapn class="font-secondary top10 text-muted col-sm-6">节点数:&nbsp;&nbsp;CLUSTER_NODE</sapn>' +
+            '                                    <span class="font-secondary top10 text-muted col-sm-6">服务数:&nbsp;&nbsp;CLUSTER_SERVICE</span>' +
+            '                                    <span class="font-secondary top10 text-muted col-sm-6">&nbsp;&nbsp;cpu:&nbsp;&nbsp;CLUSTER_CPU(核心)</span>' +
+            '                                    <span class="font-secondary top10 text-muted col-sm-6">&nbsp;&nbsp;内&nbsp;存:&nbsp;&nbsp;&nbsp;CLUSTER_MEMG</span>' +
+            '                                </div>' +
+            '                                <div class="clearfix"></div>' +
+            '                            </div>' +
+            '                        </div>';
+        var url = "/api/cluster?key="+key
+        var data = get({},url)
+        data = data["data"]
+        var obj = $("#cluster_html_content_id")
+        for (var i=0;i<data.length;i++){
+            var html = template.replace(/CLUSTER_NAME/g, data[i]["ClusterName"])
+            html = html.replace("CLUSTER_ALIAS", data[i]["ClusterAlias"])
+            html = html.replace("CLUSTER_TYPE", data[i]["ClusterType"])
+            html = html.replace("CLUSTER_SERVICE", data[i]["Services"])
+            html = html.replace("CLUSTER_NODE", data[i]["Nodes"])
+            html = html.replace("CLUSTER_CPU", data[i]["CpuNum"])
+            html = html.replace("CLUSTER_MEM", data[i]["MemSize"])
+            obj.append(html)
+        }
+    }
+    setCluster()
+</script>
+</html>

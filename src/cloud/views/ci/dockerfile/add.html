@@ -1,0 +1,65 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">添加修改Dockerfile</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 " title="在编译时使用该docker直接编译,所以要确保改文件的可用性
+打包系统提供了mvn,git等工具,可以直接运行">
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="col-md-3 fw100 control-label">Dockerfile名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.Name}}"
+                                               onchange="checkChange('Name')" name="Name" id="Name"
+                                               class="form-control" id="field-3" placeholder="一般已应用名命名或者域名">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-13" class="col-md-3 fw100 control-label">Dockerfile内容<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <textarea type="text"  rows="14" value="{{.data.Content}}" nullmsg="不能为空"
+                                             name="Content" id="Content" onchange="checkChange('Content')"
+                                                  class="form-control" id="field-13" placeholder="dockerfile内容,一个能打包完整应用的dockerfile">{{.data.Content}}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-3 fw100 control-label">描述信息</label>
+                                    <div class="col-md-9">
+                                        <input type="text" value="{{.data.Description}}" name="Description"
+                                               class="form-control" id="field-2" placeholder="描述信息">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveDockerFile('{{.data.FileId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,289 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 80%">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">创建资源配额</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="field-1" class="col-md-3 fw100 control-label">配额名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.QuotaName}}"
+                                               validFunc="checkQuotaName" errmsg="接受 A-Za-z0-9-_.() 并且最大长度不超过36,最小4个字符"
+                                               onchange="checkChange('QuotaName')" name="QuotaName" id="QuotaName"
+                                               class="form-control" id="field-1" placeholder="必须为全英文,添加完成后不可修改">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-3 fw100 control-label">配额描述<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="text" rows="1" name="Description" class="form-control"
+                                               onchange="checkChange('Description','textarea')" value="{{.data.Description}}"
+                                               id="field-2" placeholder="配额描述信息">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10 " style="margin-left: -70px;">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label
+                                           class="col-md-2 fw100 control-label">&nbsp;</label>
+                                    <div class="col-md-8 top10">
+                                        <pre class="pre">用户和组,同时选择就是用户和组同时使用这个配额</pre>
+                                        <pre class="pre">单独选择单独使用这个配额</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10 ">
+                            <div class="col-md-6 top10">
+                                <div class="form-group">
+                                    <label for="select-user-id"
+                                           class="col-md-3 fw100 control-label">选择用户<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="UserName" data-live-search="true"
+                                                data-style="btn-default"
+                                                id="select-user-id">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 top10">
+                                <div class="form-group">
+                                    <label for="select-group-id"
+                                           class="col-md-3 fw100 control-label">选择组</label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="GroupName" data-live-search="true"
+                                                data-style="btn-default"
+                                                id="select-group-id">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-">
+                                <div class="form-group">
+                                    <label for="field-1" class="col-md-3 fw100 control-label left10">配额设置<span
+                                            class="text-danger">*</span></label>
+                                    <span class="col-md-2" style="margin-left: -60px;">
+                                    类型
+                                </span>
+                                    <span class="col-md-2">
+                                    配额
+                                </span>
+                                    <span class="col-md-2 left10" style="margin-left: 130px;">
+                                    类型
+                                </span>
+                                    <span class="col-md-2">
+                                    配额
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 top10">
+                            <label for="field-1" class="col-md-3 fw100 control-label">&nbsp;</label>
+                            <span class="col-md-3">
+                                    服务CPU使用量
+                                </span>
+                            <span class="col-md-6">
+                                    <div class="col-md-9">
+                                        <input errmsg="必须为数字" nullmsg="不能为空" name="QuotaCpu" value="{{.data.QuotaCpu}}"
+                                               placeholder="请填写空间配额"
+                                               class="form-control noright-radius">
+                                    </div>
+                                    <div class="col-md-3" style="margin-left: -20px;">
+                                        <button class="floatleft form-control noleft-radius">核</button>
+                                    </div>
+                                </span>
+                        </div>
+                        <div class="col-md-6 top10">
+                            <label for="field-1" class="col-md-3 fw100 control-label">&nbsp;</label>
+                            <span class="col-md-3">
+                                    服务内存使用量
+                                </span>
+                            <div class="col-md-6">
+                                <div class="col-md-9">
+                                    <input errmsg="必须为数字" nullmsg="不能为空" name="QuotaMemory"
+                                           value="{{.data.QuotaMemory}}" placeholder="请填写空间配额"
+                                           class="form-control noright-radius">
+                                </div>
+                                <div class="col-md-3" style="margin-left: -20px;">
+                                    <button class="floatleft form-control noleft-radius">M</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 top10">
+                            <label for="field-1" class="col-md-3 fw100 control-label">&nbsp;</label>
+                            <span class="col-md-3">
+                                    应用使用量
+                                </span>
+                            <div class="col-md-6">
+                                <div class="col-md-9">
+                                    <input errmsg="必须为数字" nullmsg="不能为空" name="AppNumber" min="1" max="500"
+                                           type="number"
+                                           value="{{.data.AppNumber}}" placeholder="限制应用使用量"
+                                           class="form-control noright-radius">
+                                </div>
+                                <div class="col-md-3" style="margin-left: -20px;">
+                                    <button class="floatleft form-control noleft-radius">个</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 top10">
+                            <label for="field-1" class="col-md-3 fw100 control-label">&nbsp;</label>
+                            <span class="col-md-3">
+                                    服务使用量
+                                </span>
+                            <div class="col-md-6">
+                                <div class="col-md-9">
+                                    <input errmsg="必须为数字" nullmsg="不能为空" name="ServiceNumber" min="1" max="500"
+                                           type="number"
+                                           value="{{.data.ServiceNumber}}" placeholder="限制服务使用量"
+                                           class="form-control noright-radius">
+                                </div>
+                                <div class="col-md-3" style="margin-left: -20px;">
+                                    <button class="floatleft form-control noleft-radius">个</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 top10">
+                            <label for="field-1" class="col-md-3 fw100 control-label">&nbsp;</label>
+                            <span class="col-md-3">
+                                    容器数量
+                                </span>
+                            <div class="col-md-6">
+                                <div class="col-md-9">
+                                    <input errmsg="必须为数字" nullmsg="不能为空" name="PodNumber" min="1" max="500"
+                                           type="number"
+                                           value="{{.data.PodNumber}}" placeholder="容器使用量"
+                                           class="form-control noright-radius">
+                                </div>
+                                <div class="col-md-3" style="margin-left: -20px;">
+                                    <button class="floatleft form-control noleft-radius">个</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 top10">
+                            <label for="field-1" class="col-md-3 fw100 control-label">&nbsp;</label>
+                            <span class="col-md-3">
+                                    负载均衡数量
+                                </span>
+                            <div class="col-md-6">
+                                <div class="col-md-9">
+                                    <input errmsg="必须为数字" nullmsg="不能为空" name="LbNumber" min="1" max="500"
+                                           type="number"
+                                           value="{{.data.LbNumber}}" placeholder="可以使用的负载均衡数量"
+                                           class="form-control noright-radius">
+                                </div>
+                                <div class="col-md-3" style="margin-left: -20px;">
+                                    <button class="floatleft form-control noleft-radius">个</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 top10">
+                            <label for="field-1" class="col-md-3 fw100 control-label">&nbsp;</label>
+                            <span class="col-md-3">
+                                    构建任务数量
+                                </span>
+                            <div class="col-md-6">
+                                <div class="col-md-9">
+                                    <input errmsg="必须为数字" nullmsg="不能为空" name="JobNumber" min="1" max="500"
+                                           type="number"
+                                           value="{{.data.JobNumber}}" placeholder="可以配置的构建任务数量"
+                                           class="form-control noright-radius">
+                                </div>
+                                <div class="col-md-3" style="margin-left: -20px;">
+                                    <button class="floatleft form-control noleft-radius">个</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 top10">
+                            <label for="field-1" class="col-md-3 fw100 control-label">&nbsp;</label>
+                            <span class="col-md-3">
+                                    流水线数量
+                                </span>
+                            <div class="col-md-6">
+                                <div class="col-md-9">
+                                    <input errmsg="必须为数字" nullmsg="不能为空" name="PipelineNumber" min="1" max="500"
+                                           type="number"
+                                           value="{{.data.PipelineNumber}}" placeholder="可以配置的流水线数量"
+                                           class="form-control noright-radius">
+                                </div>
+                                <div class="col-md-3" style="margin-left: -20px;">
+                                    <button class="floatleft form-control noleft-radius">个</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 top10">
+                            <label for="field-1" class="col-md-3 fw100 control-label">&nbsp;</label>
+                            <span class="col-md-3">
+                                    镜像仓库数量
+                                </span>
+                            <div class="col-md-6">
+                                <div class="col-md-9">
+                                    <input errmsg="必须为数字" nullmsg="不能为空" name="RegistryGroupNumber" min="1" max="500"
+                                           type="number"
+                                           value="{{.data.RegistryGroupNumber}}" placeholder="配置镜像仓库数量"
+                                           class="form-control noright-radius">
+                                </div>
+                                <div class="col-md-3" style="margin-left: -20px;">
+                                    <button class="floatleft form-control noleft-radius">个</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 top10">
+                            <label for="field-1" class="col-md-3 fw100 control-label">&nbsp;</label>
+                            <span class="col-md-3">
+                                    Dockerfile数量
+                                </span>
+                            <div class="col-md-6">
+                                <div class="col-md-9">
+                                    <input errmsg="必须为数字" nullmsg="不能为空" name="DockerFileNumber" min="1" max="500"
+                                           type="number"
+                                           value="{{.data.DockerFileNumber}}" placeholder="配置dockerfile数量"
+                                           class="form-control noright-radius">
+                                </div>
+                                <div class="col-md-3" style="margin-left: -20px;">
+                                    <button class="floatleft form-control noleft-radius">个</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-footer m-b-5 m-t-15">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveQuota('{{.data.QuotaId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("#select-user-id").html("{{.users}}");
+    $("#select-group-id").html("{{.groups}}");
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 9
+    });
+</script>

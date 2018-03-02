@@ -1,0 +1,173 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 50%">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">修改添加仓库</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <!--<div class="row col-sm-12 top10">-->
+                            <!--<div class="form-group col-sm12" title="一个集群可以创建多个仓库">-->
+                                <!--<label class="col-md-2 fw100 form-control-label">仓库类型:&nbsp;&nbsp;</label>-->
+                                <!--<div class="col-sm-10">-->
+                                                            <!--<span id="no_status_border" onclick="setRegistryStatus(0)"-->
+                                                                  <!--class="btn-class borderselect btn btn-asura-default btn-bordered waves-effect w-xs waves-light service-type-select"><span-->
+                                                                    <!--class="status" id="no_status"-->
+                                                                    <!--style="float: left;display: block;"> &nbsp;&nbsp;<i-->
+                                                                    <!--class="fa fa-check "></i></span>私有仓库</span>-->
+                                    <!--<span id="is_status_border" onclick="setRegistryStatus(1)" style="min-width:120px !important;width: 120px;"-->
+                                          <!--class="btn-class btn btn-asura-default  btn-bordered waves-effect w-xs waves-light service-type-select">-->
+                                                                         <!--<span class="status" id="is_status"-->
+                                                                               <!--style="float: left;display: none;"> &nbsp;&nbsp;<i-->
+                                                                                 <!--class="fa fa-check "></i>-->
+                                                                         <!--</span>公有仓库</span>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <div class="col-md-12 top10"></div>
+                        <div class="row top10" title="在创建k8s仓库时的服务名称,不要带特殊字符和下划线等">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="col-md-2 fw100 control-label">仓库名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.Name}}"
+                                               onchange="checkChange('Name');" name="Name" {{.readonly}}
+                                               validfunc="checkAppName"
+                                               class="form-control" id="field-3" placeholder="必须为全英文, registry">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top15" title="集群选择后不可修改">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-2 fw100 control-label">所属集群<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <select class="selectpicker" name="ClusterName"
+                                                data-live-search="true" data-style="btn-default"
+                                                id="select-cluster-id">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="一个私有仓库会使用token方式认证,平台已经集成了 认证服务器, 端口默认为5001">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-15" class="col-md-2 fw100 control-label">认证服务器<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.AuthServer}}" {{.readonly}}
+                                               onchange="checkChange('AuthServer')" name="AuthServer" id="AuthServer"
+                                               class="form-control" id="field-15" placeholder="一般为服务器的">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="仓库管理员用户名,可以修改,默认admin">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-22" class="col-md-2 fw100 control-label">管理用户</label>
+                                    <div class="col-md-10">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.Admin}}" placeholder="仓库管理员用户名"
+                                               onchange="checkChange('Admin')" name="Admin"
+                                               class="form-control" id="field-22">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-23" class="col-md-2 fw100 control-label">管理密码</label>
+                                    <div class="col-md-10">
+                                        <input type="password" nullmsg="必须填写" value="{{.data.Password}}"
+                                               onchange="checkChange('Password')" name="Password"
+                                               class="form-control" id="field-23">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="外部域名,需要管理员配置dns分配和指定">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-12" class="col-md-2 fw100 control-label">服务域名<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" value="{{.data.ServerDomain}}" name="ServerDomain"
+                                               class="form-control" id="field-12" placeholder="需要dns单独解析,指定到集群随便一台机器即可">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-2 fw100 control-label">描述信息</label>
+                                    <div class="col-md-10">
+                                        <input type="text" value="{{.data.Description}}" name="Description"
+                                               class="form-control" id="field-2" placeholder="描述信息">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveRegistry('{{.data.ServerId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;创建
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var cluster = "{{.data.ClusterName}}";
+    if(!cluster){
+        $("input[name='ClusterName']").val(getClusterName());
+        $("input[name='ClusterAlias']").val(getClusterName(1));
+        $("input[name='AuthServer']").val("{{.AuthServer}}");
+        $("input[name='Admin']").val("admin");
+        $("input[name='Name']").val("registry");
+    }else{
+        $("input[name='ClusterAlias']").val(getClusterAlias(cluster));
+    }
+    $("#select-cluster-id").html("{{.cluster}}");
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 5
+    });
+
+    /**
+     * 2018-01-21 09:56
+     * @param t
+     */
+    function setRegistryStatus(t) {
+        if (t == 1) {
+            $("#show_storage_id").show();
+            $("#is_status").show();
+            $("#no_status").hide();
+            $("#is_status_border").css("cssText", "background-color:#eeeeee  !important;width: 120px;");
+            $("#no_status_border").css("cssText", "background-color:#ffffff  !important;width: 120px;");
+        } else {
+            $("#show_storage_id").hide();
+            $("#is_status").hide();
+            $("#no_status").show();
+            $("#no_status_border").css("cssText", "background-color:#eeeeee  !important;width: 120px;");
+            $("#is_status_border").css("cssText", "background-color:#ffffff  !important;width: 120px;");
+        }
+    }
+
+</script>

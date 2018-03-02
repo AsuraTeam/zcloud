@@ -1,0 +1,104 @@
+<!-- ION Slider -->
+<link href="/static/plugins/ion-rangeslider/ion.rangeSlider.css" rel="stylesheet" type="text/css"/>
+<link href="/static/plugins/ion-rangeslider/ion.rangeSlider.skinModern.css" rel="stylesheet" type="text/css"/>
+<link href="/static/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput.css" rel="stylesheet"/>
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 50%">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">金丝雀方式流量切入</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row ">
+                            <div class="col-sm-12">
+                                <div class="col-sm-3">场景介绍:</div>
+                                <div class="pre col-sm-9" style="line-height: 28px;">
+                                    1、不停止老版本，额外搞一套新版本不同版本应用共存。<br>
+                                    2、灰度发布中，常常按照用户设置路由权重,例如90%的用户维持使用老版本，10%的用户尝鲜新版本。<br>
+                                    切入比例、流量切入按服务器的百分比计算,比如有10台服务器提供服务<br>
+                                    选择 10% 那么就有1台提供服务,如果选择 50,那就有5台服务器提供服务<br>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="show-cluster-content">
+                            <div class="row top15" title="">
+                                <div class="col-md-12 top15">
+                                    <div class="form-group">
+                                        <label
+                                                class="col-md-3 fw100 control-label">应用名称</label>
+                                        <div class="col-md-9">
+                                            <input class="form-control" readonly value="{{.data.AppName}}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row top15" title="">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-md-3 fw100 control-label">服务名称<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-9">
+                                            <input class="form-control" readonly value="{{.data.ServiceName}}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row top15" title="">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="field-12" class="col-md-3 fw100 control-label">应用域名</label>
+                                        <div class="col-md-9">
+                                            <input type="text" readonly value="{{.data.Domain}}" name="Domain"
+                                                   class="form-control" id="field-12" placeholder="应用域名">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row top10">
+                                <div class="col-md-12 top15">
+                                    <div class="form-group">
+                                        <label for="range_01" class="col-md-3 fw100 control-label">切入百分百</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="range_01">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" value="{{.version}}" name="version">
+                        <div class="panel-footer top15">
+                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                    class="fa fa-times"></i>&nbsp;&nbsp;取消
+                            </button>
+                            <button type="button" onclick="startFlowExecSwal('{{.data.ServiceId}}')"
+                                    class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;切入
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/zcloud/registrySelect.js"></script>
+<script>
+
+    var percent = "{{.data.Percent}}";
+    if (percent == "0"){
+        percent = 10;
+    }else{
+        percent = parseInt(percent);
+    }
+    // 2018-02-16 11:08
+    // 流量切入选择器
+    $("#range_01").ionRangeSlider({
+        min: 0,
+        max: parseInt("100"),
+        from: parseInt(percent)
+    });
+</script>

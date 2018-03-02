@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<!-- ION Slider -->
+<link href="/static/plugins/ion-rangeslider/ion.rangeSlider.css" rel="stylesheet" type="text/css"/>
+<link href="/static/plugins/ion-rangeslider/ion.rangeSlider.skinModern.css" rel="stylesheet" type="text/css"/>
+<div class="content-page">
+    <div class="container">
+    <!-- Start content -->
+    <div class="content">
+            <div id="add_groups_html"></div>
+
+            <div class="row ">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">基础设施</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">存储管理</a>
+                            </li>
+                            <li>
+                                <a href="#">存储卷管理</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row ">
+                <div class="col-sm-12 top-10">
+                    <button type="button" onclick="addStorage()"
+                            class="btn btn-primary btn-sm waves-effect waves-light">
+                        创建存储卷
+                    </button>
+                    <button type="button" onclick="setPulibc('我的');" id="rbd"
+                            class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                            class="fa fa-user-o"></i><span>&nbsp;独享型存</span></button>
+                    <button type="button"  onclick="setPulibc('公开');" id="shared"
+                            class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                            class="fa  fa-mars-double"></i><span>&nbsp;共享型存</span></button>
+                    <button type="button"  onclick="setPulibc('公开');" id="host"
+                            class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                            class="fa  fa-server"></i><span>&nbsp;本地存储</span></button>
+                    <div class="col-sm-1 cluster-search pull-right">
+                        <button type="button" class="btn btn-default waves-effect waves-light"
+                                onclick="loadStorageData()"
+                                style="border-radius: 5px;">
+                            <i class="fa fa fa-refresh"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-3 pull-right">
+                        <input type="text" onchange="loadStorageData($(this).val())" class="form-control" id="search_user_id"
+                               placeholder="搜索名称">
+                        <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                    </div>
+                </div>
+                <br>
+                <div class="col-sm-12 app-table" >
+                    <br>
+                    <table id="storage-data-table" class="table table-hover" >
+                        <thead>
+                        <tr>
+                            <th>存储名称</th>
+                            <th>状态</th>
+                            <th>集群</th>
+                            <th>存储类型</th>
+                            <th>大小</th>
+                            <th>备注</th>
+                            <th><span class="left10">创建时间</span></th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end col -->
+{{template "template/bottom.html" .}}
+</body>
+</div>
+<script src="/static/zcloud/storage.js"></script>
+<script src="/static/zcloud/registrySelect.js"></script>
+<script>
+    loadStorageData();
+    function setPulibc(v) {
+        if(v=="公开"){
+            $("#private").css("cssText","background-color:#ffffff !important")
+            $("#public").css("cssText","background-color:#f0f0f0 !important")
+            loadStorageData("","公开");
+        }
+        if(v=="我的"){
+            $("#private").css("cssText","background-color:#f0f0f0 !important")
+            $("#public").css("cssText","background-color:#ffffff !important")
+            loadStorageData("","我的");
+        }
+    }
+</script>
+<!-- Range slider js -->
+<script src="/static/plugins/ion-rangeslider/ion.rangeSlider.min.js"></script>
+</html>

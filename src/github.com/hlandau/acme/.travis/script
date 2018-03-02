@@ -1,0 +1,75 @@
+#!bash
+
+ACME_DIR="$(pwd)"
+
+# Fetch boulder and dependencies.
+echo travis_fold:start:get-boulder
+
+NEEDED_LIBS=
+if [ -e "$HOME/tcache/gopath.tar" ]; then
+  cd "$GOPATH"
+  tar xvf "$HOME/tcache/gopath.tar" || exit 1
+  cd "$ACME_DIR"
+else
+  NEEDED_LIBS="github.com/jsha/listenbuddy github.com/tcnksm/ghr github.com/hlandau/gox bitbucket.org/liamstask/goose/cmd/goose"
+fi
+
+time travis_retry go get -v \
+  github.com/letsencrypt/boulder/... \
+  $NEEDED_LIBS
+echo travis_fold:end:get-boulder
+
+# Setup DB.
+cd $GOPATH/src/github.com/letsencrypt/boulder
+echo travis_fold:start:setup-boulder
+time ./test/create_db.sh || exit 2
+
+# Setup AMQP.
+#time go run cmd/rabbitmq-setup/main.go -server amqp://localhost || exit 4
+
+# Patch config, startup detection.
+patch -t -p1 < "$ACME_DIR/.travis/boulder.patch" || exit 3
+echo travis_fold:end:setup-boulder
+
+# Start boulder.
+export OBJDIR="$GOPATH/src/github.com/letsencrypt/boulder/bin"
+{ ./start.py &> boulder.log || cat boulder.log ; } &
+START_PID=$$
+
+# Wait for boulder to come up.
+echo Waiting for boulder to come up...
+while ((1)); do
+  kill -0 "$START_PID" || break
+  [ -e /tmp/boulder-has-started ] && break
+
+  sleep 1
+done
+echo Boulder up.
+echo ----------------------------------------------------------------
+
+# Run tests.
+cd "$ACME_DIR"
+
+echo travis_fold:start:go-tests
+time go test -v -tags=integration ./...
+RESULT=$?
+echo travis_fold:end:go-tests
+
+echo travis_fold:start:boulder-log
+echo Dumping boulder log
+cat $GOPATH/src/github.com/letsencrypt/boulder/boulder.log
+echo travis_fold:end:boulder-log
+
+echo Done with exit code $RESULT
+if [ "$RESULT" != "0" ]; then
+  exit $RESULT
+fi
+
+# Crosscompilation failures are rare now and crosscompiling takes a long time
+# so only do it for tags.
+if [ -n "$TRAVIS_TAG" ]; then
+  time source ./.travis/crosscompile
+fi
+
+# No point stopping boulder, travis will do it.
+# Don't exit here, we need after_success to run and this script is sourced.

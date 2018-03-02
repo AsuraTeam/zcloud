@@ -1,0 +1,92 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">修改添加资源</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top20">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-1" class="col-md-2 fw100 control-label">资源名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.Name}}"
+                                               onchange="checkChange('Name')" name="Name"
+                                               class="form-control" id="field-1" placeholder="必须为全英文">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top20">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="col-md-2 fw100 control-label">接口地址<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.ApiUrl}}"
+                                               onchange="checkChange('ApiUrl')" name="ApiUrl" id="ApiUrl"
+                                               class="form-control" id="field-3" placeholder="必须为全英文">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top20" title="接口类型">
+                            <div class="col-md-10">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label top10">接口类型<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-3 left10" >
+                                        <div class="radio radio-info left10">
+                                            <input id="selectApiType" {{.ApiType}} type="radio" onchange="setImageStatus();"
+                                                   name="ApiType">
+                                            <label for="selectApiType" class="fw100 control-label">私有
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 ">
+                                        <div class="radio radio-info left10">
+                                            <input id="selectImageTag2" {{.ImageTag2}} type="radio"  onchange="setImageStatus();"
+                                                   name="ApiType">
+                                            <label for="selectImageTag2" class="fw100 control-label">公开
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top20">
+                            <div class="col-md-12">
+                                <pre>公开接口不需要权限认证,所有人可以访问</pre>
+                            </div>
+                        </div>
+                        <div class="row top20">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-2 fw100 control-label">描述信息</label>
+                                    <div class="col-md-10">
+                                        <input type="text" value="{{.data.Description}}" name="Description"
+                                               class="form-control" id="field-2" placeholder="描述信息">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveResource('{{.data.ResourceId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp; 保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

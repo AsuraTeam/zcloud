@@ -1,0 +1,211 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 60%">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">添加修改服务发布</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <span onclick="showHelpMsg()" class="m-l-10"><a id="show-help-msg-button">显示帮助</a></span>
+                        <div class="row top10" id="show-help-msg" style="display: none">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-2 fw100 control-label"></label>
+                                    <div class="col-md-10">
+                                        <pre class="pre"><span
+                                                class="text-danger m-r-10">*</span>
+配置只针对生产环境做配置,并且与发布权限紧密结合<br>
+发布可分为3种模式
+1、蓝绿发布 不停老版本，部署新版本然后进行测试，确认OK，将流量切到新版本，
+            (稳定后将老版本删除,避免资源占用,只要老版本不删除,就可以随时回滚到老版本)
+2、灰度发布 以蓝绿发布为基础，但可以限制部署数量,并可以再负载均衡切入流量
+            是指在黑与白之间，能够平滑过渡的一种发布方式。
+            让一部分用户继续用A，
+            一部分用户开始用B(一般为内部人员或测试人员)，
+            如果用户对B没有什么反对意见，那么逐步扩大范围，把所有用户都迁移到B上面来。
+            灰度发布可以保证整体系统的稳定，
+            在初始灰度的时候就可以发现、调整问题，以保证其影响度。
+3、滚动更新 取出一个或者多个服务器停止服务，执行更新
+            并重新将其投入使用。周而复始，直到集群中所有的实例都更新成新版本。
+                                            <span class="Fail">(很不可靠的一种方式)</span>
+                                        </pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10 " title="">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label top10">发布类型<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-3 left10">
+                                        <div class="radio radio-info left10">
+                                            <input id="selectReleaseType1" value="1" type="radio"
+                                                   name="ReleaseType">
+                                            <label for="selectReleaseType1" class="fw100 control-label">蓝绿发布
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3" style="margin-left: -20px;">
+                                        <div class="radio radio-warning left10">
+                                            <input id="selectReleaseType2" type="radio" value="2"
+                                                   name="ReleaseType">
+                                            <label for="selectReleaseType2" class="fw100 control-label">灰度发布
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 ">
+                                        <div class="radio radio-warning left10">
+                                            <input id="selectReleaseType3" type="radio" value="3" checked
+                                                   name="ReleaseType">
+                                            <label for="selectReleaseType2" class="fw100 control-label">滚动更新
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">环境选择<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="Entname"
+                                                onchange="getEntClusterData($(this).val())"
+                                                data-live-search="true" data-style="btn-default"
+                                                id="select-entname-id">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top15" title="集群选择后不可修改">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">所属集群<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="ClusterName"
+                                                onchange="$('#show-cluster-content').show();getResouceData($(this).val(),'select-job-id','/api/ci/job/name','ItemName');getResouceData($(this).val(),'select-app-id','/api/app/name','AppName');"
+                                                data-live-search="true" data-style="btn-default"
+                                                id="select-cluster-id">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="show-cluster-content" >
+                            <div class="row top15" title="">
+                                <div class="col-md-12 top15">
+                                    <div class="form-group">
+                                        <label for="select-cluster-id"
+                                               class="col-md-3 fw100 control-label">应用名称<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-9">
+                                            <select class="selectpicker" name="AppName"
+                                                    onchange="getResouceData($('#select-cluster-id').val(),'select-service-id','/api/service/name','ServiceName',$(this).val());"
+                                                    data-live-search="true" data-style="btn-default"
+                                                    id="select-app-id">
+                                                <option value="">请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row top15" title="">
+                                <div class="col-md-12 top15">
+                                    <div class="form-group">
+                                        <label for="select-cluster-id"
+                                               class="col-md-3 fw100 control-label">服务名称<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-9">
+                                            <select class="selectpicker" name="ServiceName" data-live-search="true"
+                                                    data-style="btn-default"
+                                                    id="select-service-id">
+                                                <option value="">请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top15">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-12" class="col-md-3 fw100 control-label"><span
+                                            class="text-danger">*</span>应用域名</label>
+                                    <div class="col-md-9">
+                                        <input type="text" value="{{.data.Domain}}" name="Domain"
+                                               class="form-control" id="field-12" placeholder="应用域名">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top15">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-3 fw100 control-label">描述信息</label>
+                                    <div class="col-md-9">
+                                        <input type="text" value="{{.data.Description}}" name="Description"
+                                               class="form-control" id="field-2" placeholder="描述信息">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveCiService('{{.data.ServiceId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/zcloud/registrySelect.js"></script>
+<script>
+    var  serviceId = "{{.data.ServiceId}}";
+    $("#select-entname-id").html("{{.entname}}");
+    if(serviceId != "0"){
+        $("#select-service-id").html("{{.service}}");
+        $("#select-app-id").html("{{.apps}}");
+        $("#select-cluster-id").html("{{.cluster}}");
+        var check = "{{.data.ReleaseType}}";
+        for(var i=1;i<4;i++) {
+            if (check == i+"") {
+                $("#selectReleaseType"+i).prop("checked", "true")
+            }
+        }
+    }
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 7
+    });
+
+    /**
+     * 2018-02-13
+     * 切换帮助信息显示
+     */
+    function showHelpMsg() {
+        if($("#show-help-msg").is(":visible")) {
+            $("#show-help-msg-button").html("显示帮助");
+            $("#show-help-msg").hide();
+        }else{
+            $("#show-help-msg").show();
+            $("#show-help-msg-button").html("影藏帮助");
+        }
+    }
+</script>

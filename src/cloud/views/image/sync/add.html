@@ -1,0 +1,244 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 70%">
+        <div class="modal-content p-0 b-0 "><!-- end row -->
+            <div class="panel-content p-0 b-0 ">
+                <div class="panel panel-color panel-default">
+                    <div class="panel-heading">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <span class="modal-title">镜像仓库同步</span>
+                    </div>
+                    <form class="cluster-form">
+                        <div class="panel-body font-12 ">
+                            <pre class="pre">镜像源配置</pre>
+                            <div class="col-md-12 top10"></div>
+                            <div class="row top10" title="">
+                                <div class="col-md-6 top10">
+                                    <div class="form-group">
+                                        <label for="select-cluster-id"
+                                               class="col-md-3 fw100 control-label">环境选择<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-9">
+                                            <select class="selectpicker" name="Entname"
+                                                    onchange="getEntClusterData($(this).val())"
+                                                    data-live-search="true" data-style="btn-default"
+                                                    id="select-entname-id">
+                                                <option>请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 top10">
+                                    <div class="form-group">
+                                        <label for="select-cluster-id"
+                                               class="col-md-3 fw100 control-label">同步集群源<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-9">
+                                            <select class="selectpicker" name="ClusterName"
+                                                    onchange="setRegistryServer($(this).val())"
+                                                    data-live-search="true" data-style="btn-default"
+                                                    id="select-cluster-id">
+                                                <option>请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row top10" title="">
+                                <div class="col-md-6 top10">
+                                    <div class="form-group">
+                                        <label for="select-cluster-id"
+                                               class="col-md-3 fw100 control-label">仓库地址<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-9">
+                                            <select class="selectpicker" name="Registry"
+                                                    onchange="selectImageGroup($(this).val())"
+                                                    data-live-search="true" data-style="btn-default"
+                                                    id="select-registry-server">
+                                                <option>请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 top10">
+                                    <div class="form-group">
+                                        <label for="select-cluster-id"
+                                               class="col-md-3 fw100 control-label">仓库组<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-9">
+                                            <select class="selectpicker" name="RegistryGroup"
+                                                    onchange="getImageName($(this).val())" data-live-search="true"
+                                                    data-style="btn-default"
+                                                    id="select-registry-group">
+                                                <option>请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row top10" title="">
+                                <div class="col-md-6 top10">
+                                    <div class="form-group">
+                                        <label for="select-cluster-id"
+                                               class="col-md-3 fw100 control-label">镜像名称<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-9">
+                                            <select class="selectpicker" name="ImageName"
+                                                    onchange="getImageTags($(this).val())"
+                                                    data-live-search="true" data-style="btn-default"
+                                                    id="select-image-id">
+                                                <option>请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 top10">
+                                    <div class="form-group">
+                                        <label for="select-cluster-id"
+                                               class="col-md-3 fw100 control-label">镜像版本<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-9">
+                                            <select class="selectpicker" name="Version" data-live-search="true"
+                                                    data-style="btn-default"
+                                                    id="select-version-id">
+                                                <option>请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+                            <pre class="pre">同步镜像配置</pre>
+                            <div class="row top10" title="">
+                                <div class="col-md-6 top10">
+                                    <div class="form-group">
+                                        <label for="select-cluster-id"
+                                               class="col-md-4 fw100 control-label">目标环境选择<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-8">
+                                            <select class="selectpicker" name="TargetEntname"
+                                                    onchange="getEntClusterData($(this).val(),1)"
+                                                    data-live-search="true" data-style="btn-default"
+                                                    id="select-target-entname-id">
+                                                <option>请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 top10">
+                                    <div class="form-group">
+                                        <label for="select-cluster-id"
+                                               class="col-md-4 fw100 control-label">目标集群<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-8">
+                                            <select class="selectpicker" name="TargetCluster"
+                                                    onchange="setRegistryServer($(this).val(),1 )"
+                                                    data-live-search="true" data-style="btn-default"
+                                                    id="select-cluster-target-id">
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row top10" title="">
+                                <div class="col-md-6 top10">
+                                    <div class="form-group">
+                                        <label for="select-cluster-id"
+                                               class="col-md-4 fw100 control-label">目标仓库地址<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-8">
+                                            <select class="selectpicker" name="TargetRegistry"
+                                                    data-live-search="true" data-style="btn-default"
+                                                    id="select-registry-server-target">
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <pre class="pre">镜像同步到生产仓库需要审批完成后才会同步</pre>
+                        </div>
+                        <div class="row top10 left10" title="">
+                            <div class="col-md-6 top10">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">描述信息<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-8">
+                                        <input name="Description" class="form-control" value="{{.data.Description}}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <div class="panel-footer top10">
+                            <button type="button" onclick="saveSync('{{.data.SyncId}}')"
+                                    class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;添加同步
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/zcloud/registrySelect.js"></script>
+<script>
+    //    $("#select-cluster-id").html("{{.cluster}}");
+    $("#select-entname-id").html("{{.entname}}");
+    $("#select-target-entname-id").html("{{.entname}}");
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 10
+    });
+
+    var syncId = "{{.data.SyncId}}";
+    if(syncId){
+        $("#select-cluster-id").html("{{.clusterSrc}}");
+        $("#select-cluster-target-id").html("{{.clusterTarget}}");
+        $("#select-entname-id").html("{{.entnameSrc}}");
+        $("#select-target-entname-id").html("{{.entnameTarget}}");
+        $("#select-registry-group").html("{{.registryGroup}}");
+        $("#select-registry-server-target").html("{{.registryTarget}}");
+        $("#select-image-id").html("{{.imageData}}");
+        $("#select-registry-server").html("{{.registrySrc}}");
+        $("#select-version-id").html("{{.version}}");
+        $('.selectpicker').selectpicker("refresh");
+    }
+
+
+    /**
+     * 2018-02-06 16:03
+     * 保存镜像同步
+     */
+    function saveSync(syncId) {
+        if(!syncId){
+            syncId = 0
+        }
+        var data = get_form_data();
+        data["SyncId"] = parseInt(syncId);
+    
+        var url = "/api/image/sync";
+        var result = post(data, url);
+        result = JSON.stringify(result);
+        if (result.indexOf("保存成功") != -1){
+            $("#add_post_html").modal("toggle");
+            success(result);
+            loadSyncData();
+        }else{
+            faild(result);
+        }
+    }
+
+</script>
+</html>

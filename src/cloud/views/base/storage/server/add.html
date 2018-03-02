@@ -1,0 +1,131 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 50%">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">添加修改存储服务器</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="col-md-12 top20"></div>
+                        <div class="row top10" title="">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">环境选择<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="Entname"
+                                                onchange="getEntClusterData($(this).val())"
+                                                data-live-search="true" data-style="btn-default"
+                                                id="select-entname-id">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">所属集群<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="ClusterName" data-live-search="true"
+                                                onchange="setGroupsServer($(this).val());"
+                                                data-style="btn-default"
+                                                id="select-cluster-id">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top20" title="">
+                            <div class="col-md-10">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label top10">存储类型<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-2 left20">
+                                        <div class="radio radio-info ">
+                                            <input id="sselectStorageType1"  type="radio"
+                                                   value="Nfs"  {{.StorageType1}}
+                                                   name="StorageType">
+                                            <label for="sselectStorageType1" class="fw100 control-label">Nfs
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 ">
+                                        <div class="radio radio-info ">
+                                            <input id="sselectStorageType2" {{.StorageType2}} type="radio"
+                                                       value="Glusterfs"
+                                                   name="StorageType">
+
+                                            <label for="sselectStorageType2" class="fw100 control-label">Glusterfs
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 ">
+                                        <div class="radio radio-info ">
+                                            <input id="sselectStorageType3" {{.StorageType3}} type="radio"
+                                                   value="Ceph"
+                                                   name="StorageType">
+
+                                            <label for="sselectStorageType3" class="fw100 control-label">Ceph
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row top10" title="一块没有使用的磁盘分区比如 /dev/sdc, nfs只需要系统路径 /home/data/nfs">
+                                <div class="col-md-12 top10 left10">
+                                    <div class="form-group">
+                                        <label for="field-12" class="col-md-3 fw100 control-label">裸盘/磁盘路径</label>
+                                        <div class="col-md-9" style="margin-left: -10px;">
+                                            <input type="text" value="{{.data.HostPath}}" name="HostPath"
+                                                   class="form-control" id="field-12" placeholder="一块没有使用的磁盘分区比如 /dev/sdc, nfs只需要系统路径 /home/data/nfs  ">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row top10" title="">
+                                <div class="col-md-12 top10 left10">
+                                    <div class="form-group">
+                                        <label for="field-2" class="col-md-3 fw100 control-label">描述信息</label>
+                                        <div class="col-md-9" style="margin-left: -10px;">
+                                            <input type="text" value="{{.data.Description}}" name="Description"
+                                                   class="form-control" id="field-2" placeholder="描述信息">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                        </div>
+                        <div class="panel-footer top10">
+                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                    class="fa fa-times"></i>&nbsp;&nbsp;取消
+                            </button>
+                            <button type="button" onclick="saveStorageServer('{{.data.ServerId}}')"
+                                    class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                            </button>
+                        </div>
+                    </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+<script src="/static/zcloud/registrySelect.js"></script>
+<script>
+    $("#select-entname-id").html("{{.entname}}");
+    $("#select-cluster-id").html("{{.cluster}}");
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 10
+    });
+</script>

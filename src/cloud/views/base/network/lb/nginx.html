@@ -1,0 +1,29 @@
+
+<div id="show_nginxconf_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true" backdrop="false" data-backdrop="false"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 60%;" >
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">修改nginx配置文件 <span id="nginx_title" class="left10"></span></span>
+                </div>
+                <form class="cluster-form">
+                    <textarea id="show_nginxconf_content_html"   style="min-height: 400px;padding: 20px;width:100%;max-height: 500px;overflow-y: scroll;border:none;background-color: #000000;color:#ffffff;">
+                    </textarea>
+                    <div id="check-faild-success" style="padding: 20px 20px 20px 20px;margin: 10px 20px 20px 20px;border: 1px solid #b6edf5;"></div>
+                    <input type="hidden" id="nginx_service_id">
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="setCheckMsg();"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp; 保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

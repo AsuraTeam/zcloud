@@ -1,0 +1,90 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">创建配置</span>
+                </div>
+                <form class="cluster-form">
+                <div class="panel-body font-12 ">
+                    <div class="row top10" title="">
+                        <div class="col-md-12 top10">
+                            <div class="form-group">
+                                <label for="select-entname-id"
+                                       class="col-md-3 fw100 control-label">环境选择<span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <select class="selectpicker" name="Entname"
+                                            onchange="getEntClusterData($(this).val())"
+                                            data-live-search="true" data-style="btn-default"
+                                            id="select-entname-id">
+                                        <option>请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top15" title="集群选择后不可修改">
+                        <div class="col-md-12 top10">
+                            <div class="form-group">
+                                <label for="select-cluster-id"
+                                       class="col-md-3 fw100 control-label">所属集群<span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <select class="selectpicker" name="ClusterName"
+                                            data-live-search="true" data-style="btn-default"
+                                            id="select-cluster-id">
+                                        <option>请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-1" class="col-md-3 fw100 control-label">配置组名称<span class="text-danger">*</span></label>
+                                <div class="col-md-9" >
+                                    <input type="text" nullmsg="必须填写" {{.readonly}} value="{{.data.ConfigureName}}" validfunc="checkClusterName" onchange="checkChange('ConfigureName')" name="ConfigureName" id="ConfigureName" class="form-control" id="field-1" placeholder="配置组名称，一个组下面可以有多个配置文件">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-2" class="col-md-3 fw100 control-label">配置描述</label>
+                                <div class="col-md-9">
+                                    <input type="text" value="{{.data.Description}}" onchange="checkChange('Description')" name="Description" class="form-control" id="field-2" placeholder="配置描述信息">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                            class="fa fa-times"></i>&nbsp;&nbsp;取消
+                    </button>
+                    <button type="button" onclick="saveConfigure('{{.data.ConfigureId}}')"  class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i><span class="saveConfigure">&nbsp;&nbsp;创建
+                    </span> </button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/zcloud/registrySelect.js"></script>
+
+<script>
+//    setQuotaName("", "ResourceName")
+//    $("input[name='ClusterName']").val(getClusterName());
+$("#select-entname-id").html("{{.entname}}");
+$("#select-cluster-id").html("{{.cluster}}");
+$('.selectpicker').selectpicker({
+    //初始化
+    size: 7
+});
+
+</script>

@@ -1,0 +1,448 @@
+<head>
+    <meta charset="utf-8"/>
+    <title>Zcloud</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta content="Zcloud" name="description"/>
+    <meta content="zy" name="author"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="/static/images/favicon.ico">
+
+    <!--Morris Chart CSS -->
+    <link rel="stylesheet" href="/static/plugins/morris/morris.css">
+
+    <!-- App css -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/core.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/components.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/icons.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/pages.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/menu.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/responsive.css" rel="stylesheet" type="text/css"/>
+    <script src="/static/js/modernizr.min.js"></script>
+    <link href="/static/plugins/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet"/>
+    <!-- Sweet Alert -->
+    <link href="/static/plugins/sweet-alert2/sweetalert2.min.css" rel="stylesheet" type="text/css">
+    <link href="/static/plugins/datatables/jquery.dataTables.min.css" rel="stylesheet" type="text/css"/>
+    <style>
+        td {
+            font-size: 12px;
+        }
+    </style>
+
+</head>
+<body>
+
+<!-- Begin page -->
+<div id="wrapper">
+
+    <!-- Top Bar Start -->
+    <div class="topbar">
+
+        <div class="alert alert-icon alert-white alert-info alert-dismissible fade in notifi-success" role="alert"
+             style="position:absolute;display: none;z-index:2147483647 !important;" id="success-info-html-id">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+            <i class="mdi mdi-check-all"></i>
+            <span id="success-info-id"></span>
+        </div>
+
+        <div class="alert alert-icon alert-white alert-danger alert-dismissible fade in notifi-success" role="alert"
+             style="position:absolute;display: none;z-index:2147483647 !important;" id="faild-info-html-id">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+            <i class="mdi mdi-block-helper"></i>
+            <span id="faild-info-id"></span>
+        </div>
+
+        <!-- LOGO -->
+        <div class="topbar-left" style="color:#f2f2f2;background-color:#24a7e3">
+            <!--<a href="index.html" class="logo"><span>Code<span>Fox</span></span><i class="mdi mdi-layers"></i></a>-->
+            <!-- Image logo -->
+            <a href="index.html" class="lo1go">
+                <h6 class="text-center" style="color:#f2f2f2;margin-top:13px;">Zcloud</span><br><br>容器云平台</h6>
+            </a>
+        </div>
+
+
+        <!-- Button mobile view to collapse sidebar menu -->
+        <div class="navbar navbar-default" role="navigation">
+            <div class="container">
+
+                <!-- Navbar-left -->
+                <ul class="nav navbar-nav navbar-left nav-menu-left">
+                    <li>
+                        <button type="button" class="button-menu-mobile open-left waves-effect">
+                            <i class="dripicons-menu"></i>
+                        </button>
+                    </li>
+                    <li class="select-cluster-div">
+                        <i class="fa fa-server"></i>
+                        <span class="select-cluster-span"></span>
+                        <select class="select-cluster m-b-0"
+                                onchange="setSelectCluster($(this).val(), $(this).find('option:selected').text())"
+                                data-style="btn-pink" style="border-radius: 9px;" id="head-cluster-select">
+                        </select>
+                    </li>
+
+                </ul>
+
+                <!-- Right(Notification) -->
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden-xs">
+                        <form role="search" class="app-search">
+                            <input type="text" placeholder="Search..."
+                                   class="form-control">
+                            <a href=""><i class="fa fa-search"></i></a>
+                        </form>
+                    </li>
+                    <li>
+                        <a href="#" class="right-menu-item dropdown-toggle" data-toggle="dropdown">
+                            <i class="dripicons-bell"></i>
+                            <span class="badge badge-pink">4</span>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-right dropdown-lg user-list notify-list">
+                            <li class="list-group notification-list m-b-0">
+                                <div class="slimscroll">
+                                    <!-- list item-->
+                                    <a href="javascript:void(0);" class="list-group-item">
+                                        <div class="media">
+                                            <div class="media-left p-r-10">
+                                                <em class="fa fa-diamond bg-primary"></em>
+                                            </div>
+                                            <div class="media-body">
+                                                <h5 class="media-heading text-primary">A new order has been placed A new
+                                                    order has been placed</h5>
+                                                <p class="m-0">
+                                                    There are new settings available
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <!-- list item-->
+                                    <a href="javascript:void(0);" class="list-group-item">
+                                        <div class="media">
+                                            <div class="media-left p-r-10">
+                                                <em class="fa fa-cog bg-warning"></em>
+                                            </div>
+                                            <div class="media-body">
+                                                <h5 class="media-heading text-warning">New settings</h5>
+                                                <p class="m-0">
+                                                    There are new settings available
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <!-- list item-->
+                                    <a href="javascript:void(0);" class="list-group-item">
+                                        <div class="media">
+                                            <div class="media-left p-r-10">
+                                                <em class="fa fa-bell-o bg-custom"></em>
+                                            </div>
+                                            <div class="media-body">
+                                                <h5 class="media-heading text-custom">Updates</h5>
+                                                <p class="m-0">
+                                                    There are <span class="text-primary font-600">2</span> new updates
+                                                    available
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <!-- list item-->
+                                    <a href="javascript:void(0);" class="list-group-item">
+                                        <div class="media">
+                                            <div class="media-left p-r-10">
+                                                <em class="fa fa-user-plus bg-danger"></em>
+                                            </div>
+                                            <div class="media-body">
+                                                <h5 class="media-heading text-danger">New user registered</h5>
+                                                <p class="m-0">
+                                                    You have 10 unread messages
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <!-- list item-->
+                                    <a href="javascript:void(0);" class="list-group-item">
+                                        <div class="media">
+                                            <div class="media-left p-r-10">
+                                                <em class="fa fa-diamond bg-primary"></em>
+                                            </div>
+                                            <div class="media-body">
+                                                <h5 class="media-heading text-primary">A new order has been placed A new
+                                                    order has been placed</h5>
+                                                <p class="m-0">
+                                                    There are new settings available
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <!-- list item-->
+                                    <a href="javascript:void(0);" class="list-group-item">
+                                        <div class="media">
+                                            <div class="media-left p-r-10">
+                                                <em class="fa fa-cog bg-warning"></em>
+                                            </div>
+                                            <div class="media-body">
+                                                <h5 class="media-heading text-warning">New settings</h5>
+                                                <p class="m-0">
+                                                    There are new settings available
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </li>
+                            <!-- end notification list -->
+                        </ul>
+                    </li>
+
+                    <li class="dropdown user-box">
+                        <a href="" class="dropdown-toggle waves-effect user-link" data-toggle="dropdown"
+                           aria-expanded="true">
+                            <span class="username">{{.username}}</span><img src="/static/images/users/avatar-1.jpg"
+                                                                            alt="user-img" class="img-circle user-img">
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-right arrow-dropdown-menu arrow-menu-right user-list notify-list"
+                            style="min-width:100px;">
+                            <li><a href="javascript:void(0)"><span class="fa fa-user"></span><span
+                                    class="left10">账号中心</span></a></li>
+                            <li><a href="javascript:void(0)"><span class="fa fa-cog"></span><span
+                                    class="left10">权限管理</span></a>
+                            </li>
+                            <li id="login-out"><a href="javascript:void(0)"><span class="fa fa-sign-out"></span><span
+                                    class="left10">退出</span></a></li>
+                        </ul>
+                    </li>
+
+                </ul> <!-- end navbar-right -->
+
+            </div><!-- end container -->
+        </div><!-- end navbar -->
+    </div>
+    <!-- Top Bar End -->
+
+
+    <!-- ========== Left Sidebar Start ========== -->
+    <div class="left side-menu" style="font-size: 9px;">
+        <div class="slimscroll-menu" id="remove-scroll">
+
+            <!--- Sidemenu -->
+            <div id="sidebar-menu">
+                <!-- Left Menu Start -->
+                <ul class="metisMenu nav" id="side-menu">
+                    <li class="menu-title">全局大盘</li>
+                    <li>
+                        <a href="/index" target="_self" aria-expanded="true"><i
+                                class="fi-help"></i><span> 概览 </span></a>
+                    </li>
+                    <li class="">
+                        <a href="javascript: void(0);" aria-expanded="true"><span class="headimg"><i
+                                class="fa fa-cubes"></i>应用交付中心</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="nav-second-level-3 nav" aria-expanded="true" style="">
+
+                            <li class=""><a href="javascript: void(0);" aria-expanded="true"><i class="fa fa-cubes"></i>容器治理<span
+                                    class="menu-arrow"></span></a>
+                                <ul class="nav-third-level nav" aria-expanded="true" style="">
+                                    <li><a href="/application/app/list" target="_self">应用管理</a></li>
+                                    <li><a href="/application/service/list" target="_self">服务管理</a></li>
+                                    <li><a href="/application/container/list" target="_self">容器管理</a></li>
+                                    <li><a href="/application/template/list" target="_self">应用模板</a></li>
+                                    <!--<li><a href="/application/app/service/envfile" target="_self">环境配置文件</a></li>-->
+                                    <li><a href="/application/configure/list" target="_self">配置管理</a></li>
+                                </ul>
+                            </li>
+                            <li class=""><a href="javascript: void(0);" aria-expanded="true"><i
+                                    class="fa fa-building"></i>镜像中心<span class="menu-arrow"></span></a>
+                                <ul class="nav-third-level nav " aria-expanded="true" style="">
+                                    <li><a href="/image/registry/list" target="_self">镜像仓库</a></li>
+                                    <li><a href="/image/registry/group/list" target="_self">镜像仓库组</a></li>
+                                    <li><a href="/image/registry/base/list" target="_self">基础镜像</a></li>
+                                    <li><a href="/image/registry/perm/list" target="_self">权限管理</a></li>
+                                    <li><a href="/image/sync/list" target="_self">镜像同步</a></li>
+                                    <li><a href="/image/sync/history" target="_self">历史记录</a></li>
+                                </ul>
+                            </li>
+
+                            <li class=""><a href="javascript: void(0);" aria-expanded="true"><i class="fa fa-gavel"></i>持续集成<span
+                                    class="menu-arrow"></span></a>
+                                <ul class="nav-third-level nav " aria-expanded="true" style="">
+                                    <li><a href="/ci/code/list" target="_self">代码仓库</a></li>
+                                    <li><a href="/ci/dockerfile/list" target="_self">Dockerfile</a></li>
+                                    <li><a href="/ci/job/list" target="_self">构建项目</a></li>
+                                    <li><a href="/ci/job/history/list" target="_self">构建历史</a></li>
+                                </ul>
+                            </li>
+                            <li class="" id="service-release-li"><a href="javascript: void(0);" aria-expanded="true"><i class="fa  fa-usb"></i>服务部署<span
+                                    class="menu-arrow"></span></a>
+                                <ul class="nav-third-level nav " aria-expanded="true" style="">
+                                    <li><a href="/ci/service/perm/list" target="_self">权限配置</a></li>
+                                    <li><a href="/ci/service/list" target="_self">服务发布</a></li>
+                                    <li><a href="/ci/service/release/history" target="_self">发布历史</a></li>
+                                    <li><a href="/ci/service/release/logs" target="_self">操作日志 </a></li>
+                                </ul>
+                            </li>
+                            <li class=""><a href="javascript: void(0);" aria-expanded="true"><i class="fi-ellipsis"></i>流水线<span
+                                    class="menu-arrow"></span></a>
+                                <ul class="nav-third-level nav " aria-expanded="true" style="">
+                                    <li><a href="/pipeline/list" target="_self">流水线项目</a></li>
+                                    <li><a href="/pipeline/history/list" target="_self">运行历史</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a href="javascript: void(0);" aria-expanded="true"><span class="headimg"><i
+                                class="mdi mdi-eye"></i>监控中心</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="nav-second-level-3 nav" aria-expanded="true" style="">
+                            <li>
+                                <a href="#" target="_self" aria-expanded="true"><i
+                                        class="mdi mdi-settings"></i>
+                                    <span> 监控管理 </span></a>
+                            </li>
+                            <li class=""><a href="javascript: void(0);" aria-expanded="true"><i class="fa  fa-usb"></i>自动伸缩<span
+                                    class="menu-arrow"></span></a>
+                                <ul class="nav-third-level nav " aria-expanded="true" style="">
+                                    <li><a href="/monitor/scale/list" target="_self">伸缩配置</a></li>
+                                    <li><a href="/monitor/scale/logs" target="_self">伸缩日志 </a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a href="javascript: void(0);" aria-expanded="true"><span class="headimg"><i
+                                class=" mdi mdi-history"></i>应用日志</span> <span
+                                class="menu-arrow"></span></a>
+                        </a>
+                        <ul class="nav-second-level-3 nav" aria-expanded="true" style="">
+                            <li>
+                                <a href="#" target="_self" aria-expanded="true"><i
+                                        class="mdi mdi-settings"></i>
+                                    <span> 日志查看 </span></a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a href="javascript: void(0);" aria-expanded="true"><span class="headimg"><i
+                                class="fa fa-server"></i>基础设施</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="nav-second-level-3 nav" aria-expanded="true" style="">
+                            <li>
+                                <a href="/base/cluster/list" target="_self" aria-expanded="true"><i
+                                        class="fa fa-server"></i>
+                                    <span> 集群管理 </span></a>
+                            </li>
+                            <li>
+                                <a href="javascript: void(0);" aria-expanded="true"><i class="fa fa-database"></i>
+                                    <span> 存储管理 </span> <span class="menu-arrow"></span></a>
+                                <ul class="nav-third-level nav" aria-expanded="true">
+                                    <li><a href="/base/storage/list" target="_self">存储卷管理</a></li>
+                                    <li><a href="/base/storage/server/list" target="_self">存储服务器管理</a></li>
+                                    <li><a href="/storage/snapshot/list" target="_self">快照管理</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript: void(0);" aria-expanded="true"><i class="fa fa-sitemap"></i>
+                                    <span> 网络管理 </span> <span class="menu-arrow"></span></a>
+                                <ul class="nav-third-level nav" aria-expanded="true">
+                                    <li><a href="/base/network/lb/list">负载均衡</a></li>
+                                    <li><a href="/base/network/cert/list">证书管理</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript: void(0);" aria-expanded="true"><i class="fa fa-newspaper-o"></i>
+                                    <span> 资源配置 </span> <span class="menu-arrow"></span></a>
+                                <ul class="nav-third-level   nav" aria-expanded="true">
+                                    <li><a href="/base/quota/list" target="_self">资源空间</a></li>
+                                    <li><a href="/base/service/list" target="_self">服务用量</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a href="javascript: void(0);" aria-expanded="true"><span class="headimg"><i
+                                class="fa fa-user-secret"></i>审计日志</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="nav-second-level-3 nav" aria-expanded="true" style="">
+                            <li>
+                                <a href="javascript: void(0);" aria-expanded="true"><i class="fa fa-user-secret"></i>
+                                    <span> 操作日志 </span> <span class="menu-arrow"></span></a>
+                                <ul class="nav-third-level nav" aria-expanded="true">
+                                    <li>
+                                        <a href="/system/operlog/list" aria-expanded="true"><i
+                                                class="fa fa-history"></i>
+                                            <span> 审计日志 </span></a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a href="javascript: void(0);" aria-expanded="true"><span class="headimg"><i
+                                class="fa fa-shopping-basket"></i>应用商店</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="nav-second-level-3 nav" aria-expanded="true" style="">
+
+                            <li>
+                                <a href="#" aria-expanded="true"><i class="fa fa-shopping-basket"></i>
+                                    <span onclick="alert('还没开发了')"> 应用管理 </span></a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    <li class="" title="该导航内操作都由系统管理员进行操作">
+                        <a href="javascript: void(0);" aria-expanded="true"><span class="headimg"><i
+                                class="fa fa-users"></i>系统配置</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="nav-second-level-3 nav" aria-expanded="true" style="">
+                            <li>
+                                <a href="javascript: void(0);" aria-expanded="true"><i class="fa fa-users"></i>
+                                    <span> 用户中心 </span> <span class="menu-arrow"></span></a>
+                                <ul class="nav-third-level nav" aria-expanded="true">
+                                    <li><a href="/system/users/user/list">用户管理</a></li>
+                                    <li><a href="/system/users/groups/list">部门团队管理</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript: void(0);" aria-expanded="true"><i class="fa fa-cogs"></i>
+                                    <span> 权限管理 </span> <span class="menu-arrow"></span></a>
+                                <ul class="nav-third-level nav" aria-expanded="true">
+                                    <li><a href="/system/perm/resource/list">资源管理</a></li>
+                                    <li><a href="/system/perm/role/list">角色管理</a></li>
+                                    <li><a href="/system/perm/list">权限分配</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript: void(0);" aria-expanded="true"><i class="fa fa-fort-awesome"></i>
+                                    <span> 环境管理 </span> <span class="menu-arrow"></span></a>
+                                <ul class="nav-third-level nav" aria-expanded="true">
+                                    <li><a href="/system/ent/list">环境配置</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!-- Sidebar -->
+            <div class="clearfix"></div>
+
+        </div>
+        <!-- Sidebar -left -->
+
+    </div>
+    <!-- Left Sidebar End -->
+</div>
+<textarea id="cluster_data" style="display: none;"></textarea>

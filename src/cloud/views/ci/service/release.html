@@ -1,0 +1,229 @@
+<style>
+    .releasetype {
+        margin-top: 15px;
+    }
+</style>
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 60%">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">服务发布</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10 " title="">
+                            <div class="col-md-12" title="发布成功后,直接将访问指向新应用" style="margin-left: -10px;">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label top10">直接切换<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-2 " style="margin-left: -12%;">
+                                        <div class="checkbox checkbox-info left10">
+                                            <input id="selectReleaseType1" value="1" type="checkbox"
+                                                   name="AutoSwitch">
+                                            <label for="selectReleaseType1" class="fw100 control-label">
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" style="margin-left: -10%"><pre class="pre">发布成功后,直接将访问指向新应用,默认不切换</pre></div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10"></div>
+                            <div id="show-cluster-content">
+                                <div class="row top15" title="">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label
+                                                    class="col-md-3 fw100 control-label">应用名称</label>
+                                            <div class="col-md-9">
+                                                <input type="text" value="{{.data.AppName}}" readonly name="AppName"
+                                                       class="form-control" placeholder="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 ">
+                                        <div class="form-group">
+                                            <label
+                                                    class="col-md-3 fw100 control-label">服务名称</label>
+                                            <div class="col-md-9">
+                                                <input type="text" value="{{.data.ServiceName}}" readonly
+                                                       name="ServiceName"
+                                                       class="form-control" placeholder="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 top15">
+                                        <div class="form-group">
+                                            <label for="field-112" class="col-md-3 fw100 control-label">镜像名称</label>
+                                            <div class="col-md-9">
+                                                <input type="text" value="{{.data.ImageName}}" name="ImageName" readonly
+                                                       class="form-control" id="field-112" placeholder="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 top15">
+                                        <div class="form-group">
+                                            <label for="field-12" class="col-md-3 fw100 control-label">应用域名</label>
+                                            <div class="col-md-9">
+                                                <input type="text" value="{{.data.Domain}}" name="Domain" readonly
+                                                       class="form-control" id="field-12" placeholder="应用域名">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 top15">
+                                        <div class="form-group">
+                                            <label class="col-md-3 fw100 control-label">上线类型</label>
+                                            <div class="col-md-9">
+                                                <select class="form-control" name="ReleaseOnlineType"
+                                                        onchange="changeReleaseType($(this).val())">
+                                                    <option>-请选择--</option>
+                                                    <option value="BUG修复">BUG修复</option>
+                                                    <option value="需求">需求</option>
+                                                    <option value="项目">项目</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 top15">
+                                        <div class="form-group">
+                                            <label for="select-version-id"
+                                                   class="col-md-3 fw100 control-label">镜像版本<span
+                                                    class="text-danger">*</span></label>
+                                            <div class="col-md-9">
+                                                <select class="selectpicker" name="Version" data-live-search="true"
+                                                        data-style="btn-default"
+                                                        id="select-version-id">
+                                                    <option>请选择</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12"></div>
+                                    <div class="col-md-6 releasetype" style="display: none" id="releasebugdescription">
+                                        <div class="form-group">
+                                            <label class="col-md-3 fw100 control-label">Bug级别</label>
+                                            <div class="col-md-9">
+                                                <select class="form-control" name="ReleaseBugDescription">
+                                                    <option value="p1">p1</option>
+                                                    <option value="p2">p2</option>
+                                                    <option value="p3">p3</option>
+                                                    <option value="p4">p4</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 releasetype" style="display: none"
+                                         id="releasedemanddescription">
+                                        <div class="form-group">
+                                            <label for="field-134" class="col-md-3 fw100 control-label">需求名称</label>
+                                            <div class="col-md-9">
+                                                <input type="text" value="{{.data.ReleaseDemandDescription}}"
+                                                       name="ReleaseDemandDescription"
+                                                       class="form-control" id="field-134" placeholder="需求名称">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 releasetype" style="display: none" id="releaseitemdescription">
+                                        <div class="form-group">
+                                            <label for="field-133" class="col-md-3 fw100 control-label">项目名称</label>
+                                            <div class="col-md-9">
+                                                <input type="text" value="{{.data.ReleaseItemDescription}}"
+                                                       name="ReleaseItemDescription"
+                                                       class="form-control" id="field-133" placeholder="项目名称">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 releasetype" style="display: none" id="releasebugpmlink">
+                                        <div class="form-group">
+                                            <label for="field-32" class="col-md-3 fw100 control-label">禅道bug地址</label>
+                                            <div class="col-md-9">
+                                                <input type="text" value="{{.data.ReleaseBugPmLink}}"
+                                                       name="ReleaseBugPmLink"
+                                                       class="form-control" id="field-32" placeholder="禅道bug地址">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 releasetype" style="display: none" id="releasejobpmlink">
+                                        <div class="form-group">
+                                            <label for="field-132" class="col-md-3 fw100 control-label">禅道任务地址</label>
+                                            <div class="col-md-9">
+                                                <input type="text" value="{{.data.ReleaseJobPmLink}}"
+                                                       name="ReleaseJobPmLink"
+                                                       class="form-control" id="field-132" placeholder="禅道任务链接">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 top5"></div>
+                                <div class="row top15">
+                                    <div class="col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-md-3 fw100 control-label">测试人员</label>
+                                            <div class="col-md-9">
+                                                <select class="form-control" id="select-test-user"
+                                                        name="ReleaseTestUser">
+                                                    <option value="项目">项目</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row top15">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="field-2" class="col-md-3 fw100 control-label">发布描述</label>
+                                            <div class="col-md-9">
+                                                <input type="text" value="{{.data.Description}}" name="Description"
+                                                       class="form-control" id="field-2" placeholder="描述信息">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12"><br></div>
+                            <div class="panel-footer top15">
+                                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                        class="fa fa-times"></i>&nbsp;&nbsp;取消
+                                </button>
+                                <button type="button" onclick="saveReleaseService('{{.data.ServiceId}}')"
+                                        class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+
+    var auto_switch = "{{.data.AutoSwitch}}";
+    $("#select-version-id").html("{{.images}}");
+    if(auto_switch){
+        $("input[name='AutoSwitch']").prop("checked","true");
+    }
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 7
+    });
+    function changeReleaseType(val) {
+        $(".releasetype").hide();
+        if (val == "BUG修复") {
+            $("#releasebugdescription").show();
+            $("#releasebugpmlink").show();
+        }
+        if (val == "需求") {
+            $("#releasedemanddescription").show();
+            $("#releasejobpmlink").show();
+        }
+        if (val == "项目") {
+            $("#releaseitemdescription").show();
+            $("#releasejobpmlink").show();
+        }
+    }
+</script>

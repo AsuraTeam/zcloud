@@ -1,0 +1,79 @@
+<div class="row ">
+    <div class="col-sm-12 top-10" style="    margin-left: -18px;">
+        <div class="col-sm-10">
+            <button type="button" onclick="addApp()" id="service_add_app" style="display: none"
+                    class="btn btn-primary btn-sm waves-effect waves-light">
+                <i class="fa fa-plus"></i>&nbsp;添加服务
+            </button>
+            <a>
+                <button type="button" disabled onclick="startService();"
+                        class="btn btn-default btn-sm button-select radius3  waves-effect waves-light"><i
+                        class="fa fa-play"></i><span>&nbsp;启 动</span></button>
+            </a>
+            <button type="button" onclick="stopServiceSwal();" disabled
+                    class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                    class="fa fa-stop"></i><span>&nbsp;停 止</span></button>
+            <button type="button" disabled onclick="deleteServiceSwal();"
+                    class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                    class="fa fa-trash-o"></i><span>&nbsp;删 除</span></button>
+            <button type="button" disabled title="重启服务,会将所有容器都重启" onclick="restartServiceSwal()"
+                    class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                    class="fa fa-bolt"></i><span>&nbsp;重启</span></button>
+            <button type="button" title="可以将应用扩展到多个" disabled onclick="addScale();"
+                    class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                    class="fa fa-balance-scale"></i><span>&nbsp;扩展</span></button>
+            <button type="button" title="可以修改CPU,内存分配资源,升级时会重启容器" disabled onclick="addCpuMemory()"
+                    class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                    class="fa fa-hospital-o"></i><span>&nbsp;配置</span></button>
+            <button type="button" title="可以更新服务镜像,完成版本的更新,升级时会重启容器" disabled onclick="addServiceImage()"
+                    class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                    class="fa fa-image"></i><span>&nbsp;升级</span></button>
+            <button type="button" title="可以更新容器的环境变量,升级时会重启容器" disabled onclick="addChangeEnv()"
+                    class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                    class="fa fa-soundcloud"></i><span>&nbsp;变量</span></button>
+            <button type="button" title="更新容器端口" disabled onclick="addPort()"
+                    class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                    class="fa fa-circle-o"></i><span>&nbsp;端口</span></button>
+            <button type="button" title="可以更新容器的环境变量,升级时会重启容器" disabled onclick="changeHealth()"
+                    class="btn btn-default btn-sm button-select radius3 waves-effect waves-light"><i
+                    class="fa fa-medkit"></i><span>&nbsp;健康检查</span></button>
+        </div>
+        <div class="col-sm-1 cluster-search pull-right" style="margin-right: -15px;">
+            <button type="button" class="btn btn-default waves-effect waves-light"
+                    onclick="loadServiceData()"
+                    style="border-radius: 5px;">
+                <i class="fa fa fa-refresh"></i>
+            </button>
+        </div>
+        <div class="col-md-3 pull-right" style="margin-top: -33px;">
+            <input type="text" onkeyup="loadServiceData($(this).val())" class="form-control"
+                   placeholder="搜索名称">
+            <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+        </div>
+    </div>
+    <br>
+    <div class="col-sm-12 app-table">
+        <table id="service-data-table" class="table table-hover ">
+            <thead>
+            <tr>
+                <th>
+                    <div class="checkbox checkbox-primary " style="margin-left: 10px;    margin-bottom: -5px;">
+                        <input id="checkbox0" type="checkbox" class="all-select">
+                        <label for="checkbox0">
+                        </label>
+                    </div>
+                </th>
+                <th>服务名称</th>
+                <th>运行状态</th>
+                <th>镜像</th>
+                <th>资源空间</th>
+                <th>创建时间</th>
+                <th>服务地址</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>

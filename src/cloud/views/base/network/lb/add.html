@@ -1,0 +1,134 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">创建负载均衡</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10" title="">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="select-entname-id"
+                                           class="col-md-3 fw100 control-label">环境选择<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="Entname"
+                                                onchange="getEntClusterData($(this).val())"
+                                                data-live-search="true" data-style="btn-default"
+                                                id="select-entname-id">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top15" title="">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">集群名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="ClusterName" onchange="setDomain()"
+                                                data-live-search="true" data-style="btn-default"
+                                                id="select-cluster-id">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-1" class="col-md-3 fw100 control-label">负载均衡名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.LbName}}"
+                                               validFunc="checkAppName" errmsg="接受 A-Za-z0-9-_.() 并且最大长度不超过32,最小4个字符"
+                                               onchange="checkChange('LbName')" name="LbName" id="LbName"
+                                               class="form-control" id="field-1" placeholder="必须为全英文">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-12" class="col-md-3 fw100 control-label">类型<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9" id="field-12">
+                                        <select class="form-control" name="LbType" id="LbType">
+                                            <option value="HaProxy">HaProxy</option>
+                                            <option value="Nginx">Nginx</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-3 fw100 control-label"><span class="text-danger">*</span>域名后缀</label>
+                                    <div class="col-md-9">
+                                        <input type="text" nullmsg="必须填写域名后缀" value="{{.data.LbDomainSuffix}}"
+                                               name="LbDomainSuffix" class="form-control" id="field-13"
+                                               placeholder="域名后缀, .zcloud.com,dns需要解析到改域名">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--<div class="row top10">-->
+                            <!--<div class="col-md-12">-->
+                                <!--<div class="form-group">-->
+                                    <!--<label for="field-14" class="col-md-3 fw100 control-label">负载均衡IP地址<span-->
+                                            <!--class="text-danger">*</span></label>-->
+                                    <!--<div class="col-md-9" id="field-14">-->
+                                        <!--<textarea rows="5" name="LbIp" class="form-control"-->
+                                                  <!--placeholder="负载均衡IP,多个用逗号分隔,一般为集群IP地址">{{.data.LbIp}}</textarea>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-3 fw100 control-label">负载均衡描述</label>
+                                    <div class="col-md-9">
+                                        <input type="text" value="{{.data.Description}}" name="Description"
+                                               class="form-control" id="field-2" placeholder="负载均衡描述信息">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveLb('{{.data.LbId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;创建
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("#select-entname-id").html("{{.entname}}");
+    $("#select-cluster-id").html("{{.cluster}}");
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 10
+    });
+    function setDomain() {
+            $("input[name='LbDomainSuffix']").val("." + $("#select-cluster-id").val() + ".zcloud.com")
+    }
+</script>

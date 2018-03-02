@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <div class="container">
+    <!-- Start content -->
+    <div class="content">
+            <div id="add_lb_html"></div>
+            <div class="row ">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">基础设施</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">网络管理</a>
+                            </li>
+                            <li>
+                                <a href="#">负载均衡</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row ">
+                <div class="col-sm-12 top-10">
+                    <button type="button" onclick="addLb()"
+                            class="btn btn-primary btn-sm waves-effect waves-light">
+                        创建
+                    </button>
+                    <div class="col-sm-1 cluster-search pull-right">
+                        <button type="button" class="btn btn-default waves-effect waves-light"
+                                onclick="loadLbData()"
+                                style="border-radius: 5px;">
+                            <i class="fa fa fa-refresh"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-3 pull-right">
+                        <input type="text" onkeyup="loadLbData($(this).val())" class="form-control"
+                               placeholder="搜索名称">
+                        <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                    </div>
+                </div>
+                <br>
+                <div class="col-sm-12 app-table">
+                    <table id="lb-data-table" class="table table-hover table-striped ">
+                        <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>类型</th>
+                            <th>集群</th>
+                            <th>环境名称</th>
+                            <th>创建时间</th>
+                            <th>服务数量</th>
+                            <th>最近修改时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end col -->
+{{template "template/bottom.html" .}}
+</body>
+</div>
+<input type="hidden" id="delete_lb_id">
+<script src="/static/zcloud/lb.js"></script>
+<script src="/static/zcloud/registrySelect.js"></script>
+</html>

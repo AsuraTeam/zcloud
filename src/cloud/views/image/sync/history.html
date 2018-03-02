@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <div class="container">
+        {%include image/sync/log.html%}
+        <!-- Start content -->
+        <div class="content">
+            <div id="add_pipeline_html"></div>
+            <div class="row ">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">应用支付中心</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">镜像中心</a>
+                            </li>
+                            <li>
+                                <a href="#">镜像同步记录</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row ">
+                <div class="col-sm-12 top-10">
+
+                    <div class="col-sm-1 cluster-search pull-right">
+                        <button type="button" class="btn btn-default waves-effect waves-light"
+                                onclick="loadSyncLog()"
+                                style="border-radius: 5px;">
+                            <i class="fa fa fa-refresh"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-3 pull-right">
+                        <input type="text" onchange="loadSyncLog($(this).val())" class="form-control"
+                               id="search_user_id"
+                               placeholder="搜索项目,版本">
+                        <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                    </div>
+                </div>
+                <br>
+                <div class="col-sm-12 app-table">
+                    <br>
+                    <table id="history-data-table" class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>用户</th>
+                            <th>启动时间</th>
+                            <th>镜像名称</th>
+                            <th>版本号</th>
+                            <th>来源仓库</th>
+                            <th>目标仓库</th>
+                            <th>同步耗时(秒)</th>
+                            <th>同步状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end col -->
+{{template "template/bottom.html" .}}
+</body>
+</div>
+
+<script>
+    /**
+     * 加载数据
+     * @param key
+     */
+    function loadSyncLog(key) {
+        if (!key) {
+            key = $("#search_user_id").val();
+        } else {
+            if (key.length < 4) {
+                return
+            }
+        }
+        if (!key) {
+            key = "";
+        }
+
+        $("#history-data-table").dataTable({
+            "filter": false,//去掉搜索框
+            "ordering": false, // 是否允许排序
+            "paginationType": "full_numbers", // 页码类型
+            "destroy": true,
+            "bLengthChange": false,
+            "processing": true,
+            "bPaginate": true, //是否显示（应用）分页器
+            "serverSide": true,
+            "bInfo": true, //是否显示页脚信息，DataTables插件左下角显示记录数
+            "scrollX": true, // 是否允许左右滑动
+            "displayLength": 10, // 默认长度
+            "ajax": { // 请求地址
+                "url": "/api/image/sync/history?t=" + new Date().getTime() + "&search=" + key,
+                "type": 'get'
+            },
+            "columns": [ // 数据映射
+                {
+                    "data": "CreateUser", "sWidth": "6%", "mRender": function (data) {
+                    return data
+                }
+                },
+                {"data": "CreateTime", "sWidth": "8%"},
+                {
+                    "data": "ItemName", "sWidth": "7%", "mRender": function (data, type, full) {
+                    return data ;
+                }
+                },
+                {"data": "Version", "sWidth": "8%"},
+                {
+                    "data": "RegistryServer1", "sWidth": "8%", "mRender": function (data) {
+                    return "<div style='word-wrap:break-word'>" + data + "</div>";
+                }
+                },
+                {
+                    "data": "RegistryServer2", "sWidth": "9%", "mRender": function (data) {
+                    return "<div style='word-wrap:break-word'>" + data + "</div>";
+                }
+                },
+                {
+                    "data": "Runtime", "sWidth": "9%", "mRender": function (data) {
+                    return "<span class='left40'>" + data + "</span>"
+                }
+                },
+                {
+                    "data": "Status", "sWidth": "8%", "mRender": function (data) {
+                    if (data == "成功") {
+                        return "<span class='Running'>" + data + "</span>"
+                    }
+                    if (data == "同步中") {
+                        return "<span class='text-warning'>" + data + "</span>"
+                    }
+                    return "<span class='Fail'>失败</span>"
+                }
+                },
+                {
+                    "data": "LogId", "sWidth": "6%", "mRender": function (data) {
+                    var r = '<button type="button"  title="同步日志" onClick="jobLog(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper left10"><i class="fa fa-hospital-o"></i></button>&nbsp;';
+                    return r;
+                }
+                },
+            ],
+            "fnRowCallback": function (row, data) { // 每行创建完毕的回调
+                $(row).data('recordId', data.recordId);
+            }
+        });
+    }
+    loadSyncLog();
+
+    /**
+     * 2018-02-06 22:10
+     * 显示日志
+     * @param full
+     */
+    function jobLog(id) {
+        var url = "/api/image/sync/history";
+        var result = get({id:id}, url);
+        $("#history_log_id").html(result["data"][0]["Messages"].replace(/\n/g, "<br>"));
+        $("#add_post_html").modal("toggle");
+    }
+</script>
+</html>

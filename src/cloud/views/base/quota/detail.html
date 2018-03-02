@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+<link rel="stylesheet" href="/static/plugins/tooltipster/tooltipster.bundle.min.css">
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <!-- Start content -->
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div id="add_quota_html"></div>
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">基础设施</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">资源配置</a>
+                            </li>
+                            <li>
+                                <a href="/base/quota/list" target="_self">资源空间</a>
+                            </li>
+                            <li>
+                                <a href="#">详情</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row">
+                <div class="col-sm-12 top-10">
+                    <i class="fa fa-server font-18"><span class="left10"><strong>{{.data.QuotaName}}</strong></span></i>
+                    <div class="col-sm-3 pull-right" style="margin-right: -130px;">
+                        <button onclick="addQuota('{{.data.QuotaId}}')" class="btn btn-sm btn-default"><i
+                                class="fa  fa-refresh">&nbsp;&nbsp;</i>更新
+                        </button>
+                        <button onclick="deleteQuotaSwal('{{.data.QuotaId}}')" class="btn btn-sm btn-default"><i
+                                class="fa  fa-trash-o">&nbsp;&nbsp;</i>删除
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 top10">
+                    <div class="portlet">
+                        <div class="portlet-heading portlet-default">
+                            <h3 class="portlet-title text-dark ">
+                                基本信息
+                            </h3>
+                            <div class="portlet-widgets">
+                                <a data-toggle="collapse" data-parent="#accordion1" href="#bg-default"><i
+                                        class="mdi mdi-minus"></i></a>
+                                <a href="#" data-toggle="remove"><i class="mdi mdi-close"></i></a>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="quota-title top10"></div>
+                        </div>
+                        <div id="bg-default" class="panel-collapse collapse in text-default">
+                            <div class="portlet-body">
+                                <table class="table tablesaw  m-b-0 tablesaw-swipe">
+                                    <tbody>
+                                    <tr>
+                                        <th class="noborder th-text-title">配额名称</th>
+                                        <th class="noborder">{{.data.QuotaName}}</th>
+                                        <th class="noborder th-text-title">创建人</th>
+                                        <th class="noborder">{{.data.CreateUser}}</th>
+                                        <th class="noborder th-text-title">创建时间</th>
+                                        <th class="noborder">{{.data.CreateTime}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="noborder th-text-title">描述信息</th>
+                                        <th class="noborder">{{.data.Description}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="noborder th-text-title">配额用户</th>
+                                        <th class="noborder">{{.data.UserName}}</th>
+                                        <th class="noborder th-text-title">配额组</th>
+                                        <th class="noborder">{{.data.GroupName}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="noborder th-text-title">内存</th>
+                                        <th class="noborder">{{.data.QuotaMemory}}</th>
+                                        <th class="noborder th-text-title">Cpu</th>
+                                        <th class="noborder">{{.data.QuotaCpu}}</th>
+                                        <th class="noborder th-text-title">镜像仓库</th>
+                                        <th class="noborder">{{.data.RegistryGroupNumber}}</th>
+                                        <th class="noborder th-text-title">Dockerfile数量</th>
+                                        <th class="noborder">{{.data.DockerFileNumber}}(个)</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="noborder th-text-title">应用数量</th>
+                                        <th class="noborder">{{.data.AppNumber}}</th>
+                                        <th class="noborder th-text-title">服务数量</th>
+                                        <th class="noborder">{{.data.ServiceNumber}}</th>
+                                        <th class="noborder th-text-title">容器数量</th>
+                                        <th class="noborder">{{.data.PodNumber}}</th>
+                                    </tr>
+                                    <tr>
+
+                                        <th class="noborder th-text-title">构建任务数量</th>
+                                        <th class="noborder">{{.data.JobNumber}}</th>
+                                        <th class="noborder th-text-title">负载均衡数量</th>
+                                        <th class="noborder">{{.data.LbNumber}}(个)</th>
+                                        <th class="noborder th-text-title">流水线数量</th>
+                                        <th class="noborder">{{.data.PipelineNumber}}(个)</th>
+
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="rb-legend-list left10"
+                     layout-align="start center">
+                    <span class="label label-danger min-label">&nbsp;</span>超出
+                    <span class="label label-success min-label">&nbsp;</span>正常
+                </div>
+                <div class="col-sm-4 text-center top10">
+                    <div class="card-box quota-detai-height230">
+                        <div class="quota-title">服务CPU使用量<p></div>
+                        <br class="top10">
+                        <div id="g7" class="gauge-chart col-sm-7 cluster-cpu"></div>
+                        <div class="col-sm-5 left10">
+                            <strong>{{.data.CpuFree}}</strong><br>
+                            <span class="cluster-text-default">剩余CPU</span><br>
+                            <br>
+                            <strong>{{.data.QuotaCpu}}&nbsp;/&nbsp;{{.data.CpuUsed}}</strong><br>
+                            <span class="cluster-text-default">CPU总数/已使用(核)</span>
+                        </div>
+                    </div>
+                </div><!-- end col-->
+                <div class="col-sm-4 text-center top10">
+                <div class="card-box quota-detai-height230">
+                    <div class="quota-title">服务内存使用量<p></div>
+                    <br>
+                    <div id="g8" class="gauge-chart col-sm-7 cluster-cpu"></div>
+                    <div class="col-sm-5 left10">
+                        <strong>{{.data.MemoryFree}}</strong><br>
+                        <span class="cluster-text-default">剩余内存</span><br>
+                        <br>
+                        <strong>{{.data.QuotaMemory}}&nbsp;/&nbsp;{{.data.MemoryUsed}}</strong><br>
+                        <span class="cluster-text-default">内存总量/已使用(GB)</span>
+                    </div>
+                </div>
+            </div><!-- end col-->
+                <div class="col-sm-4 text-center top10">
+                    <div class="card-box quota-detai-height230">
+                        <div class="quota-title">镜像仓库组使用量<p></div>
+                        <br>
+                        <div id="g15" class="gauge-chart col-sm-7 cluster-cpu"></div>
+                        <div class="col-sm-5 left10">
+                            <strong>{{.data.RegistryGroupFree}}</strong><br>
+                            <span class="cluster-text-default">剩余仓库组</span><br>
+                            <br>
+                            <strong>{{.data.RegistryGroupNumber}}&nbsp;/&nbsp;{{.data.RegistryGroupUsed}}</strong><br>
+                            <span class="cluster-text-default">仓库组总量/已使用(个)</span>
+                        </div>
+                    </div>
+                </div><!-- end col-->
+                <div class="col-sm-12"></div>
+                <div class="col-sm-4 text-center top10">
+                    <div class="card-box quota-detai-height230">
+                        <div class="quota-title">应用配额使用量<p></div>
+                        <br class="top10">
+                        <div id="g9" class="gauge-chart col-sm-7 cluster-cpu"></div>
+                        <div class="col-sm-5 left10">
+                            <strong>{{.data.AppFree}}</strong><br>
+                            <span class="cluster-text-default">剩余应用</span><br>
+                            <br>
+                            <strong>{{.data.AppNumber}}&nbsp;/&nbsp;{{.data.AppUsed}}</strong><br>
+                            <span class="cluster-text-default">应用总数/已使用(个)</span>
+                        </div>
+                    </div>
+                </div><!-- end col-->
+
+                <div class="col-sm-4 text-center top10">
+                    <div class="card-box quota-detai-height230">
+                        <div class="quota-title">服务配额使用量<p></div>
+                        <br>
+                        <div id="g10" class="gauge-chart col-sm-7 cluster-cpu"></div>
+                        <div class="col-sm-5 left10">
+                            <strong>{{.data.ServiceFree}}</strong><br>
+                            <span class="cluster-text-default">剩余服务</span><br>
+                            <br>
+                            <strong>{{.data.ServiceNumber}}&nbsp;/&nbsp;{{.data.ServiceUsed}}</strong><br>
+                            <span class="cluster-text-default">服务总数/已使用(个)</span>
+                        </div>
+                    </div>
+                </div><!-- end col-->
+                <div class="col-sm-4 text-center top10">
+                    <div class="card-box quota-detai-height230">
+                        <div class="quota-title">容器配额使用量<p></div>
+                        <br class="top10">
+                        <div id="g11" class="gauge-chart col-sm-7 cluster-cpu"></div>
+                        <div class="col-sm-5 left10">
+                            <strong>{{.data.PodFree}}</strong><br>
+                            <span class="cluster-text-default">剩余容器</span><br>
+                            <br>
+                            <strong>{{.data.PodNumber}}&nbsp;/&nbsp;{{.data.PodUsed}}</strong><br>
+                            <span class="cluster-text-default">容器总数/已使用(个)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12"></div>
+                <div class="col-sm-4 text-center top10">
+                    <div class="card-box quota-detai-height230">
+                        <div class="quota-title">负载均衡配额使用量<p></div>
+                        <br>
+                        <div id="g12" class="gauge-chart col-sm-7 cluster-cpu"></div>
+                        <div class="col-sm-5 left10">
+                            <strong>{{.data.LbFree}}</strong><br>
+                            <span class="cluster-text-default">剩余负载均衡</span><br>
+                            <br>
+                            <strong>{{.data.LbNumber}}&nbsp;/&nbsp;{{.data.LbUsed}}</strong><br>
+                            <span class="cluster-text-default">负载均衡总数/已使用(个)</span>
+                        </div>
+                    </div>
+                </div><!-- end col-->
+                <div class="col-sm-4 text-center top10">
+                    <div class="card-box quota-detai-height230">
+                        <div class="quota-title">构建任务使用量<p></div>
+                        <br class="top10">
+                        <div id="g13" class="gauge-chart col-sm-7 cluster-cpu"></div>
+                        <div class="col-sm-5 left10">
+                            <strong>{{.data.JobFree}}</strong><br>
+                            <span class="cluster-text-default">剩余构建量</span><br>
+                            <br>
+                            <strong>{{.data.JobNumber}}&nbsp;/&nbsp;{{.data.JobUsed}}</strong><br>
+                            <span class="cluster-text-default">构建任务总数/已使用(个)</span>
+                        </div>
+                    </div>
+                </div><!-- end col-->
+                <div class="col-sm-4 text-center top10">
+                    <div class="card-box quota-detai-height230">
+                        <div class="quota-title">流水线使用量<p></div>
+                        <br>
+                        <div id="g14" class="gauge-chart col-sm-7 cluster-cpu"></div>
+                        <div class="col-sm-5 left10">
+                            <strong>{{.data.PipelineFree}}</strong><br>
+                            <span class="cluster-text-default">剩余流水线</span><br>
+                            <br>
+                            <strong>{{.data.PipelineNumber}}&nbsp;/&nbsp;{{.data.PipelineUsed}}</strong><br>
+                            <span class="cluster-text-default">流水线总数/已使用(个)</span>
+                        </div>
+                    </div>
+                </div><!-- end col-->
+                <div class="col-sm-4 text-center top10">
+                    <div class="card-box quota-detai-height230">
+                        <div class="quota-title">Dockerfile使用量<p></div>
+                        <br>
+                        <div id="g16" class="gauge-chart col-sm-7 cluster-cpu"></div>
+                        <div class="col-sm-5 left10">
+                            <strong>{{.data.DockerFileFree}}</strong><br>
+                            <span class="cluster-text-default">剩余Dockerfile</span><br>
+                            <br>
+                            <strong>{{.data.DockerFileNumber}}&nbsp;/&nbsp;{{.data.DockerFileUsed}}</strong><br>
+                            <span class="cluster-text-default">Dockerfile总数/已使用(个)</span>
+                        </div>
+                    </div>
+                </div><!-- end col-->
+
+            </div> <!-- content -->
+            {{template "template/bottom.html" .}}
+            </body>
+        </div>
+        <input id="CpuUsePercentId" value="60" type="hidden">
+        <input id="MemUsePercentId" value="10" type="hidden">
+        <script src="/static/plugins/raphael/raphael-min.js"></script>
+        <script src="/static/plugins/justgage/justgage.js"></script>
+        <script src="/static/zcloud/quota.js"></script>
+        <script>
+
+            function justgage(id, value) {
+                new JustGage({
+                    id: id,
+                    value: value,
+                    min: 0,
+                    max: 100,
+                    label: "%",
+                    donut: true,
+                    gaugeWidthScale: 0.4,
+                    counter: true,
+                    decimals: 2,
+                    hideInnerShadow: true
+                });
+            }
+            // cpu
+            justgage("g7", parseInt("{{.data.CpuPercent}}"));
+            // 内存
+            justgage("g8", parseInt("{{.data.MemoryPercent}}"));
+            // 应用
+            justgage("g9", parseInt("{{.data.AppPercent}}"));
+            // 服务
+            justgage("g10", parseInt("{{.data.ServicePercent}}"));
+            // 容器
+            justgage("g11", parseInt("{{.data.PodPercent}}"));
+            // 负载均衡
+            justgage("g12", parseInt("{{.data.LbPercent}}"));
+            // 构建任务
+            justgage("g13", parseInt("{{.data.JobPercent}}"));
+            // 流水线
+            justgage("g14", parseInt("{{.data.PipelinePercent}}"));
+            // 镜像仓库
+            justgage("g15", parseInt("{{.data.RegistryGroupPercent}}"));
+            // dockerFile
+            justgage("g16", parseInt("{{.data.DockerFilePercent}}"));
+
+        </script>
+    </div>
+</html>

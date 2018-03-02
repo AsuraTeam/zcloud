@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <!-- Start content -->
+    <div class="content">
+        <div class="container">
+            <div id="add_cluster_html"></div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">集群管理</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">基础设施</a>
+                            </li>
+                            <li>
+                                <a href="#">集群管理</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row">
+                <div class="col-sm-12 top-10">
+                    <button type="button" onclick="addCluster()" class="btn btn-primary  w-md waves-effect waves-light">创建集群</button>
+                    <div class="col-sm-1 cluster-search pull-right">
+                        <button type="button" class="btn btn-default waves-effect waves-light" style="border-radius: 5px;">
+                            <i class="fa fa fa-refresh"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-3 pull-right">
+                        <input type="text" class="form-control" placeholder="按名称搜索">
+                        <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                    </div>
+                </div>
+                <div class="col-lg-12 top10">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="card-box widget-box-four">
+                                <div id="dashboard-1" class="widget-box-four-chart"></div>
+                                <div class="wigdet-four-content pull-left">
+                                    <h4 class="m-t-0 font-16 m-b-5 text-overflow" title="Total Revenue">测试环境集群</h4>
+                                    <p class="font-secondary text-muted">节点数:7</p>
+                                    <p class="font-secondary text-muted">服务数:0</p>
+                                    <p class="font-secondary text-muted">cpu:45(核心)</p>
+                                    <p class="font-secondary text-muted">内存:30G</p>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div><!-- end col -->
+
+                        <div class="col-sm-4">
+                            <div class="card-box widget-box-four">
+                                <div id="dashboard-2" class="widget-box-four-chart"></div>
+                                <div class="wigdet-four-content pull-left">
+                                    <h4 class="m-t-0 font-16 m-b-5 text-overflow" title="Total Unique Visitors">
+                                        生产环境集群</h4>
+                                    <p class="font-secondary text-muted">13节点</p>
+                                    <h3 class="m-b-0 m-t-20"><span></span> <span>30服务</span></h3>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div><!-- end col -->
+                    </div>
+                    <!-- end row -->
+                </div><!-- end col -->
+                <!-- end row -->
+            </div>
+
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+
+
+{{template "template/bottom.html" .}}
+</body>
+</div>
+<script>
+    function addCluster() {
+        var url = "/base/cluster/add"
+        var result = post({}, url)
+        $("#add_cluster_html").html(result)
+        $("#add_post_html").modal("toggle")
+    }
+</script>
+</html>

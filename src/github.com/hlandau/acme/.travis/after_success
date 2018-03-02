@@ -1,0 +1,117 @@
+#!bash
+
+# Only upload version tags.
+if ! [[ "$TRAVIS_TAG" =~ ^v[0-9] ]]; then
+  echo Skipping release upload because this build is not for a release tag.
+  return 0
+fi
+
+[ -n "$GITHUB_TOKEN" ] || { echo "Don't appear to have GitHub token, cannot continue."; return 0; }
+[ -e "/tmp/crosscompiled" ] || { echo "Not crosscompiled?"; return 1; }
+
+# Make archives.
+echo Archiving releases...
+ACME_DIR="$(pwd)"
+cd "$GOPATH/releasing/idist"
+for x in *; do
+  echo "$x"
+  cp "$GOPATH/src/github.com/$TRAVIS_REPO_SLUG/.travis/dist-readme.md" "$x"/README.md || \
+  cp "$GOPATH/src/github.com/$TRAVIS_REPO_SLUG/README.md" "$x"/ || true
+  tar -zcf "../dist/$(basename "$x").tar.gz" "$x"
+done
+
+# Must be in the right directory when calling ghr.
+cd "$ACME_DIR"
+
+echo Uploading releases...
+PPA_NAME=rhea COPR_PROJECT_ID=5993
+grep -F '[draft]' /tmp/commit-message && \
+  GHR_OPTIONS="--draft" PPA_NAME=testppa COPR_PROJECT_ID=6071
+TRAVIS_REPO_OWNER="$(echo "$TRAVIS_REPO_SLUG" | sed 's#/.*##g')"
+travis_retry ghr $GHR_OPTIONS -u "$TRAVIS_REPO_OWNER" "$TRAVIS_TAG" "$GOPATH/releasing/dist/"
+
+# Prepare Ubuntu PPA signing key.
+echo Preparing Ubuntu PPA signing key...
+wget -qO ppa-private.asc.enc "https://www.devever.net/~hl/f/ppa-private-${PPA_ENCRYPTION_ID}.asc.enc"
+export PPA_ENCRYPTION_ID=
+openssl enc -d -aes-128-cbc -md sha256 -salt -pass env:PPA_ENCRYPTION_PASS -in "ppa-private.asc.enc" -out "ppa-private.asc"
+export PPA_ENCRYPTION_PASS=
+shred -u ppa-private.asc.enc
+export GNUPGHOME="$ACME_DIR/.travis/.gnupg"
+mkdir -p "$GNUPGHOME"
+gpg --batch --import < ppa-private.asc
+shred -u ppa-private.asc
+cat <<END | gpg --batch --import-ownertrust
+046B4FF0F9FD04C1F4662DE951107171B1D4C4C5:6:
+END
+
+# Upload Ubuntu PPA package.
+cat <<'END' > "$HOME/.devscripts"
+DEBSIGN_KEYID="Hugo Landau (2017 PPA Signing) <hlandau@devever.net>"
+END
+
+UBUNTU_RELEASES="precise trusty xenial yakkety zesty vivid"
+for distro_name in $UBUNTU_RELEASES; do
+  echo Creating Debian source environment for ${distro_name}...
+  $GOPATH/src/github.com/$TRAVIS_REPO_SLUG/.travis/make_debian_env "$GOPATH/releasing/dbuilds/$distro_name" "$GOPATH/releasing/dist/" "$TRAVIS_TAG" "$distro_name"
+
+  echo Creating Debian source archive for ${distro_name}...
+  cd $GOPATH/releasing/dbuilds/$distro_name/acmetool_*[0-9]
+  debuild -S
+done
+
+echo Deleting keys...
+find "$GNUPGHOME" -type f -exec shred -u '{}' ';'
+rm -rf "$GNUPGHOME"
+
+echo Uploading Debian source archives...
+cd "$GOPATH/releasing/dbuilds"
+(
+  echo 'open ppa.launchpad.net'
+  echo 'set passive on'
+  echo "cd ~hlandau/$PPA_NAME"
+  for f in ./*/acmetool_*.dsc ./*/acmetool*.diff.gz ./*/acmetool_*_source.changes ./xenial/acmetool_*.orig.tar.gz; do
+    echo "put $f"
+  done
+  echo 'quit'
+) | ncftp
+
+# RPM.
+cd "$ACME_DIR/.travis"
+mkdir -p "$HOME/rpmbuild/SPECS" "$HOME/rpmbuild/SOURCES"
+RPMS="acmetool acmetool-nocgo"
+for x in $RPMS; do
+  $GOPATH/src/github.com/$TRAVIS_REPO_SLUG/.travis/make_rpm_spec "$TRAVIS_TAG" "$x" > "$HOME/rpmbuild/SPECS/${x}.spec"
+done
+ln $GOPATH/releasing/dist/acmetool_*.orig.tar.gz $HOME/rpmbuild/SOURCES/
+echo travis_fold:start:build-srpm
+for x in $RPMS; do
+  rpmbuild -bs "$HOME/rpmbuild/SPECS/${x}.spec"
+done
+echo travis_fold:end:build-srpm
+
+for srpm in $HOME/rpmbuild/SRPMS/acmetool-*.rpm; do
+  if [[ $srpm != *nocgo* ]]; then
+    cat <<END > /tmp/rpm-metadata
+{
+  "project_id": $COPR_PROJECT_ID,
+  "chroots": ["fedora-23-i386", "fedora-23-x86_64", "epel-7-x86_64", "fedora-24-i386", "fedora-24-x86_64", "fedora-25-i386", "fedora-25-x86_64", "fedora-26-i386", "fedora-26-x86_64"]
+}
+END
+  else
+    cat <<END > /tmp/rpm-metadata
+{
+  "project_id": $COPR_PROJECT_ID,
+  "chroots": ["epel-5-i386", "epel-5-x86_64", "epel-6-i386", "epel-6-x86_64", "fedora-22-i386", "fedora-22-x86_64"]
+}
+END
+  fi
+
+  echo Uploading $srpm
+  curl -u "$COPR_LOGIN_TOKEN" \
+    -F 'metadata=</tmp/rpm-metadata;type=application/json;filename=' \
+    -F "srpm=@$srpm;type=application/x-rpm" \
+    'https://copr.fedorainfracloud.org/api_2/builds'
+done
+
+echo Done

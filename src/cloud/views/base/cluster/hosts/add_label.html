@@ -1,0 +1,79 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">添加修改标签</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="field-9" class="col-md-3 fw100 control-label">集群名称</label>
+                                    <div class="col-md-9" id="field-9">
+                                        <input class="form-control" readonly
+                                               value="{{.data.ClusterName}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="field-11" class="col-md-3 fw100 control-label">主机IP</label>
+                                    <div class="col-md-9" id="field-11">
+                                        <input class="form-control" type="hidden" id="update_service_env_id" readonly
+                                               name="HostId"
+                                               value="{{.data.HostId}}"/>
+                                        <input class="form-control" readonly name="HostIp"
+                                               value="{{.data.HostIp}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10" title="每行一个">
+                                <div class="form-group">
+                                    <label for="field-13" class="col-md-3 fw100 control-label">标签值</label>
+                                    <div class="col-md-9" id="field-13">
+                                        <textarea class="form-control"rows="8" name="HostLabel"  placeholder="标签名称=标签值
+type=ssd
+type=web
+type=memory
+type=cpu
+"
+                                                  value="{{.data.HostLabel}}">{{.data.HostLabel}}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveLabel()"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp; 保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // 保存主机标签
+    // 2018-01-18 21:20
+    function saveLabel() {
+        var data = get_form_data();
+        var url = "/api/cluster/label";
+        var result = post(data, url)
+        result = JSON.stringify(result)
+        if(result.indexOf("成功") != -1 ){
+            success(result)
+            loadData();
+        }else{
+            faild(result)
+        }
+    }
+</script>

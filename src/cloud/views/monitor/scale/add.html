@@ -1,0 +1,298 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 70%">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">自动伸缩配置</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <span onclick="showHelpMsg()" class="m-l-10"><a id="show-help-msg-button">显示帮助</a></span>
+                        <div class="row top10" id="show-help-msg" style="display: none">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-2 fw100 control-label"></label>
+                                    <div class="col-md-10">
+                                        <pre class="pre">例如有5个实例,cpu利用率之和为400%,那么平均利用率就为80%,如果阈值设置为80%<br>那么此时不会扩容<br>
+如果cpu利用率继续上升,利用率和达到401%,那么就会触发自动扩容<br>
+扩容实例可以配置每次扩容数量,和扩容间隔<br>
+自动扩容会参照创建服务时指定的最大实例和最小实例进行扩容和缩容<br>
+自动扩容也会参照配额,如果扩容后超过配额,那么就不会继续扩容<br>
+自动缩容依照配置的最小实例进行缩容,请保证最小实例在2个或以上<br>
+自定义查询,可以支持任何 prometheus 指标的扩缩容配置
+                                        </pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="">
+                            <div class="col-md-6 top10">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">环境选择<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="Entname"
+                                                onchange="getEntClusterData($(this).val())"
+                                                data-live-search="true" data-style="btn-default"
+                                                id="select-entname-id">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 top10">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">所属集群<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="ClusterName"
+                                                onchange="$('#show-cluster-content').show();getResouceData($(this).val(),'select-job-id','/api/ci/job/name','ItemName');getResouceData($(this).val(),'select-app-id','/api/app/name','AppName');"
+                                                data-live-search="true" data-style="btn-default"
+                                                id="select-cluster-id">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 top15">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">应用名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="AppName"
+                                                onchange="getResouceData($('#select-cluster-id').val(),'select-service-id','/api/service/name','ServiceName',$(this).val());"
+                                                data-live-search="true" data-style="btn-default"
+                                                id="select-app-id">
+                                            <option value="">请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 top15">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">服务名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="ServiceName" data-live-search="true"
+                                                data-style="btn-default"
+                                                id="select-service-id">
+                                            <option value="">请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7 top15">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label">指标类型</label>
+                                    <div class="col-md-4 ">
+                                        <div class="radio radio-primary left10">
+                                            <input onchange="set_metirc_type()" id="radio10" checked type="radio"
+                                                   name="MetricType">
+                                            <label for="radio10" class="fw100 control-label">自定义
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 ">
+                                        <div class="radio radio-warning left10">
+                                            <input id="radio20" type="radio" {{.system}}  onchange="set_metirc_type()"
+                                                   name="MetricType">
+                                            <label for="radio20" class="fw100 control-label">系统自带
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 top15" title="系统默认使用Prometheus监控系统进行数据查询,es为外部系统">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">数据源选择<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" name="DataSource" id="select-data-source-id" onchange="setDataSource($(this).val())">
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 top15" title="ElastciSearch的接口配置" id="show-es-id" style="display: none;">
+                                <div class="form-group">
+                                    <label for="field-1312" class="col-md-3 fw100 control-label">Es地址<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="text" value="{{.data.Es}}" name="Es"
+                                               class="form-control" id="field-1312" placeholder="http://10.1.2.1:9200">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12"></div>
+                            <div class="col-md-6 top15" id="select-name-id" title="该部分指标为系统自带的指标,无法更改">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">指标选择<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" name="MetricName" id="select-metric-name-id">
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12"></div>
+                            <div class="col-md-12 top15" title="查询语法" id="show-query-id" style="display: none;">
+                                <div class="form-group">
+                                    <label for="field-1222" style="width: 12%;" class="col-md-2 fw100 control-label">查询语法<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" value="{{.data.Query}}" name="Query"
+                                               class="form-control" id="field-1222">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 top10" title="当监控值计算大于该值后进行扩容">
+                                <div class="form-group">
+                                    <label for="field-122" class="col-md-3 fw100 control-label">大于阈值<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="number" value="{{.data.Gt}}" name="Gt"
+                                               class="form-control" id="field-122">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 top10" title="监控数据查询2条结果的间隔">
+                                <div class="form-group">
+                                    <label for="field-118" class="col-md-3 fw100 control-label">查询步长(秒)<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="number" min="1" max="5" value="{{.data.Step}}"
+                                               name="Step"
+                                               class="form-control" id="field-118">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 top10" title="监控数据取最后几次平均的值">
+                                <div class="form-group">
+                                    <label for="field-117" class="col-md-3 fw100 control-label">数值范围<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="number" min="1" max="5" value="{{.data.LastCount}}"
+                                               name="LastCount"
+                                               class="form-control" id="field-117">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 top10" title="扩缩时每次添加的个数">
+                                <div class="form-group">
+                                    <label for="field-112" class="col-md-3 fw100 control-label">扩容步长<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="number" min="1" max="10" value="{{.data.IncreaseStep}}"
+                                               name="IncreaseStep"
+                                               class="form-control" id="field-112">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 top10" title="扩缩容至少多长时间内不进行扩容">
+                                <div class="form-group">
+                                    <label for="field-12" class="col-md-3 fw100 control-label">动作间隔<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="number" min="60" max="1200" value="{{.data.ActionInterval}}"
+                                               name="ActionInterval"
+                                               class="form-control" id="field-12">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12"></div>
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="field-2" style="width: 12%;" class="col-md-2 fw100 control-label">描述信息</label>
+                                    <div class="col-md-10">
+                                        <input type="text" value="{{.data.Description}}" name="Description"
+                                               class="form-control" id="field-2" placeholder="描述信息">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveAutoScale('{{.data.ScaleId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var scaleId = "{{.data.ScaleId}}";
+    $("#select-entname-id").html("{{.entname}}");
+    if (scaleId != "0") {
+        $("#select-service-id").html("{{.service}}");
+        $("#select-app-id").html("{{.apps}}");
+        $("#select-cluster-id").html("{{.cluster}}");
+    }
+    $("#select-metric-name-id").html("{{.metric}}");
+    $("#select-data-source-id").html("{{.dataSource}}");
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 7
+    });
+
+    /**
+     * 2018-02-13
+     * 切换帮助信息显示
+     */
+    function showHelpMsg() {
+        if ($("#show-help-msg").is(":visible")) {
+            $("#show-help-msg-button").html("显示帮助");
+            $("#show-help-msg").hide();
+        } else {
+            $("#show-help-msg").show();
+            $("#show-help-msg-button").html("影藏帮助");
+        }
+    }
+
+    /**
+     * 2018-02-19 20:38
+     * 设置选择指标类型显示
+     */
+    function set_metirc_type() {
+        if($("#radio10").is(":checked")){
+            $("#select-name-id").hide();
+            $("#show-query-id").show();
+        }
+
+        if($("#radio20").is(":checked")){
+            $("#select-name-id").show();
+            $("#show-query-id").hide();
+        }
+    }
+
+    set_metirc_type();
+
+    /**
+     * 2018-02-20 08:15
+     * 设置数据源显示
+     * @param val
+     */
+    function setDataSource(val){
+        if(val=="es"){
+            $("#show-es-id").show();
+        }else{
+            $("#show-es-id").hide();
+        }
+    }
+    setDataSource("{{.data.DataSource}}")
+</script>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+<link rel="stylesheet" href="/static/plugins/tooltipster/tooltipster.bundle.min.css">
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <!-- Start content -->
+    <div class="content">
+        <div class="container">
+            <div id="add_hosts_html"></div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">应用交付中心</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">容器治理</a>
+                            </li>
+                            <li>
+                                <a href="/application/container/list">容器管理</a>
+                            </li>
+                            <li>
+                                <a href="#">详情</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row">
+                <div class="col-sm-12 top-10">
+                    <i class="fa fa-cubes font-18"><strong class="left10">{{.data.ContainerName}}</strong></i>
+                    <button type="button" id="container-run-status"
+                            class="btn  btn-rounded w-xs waves-effect waves-light cluster-runing">运行中
+                    </button>
+                    <div class="col-sm-3 pull-right" style="margin-right: -20px;">
+                        <button onclick="deleteContainerSwal('{{.data.ContainerId}}')" id="updateAppId"
+                                class="btn btn-sm btn-default pull-right"><i
+                                class="fa  fa-refresh">&nbsp;&nbsp;</i>重建
+                        </button>
+                        <button onclick="toTty('{{.data.ContainerId}}')" class="btn btn-sm btn-info pull-right"><i
+                                class="fa  fa-refresh">&nbsp;&nbsp;</i>登录终端
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+        </div>
+        <div class="row">
+            <div class="col-lg-12 top10">
+                <div class="portlet">
+                    <div class="portlet-heading portlet-default">
+                        <h3 class="portlet-title text-dark">
+                            基本信息
+                        </h3>
+                        <div class="portlet-widgets">
+                            <a data-toggle="collapse" data-parent="#accordion1" href="#bg-default"><i
+                                    class="mdi mdi-minus"></i></a>
+                            <a href="#" data-toggle="remove"><i class="mdi mdi-close"></i></a>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="bg-default" class="panel-collapse collapse in">
+                        <div class="portlet-body col-sm-12">
+                            <div class="col-sm-3 ">
+                                <img class="app-detail-img" src="/static/img/default.png" style="margin-top: -10px;"/>
+                            </div>
+                            <div class="col-sm-9">
+                                <table class="table tablesaw  m-b-0 tablesaw-swipe">
+                                    <tbody>
+                                    <tr>
+                                        <th class="noborder">状态</th>
+                                        <th class="noborder">{{.data.Status}}</th>
+                                        <th class="noborder">创建时间</th>
+                                        <th class="noborder">{{.data.CreateTime}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="noborder">所属应用</th>
+                                        <th class="noborder">{{.data.AppName}}</th>
+                                        <th class="noborder">所属集群</th>
+                                        <th class="noborder">{{.data.ClusterName}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="noborder">地址</th>
+                                        <th class="noborder">{{.data.ContainerIp}}</th>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 top10">
+                <div class="card-box" id="cart-box" style="height: 900px;">
+                    <ul class="nav nav-tabs tabs-bordered">
+                        <li class="active">
+                            <a href="#host-b1" data-toggle="tab" aria-expanded="false"
+                               onclick="setBoxHeight('host-b1')">
+                                <span class="visible-xs"><i class="fa fa-home"></i></span>
+                                <span class="hidden-xs">配置</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#plugin-b1" data-toggle="tab" aria-expanded="false"
+                               onclick="setBoxHeight('monitor-b1')">
+                                <span class="visible-xs"><i class="fa fa-user"></i></span>
+                                <span class="hidden-xs">监控</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#events-b1" data-toggle="tab" aria-expanded="false"
+                               onclick="setBoxHeight('events-b1')">
+                                <span class="visible-xs"><i class="fa fa-envelope-o"></i></span>
+                                <span class="hidden-xs">事件</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#process-bl" data-toggle="tab" aria-expanded="false"
+                               onclick="setBoxHeight('process-bl')">
+                                <span class="visible-xs"><i class="fa fa-cog"></i></span>
+                                <span class="hidden-xs">进程</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="host-b1">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-11" class="col-md-3 fw100 control-label titleSpan"><h5
+                                            class="top2">基本信息</h5></span></label>
+                                    <div class="col-md-9" id="field-11">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 ">
+                                <div class="form-group">
+                                    <label class="col-md-3 font999 control-label">名称</span></label>
+                                    <label class="col-md-4 font999 control-label">镜像</span></label>
+                                    <label class="col-md-4 font999 control-label">所属节点</span></label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 ">
+                                <div class="form-group">
+                                    <label class="col-md-3 font999 control-label">{{.data.ContainerName}}</span></label>
+                                    <label class="col-md-4 font999 control-label">{{.data.Image}}</span></label>
+                                    <label class="col-md-4 font999 control-label">{{.data.ServerAddress}}</span></label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 topbr">
+                                <div class="form-group">
+                                    <label for="field-11" class="col-md-3 fw100 control-label titleSpan"><h5
+                                            class="top2">资源配置</h5></span></label>
+                                    <div class="col-md-9">
+                                        &nbsp;
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 ">
+                                <div class="form-group">
+                                    <label class="col-md-3 font999 control-label">CPU</span></label>
+                                    <label class="col-md-4 font999 control-label">内存</span></label>
+                                    <label class="col-md-4 font999 control-label">系统盘</span></label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 ">
+                                <div class="form-group">
+                                    <label class="col-md-3 font999 control-label">{{.data.Cpu}}核</span></label>
+                                    <label class="col-md-4 font999 control-label">{{.data.Memory}}M</span></label>
+                                    <label class="col-md-4 font999 control-label">10G</span></label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 topbr">
+                                <div class="form-group">
+                                    <label for="field-11" class="col-md-3 fw100 control-label titleSpan"><h5
+                                            class="top2">环境变量</h5></span></label>
+                                    <div class="col-md-9">
+                                        &nbsp;
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 ">
+                                <div class="form-group">
+                                    <label class="col-md-3 font999 control-label">变量名</span></label>
+                                    <label class="col-md-4 font999 control-label">变量值</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group" id="env_var_html_id">
+                            </div>
+
+                            <div class="col-md-12 topbr">
+                                <div class="form-group">
+                                    <label for="field-11" class="col-md-3 fw100 control-label titleSpan"><h5
+                                            class="top2">存储卷</h5></span></label>
+                                    <div class="col-md-9">
+                                        &nbsp;
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-md-3 font999 control-label">存储类型</span></label>
+                                        <label class="col-md-4 font999 control-label">存储</span></label>
+                                        <label class="col-md-5 font999 control-label">容器目录</span></label>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="storage_html_id">
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="tab-pane " id="monitor-b1">
+                            紧张开发中
+                            <div class="tooltip top" role="tooltip">
+                                <div class="tooltip-arrow"></div>
+                                <div class="tooltip-inner"> Tooltip on the top</div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="events-b1">
+                        </div>
+                        <div class="tab-pane" id="process-bl">
+                            {{.data.Process}}
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- end col -->
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+    {{template "template/bottom.html" .}}
+    </body>
+</div>
+
+
+<script src="/static/zcloud/cluster.js"></script>
+<script src="/static/zcloud/service.js"></script>
+<script>
+
+    // 将环境变量数据渲染
+    // 2018-01-16 09:28
+    function setEnvHtml() {
+        var html = "";
+        var template = '<div class="col-md-12 "><label class="col-md-3 font999 control-label">NAME</span></label> <label class="col-md-4 font999 control-label">VALUE</span></label></div>';
+        var env = '{{.data.Env}}';
+        var envs = env.split("\n");
+        for (var i = 0; i < envs.length; i++) {
+            var envdata = envs[i].split('=');
+            if (envdata.length > 1) {
+                var value = []
+                for (var j = 1; j < envdata.length; j++) {
+                    value.push(envdata[j])
+                }
+                html += template.replace(/NAME/, envdata[0]).replace(/VALUE/, value.join("="));
+            }
+        }
+        $("#env_var_html_id").html(html);
+    }
+    setEnvHtml();
+
+    function setStorageData() {
+        var html = "";
+        var template = '<div class="col-md-12">' +
+            '<div class="form-group"> ' +
+            '<label class="col-md-3 font999 control-label">存储类型</span></label>     ' +
+            '<label class="col-md-4 font999 control-label">存储</span></label>' +
+            ' <label class="col-md-5 font999 control-label">容器目录</span></label></div></div>';
+        var data = '{{.data.StorageData}}';
+        if (data.length > 10) {
+            data = JSON.parse(data)
+            for (var i = 0; i < data.length; i++) {
+                html += template.replace(/存储类型/, "本地挂载").replace(/容器目录/, data[i]["ContainerPath"]).replace(/存储/, data[i]["HostPath"]);
+            }
+        }
+        $("#storage_html_id").html(html);
+    }
+    setStorageData();
+    var process = " {{.data.Process}}";
+    if (process) {
+        process = process.replace(/  /g, " ");
+        process = process.replace(/  /g, " ");
+        process = process.replace(/  /g, " ");
+        p = process.split("\n");
+        var html = "<table class='table table-hover ' style='table-layout: unset;'>";
+        for (var i = 0; i < p.length; i++) {
+            var pt = p[i].split(" ");
+            if (pt.length < 4) {
+                continue
+            }
+            html += "<tr>";
+            html += "<td style='border-right: none;'><span>" + pt[1] + "</span></td>";
+            html += "<td style='border-right: none;'><span>" + pt[2] + "</span></td>";
+            html += "<td style='border-right: none;'><span>" + pt[3] + "</span></td>";
+            var temp = "";
+            for (var j = 4; j < pt.length; j++) {
+                temp += pt[j] + "&nbsp;&nbsp;"
+            }
+            html += "<td><span class='m-l-15'>" + temp + "</span></td>";
+            html += "</tr>"
+        }
+        html += "</table>";
+        $("#process-bl").html(html);
+    }
+
+    var events = "{{.data.Events}}";
+    if (events) {
+        events = JSON.parse(events);
+        events = events.reverse();
+        console.log(events);
+        var html = "<table class='table table-hover ' style='table-layout: unset;'>";
+        for (var i = 0; i < events.length; i++) {
+            html += "<tr>";
+            html += "<td><span>" + events[i]["EventTime"] + "</span></td>";
+            html += "<td><span class='m-l-15'>" + events[i]["Messages"] + "</span></td>";
+            html += "<td><span class='m-l-15'>" + events[i]["Reason"] + "</span></td>";
+            html += "<td><span class='m-l-15'>" + events[i]["Host"] + "</span></td>";
+            html += "</tr>"
+        }
+        html += "</table>";
+        $("#events-b1").html(html);
+    }
+    var status = "{{.data.Status}}";
+    if (status == "Pending") {
+        $("#container-run-status").removeClass("btn-success");
+        $("#container-run-status").addClass("btn-danger");
+    }
+    if (status == "Running") {
+        $("#container-run-status").removeClass("btn-danger");
+        $("#container-run-status").addClass("btn-success");
+    }
+    $("#container-run-status").html(status);
+</script>
+</html>

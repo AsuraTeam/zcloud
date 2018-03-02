@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+<link rel="stylesheet" href="/static/plugins/tooltipster/tooltipster.bundle.min.css">
+{{template "template/head.html" .}}
+<style>
+
+    ::-webkit-scrollbar {
+        width: 0.11em;
+    }
+
+    ::-webkit-scrollbar:horizontal
+    {
+        height: 0.11em;
+    }
+</style>
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <!-- Start content -->
+    <div class="content">
+        <div class="container">
+            <div id="add_hosts_html"></div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">应用交付中心</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">容器治理</a>
+                            </li>
+                            <li>
+                                <a href="/application/configure/list">配置管理</a>
+                            </li>
+                            <li>
+                                <a href="#">详情</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row">
+                <div id="add_configure_html"></div>
+                <div id="add_configure_data_html"></div>
+                <div class="col-sm-12 top-10">
+                    <i class="fa fa-cubes font-18"><strong class="left10">{{.data.ConfigureName}}</strong></i>
+                    <div class="col-sm-3 pull-right" style="margin-right: -145px;">
+                        <button onclick="addConfigure('{{.data.ConfigureId}}')" class="btn btn-sm btn-default"><i
+                                class="fa  fa-refresh">&nbsp;&nbsp;</i>更新
+                        </button>
+                        <button onclick="deleteConfigureSwal()" class="btn btn-sm btn-default"><i
+                                class="fa  fa-trash-o">&nbsp;&nbsp;</i>删除
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+        </div>
+        <div class="row">
+            <div class="col-lg-12 top10">
+                <div class="portlet">
+                    <div class="portlet-heading portlet-default">
+                        <h3 class="portlet-title text-dark">
+                            基本信息
+                        </h3>
+                        <div class="portlet-widgets">
+                            <a data-toggle="collapse" data-parent="#accordion1" href="#bg-default"><i
+                                    class="mdi mdi-minus"></i></a>
+                            <a href="#" data-toggle="remove"><i class="mdi mdi-close"></i></a>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="bg-default" class="panel-collapse collapse in">
+                        <div class="portlet-body col-sm-12">
+                            <div class="col-sm-3 ">
+                                <i class="app-detail-img mdi mdi-file-check config-sitemap"></i>
+                            </div>
+                            <div class="col-sm-9">
+                                <table class="table tablesaw  m-b-0 tablesaw-swipe">
+                                    <tbody>
+                                    <tr>
+                                        <th class="noborder">配置组</th>
+                                        <th class="noborder">{{.data.ClusterName}}</th>
+                                        <th class="noborder">创建人</th>
+                                        <th class="noborder">{{.data.CreateUser}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="noborder">创建时间</th>
+                                        <th class="noborder">{{.data.CreateTime}}</th>
+                                        <th class="noborder">更新时间</th>
+                                        <th class="noborder">{{.data.LastModifyTime}}</th>
+                                    </tr>
+                                    <tr>
+                                    <tr>
+                                        <th class="noborder">所属集群</th>
+                                        <th class="noborder">{{.data.ClusterName}}</th>
+                                        <th class="noborder">描述信息</th>
+                                        <th class="noborder">{{.data.Description}}</th>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 top10">
+                <div class="card-box" id="cart-box" style="height: 500px;">
+                    <ul class="nav nav-tabs tabs-bordered">
+                        <li class="active">
+                            <a href="#host-b1" data-toggle="tab" aria-expanded="false"
+                               onclick="setBoxHeight('host-b1')">
+                                <span class="visible-xs"><i class="fa fa-home"></i></span>
+                                <span class="hidden-xs">配置项目</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="host-b1">
+                            <div class="col-sm-12 top-10">
+                                <div class="col-sm-1" >
+                                <button type='button' onclick="addConfigureData('','{{.data.ConfigureName}}','{{.data.ConfigureId}}')"  class="btn btn-primary btn-sm waves-effect waves-light">
+                                添加配置项
+                                </button>
+                            </div>
+                            <div class="col-sm-1 cluster-search pull-right">
+                                <button type="button" class="btn btn-default waves-effect waves-light"
+                                        onclick="loadDetailData()"
+                                        style="border-radius: 5px;">
+                                    <i class="fa fa fa-refresh"></i>
+                                </button>
+                            </div>
+                            <div class="col-md-3 pull-right">
+                                <input type="text" onkeyup="loadDetailData($(this).val())" class="form-control"
+                                       placeholder="搜索名称或内容">
+                                <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <table id="conf-data-table" class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>键</th>
+                                    <th>值</th>
+                                    <th>创建人</th>
+                                    <th>修改时间</th>
+                                    <th>修改人</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- end col -->
+    </div> <!-- container -->
+
+</div> <!-- content -->
+
+
+{{template "template/bottom.html" .}}
+</body>
+</div>
+<input id="delete_configure_id" title="hidden" value="{{.data.ConfigureId}}">
+<script src="/static/zcloud/configure.js"></script>
+<script src="/static/zcloud/configureData.js"></script>
+<script>
+
+    function loadDetailData(ip) {
+        if (!ip) {
+            ip = ""
+        } else {
+            if (ip.length < 4) {
+                return
+            }
+        }
+
+        $("#conf-data-table").dataTable({
+            "filter": false,//去掉搜索框
+            "ordering": false, // 是否允许排序
+            "paginationType": "full_numbers", // 页码类型
+            "destroy": true,
+            "processing": true,
+            "bPaginate": false, //是否显示（应用）分页器
+            "serverSide": true,
+            "bInfo": false, //是否显示页脚信息，DataTables插件左下角显示记录数
+            "scrollX": true, // 是否允许左右滑动
+            "displayLength": 10, // 默认长度
+            "ajax": { // 请求地址
+                "url": "/api/configure/data?ConfigureId={{.data.ConfigureId}}&t=" + new Date().getTime() + "&=" + ip + "&clusterName={{.data.ClusterName}}",
+                "type": 'get'
+            },
+            "columns": [ // 数据映射
+                {"data": "DataName","sWidth":"10%"},
+                {"data": "Data","sWidth":"33%","mRender":function (data) {
+                    return "<textarea class='form-control color-scroll visible-always-scroll' rows='5'  style='border: none;background-color: #333;width: 100%;color: #F0F0F0;overflow-y: scroll'>"+data+"</textarea>"
+                }},
+                {"data": "CreateUser","sWidth":"9%"},
+                {"data": "LastModifyTime","sWidth":"12%"},
+                {"data": "LastModifyUser","sWidth":"9%"},
+                {
+                    "sWidth": "5%", "data": "DataId", "mRender": function (data, type, full) {
+                    return '<button type="button" title="更新" onclick="addConfigureData(' + data + ',\'{{.data.ConfigureName}}\',{{.data.ConfigureId}})" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
+                        '<button type="button"  title="删除" onClick="setDeleteDataId(' + data + ')" class="delete-template btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
+                }
+                },
+            ],
+            "fnRowCallback": function (row, data) { // 每行创建完毕的回调
+                $(row).data('recordId', data.recordId);
+            }
+        });
+    }
+
+    loadDetailData();
+</script>
+</html>

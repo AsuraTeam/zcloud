@@ -1,0 +1,77 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 60%;">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">添加修改证书</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-12" class="col-md-3 fw100 control-label">证书名称</label>
+                                    <div class="col-md-9">
+                                        <input type="text" value="{{.data.CertKey}}" name="CertKey"
+                                               class="form-control" id="field-12" placeholder="证书名称, online-ssl-cert">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-13" class="col-md-3 fw100 control-label">证书私钥<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <textarea type="text"  rows="8" value="{{.data.CertValue}}" nullmsg="不能为空" style="background-color: #000000;color: #ffffff;"
+                                                  name="CertValue" id="" onchange="checkChange('CertValue')"
+                                                  class="form-control"  placeholder="证书私钥文件, 一般叫 .key 的文件内容">{{.data.CertValue}}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-13" class="col-md-3 fw100 control-label">证书公钥<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <textarea type="text"  rows="8" value="{{.data.PemValue}}" nullmsg="不能为空"
+                                             name="PemValue" id="PemValue" onchange="checkChange('PemValue')" style="background-color: #000000;color: #ffffff;"
+                                                  class="form-control" id="field-13" placeholder="证书公钥文件, 一般为 .crt 的文件内容">{{.data.PemValue}}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-3 fw100 control-label">描述信息</label>
+                                    <div class="col-md-9">
+                                        <input type="text" value="{{.data.Description}}" name="Description"
+                                               class="form-control" id="field-2" placeholder="描述信息">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveCert('{{.data.CertId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

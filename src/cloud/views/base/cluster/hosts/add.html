@@ -1,0 +1,81 @@
+<div id="add_post_html" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content p-0 b-0">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">创建主机</span>
+                </div>
+                <form class="cluster-form">
+                <div class="panel-body font-12">
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-1" class="col-md-3 fw100 control-label">集群名称<span class="text-danger">*</span></label>
+                                <div class="col-md-9" id="CluseterNameDiv">
+                                    <input type="text"  readonly value="{{.ClusterName}}" name="ClusterName" id="ClusterName" class="form-control host-add-readonly" id="field-1" placeholder="必须为全英文">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-2" class="col-md-3 fw100 control-label">节点IP</label>
+                                <div class="col-md-9">
+                                    <input type="text" onchange="checkChange('HostIp')" validFunc="checkIp" nullmsg="节点IP必须填写" errmsg="IP地址格式不对,请正确填写" name="HostIp" class="form-control" id="field-2" placeholder="主机的IP地址,10.16.4.100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-3" class="col-md-3 fw100 control-label">节点类型<span class="text-danger">*</span></label>
+                                <div class="col-md-9" id="field-3">
+                                    <select class="form-control" name="HostType">
+                                        <option value="master">master</option>
+                                        <option value="slave">slave</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                            class="fa fa-times"></i>&nbsp;&nbsp;取消
+                    </button>
+                    <button type="button" onclick="saveHosts()" id="save_cluster" class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;创建
+                    </button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function saveHosts() {
+        var HostId = "{{.HostId}}"
+        if(!HostId){
+            HostId = 0
+        }
+        var data = get_form_data();
+        data["HostId"] = parseInt(HostId)
+        if(!checkValue(data,"ClusterName,HostIp")){
+            return
+        }
+        var url = "/api/cluster/hosts";
+        var result = post(data, url)
+        result = JSON.stringify(result)
+        if (result.indexOf("保存成功") != -1){
+            $("#add_post_html").modal("toggle")
+            success(result)
+            loadData()
+        }else{
+            faild(result)
+        }
+
+    }
+</script>

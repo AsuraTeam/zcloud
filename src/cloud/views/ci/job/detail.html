@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+    ::-webkit-scrollbar {
+        width: 0.11em;
+    }
+
+    ::-webkit-scrollbar:horizontal {
+        height: 0.11em;
+    }
+</style>
+
+<!-- Tooltipster css -->
+<link rel="stylesheet" href="/static/plugins/tooltipster/tooltipster.bundle.min.css">
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <!-- Start content -->
+    <div id="add_file_html"></div>
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">应用交付中心</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">持续集成</a>
+                            </li>
+                            <li>
+                                <a href="/ci/job/list" target="_self">构建项目</a>
+                            </li>
+                            <li>
+                                <a href="#">详情</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row">
+                <div class="col-sm-12 top-10">
+                    <i class="fa fa-server font-18"><span class="left10"><strong>{{.data.ItemName}}</strong></span></i>
+                    <button type="button"
+                            class="btn btn-success btn-rounded w-xs waves-effect waves-light cluster-runing">
+                        {{.data.BuildStatus}}
+                    </button>
+                    <div class="col-sm-3 pull-right" style="margin-right: -130px;">
+                        <button onclick="addJob('{{.data.JobId}}')" class="btn btn-sm btn-default"><i
+                                class="fa  fa-refresh">&nbsp;&nbsp;</i>更新
+                        </button>
+                        <button onclick="deleteJobSwal('{{.data.JobId}}',1)" id="deleteAppId1"
+                                class="btn btn-sm btn-default"><i
+                                class="fa  fa-trash-o">&nbsp;&nbsp;</i>删除
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-12 top10">
+                    <div class="portlet">
+                        <div class="portlet-heading portlet-default">
+                            <h3 class="portlet-title text-dark">
+                                基本信息
+                            </h3>
+                            <div class="portlet-widgets">
+                                <a data-toggle="collapse" data-parent="#accordion1" href="#bg-default"><i
+                                        class="mdi mdi-minus"></i></a>
+                                <a href="#" data-toggle="remove"><i class="mdi mdi-close"></i></a>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="bg-default" class="panel-collapse collapse in">
+                            <div class="portlet-body col-sm-12">
+                                <div class="col-sm-3 ">
+                                    <img class="app-detail-img" src="/static/img/default.png"
+                                         style="margin-top: -10px;"/>
+                                </div>
+                                <div class="col-sm-9 ">
+                                    <table class="table tablesaw  m-b-0 tablesaw-swipe">
+                                        <tbody>
+                                        <tr>
+                                            <th class="noborder">项目名称</th>
+                                            <th class="noborder">{{.data.ItemName}}</th>
+                                            <th class="noborder">创建用户</th>
+                                            <th class="noborder">{{.data.CreateUser}}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="noborder">构建集群</th>
+                                            <th class="noborder">{{.data.ClusterName}}</th>
+                                            <th class="noborder">创建时间</th>
+                                            <th class="noborder">{{.data.CreateTime}}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="noborder">仓库地址</th>
+                                            <th class="noborder">{{.data.RegistryServer}}</th>
+                                            <th class="noborder">描述信息</th>
+                                            <th class="noborder">{{.data.Description}}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="noborder">DockerFile</th>
+                                            <th class="noborder"><textarea rows="{{.content}}"
+                                                                           style="height: auto;border: none;width: 300%;">{{.data.Content}}</textarea>
+                                            </th>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{template "template/bottom.html" .}}
+            </body>
+        </div>
+    </div>
+</div>
+<script src="/static/zcloud/ciJob.js"></script>
+</html>
