@@ -29,7 +29,6 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 	//fsnotify "gopkg.in/fsnotify.v1"
 	"github.com/astaxie/beego/logs"
-	"cloud/util"
 )
 
 type RestartableServer struct {
@@ -166,17 +165,17 @@ func (rs *RestartableServer) Serve(c *server.Config) {
 // 启动docker认证服务
 // 2018-01-19 15:52
 func StartRegistryAuthServer() {
-	cf := util.AuthServerConfigFile()
-	if cf == "" {
-		glog.Exitf("Config file not specified")
-	}
-	c, err := server.LoadConfig(cf)
+	//cf := util.AuthServerConfigFile()
+	//if cf == "" {
+	//	glog.Exitf("Config file not specified")
+	//}
+	c, err := server.LoadConfig()
 	if err != nil {
 		glog.Exitf("Failed to load config: %s", err)
 	}
 
 	rs := RestartableServer{
-		configFile: cf,
+		//configFile: cf,
 		hd:         &httpdown.HTTP{},
 	}
 	rs.Serve(c)

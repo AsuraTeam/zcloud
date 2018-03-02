@@ -139,8 +139,11 @@ func (this *SyncController) SyncDatas() {
 		temp, ok := registryData.Get(v.ClusterName + v.Registry)
 		if ok {
 			rv := temp.(registry.CloudRegistryServer)
-			server := rv.ServerAddress
-			v.Registry = rv.ServerDomain + ":" + strings.Split(server, ":")[1]
+			server := strings.Split(rv.ServerAddress, ":")
+			if len(server) < 2 {
+				continue
+			}
+			v.Registry = rv.ServerDomain + ":" + server[1]
 		}
 		result = append(result, v)
 	}

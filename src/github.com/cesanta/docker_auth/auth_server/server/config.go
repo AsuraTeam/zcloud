@@ -21,14 +21,13 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
 	"github.com/cesanta/docker_auth/auth_server/authn"
 	"github.com/docker/libtrust"
-	yaml "gopkg.in/yaml.v2"
 	"path/filepath"
+	"github.com/astaxie/beego/logs"
 )
 
 type Config struct {
@@ -80,9 +79,9 @@ func validate(c *Config) error {
 	if c.Token.Expiration <= 0 {
 		return fmt.Errorf("expiration must be positive, got %d", c.Token.Expiration)
 	}
-	if c.Users == nil {
-		return errors.New("no auth methods are configured, this is probably a mistake. Use an empty user map if you really want to deny everyone.")
-	}
+	//if c.Users == nil {
+	//	return errors.New("no auth methods are configured, this is probably a mistake. Use an empty user map if you really want to deny everyone.")
+	//}
 
 	return nil
 }
@@ -104,25 +103,29 @@ func loadCertAndKey(certFile, keyFile string) (pk libtrust.PublicKey, prk libtru
 	return
 }
 
-func LoadConfig(fileName string) (*Config, error) {
-	contents, err := ioutil.ReadFile(fileName)
-	if err != nil {
-		return nil, fmt.Errorf("could not read %s: %s", fileName, err)
-	}
+func LoadConfig() (*Config, error) {
+	//contents, err := ioutil.ReadFile(fileName)
+	//if err != nil {
+	//	return nil, fmt.Errorf("could not read %s: %s", fileName, err)
+	//}
+	var err error
 	c := &Config{}
-	if err = yaml.Unmarshal(contents, c); err != nil {
-		return nil, fmt.Errorf("could not parse config: %s", err)
-	}
-	if err = validate(c); err != nil {
+	c.Token = TokenConfig{Issuer:"Acme auth server",Expiration:900}
+	c.Server = ServerConfig{ListenAddress:":5001"}
+	pwd,_ := os.Getwd()
+	key := filepath.Join(pwd,"conf", "key", "server.key")
+	pem := filepath.Join(pwd,"conf", "key", "server.pem")
+	c.Server.CertFile = pem
+	c.Server.KeyFile = key
+	//if err = yaml.Unmarshal(contents, c); err != nil {
+	//	return nil, fmt.Errorf("could not parse config: %s", err)
+	//}
+	if err := validate(c); err != nil {
 		return nil, fmt.Errorf("invalid config: %s", err)
 	}
 	serverConfigured := false
 	if c.Server.CertFile != "" || c.Server.KeyFile != "" {
-		pwd,_ := os.Getwd()
-		key := filepath.Join(pwd,"conf", "key", "server.key")
-		pem := filepath.Join(pwd,"conf", "key", "server.pem")
-		c.Server.CertFile = pem
- 		c.Server.KeyFile = key
+
 		// Check for partial configuration.
 		if c.Server.CertFile == "" || c.Server.KeyFile == "" {
 			return nil, fmt.Errorf("failed to load server cert and key: both were not provided")
@@ -166,6 +169,5 @@ func LoadConfig(fileName string) (*Config, error) {
 			return nil, fmt.Errorf("server.letsencrypt.cache_dir (%s) does not exist or is not a directory", c.Server.LetsEncrypt.CacheDir)
 		}
 	}
-
 	return c, nil
 }

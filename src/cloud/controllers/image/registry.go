@@ -245,7 +245,7 @@ func (this *ImageController) RegistryServer() {
 				h := v.ServerDomain + ":" + strings.Replace(port, "<br>", "", -1)
 				logs.Info(h)
 				v.Access += strings.Replace(registry.SelectRegistryAccess, "?", h, -1)
-				v.ServerAddress = v.ServerDomain + ":" + port
+				v.ServerAddress = hostdata[0].HostIp + ":" + port
 				logs.Info(v.ServerAddress)
 				searchMap = sql.GetSearchMapV("Serverid", strconv.FormatInt(v.ServerId, 10))
 				u := sql.UpdateSql(v,
