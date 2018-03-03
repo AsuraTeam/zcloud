@@ -27,7 +27,6 @@ import (
 	"github.com/cesanta/docker_auth/auth_server/authn"
 	"github.com/docker/libtrust"
 	"path/filepath"
-	"github.com/astaxie/beego/logs"
 )
 
 type Config struct {
