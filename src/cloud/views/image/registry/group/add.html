@@ -32,7 +32,7 @@
                                            class="col-md-3 fw100 control-label">所属集群<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-9">
-                                        <select class="selectpicker" name="ClusterName"
+                                        <select name="ClusterName"
                                                 onclick="setGroupsServer($(this).val());"
                                                 data-live-search="true" data-style="btn-default"
                                                 id="select-cluster-id">
@@ -155,5 +155,5 @@
         $("#" + id).selectpicker('refresh');
     }
 
-
+    setGroupsServer($("#select-cluster-id").val());
 </script>
