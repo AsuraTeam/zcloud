@@ -52,6 +52,7 @@ func VerfiyPublicUser(scops []AuthScope, service string)  bool {
 	}
 	for _,v := range scops {
 		r := CloudRegistryGroup{}
+		v.Name = strings.Split(v.Name, "/")[0]
 		q := `select group_type from cloud_registry_group where group_type="公开" and cluster_name="`+sql.Replace(services[1])+`" and server_domain="`+sql.Replace(services[0])+`" and group_name="`+sql.Replace(v.Name)+`"`
 		sql.GetOrm().Raw(q).QueryRow(&r)
 		if r.GroupType == "公开" {
