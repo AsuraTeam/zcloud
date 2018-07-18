@@ -50,7 +50,7 @@ func (this *AppController) AppScale() {
 	start := this.GetString("start")
 	replicas, _ := this.GetInt("replicas")
 
-	serviceData := []app.CloudAppService{}
+	serviceData := make([]app.CloudAppService, 0)
 	serverMap := sql.GetSearchMapV("AppName", d.AppName)
 
 	q = sql.SearchSql(app.CloudAppService{}, app.SelectCloudAppService, serverMap)

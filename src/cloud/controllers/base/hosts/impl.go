@@ -52,12 +52,9 @@ func setHostCache(hostData hosts.CloudClusterHosts, c kubernetes.Clientset, node
 	nodeStatus.HostType = hostData.HostType
 	nodeStatus.HostId = hostData.HostId
 	nodeStatus.HostLabel = hostData.HostLabel
-	data := hosts.CloudClusterHosts{}
-	data.HostIp = nodeStatus.HostIp
-	data.HostType = "slave"
-	data.ClusterName = nodeStatus.ClusterName
-	q := sql.InsertSql(data, hosts.InsertCloudClusterHosts)
-	sql.Raw(q).Exec()
+	nodeStatus.HostIp = hostData.HostIp
+	nodeStatus.HostType = hostData.HostType
+
 	if cache.HostCacheErr == nil {
 		cache.HostCache.Put(hostData.HostIp, util.ObjToString(nodeStatus), time.Second*86400*5)
 	}
@@ -92,7 +89,7 @@ func setHostsMap(data []hosts.CloudClusterHosts) util.Lock {
 // 任务计划设置缓存
 func CronCache() {
 	logs.Info("开始写入Node缓存")
-	data := []hosts.CloudClusterHosts{}
+	data := make([]hosts.CloudClusterHosts, 0)
 	q := sql.SearchSql(
 		hosts.CloudClusterHosts{},
 		hosts.SelectCloudClusterHosts, sql.SearchMap{})

@@ -94,7 +94,7 @@ func (this *ConfigureController) ConfigureSave() {
 // 配置文件名称数据
 // @router /api/configure/name [get]
 func (this *ConfigureController) GetConfigureName() {
-	data := []app.CloudAppConfigureName{}
+	data := make([]app.CloudAppConfigureName, 0)
 	searchMap := sql.SearchMap{}
 	keys := "ClusterName,Entname"
 	searchMap = sql.GetSearchMapValue(strings.Split(keys, ","), *this.Ctx, searchMap)
