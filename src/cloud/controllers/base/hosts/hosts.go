@@ -82,7 +82,7 @@ func (this *HostsController) GetHostImages() {
 // 主机数据获取
 // @router /api/hosts/data [get]
 func (this *HostsController) HostsData() {
-	data := []hosts.CloudClusterHosts{}
+	data := make([]hosts.CloudClusterHosts, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	ip := this.GetString("ip")
@@ -109,10 +109,11 @@ func (this *HostsController) HostsData() {
 	num, err := sql.Raw(searchSql).QueryRows(&data)
 	c, err := k8s.GetClient(cluster)
 	var r map[string]interface{}
+
 	if err == nil {
 		returnData := getRedisNodeData(data)
 		r = util.ResponseMap(returnData, num, this.GetString("draw"))
-	} else {
+	}else{
 		r = util.ResponseMapError(err.Error())
 	}
 	setHostJson(this, r)

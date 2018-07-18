@@ -52,6 +52,12 @@ func setHostCache(hostData hosts.CloudClusterHosts, c kubernetes.Clientset, node
 	nodeStatus.HostType = hostData.HostType
 	nodeStatus.HostId = hostData.HostId
 	nodeStatus.HostLabel = hostData.HostLabel
+	data := hosts.CloudClusterHosts{}
+	data.HostIp = nodeStatus.HostIp
+	data.HostType = "slave"
+	data.ClusterName = nodeStatus.ClusterName
+	q := sql.InsertSql(data, hosts.InsertCloudClusterHosts)
+	sql.Raw(q).Exec()
 	if cache.HostCacheErr == nil {
 		cache.HostCache.Put(hostData.HostIp, util.ObjToString(nodeStatus), time.Second*86400*5)
 	}
@@ -107,7 +113,7 @@ func CronCache() {
 
 // 获取某个集群里面集群的数量,删除集群时做验证
 func GetClusterHosts(cluster string) []hosts.CloudClusterHosts {
-	data := []hosts.CloudClusterHosts{}
+	data := make([]hosts.CloudClusterHosts, 0)
 	searchMap := sql.SearchMap{}
 	searchMap.Put("ClusterName", cluster)
 	searchSql := sql.SearchSql(
@@ -121,7 +127,7 @@ func GetClusterHosts(cluster string) []hosts.CloudClusterHosts {
 // 2018-02-13 09:37
 // 将redis的数据读取出来
 func getRedisNodeData(data []hosts.CloudClusterHosts) []k8s.NodeStatus  {
-	returnData := []k8s.NodeStatus{}
+	returnData := make([]k8s.NodeStatus, 0)
 	for _, hostData := range data {
 		r := cache.HostCache.Get(hostData.HostIp)
 		if r != nil {

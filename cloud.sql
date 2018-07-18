@@ -1609,3 +1609,4 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2018-03-09 12:30:13
+alter table cloud_cluster_hosts add unique index uidx_cloud_cluster_hosts_ip_api_port_host_type(host_ip,api_port,host_type);
