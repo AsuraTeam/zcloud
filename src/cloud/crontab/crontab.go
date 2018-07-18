@@ -8,16 +8,18 @@ import (
 	"cloud/controllers/base/cluster"
 	"cloud/controllers/monitor"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 )
 
 // 自动刷新数据任务计划
 func CronStart() {
 
 	// 如果配置文件没有开启就不跑
-	if beego.AppConfig.String("cron") != "true" {
+	logs.Info("任务计划参数->", beego.AppConfig.String("crontab"))
+	if beego.AppConfig.String("crontab") != "true" {
 		return
 	}
-
+	logs.Info("启动任务计划")
 	cron := cron.New()
 	// 应用缓存,每2分钟
 	cron.AddFunc("1 */2 * * * ?", func() {
@@ -28,7 +30,7 @@ func CronStart() {
 		app.MakeContainerData("")
 	}, "MakeContainerData")
 	// node状态写入到缓存
-	cron.AddFunc("20 */10 * * * ?", func() {
+	cron.AddFunc("20 */3 * * * ?", func() {
 		hosts.CronCache()
 	}, "NodeStatusCache")
 	// 服务数据写入到缓存
