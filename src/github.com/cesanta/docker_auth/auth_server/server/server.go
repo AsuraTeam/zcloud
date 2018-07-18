@@ -59,7 +59,9 @@ func NewAuthServer(c *Config) (*AuthServer, error) {
 		config:      c,
 		authorizers: []authz.Authorizer{},
 	}
-
+	u := map[string]*authn.Requirements{}
+	c.Users = u
+	as.authenticators = append(as.authenticators, authn.NewStaticUserAuth(c.Users))
 	logs.Info("c.users", c.Users)
 	if c.Users != nil {
 		as.authenticators = append(as.authenticators, authn.NewStaticUserAuth(c.Users))
@@ -234,7 +236,7 @@ func joinImage(name ...string) string {
 	return strings.Join(n, "/")
 }
 
-const PROJECT_LIKE = " or project like \"NAME\" "
+const PROJECT_LIKE = ` or project like "NAME" `
 
 // 获取模糊匹配权限的sql
 // 写死匹配最多3级目录
@@ -251,7 +253,7 @@ func GetLikeProjectSql(ai *authz.AuthRequestInfo) string {
 // 获取用户组的权限
 // 2018-01-20 07:20
 func getUserGroups(user string) string {
-	g := []groups.CloudUserGroups{}
+	g := make([]groups.CloudUserGroups, 0)
 	q := strings.Replace(groups.UserGroupsLike, "NAME", sql.Replace(user), -1)
 	sql.GetOrm().Raw(q).QueryRows(&g)
 	if len(g) > 0 {
