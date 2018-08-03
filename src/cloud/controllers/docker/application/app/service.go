@@ -441,10 +441,11 @@ func (this *ServiceController) ServiceUpdate() {
 		tags := strings.Split(service.ImageTag, ":")
 		if version != tags[1] {
 			service.ImageTag = tags[0] + ":" + version
-		} else {
-			responseData(errors.InvalidArgumentError("镜像版本一致"), this, service.ServiceName, "操作失败")
-			return
 		}
+		//} else {
+		//	responseData(errors.InvalidArgumentError("镜像版本一致"), this, service.ServiceName, "操作失败")
+		//	return
+		//}
 		interval, err := this.GetInt("MinReady")
 		if err != nil || interval > 60 || interval < 2 {
 			responseData(errors.InvalidArgumentError("更新间隔错误,可选范围为:2-60"), this, service.ServiceName, "操作失败")

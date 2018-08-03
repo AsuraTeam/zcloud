@@ -54,6 +54,7 @@ func GetDeploymentsVersion(namespace string, name string, client kubernetes.Clie
 func UpdateDeploymentImage(param RollingParam) (bool, error) {
 	deploy, err := param.Client.AppsV1beta1().Deployments(param.Namespace).Get(param.Name, metav1.GetOptions{})
 	if err != nil {
+		logs.Error("UpdateDeploymentImage - 1 ", err)
 		return false, err
 	}
 
@@ -85,6 +86,7 @@ func UpdateDeploymentImage(param RollingParam) (bool, error) {
 
 	_, err = param.Client.AppsV1beta1().Deployments(param.Namespace).Update(deploy)
 	if err != nil {
+		logs.Error("UpdateDeploymentImage - 2 ", err)
 		return false, err
 	}
 	return true, nil

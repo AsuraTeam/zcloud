@@ -72,6 +72,7 @@ func ExecUpdate(service app.CloudAppService, updateType string, username string)
 		if param.Replicas == 1 {
 			rollparam.MaxUnavailable = 0
 		}
+		logs.Info("更新镜像", util.ObjToString(rollparam))
 		_, err = k8s.UpdateDeploymentImage(rollparam)
 	} else {
 		_, err = k8s.CreateServicePod(param)
@@ -79,6 +80,8 @@ func ExecUpdate(service app.CloudAppService, updateType string, username string)
 	if err == nil {
 		updateServiceData(service, username)
 		go updateContainerData(service)
+	}else{
+		logs.Error("ExecUpdate 失败 ", err.Error())
 	}
 	return err
 }
