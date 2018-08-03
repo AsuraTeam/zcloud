@@ -3,7 +3,7 @@
     this.term = null;
     this.args = arguments;
     // console.log(this.args);
-    this.contextPath = (window.location.protocol === "https:" ? "wss://" : "ws://") + window.location.host;
+    this.contextPath = (window.location.protocol === "https:" ? "wss://" : "ws://") + document.domain;
     // console.log(window.location.host)
     this.backgroundColor = '#000000';
     this.fontColor = "#cccccc";
@@ -84,7 +84,7 @@
     window.WebSocket = window.WebSocket || window.MozWebSocket;
     // console.log(this.contextPath)
     if(window.WebSocket) {
-        self.socket = new WebSocket('ws:127.0.0.1:8999/tty' + params);
+        self.socket = new WebSocket('ws:'+document.domain+':8999/tty' + params);
         // self.socket = new WebSocket(this.contextPath + '/terminal.ws' + params);
     }else {
         self.socket = SockJS("http://" + window.location.host + "/terminal.js" + params);
