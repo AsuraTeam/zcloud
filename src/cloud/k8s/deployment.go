@@ -75,6 +75,7 @@ func UpdateDeploymentImage(param RollingParam) (bool, error) {
 	if param.MaxSurge > 0 {
 		deploy.Spec.Strategy.RollingUpdate.MaxSurge = &intstr.IntOrString{IntVal: param.MaxSurge}
 	}
+	logs.Error("UpdateDeploymentImage - 11")
 	var m int64
 	m = param.TerminationGracePeriodSeconds
 	if m > 0 {
@@ -84,11 +85,12 @@ func UpdateDeploymentImage(param RollingParam) (bool, error) {
 		deploy.Spec.Strategy.RollingUpdate.MaxUnavailable = &intstr.IntOrString{IntVal: param.MaxUnavailable}
 	}
 
-	_, err = param.Client.AppsV1beta1().Deployments(param.Namespace).Update(deploy)
+	r, err := param.Client.AppsV1beta1().Deployments(param.Namespace).Update(deploy)
 	if err != nil {
 		logs.Error("UpdateDeploymentImage - 2 ", err)
 		return false, err
 	}
+	logs.Error("UpdateDeploymentImage - 结果 ", util.ObjToString(r))
 	return true, nil
 }
 
