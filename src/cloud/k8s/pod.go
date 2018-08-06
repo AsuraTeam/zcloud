@@ -181,6 +181,7 @@ func podStatus(app app.CloudContainer, obj v1.ContainerStatus) app.CloudContaine
 		app.TerminatedMessages = obj.State.Terminated.Message
 		app.TerminatedReason = obj.State.Terminated.Reason
 	}
+	logs.Info(util.ObjToString(obj))
 	app.Image = obj.Image
 	app.AppName = obj.Name
 	app.ServiceName = obj.Name
@@ -214,6 +215,7 @@ func GetContainerStatus(namespace string, clientset kubernetes.Clientset) []app.
 
 		limit := d.Spec.Containers[0].Resources.Limits
 		app.Cpu = limit.Cpu().Value()
+		app.Image = d.Spec.Containers[0].Image
 		app.Memory = limit.Memory().Value() / 1024 / 1024
 
 		envs := make([]string, 0)

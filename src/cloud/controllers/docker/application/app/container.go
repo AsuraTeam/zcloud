@@ -159,7 +159,7 @@ func MakeContainerData(namespace string) {
 	if namespace != "" {
 		searchMap.Put("Namespace", namespace)
 	}
-	data := []app.CloudAppService{}
+	data := make([]app.CloudAppService, 0)
 	searchSql := sql.SearchSql(
 		app.CloudAppService{},
 		app.SelectCloudAppService,
@@ -189,7 +189,7 @@ func MakeContainerData(namespace string) {
 	// 要删除的数据
 	deleteData := util.Lock{}
 	appDatasDb := util.Lock{}
-	datas := []app.CloudContainerName{}
+	datas := make([]app.CloudContainerName, 0)
 	containerSql := sql.SearchSql(app.CloudContainer{}, app.SelectCloudContainer, sql.SearchMap{})
 	sql.Raw(containerSql).QueryRows(&datas)
 	for _, d := range datas {
