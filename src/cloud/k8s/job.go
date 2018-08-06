@@ -25,12 +25,12 @@ ping REGISTRYDOMAIN -c 1
 dockerd --ip-forward=false --iptables=false --insecure-registry REGISTRY &>/dev/null &
 dockerd --ip-forward=false --iptables=false --insecure-registry REGISTRY &>/dev/null &
 echo $DOCKERFILE
-sleep 9
+sleep 10
 cat > /root/docker <<EOF
 $DOCKERFILE
 EOF
 cat /root/docker
-seq="1 2 3 4 5"
+seq="1 2 3 4 5 6"
 for i in $seq
 do
    docker build -t REGISTRY/REGISTRYGROUP/ITEMNAME:VERSION -f  /root/docker /root --ulimit nproc=MINPROC:MAXPROC  --no-cache --ulimit nofile=MINFILE:MAXFILE  2>&1

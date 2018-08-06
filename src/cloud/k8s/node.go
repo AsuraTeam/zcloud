@@ -127,7 +127,9 @@ func UpdateNodeLabels(clustername string, ip string, labelsData string) error {
 				"labels": item.GetLabels(),
 				"name":   item.GetName(),
 			},
+			"spec":item.Spec,
 		}
+		logs.Info("更新标签数据" , util.ObjToString(conf))
 		obj := unstructured.Unstructured{Object: conf}
 		d, err := dclient.Resource(resource, "").Update(&obj)
 		logs.Info("更新Node标签:", d, err)

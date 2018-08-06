@@ -75,7 +75,7 @@ func GetDockerfileData(name string)[]ci.CloudCiDockerfile {
 		searchMap.Put("Name", name)
 	}
 	// dockerfile数据
-	data := []ci.CloudCiDockerfile{}
+	data := make([]ci.CloudCiDockerfile, 0)
 	q := sql.SearchSql(ci.CloudCiDockerfile{},
 		ci.SelectCloudCiDockerfile,
 		searchMap)

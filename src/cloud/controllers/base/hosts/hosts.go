@@ -50,7 +50,7 @@ func (this *HostsController) Save() {
 	searchMap := sql.SearchMap{}
 	searchMap.Put("ClusterName", d.ClusterName)
 	searchMap.Put("HostType", "master")
-	masterData := []hosts.CloudClusterHosts{}
+	masterData := make([]hosts.CloudClusterHosts, 0)
 
 	q := sql.SearchSql(d, hosts.SelectCloudClusterHosts, searchMap)
 	sql.Raw(q).QueryRows(&masterData)
@@ -171,10 +171,9 @@ func (this *HostsController) LabelSave() {
 	d := hosts.CloudClusterHosts{}
 	this.ParseForm(&d)
 	hostData := getHostData(d.HostId)
-	this.ServeJSON(false)
 	err := k8s.UpdateNodeLabels(hostData.ClusterName, hostData.HostIp, d.HostLabel)
 	if err != nil {
-		this.Data["json"] = util.ResponseMapError("操作失败:" + err.Error())
+		setHostJson(this, util.ResponseMapError("操作失败:" + err.Error()))
 		return
 	}
 	searchMap := sql.SearchMap{}
@@ -187,7 +186,7 @@ func (this *HostsController) LabelSave() {
 		hosts.UpdateExclude)
 	_, err = sql.Raw(update).Exec()
 	data, msg := util.SaveResponse(err, "数据库操作失败")
-	this.Data["json"] = data
 	util.SaveOperLog(getHostUser(this), *this.Ctx, "保存主机标签 "+msg, d.HostIp)
+	setHostJson(this, data)
 }
 
