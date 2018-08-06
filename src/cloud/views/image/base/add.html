@@ -23,7 +23,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row top20" title="一般仓库开头URL开头的前缀，">
+                        <div class="row top20" title="一般仓库开头URL开头的前缀，例子 template/java8:latest">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="field-15" class="col-md-2 fw100 control-label">镜像名称<span
@@ -31,7 +31,7 @@
                                     <div class="col-md-10">
                                         <input type="text" nullmsg="必须填写" value="{{.data.ImageName}}"  errmsg="不能已/开头和结束"
                                                onchange="checkChange('ImageName')" name="ImageName"  validFunc="checkProject"
-                                               class="form-control" id="field-15" placeholder="镜像名称，基础镜像应该预先传到仓库服务器 ">
+                                               class="form-control" id="field-15" placeholder="镜像名称，基础镜像应该预先传到仓库服务器,template/java8:latest ">
                                     </div>
                                 </div>
                             </div>

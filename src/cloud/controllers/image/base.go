@@ -22,7 +22,7 @@ func (this *BaseController) BaseList() {
 // 生成 基础镜像服务 html
 // 2018-02-09 17:54
 func GetBaseImageSelect() string {
-	data := []registry.CloudImageBase{}
+	data := make([]registry.CloudImageBase, 0)
 	searchSql := sql.SearchSql(registry.CloudImageBase{}, registry.SelectCloudImageBase, sql.SearchMap{})
 	sql.Raw(searchSql).QueryRows(&data)
 	html := make([]string, 0)
@@ -112,7 +112,7 @@ func (this *BaseController) BaseSave() {
 
 	searchMap := sql.SearchMap{}
 	searchMap.Put("BaseId", d.BaseId)
-	masterData := []registry.CloudImageBase{}
+	masterData := make([]registry.CloudImageBase, 0)
 
 	q := sql.SearchSql(d, registry.SelectCloudImageBase, searchMap)
 	sql.Raw(q).QueryRows(&masterData)
@@ -140,7 +140,7 @@ func (this *BaseController) BaseSave() {
 // 基础镜像服务器数据
 // @router /api/registry [get]
 func (this *BaseController) Base() {
-	data := []registry.CloudImageBase{}
+	data := make([]registry.CloudImageBase, 0)
 	searchMap := sql.SearchMap{}
 	key := this.GetString("search")
 	searchSql := sql.SearchSql(registry.CloudImageBase{},

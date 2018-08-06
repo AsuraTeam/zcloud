@@ -87,15 +87,13 @@ func (this *JobController) JobAdd() {
 	var baseImageHtml string
 	dockerfileData := GetDockerFileSelect()
 	clusterData := cluster.GetClusterSelect()
-	clusterMap := cluster.GetClusterMap()
 	// 更新操作
 	if id != "0" {
 		searchMap := sql.GetSearchMap("JobId", *this.Ctx)
 		q := sql.SearchSql(ci.CloudBuildJob{}, ci.SelectCloudBuildJob, searchMap)
 		sql.Raw(q).QueryRow(&update)
 		dockerfile = util.GetSelectOptionName(update.DockerFile)
-		c := clusterMap.GetVString(update.ClusterName)
-		clusterHtml = util.GetSelectOption(c, update.ClusterName, c)
+		clusterHtml = util.GetSelectOptionName(update.ClusterName)
 		baseImageHtml = util.GetSelectOptionName(update.BaseImage)
 		this.Data["registryGroup"] = util.GetSelectOptionName(update.RegistryServer)
 	}
@@ -137,7 +135,7 @@ func GetJobName(username string, clustername string, itemname string) []ci.Cloud
 		searchMap.Put("ItemName", itemname)
 	}
 	// 构建任务数据
-	data := []ci.CloudBuildJob{}
+	data := make([]ci.CloudBuildJob, 0)
 	q := sql.SearchSql(ci.CloudBuildJob{}, ci.SelectCloudBuildJob, searchMap)
 	sql.Raw(q).QueryRows(&data)
 	return data
@@ -211,7 +209,7 @@ func (this *JobController) JobDataName() {
 		searchMap.Put("ClusterName", clustername)
 	}
 	// 构建任务数据
-	data := []ci.CloudBuildJob{}
+	data := make([]ci.CloudBuildJob, 0)
 	q := sql.SearchSql(ci.CloudBuildJob{}, ci.SelectCloudBuildJob, searchMap)
 	sql.Raw(q).QueryRows(&data)
 	setJson(this, data)
@@ -231,7 +229,7 @@ func getUser(this *JobController) string {
 // 构建任务数据
 // @router /api/ci/job/history [get]
 func (this *JobController) JobHistoryDatas() {
-	data := []ci.CloudBuildJobHistory{}
+	data := make([]ci.CloudBuildJobHistory, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	key := this.GetString("search")
@@ -262,7 +260,7 @@ func (this *JobController) JobHistoryDatas() {
 // 构建任务数据
 // @router /api/ci/job [get]
 func (this *JobController) JobDatas() {
-	data := []ci.CloudBuildJob{}
+	data := make([]ci.CloudBuildJob, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	key := this.GetString("search")
@@ -283,7 +281,7 @@ func (this *JobController) JobDatas() {
 		ci.CloudBuildJob{})
 
 	clusterMap := cluster.GetClusterMap()
-	result := []ci.CloudBuildJob{}
+	result := make([]ci.CloudBuildJob, 0)
 	for _, v := range data {
 		v.ClusterName = clusterMap.GetVString(v.ClusterName)
 		result = append(result, v)
@@ -558,6 +556,7 @@ func JobExecStart(jobData ci.CloudBuildJob, username string, jobname string, reg
 	logs.Info("获取到仓库地址", groupData)
 
 	param := getJobParam(jobData, jobname, groupData.ServerAddress, groupData)
+	param.ClusterName = jobData.ClusterName
 	if registryAuth != "" {
 		param.RegistryAuth = registryAuth
 	}
@@ -580,6 +579,7 @@ func JobExecStart(jobData ci.CloudBuildJob, username string, jobname string, reg
 func (this *JobController) JobExec() {
 
 	jobData := getJobData(this)
+	logs.Info("获取到job数据", util.ObjToString(jobData))
 	// 创建私密文件
 	param := k8s.ServiceParam{}
 	param.Image = jobData.BaseImage

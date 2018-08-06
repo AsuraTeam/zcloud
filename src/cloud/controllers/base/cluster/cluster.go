@@ -9,7 +9,6 @@ import (
 	"cloud/controllers/base/hosts"
 	"strings"
 	hosts2 "cloud/models/hosts"
-	"github.com/astaxie/beego/logs"
 )
 
 type ClusterController struct {

@@ -18,7 +18,7 @@
                                     <div class="col-md-9">
                                         <input type="text" nullmsg="必须填写" value="{{.data.ItemName}}" validFunc="checkImageTag"
                                                onchange="checkChange('ItemName')" name="ItemName" id="ItemName"
-                                               class="form-control" id="field-13" placeholder="一般已应用名命名,不能带点.比如 www sms zmc">
+                                               class="form-control" id="field-13" placeholder="一般以应用名命名,不能带点.比如 www sms zmc">
                                     </div>
                                 </div>
                             </div>
@@ -153,10 +153,10 @@
                                     <label for="select-cluster-id"
                                            class="col-md-3 fw100 control-label">构建集群<span
                                             class="text-danger">*</span></label>
-                                    <div class="col-md-9">
+                                    <div class="col-md-9" onclick="getRegistryGroup($('#select-cluster-id').val())">
                                         <select class="selectpicker" name="ClusterName" onchange="getRegistryGroup($(this).val())" data-live-search="true" data-style="btn-default"
                                                 id="select-cluster-id">
-                                            <option>请选择</option>
+                                            <option>--请选择--</option>
                                         </select>
                                     </div>
                                 </div>
@@ -169,7 +169,7 @@
                                     <label class="col-md-3 fw100 control-label">仓库组选择<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-9">
-                                        <select id="select-registry-server" class="form-control" name="RegistryServer">
+                                        <select id="select-registry-server"  class="form-control" name="RegistryServer">
                                             {{.registryGroup}}
                                         </select>
                                     </div>

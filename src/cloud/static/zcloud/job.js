@@ -188,7 +188,7 @@ function saveJob(jobId) {
     var data = get_form_data();
     console.log(data);
     data["JobId"] = parseInt(jobId);
-    if (!checkValue(data, "ItemName,RegistryServer,TimeOut,DockerFile,ClusterName,BaseImage")) {
+    if (!checkValue(data, "ItemName,RegistryServer,TimeOut,ClusterName,BaseImage")) {
         return
     }
     if (!$("#selectImageTag1").is(":checked")) {

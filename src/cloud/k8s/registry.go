@@ -249,6 +249,10 @@ func DeleteRegistryImage(host string, username string, password string, imagenam
 // 检查镜像是否存在
 func CheckImageExists(host string, username string, password string, imagename string, tag string) (bool) {
 	hub := getHubClient(host, username, password)
+	if hub == nil {
+		logs.Error("连接失败")
+		return false
+	}
 	_, err := hub.ManifestDigest(imagename, tag)
 	if err != nil {
 		return false

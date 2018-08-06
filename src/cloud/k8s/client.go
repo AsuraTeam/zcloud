@@ -15,6 +15,7 @@ import (
 	"github.com/garyburd/redigo/redis"
 	"cloud/cache"
 	"cloud/util"
+	"github.com/astaxie/beego/logs"
 )
 
 const SelectCloudClusterHosts = "select host_ip,host_type,cluster_name,api_port from cloud_cluster_hosts"
@@ -64,6 +65,7 @@ func getCertFile(name string) CertData {
 // 获取客户端证书配置
 func getTnlCfg(cluster string) restclient.Config {
 	master, port := GetMasterIp(cluster)
+	logs.Info("获取集群地址", master, port, cluster)
 	caData := getCertFile(cluster)
 	config := restclient.Config{}
 	config.CAData = []byte(caData.CaData)
@@ -93,6 +95,7 @@ func GetClient(cluster string) (kubernetes.Clientset, error) {
 	config.Timeout = time.Second * 3
 	client, err := kubernetes.NewForConfig(&config)
 	if err != nil {
+		logs.Error("GetClient Error", err.Error())
 		return kubernetes.Clientset{}, err
 	}
 	clientPool.Put(key, *client)

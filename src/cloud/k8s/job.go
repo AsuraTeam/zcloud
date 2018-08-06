@@ -191,10 +191,10 @@ func getBuildConfigdata(param JobParam) []ConfigureData {
 	// 配置信息
 	config := `[{"ContainerPath":"/build/","DataName":"build-job-` + param.Itemname + `","DataId":"build-cmd"}]`
 	// 生产configmap信息
-	configdata := []ConfigureData{}
+	configdata := make([]ConfigureData, 0)
 	json.Unmarshal([]byte(config), &configdata)
 
-	configureData := []ConfigureData{}
+	configureData := make([]ConfigureData, 0)
 	for _, v := range configdata {
 		ConfigDbData := map[string]interface{}{
 			"build-cmd": getBuild(param), // 启动命令
@@ -309,20 +309,25 @@ func CreateJob(param JobParam) string {
 		conf = setImagePullPolice(serviceParam, conf)
 	}
 
-	clientset, _ := GetClient(param.ClusterName)
-	CreateServiceAccount(clientset, param.Namespace, "default")
+	logs.Info("获取执行job集群地址", util.ObjToString(param))
+	clientSet, err := GetClient(param.ClusterName)
+	if err != nil {
+		logs.Error("获取客户端失败", err.Error())
+	}
+
+	CreateServiceAccount(clientSet, param.Namespace, "default")
 	cl2, _ := GetYamlClient(param.ClusterName, "", "v1", "api")
 	serviceParam.Cl2 = cl2
-	serviceParam.Cl3 = clientset
+	serviceParam.Cl3 = clientSet
 
 	if ! param.NoUpdateConfigMap {
 		logs.Info("获取到job的configmap", serviceParam.ConfigureData)
 		CreateConfigmap(serviceParam)
 	}
 
-	conf = getJobLables(conf, clientset)
+	conf = getJobLables(conf, clientSet)
 	obj := getJobParam(conf)
-	deployments, err := clientset.BatchV1().Jobs(param.Namespace).Create(&obj)
+	deployments, err := clientSet.BatchV1().Jobs(param.Namespace).Create(&obj)
 
 	if err != nil {
 		logs.Error("创建失败 job ", err, deployments)
