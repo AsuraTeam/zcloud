@@ -39,6 +39,7 @@ func (this *JobController) JobList() {
 // 构建任务历史页面
 // @router /ci/job/history/list [get]
 func (this *JobController) JobHistoryList() {
+	updateTimeOutJob()
 	this.TplName = "ci/job/history.html"
 }
 
@@ -260,7 +261,7 @@ func (this *JobController) JobHistoryDatas() {
 // 构建任务数据
 // @router /api/ci/job [get]
 func (this *JobController) JobDatas() {
-	updateTimeOutJob()
+
 	data := make([]ci.CloudBuildJob, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
@@ -340,6 +341,7 @@ func (this *JobController) JobDelete() {
 // 查看构建日志
 // @router /ci/job/logs/:id:int [get]
 func (this *JobController) JobLogsPage() {
+
 	historyId := this.GetString("history")
 	jobName := this.GetString("jobName")
 	history := ci.CloudBuildJobHistory{}
@@ -601,10 +603,7 @@ func updateTimeOutJob()  {
 	sql.Raw(ci.SelectJobTimeout).QueryRows(&jobHistory)
 	for _, v := range jobHistory{
 		if util.TimeToStamp(util.GetDate()) - util.TimeToStamp(v.CreateTime) > v.BuildTime {
-			searchMap := sql.SearchMap{}
-			searchMap.Put("HistoryId", v.HistoryId)
-			searchMap.Put("BuildStatus", "构建超时")
-			q := sql.UpdateSql(ci.CloudBuildJobHistory{}, ci.UpdateCloudBuildJobHistory, searchMap, "")
+			q := ci.UpdateCloudBuildJobTimeout + util.ObjToString(v.HistoryId)
 			sql.Raw(q).Exec()
 		}
 	}

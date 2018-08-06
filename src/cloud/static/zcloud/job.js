@@ -286,6 +286,10 @@ function loadJobHistoryData(key) {
                     var r = '<div class="Fail"><div><i class="fa fa-circle"></i><span>&nbsp;构建失败</span></div>'
                     return r
                 }
+                    if (data == "构建超时") {
+                        var r = '<div class="Fail"><div><i class="fa fa-circle"></i><span>&nbsp;构建超时</span></div>'
+                        return r
+                    }
                 if (data == "构建成功") {
                     var r = '<div class="Running"><div><i class="fa fa-circle"></i><span>&nbsp;构建成功</span></div>'
                     return r
