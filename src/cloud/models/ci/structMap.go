@@ -33,6 +33,7 @@ const InsertCloudBuildJobHistory = "insert into cloud_build_job_history"
 const SelectBuildJobToApp  = "select history_id, registry_server, registry_group, item_name,image_tag from cloud_build_job_history"
 const ExcludeUpdateHistoryColumn = "JobId,JobName,CreateTime,CreateUser,ImageTag,ClusterName,ImageTag,DockerFile,RegistryServer,ItemName,RegistryGroup"
 const SelectBuildHistoryWhere =` and (job_name like "%?%" or build_logs like "%?%" or item_name like "%?%" or create_user like "%?%")`
+const SelectJobTimeout = "select  history_id,a.create_time, b.time_out as build_time from cloud_build_job_history a, cloud_build_job b where build_status='构建中' and a.job_id=job_id"
 
 
 

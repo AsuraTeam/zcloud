@@ -260,6 +260,7 @@ func (this *JobController) JobHistoryDatas() {
 // 构建任务数据
 // @router /api/ci/job [get]
 func (this *JobController) JobDatas() {
+	updateTimeOutJob()
 	data := make([]ci.CloudBuildJob, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
@@ -592,4 +593,19 @@ func (this *JobController) JobExec() {
 	data, msg := util.SaveResponse(nil, "构建中")
 	util.SaveOperLog(this.GetSession("username"), *this.Ctx, "保存构建任务配置 "+msg, jobData.ItemName)
 	setJson(this, data)
+}
+
+// 任务计划超时更新
+func updateTimeOutJob()  {
+	jobHistory := make([]ci.CloudBuildJobHistory, 0)
+	sql.Raw(ci.SelectJobTimeout).QueryRows(&jobHistory)
+	for _, v := range jobHistory{
+		if util.TimeToStamp(util.GetDate()) - util.TimeToStamp(v.CreateTime) > v.BuildTime {
+			searchMap := sql.SearchMap{}
+			searchMap.Put("HistoryId", v.HistoryId)
+			searchMap.Put("BuildStatus", "构建超时")
+			q := sql.UpdateSql(ci.CloudBuildJobHistory{}, ci.UpdateCloudBuildJobHistory, searchMap, "")
+			sql.Raw(q).Exec()
+		}
+	}
 }

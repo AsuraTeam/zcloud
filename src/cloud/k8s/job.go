@@ -353,7 +353,7 @@ func getJobPod(pod string, cl kubernetes.Clientset, namespace string) ([]corev1.
 
 
 func GetJobLogs(cl kubernetes.Clientset, pod string, namespace string) string {
-	podsdata := []corev1.Pod{}
+	podsdata := make([]corev1.Pod, 0)
 	var err error
 	if cache.PodCache != nil {
 		r := cache.PodCache.Get(pod + namespace)
