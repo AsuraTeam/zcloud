@@ -181,7 +181,6 @@ func podStatus(app app.CloudContainer, obj v1.ContainerStatus) app.CloudContaine
 		app.TerminatedMessages = obj.State.Terminated.Message
 		app.TerminatedReason = obj.State.Terminated.Reason
 	}
-	logs.Info(util.ObjToString(obj))
 	app.Image = obj.Image
 	app.AppName = obj.Name
 	app.ServiceName = obj.Name

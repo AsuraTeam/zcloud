@@ -137,7 +137,7 @@ func checkParam(service app.CloudAppService, cpuerr error, memerr error, this *S
 // 通过任务计划写入服务缓存
 func CronServiceCache() {
 	logs.Info("写入服务缓存")
-	data := []app.CloudAppService{}
+	data := make([]app.CloudAppService, 0)
 	q := sql.SearchSql(app.CloudAppService{}, app.SelectCloudAppService, sql.SearchMap{})
 	sql.Raw(q).QueryRows(&data)
 	go GoServerThread(data)
@@ -224,8 +224,8 @@ func getParam(d app.CloudAppService, user string) k8s.ServiceParam {
 	param.CreateUser = user
 	config := d.ConfigureData
 	if config != "" {
-		configureData := []k8s.ConfigureData{}
-		configdata := []k8s.ConfigureData{}
+		configureData := make([]k8s.ConfigureData, 0)
+		configdata := make([]k8s.ConfigureData, 0)
 		json.Unmarshal([]byte(config), &configdata)
 		for _, v := range configdata {
 			v.ConfigDbData = GetConfgData(v.DataName, d.ClusterName)
@@ -276,7 +276,7 @@ func GetServiceData(name string, cluster string, appname string) app.CloudAppSer
 // 2018-02-01 15:15
 // 获取某个用户的所有服务
 func GetUserLbService(user string, clustername string, id string) []app.CloudAppService {
-	data := []app.CloudAppService{}
+	data := make([]app.CloudAppService, 0)
 	searchMap := sql.GetSearchMapV(
 		"CreateUser",
 		user,
@@ -488,7 +488,7 @@ func CreateGreenService(ciData ci.CloudCiService, username string) (string, bool
 // 2018-02-18 11:04
 // 获取需要刷新redis缓存的数据
 func getServices(d app.CloudAppService) []app.CloudAppService {
-	data := []app.CloudAppService{}
+	data := make([]app.CloudAppService, 0)
 	searchSql := sql.SearchSql(
 		app.CloudAppService{},
 		app.SelectCloudAppService,

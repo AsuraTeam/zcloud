@@ -61,7 +61,7 @@ func (this *AppController) ContainerDelete() {
 // 2018-01-15 15:11
 // @router /api/container [get]
 func (this *AppController) ContainerData() {
-	data := []app.CloudContainer{}
+	data := make([]app.CloudContainer, 0)
 	search := this.GetString("search")
 
 	key := sql.MKeyV("Entname", "ServiceName", "AppName")
@@ -117,14 +117,14 @@ func (this *AppController) ContainerData() {
 func writeToDb(appDatas util.Lock, appDatasDb util.Lock) {
 	for _, d := range appDatas.GetData() {
 		o := d.(app.CloudContainer)
-		sname := o.AppName + o.ContainerName
-		if _, ok := appDatasDb.Get(sname); !ok {
+		sName := o.AppName + o.ContainerName
+		if _, ok := appDatasDb.Get(sName); !ok {
 			o.Events = ""
 			q := sql.InsertSql(o, app.InsertCloudContainer)
 			sql.Raw(q).Exec()
 		}
 		if cache.ContainerCacheErr == nil {
-			cache.ContainerCache.Put(sname, util.ObjToString(o), time.Second*3600)
+			cache.ContainerCache.Put(sName, util.ObjToString(o), time.Second*3600)
 		}
 	}
 }
@@ -167,7 +167,7 @@ func MakeContainerData(namespace string) {
 	sql.Raw(searchSql).QueryRows(&data)
 
 	containerDatas := util.Lock{}
-	appDatas := util.Lock{}
+	appDataLock := util.Lock{}
 	lockData := util.Lock{}
 
 	for _, d := range data {
@@ -179,7 +179,7 @@ func MakeContainerData(namespace string) {
 			appData := k8s.GetContainerStatus(namespace, c)
 			for _, all := range appData {
 				all = setAppData(all, d, c)
-				appDatas.Put(all.AppName+all.ContainerName, all)
+				appDataLock.Put(all.AppName+all.ContainerName, all)
 				containerDatas.Put(all.AppName+all.ContainerName, "1")
 				lockData.Put(sname, "1")
 			}
@@ -202,7 +202,7 @@ func MakeContainerData(namespace string) {
 	}
 
 	// 更新或插入数据
-	go writeToDb(appDatas, appDatasDb)
+	go writeToDb(appDataLock, appDatasDb)
 	// 删除数据
 	go deleteDbContainer(deleteData)
 }

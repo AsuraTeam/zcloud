@@ -53,7 +53,7 @@ func (this *AppController) TemplateSave() {
 // 模板名称数据
 // @router /api/template/name [get]
 func (this *AppController) GetTemplateName() {
-	data := []app.CloudAppTemplateName{}
+	data := make([]app.CloudAppTemplateName, 0)
 	searchSql := sql.SearchSql(app.CloudAppTemplate{}, app.SelectCloudAppTemplate, sql.SearchMap{})
 	sql.Raw(searchSql).QueryRows(&data)
 	this.Data["json"] = data
@@ -63,7 +63,7 @@ func (this *AppController) GetTemplateName() {
 // 模板数据
 // @router /api/template [get]
 func (this *AppController) TemplateData() {
-	data := []app.CloudAppTemplate{}
+	data := make([]app.CloudAppTemplate, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	key := this.GetString("key")

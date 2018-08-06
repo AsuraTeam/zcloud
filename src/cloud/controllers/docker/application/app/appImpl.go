@@ -56,7 +56,7 @@ func getCacheAppData(data []app.CloudApp) []k8s.CloudApp {
 // 2018-02-22 18:18
 // 任务计划app数据缓存
 func CacheAppData()  {
-	data := []app.CloudApp{}
+	data := make([]app.CloudApp, 0)
 	sql.Raw(app.SelectCloudApp).QueryRows(&data)
 	getK8sAppData(data)
 }
@@ -100,7 +100,7 @@ func getUser(this *AppController) string {
 // 获取所有应用和服务的名称,在流水线判断应用服务是否存在
 func GetAppServiceDataMap() util.Lock {
 	lock := util.Lock{}
-	data := []app.CloudAppServiceName{}
+	data := make([]app.CloudAppServiceName, 0)
 
 	searchSql := sql.SearchSql(
 		app.CloudAppService{},

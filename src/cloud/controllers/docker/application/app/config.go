@@ -109,7 +109,7 @@ func (this *ConfigureController) GetConfigureName() {
 // 配置文件数据
 // @router /api/configure [get]
 func (this *ConfigureController) ConfigureData() {
-	data := []app.CloudAppConfigure{}
+	data := make([]app.CloudAppConfigure, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	key := this.GetString("key")

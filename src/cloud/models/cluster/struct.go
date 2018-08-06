@@ -38,6 +38,8 @@ type CloudCluster struct {
     CertData string
     // node证书私钥内容
     KeyData string
+    // 主节点地址
+    ApiAddress string
 }
 
 // 集群页面管理使用数据

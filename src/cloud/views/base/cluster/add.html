@@ -50,6 +50,26 @@
                         <div class="row top10">
                             <div class="col-md-12">
                                 <div class="form-group">
+                                    <label for="field-2" class="col-md-3 fw100 control-label">MASTER IP</label>
+                                    <div class="col-md-9">
+                                        <input type="text" validFunc="checkIp"  onchange="checkChange('HostIp')" value="{{.data.ApiAddress}}" nullmsg="主节点IP必须填写" errmsg="IP地址格式不对,请正确填写" name="ApiAddress" class="form-control" id="field-2" placeholder="主机的IP地址,10.16.4.100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-3 fw100 control-label">API端口</label>
+                                    <div class="col-md-9">
+                                        <input type="text" min="6442" max="10000"   name="NetworkCart" class="form-control" value="{{.data.NetworkCart}}" id="api-port" placeholder="api端口 6443">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
                                     <label  class="col-md-3 fw100 control-label">ca证书公钥文件</label>
                                     <div class="col-md-9">
                                         <textarea rows="6" name="CaData" class="form-control"
@@ -109,20 +129,20 @@
                                 <!--</div>-->
                             <!--</div>-->
                         <!--</div>-->
-                        <div class="row top10">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="field-5" class="col-md-3 fw100 control-label">内网网卡名称<span
-                                            class="text-danger">*</span></label>
-                                    <div class="col-md-9">
-                                        <input type="text" errmsg="网卡名称,一般为eth0" validFunc="checkNetworkCart"
-                                               onchange="checkChange('NetworkCart')" class="form-control" id="field-5"
-                                               placeholder="eth0" value="{{.data.NetworkCart}}"
-                                               name="NetworkCart">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {{/*<div class="row top10">*/}}
+                            {{/*<div class="col-md-12">*/}}
+                                {{/*<div class="form-group">*/}}
+                                    {{/*<label for="field-5" class="col-md-3 fw100 control-label">内网网卡名称<span*/}}
+                                            {{/*class="text-danger">*</span></label>*/}}
+                                    {{/*<div class="col-md-9">*/}}
+                                        {{/*<input type="text" errmsg="网卡名称,一般为eth0" validFunc="checkNetworkCart"*/}}
+                                               {{/*onchange="checkChange('NetworkCart')" class="form-control" id="field-5"*/}}
+                                               {{/*placeholder="eth0" value="{{.data.NetworkCart}}"*/}}
+                                               {{/*name="NetworkCart">*/}}
+                                    {{/*</div>*/}}
+                                {{/*</div>*/}}
+                            {{/*</div>*/}}
+                        {{/*</div>*/}}
                     </div>
                     <input type="hidden" name="ClusterId" value="{{.data.ClusterId}}">
                     <div class="panel-footer">
@@ -130,7 +150,7 @@
                                 class="fa fa-times"></i>&nbsp;&nbsp;取消
                         </button>
                         <button type="button" onclick="saveCluster('{{.data.ClusterId}}')" id="save_cluster"
-                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;创建
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
                         </button>
                     </div>
                 </form>
@@ -141,7 +161,7 @@
 <script>
     function saveCluster() {
         var data = get_form_data();
-        if (!checkValue(data, "ClusterName,CaData,CertData,KeyData,NetworkCart")) {
+        if (!checkValue(data, "ClusterName,CaData,CertData,KeyData,NetworkCart,ApiAddress")) {
             return
         }
         var url = "/api/cluster";
@@ -154,6 +174,10 @@
         } else {
             faild(result)
         }
+    }
 
+    var id = "{{.data.ClusterId}}";
+    if(id == "0"){
+        $('#api-port').val(6443);
     }
 </script>

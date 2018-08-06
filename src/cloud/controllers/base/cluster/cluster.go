@@ -8,6 +8,8 @@ import (
 	"cloud/k8s"
 	"cloud/controllers/base/hosts"
 	"strings"
+	hosts2 "cloud/models/hosts"
+	"github.com/astaxie/beego/logs"
 )
 
 type ClusterController struct {
@@ -28,14 +30,20 @@ func (this *ClusterController) Images() {
 }
 
 
+// 添加集群
 // @router /base/cluster/add [get]
 func (this *ClusterController) Add() {
 	id,_ := this.GetInt("ClusterId")
 	update := cluster.CloudCluster{}
+	update.NetworkCart = "6443"
 	if id != 0 {
 		q := sql.SearchSql(update, cluster.SelectCloudCluster, sql.GetSearchMap("ClusterId", *this.Ctx))
 		sql.Raw(q).QueryRow(&update)
+		h, p := k8s.GetMasterIp(update.ClusterName)
+		update.ApiAddress= h
+		update.NetworkCart = p
 	}
+
 	this.Data["data"] = update
 	this.TplName = "base/cluster/add.html"
 }
@@ -58,6 +66,7 @@ func (this *ClusterController) DetailPage() {
 	this.TplName = "base/cluster/detail.html"
 }
 
+// 保存集群，初始化集群节点IP
 // json
 // @router /api/cluster [post]
 func (this *ClusterController) Save() {
@@ -76,6 +85,19 @@ func (this *ClusterController) Save() {
 	}
 
 	_, err = sql.Raw(q).Exec()
+
+	// 插入集群节点数据
+	h := hosts2.CloudClusterHosts{}
+	h.HostType = "master"
+	h.HostIp = d.ApiAddress
+	h.ApiPort = d.NetworkCart
+	h.CreateTime = util.GetDate()
+	h.CreateUser = getUsername(this)
+	h.LastModifyTime = h.CreateTime
+	h.LastModifyUser = h.CreateUser
+	h.ClusterName = d.ClusterName
+	i := sql.InsertSql(h, hosts2.InsertCloudClusterHosts)
+	sql.Raw(i).Exec()
 
 	data, msg := util.SaveResponse(err, "名称已经被使用")
 	util.SaveOperLog(this.GetSession("username"), *this.Ctx, "保存集群操作 "+msg, d.ClusterName)

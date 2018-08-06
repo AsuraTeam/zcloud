@@ -200,7 +200,7 @@ func (this *ServiceController) ServiceSave() {
 // @param ClusterName
 // @router /api/service/name [get]
 func (this *ServiceController) GetServiceName() {
-	data := []app.CloudAppServiceName{}
+	data := make([]app.CloudAppServiceName, 0)
 	key := strings.Split(app.ServiceSearchKey, ",")
 
 	searchMap := sql.GetSearchMapValue(key, *this.Ctx, sql.SearchMap{})
@@ -217,7 +217,7 @@ func (this *ServiceController) GetServiceName() {
 // Service 数据
 // @router /api/service [get]
 func (this *ServiceController) ServiceData() {
-	data := []app.CloudAppService{}
+	data := make([]app.CloudAppService, 0)
 	key := this.GetString("key")
 	qk := strings.Split(app.ServiceSearchKey, ",")
 	user := getServiceUser(this)
