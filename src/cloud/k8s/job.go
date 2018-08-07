@@ -22,8 +22,8 @@ echo "开始构建...$d"
 echo "构建服务器$HOSTNAME"
 echo REGISTRYIP REGISTRYDOMAIN >> /etc/hosts
 ping REGISTRYDOMAIN -c 1
-dockerd --ip-forward=false --iptables=false --insecure-registry REGISTRY &>/dev/null &
-dockerd --ip-forward=false --iptables=false --insecure-registry REGISTRY &>/dev/null &
+dockerd --ip-forward=false --iptables=false --insecure-registry REGISTRY   &>/dev/null &
+dockerd --ip-forward=false --iptables=false --insecure-registry REGISTRY  &>/dev/null &
 echo $DOCKERFILE
 sleep 10
 cat > /root/docker <<EOF
@@ -153,9 +153,9 @@ func setJobInitParam(param JobParam) JobParam {
 	if param.Namespace == "" {
 		param.Namespace = util.Namespace("job", "job")
 	}
-	if param.Images == "" {
-		param.Images = "docker"
-	}
+	//if param.Images == "" {
+	param.Images = "docker"
+	//}
 	if len(param.Command) == 0 {
 		param.Command = []string{"sh", "/build/build-cmd", ";", "exit", "0"}
 	}
@@ -191,11 +191,11 @@ func getBuildConfigdata(param JobParam) []ConfigureData {
 	// 配置信息
 	config := `[{"ContainerPath":"/build/","DataName":"build-job-` + param.Itemname + `","DataId":"build-cmd"}]`
 	// 生产configmap信息
-	configdata := make([]ConfigureData, 0)
-	json.Unmarshal([]byte(config), &configdata)
+	configData := make([]ConfigureData, 0)
+	json.Unmarshal([]byte(config), &configData)
 
 	configureData := make([]ConfigureData, 0)
-	for _, v := range configdata {
+	for _, v := range configData {
 		ConfigDbData := map[string]interface{}{
 			"build-cmd": getBuild(param), // 启动命令
 		}

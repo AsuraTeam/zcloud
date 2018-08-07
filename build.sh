@@ -1,4 +1,4 @@
-export GOPATH=//home/gitsrc/cloud/
+export GOPATH=/home/gitsrc/cloud/
 export GOROOT=/usr/local/go
 cd  /home/gitsrc/cloud/src/cloud/
 go build -i -o  cloud-server 
