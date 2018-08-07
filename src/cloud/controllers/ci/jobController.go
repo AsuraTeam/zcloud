@@ -472,18 +472,18 @@ func GetJobLogs(jobData ci.CloudBuildJob) string {
 // @router /api/ci/job/logs/:id:int [get]
 func (this *JobController) JobLogs() {
 	jobData := getJobData(this)
-	logsr := GetJobLogs(jobData)
-	this.Ctx.WriteString(logsr)
+	logs := GetJobLogs(jobData)
+	this.Ctx.WriteString(logs)
 }
 
 // 2018-02-08 12:26
 // 获取job参数
-func getJobParam(jobData ci.CloudBuildJob,jobname string, registryServer string, groupData registry2.CloudRegistryServer) k8s.JobParam{
+func getJobParam(jobData ci.CloudBuildJob,jobName string, registryServer string, groupData registry2.CloudRegistryServer) k8s.JobParam{
 	master, port := hosts.GetMaster(jobData.ClusterName)
 	param := k8s.JobParam{
 		Master:         master,
 		Port:           port,
-		Jobname:jobname,
+		Jobname:        jobName,
 		Itemname:       jobData.ItemName,
 		RegistryServer: registryServer,
 		Version:        jobData.LastTag,
@@ -551,7 +551,7 @@ func JobExecStart(jobData ci.CloudBuildJob, username string, jobname string, reg
 	}
 	logs.Info("jobData", util.ObjToString(jobData))
 
-	groupData := registry.GetRegistryGroup(jobData.RegistryServer, jobData.ClusterName)
+	groupData, nodeIp, authServer, authDomain := registry.GetRegistryGroup(jobData.RegistryServer, jobData.ClusterName)
 	if groupData.ServerAddress == "" {
 		logs.Error("获取仓库服务失败", groupData)
 		return ""
@@ -559,6 +559,9 @@ func JobExecStart(jobData ci.CloudBuildJob, username string, jobname string, reg
 	logs.Info("获取到仓库地址", groupData)
 
 	param := getJobParam(jobData, jobname, groupData.ServerAddress, groupData)
+	param.RegistryIp = nodeIp
+	param.AuthServerIp = authServer
+	param.AuthServerDomain = authDomain
 	param.ClusterName = jobData.ClusterName
 	if registryAuth != "" {
 		param.RegistryAuth = registryAuth

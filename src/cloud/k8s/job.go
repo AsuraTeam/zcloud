@@ -21,16 +21,29 @@ d=$(date +"%F %T")
 echo "开始构建...$d"
 echo "构建服务器$HOSTNAME"
 echo REGISTRYIP REGISTRYDOMAIN >> /etc/hosts
+echo AuthServerIp AuthServerDomain >> /etc/hosts
 ping REGISTRYDOMAIN -c 1
-dockerd --ip-forward=false --iptables=false --insecure-registry REGISTRY   &>/dev/null &
-dockerd --ip-forward=false --iptables=false --insecure-registry REGISTRY  &>/dev/null &
-echo $DOCKERFILE
+ping AuthServerDomain -c 1
+dockerd --ip-forward=false --iptables=false --insecure-registry REGISTRY  --storage-driver=devicemapper  &>/dev/null &
 sleep 10
+echo $DOCKERFILE
+seq="1 2 3 4 5 6 7 8 9 10"
+
+for i in $seq
+do
+  docker ps |grep IMAGE && continue
+  sleep 3
+  d=$(date +"%F %T")
+  echo "请等待.. $i  $d" 
+done
+
 cat > /root/docker <<EOF
 $DOCKERFILE
 EOF
 cat /root/docker
-seq="1 2 3 4 5 6"
+echo ""
+d=$(date +"%F %T")
+echo "开始构建... $d"
 for i in $seq
 do
    docker build -t REGISTRY/REGISTRYGROUP/ITEMNAME:VERSION -f  /root/docker /root --ulimit nproc=MINPROC:MAXPROC  --no-cache --ulimit nofile=MINFILE:MAXFILE  2>&1
@@ -128,6 +141,10 @@ type JobParam struct {
 	RegistryAuth string
 	// 集群名称
 	ClusterName string
+	// 认证服务器IP地址
+	AuthServerIp string
+	// 认证服务器域名
+	AuthServerDomain string
 }
 
 // 替换buildcmd
@@ -160,10 +177,10 @@ func setJobInitParam(param JobParam) JobParam {
 		param.Command = []string{"sh", "/build/build-cmd", ";", "exit", "0"}
 	}
 	if param.Cpu == 0 {
-		param.Cpu = 1
+		param.Cpu = 2
 	}
 	if param.Memory == 0 {
-		param.Memory = 512
+		param.Memory = 4096
 	}
 	return param
 }
@@ -181,6 +198,8 @@ func getBuild(param JobParam) string {
 	build = replace(build, "REGISTRYDOMAIN", param.RegistryDomain)
 	build = replace(build, "REGISTRYGROUP", param.RegistryGroup)
 	build = replace(build, "REGISTRY", param.RegistryServer)
+	build = replace(build, "AuthServerIp", param.AuthServerIp)
+	build = replace(build, "AuthServerDomain", param.AuthServerDomain)
 	build = replace(build, "AUTH", param.Auth) // base64 user:passwd
 	return build
 }
@@ -214,11 +233,13 @@ func getJobParam(conf map[string]interface{}) v1.Job {
 	return job
 }
 
+// 物理机系统和job系统必须一致
 // 获取配置server创建所需参数
 // 2018-01-25 16:42
 func getJobServerParam(param JobParam) ServiceParam {
 	serviceParam := ServiceParam{}
-	serviceParam.StorageData = `[{"ContainerPath":"/var/lib/docker/","Volume":"","HostPath":"/home/data/docker/"}]`
+	serviceParam.StorageData = `[{"ContainerPath":"/var/run/docker.sock","Volume":"","HostPath":"/var/run/docker.sock"}, {"ContainerPath":"/usr/bin/docker","Volume":"","HostPath":"/usr/bin/docker"}]`
+	//serviceParam.StorageData = `[]`
 	serviceParam.Namespace = param.Namespace
 	if len(param.ConfigureData) == 0 {
 		configureData := getBuildConfigdata(param)
@@ -276,6 +297,7 @@ func CreateJob(param JobParam) string {
 						map[string]interface{}{
 							"name":         param.Jobname,
 							"image":        param.Images,
+							"imagePullPolicy": "Never",
 							"command":      param.Command,
 							"volumeMounts": volumeMounts,
 							"securityContext": map[string]interface{}{

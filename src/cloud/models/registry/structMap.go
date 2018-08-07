@@ -23,7 +23,7 @@ const UpdateGroupExclude = "GroupName,CreateTime"
 const UpdateCloudRegistryGroupExclude  =  "GroupName,CreateUser,CreateTime,LastModifyUser,ServerDomain,ClusterName"
 const InsertCloudRegistryGroup = "insert into cloud_registry_group" 
 const DeleteCloudRegistryGroup = "delete from cloud_registry_group"
-const SelectRegistryServerGroup  = `select b.server_address as server_address,b.server_domain as server_domain from cloud_registry_group a , cloud_registry_server b where a.server_domain=b.server_domain and a.cluster_name=b.cluster_name and a.group_name="{0}" and a.cluster_name="{1}"`
+const SelectRegistryServerGroup  = `select b.server_address as server_address,b.server_domain as server_domain, b.auth_server as auth_server from cloud_registry_group a , cloud_registry_server b where a.server_domain=b.server_domain and a.cluster_name=b.cluster_name and a.group_name="{0}" and a.cluster_name="{1}"`
 const SelectUserRegistryGroups = "select group_id from cloud_registry_group where create_user in (?)"
 
 const SelectCloudImage = "select access,download,tags,tag_number,layers_number,create_user,name,repositories,image_type,image_id,create_time,size,repositories_group from cloud_image"

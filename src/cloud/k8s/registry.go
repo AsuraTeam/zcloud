@@ -82,10 +82,10 @@ func getParam(registryParam RegistryParam) ServiceParam {
 
 	config := `[{"ContainerPath":"/certs","DataName":"registry-auth","DataId":"auth-crt,registry-crt,registry-key"},{"ContainerPath":"/start","DataName":"registry-auth","DataId":"start-cmd"},{"ContainerPath":"/etc/docker/registry","DataName":"registry-config","DataId":"config-yml"}]`
 	// 生产configmap信息
-	configdata := []ConfigureData{}
+	configdata := make([]ConfigureData, 0)
 	err := json.Unmarshal([]byte(config), &configdata)
 	logs.Info(err)
-	configureData := []ConfigureData{}
+	configureData := make([]ConfigureData, 0)
 
 	// 读取配置文件里的证书信息
 	pwd, _ := os.Getwd()
@@ -259,3 +259,4 @@ func CheckImageExists(host string, username string, password string, imagename s
 	}
 	return true
 }
+

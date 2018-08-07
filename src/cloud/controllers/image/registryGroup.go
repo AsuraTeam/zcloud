@@ -14,6 +14,8 @@ import (
 	"cloud/controllers/base/quota"
 	"cloud/cache"
 	"time"
+	"k8s.io/apimachinery/pkg/util/rand"
+	"net"
 )
 
 type RegistryGroupController struct {
@@ -191,28 +193,43 @@ func (this *RegistryGroupController) RegistryGroupImages() {
 	setJson(this, r)
 }
 
+// 获取认证服务器IP地址
+func getAuthServer(authServer string) (string, string) {
+	authServer = strings.Split(authServer, "/")[2]
+	authServer = strings.Split(authServer, ":")[0]
+	ns ,_ := net.LookupHost(authServer)
+	if len(ns) > 0 {
+		return ns[0], authServer
+	}
+	return authServer, authServer
+}
+
 // 获取组数据
 // 2018-01-31 21:03
-func GetRegistryGroup(groupname string, clustername string) registry.CloudRegistryServer {
+func GetRegistryGroup(groupName string, clusterName string) (registry.CloudRegistryServer, string, string, string) {
 	data := registry.CloudRegistryServer{}
 	q := registry.SelectRegistryServerGroup
-	q = strings.Replace(q, "{0}", sql.Replace(groupname), -1)
-	q = strings.Replace(q, "{1}", sql.Replace(clustername), -1)
+	q = strings.Replace(q, "{0}", sql.Replace(groupName), -1)
+	q = strings.Replace(q, "{1}", sql.Replace(clusterName), -1)
 	searchSql := sql.SearchSql(registry.CloudRegistryServer{}, q, sql.SearchMap{})
 	sql.Raw(searchSql).QueryRow(&data)
-	return data
+	client, _ := k8s.GetClient(clusterName)
+	nodes := k8s.GetNodesIp(client)
+	logs.Info("执行job获取到节点地址", util.ObjToString(nodes))
+	ip, domain := getAuthServer(data.AuthServer)
+	return data, nodes[rand.Intn(len(nodes)-1)].Ip,ip, domain
 }
 
 // 仓库组器数据
 // @router /api/registry/group [get]
 func (this *RegistryGroupController) RegistryGroup() {
-	data := []registry.CloudRegistryGroup{}
+	data := make([]registry.CloudRegistryGroup, 0)
 	searchMap := sql.SearchMap{}
 	groupTp := this.GetString("groupType")
-	clustername := this.GetString("ClusterName")
+	clusterMame := this.GetString("ClusterName")
 
-	if clustername != "" {
-		searchMap.Put("ClusterName", clustername)
+	if clusterMame != "" {
+		searchMap.Put("ClusterName", clusterMame)
 		searchMap.Put("CreateUser", getUser(this))
 	}
 	key := this.GetString("search")
