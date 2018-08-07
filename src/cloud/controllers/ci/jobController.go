@@ -167,6 +167,7 @@ func (this *JobController) JobSave() {
 		searchMap.Put("JobId", d.JobId)
 		searchMap.Put("CreateUser", getUser(this))
 		q = sql.UpdateSql(d, ci.UpdateCloudBuildJob, searchMap, ci.UpdateCloudBuildJobExclude2)
+		cache.JobDataCache.Delete(strconv.FormatInt(d.JobId, 10))
 	}else{
 		status, msg := checkQuota(getUser(this))
 		if !status {
@@ -304,8 +305,8 @@ func getJobData(this *JobController) ci.CloudBuildJob {
 	if cache.JobDataErr == nil {
 		r := cache.JobDataCache.Get(id)
 		if r != nil {
-			rdata, _ := redis.String(r, nil)
-			json.Unmarshal([]byte(rdata), &jobData)
+			rData, _ := redis.String(r, nil)
+			json.Unmarshal([]byte(rData), &jobData)
 			if jobData.JobId != 0 {
 				return jobData
 			}
@@ -375,8 +376,8 @@ func getLastLog(jobId int64) ci.CloudBuildJobHistory {
 	if cache.JobCacheErr == nil {
 		r := cache.JobCache.Get(strconv.FormatInt(jobId, 10))
 		if r != nil {
-			rdata, _ := redis.String(r, nil)
-			json.Unmarshal([]byte(rdata), &history)
+			rData, _ := redis.String(r, nil)
+			json.Unmarshal([]byte(rData), &history)
 			if history.HistoryId != 0 {
 				logs.Info("从redis缓存获取到 cloud_job_history_", history.JobName)
 				return history
@@ -396,9 +397,9 @@ func getLastLog(jobId int64) ci.CloudBuildJobHistory {
 
 // 2018-02-04 15;57
 // 获取历史数据,在流水线时候使用到
-func GetHistoryData(jobname string) ci.CloudBuildJobHistory {
+func GetHistoryData(jobName string) ci.CloudBuildJobHistory {
 	history := ci.CloudBuildJobHistory{}
-	q := sql.SearchSql(history, ci.SelectCloudBuildJobHistory, sql.GetSearchMapV("JobName", jobname))
+	q := sql.SearchSql(history, ci.SelectCloudBuildJobHistory, sql.GetSearchMapV("JobName", jobName))
 	sql.Raw(q).QueryRow(&history)
 	return history
 }
@@ -407,12 +408,12 @@ func GetHistoryData(jobname string) ci.CloudBuildJobHistory {
 更新日志
 2018-01-26 6:29
  */
-func updateBuildLog(history ci.CloudBuildJobHistory, logsr string) {
-	if len(logsr) < 10 {
+func updateBuildLog(history ci.CloudBuildJobHistory, logsR string) {
+	if len(logsR) < 10 {
 		return
 	}
-	history.BuildLogs = logsr
-	success := strings.Split(logsr, "完成构建...")
+	history.BuildLogs = logsR
+	success := strings.Split(logsR, "完成构建...")
 	if len(success) > 1 {
 		t := strings.Split(success[1], "\n")
 		finishTime := util.TimeToStamp(t[0])
@@ -429,8 +430,8 @@ func updateBuildLog(history ci.CloudBuildJobHistory, logsr string) {
 
 // 完成后更新数据
 // 2018-01-26 20:27
-func updateBuildResult(history ci.CloudBuildJobHistory, logsr string, jobData ci.CloudBuildJob, cl kubernetes.Clientset) {
-	updateBuildLog(history, logsr)
+func updateBuildResult(history ci.CloudBuildJobHistory, logsR string, jobData ci.CloudBuildJob, cl kubernetes.Clientset) {
+	updateBuildLog(history, logsR)
 	searchMap := sql.SearchMap{}
 	searchMap.Put("JobId", jobData.JobId)
 	jobData.BuildStatus = history.BuildStatus
@@ -449,22 +450,22 @@ func GetJobLogs(jobData ci.CloudBuildJob) string {
 		logs.Info("获取到开始构建")
 		return history.BuildLogs
 	}
-	logsr := k8s.GetJobLogs(cl, history.JobName, util.Namespace("job", "job"))
-	if logsr == "" {
-		logsr = "没有找到日志<span style='display:none;'></span>"
-		return logsr
+	logsR := k8s.GetJobLogs(cl, history.JobName, util.Namespace("job", "job"))
+	if logsR == "" {
+		logsR = "没有找到日志<span style='display:none;'></span>"
+		return logsR
 	}
 
-	if strings.Contains(logsr, "构建完成") || strings.Contains(logsr, "构建失败") {
+	if strings.Contains(logsR, "构建完成") || strings.Contains(logsR, "构建失败") {
 		history.BuildStatus = "构建失败"
-		if strings.Contains(logsr, "构建完成") {
+		if strings.Contains(logsR, "构建完成") {
 			history.BuildStatus = "构建成功"
 		}
-		updateBuildResult(history, logsr, jobData, cl)
+		updateBuildResult(history, logsR, jobData, cl)
 		go registry.UpdateGroupImageInfo()
 	}
-	updateBuildLog(history, logsr)
-	return logsr
+	updateBuildLog(history, logsR)
+	return logsR
 }
 
 // 执行任务计划
@@ -489,12 +490,13 @@ func getJobParam(jobData ci.CloudBuildJob,jobName string, registryServer string,
 		Version:        jobData.LastTag,
 		Timeout:        jobData.TimeOut,
 		Dockerfile:     jobData.Content,
+		Script:         jobData.Script,
 		RegistryGroup:  jobData.RegistryServer,
 		Images: jobData.BaseImage,
 	}
 	registryServers := registry.GetRegistryServer(groupData.ServerDomain)
 
-	var authuser string
+	var authUser string
 	if len(registryServers) > 0 {
 		access := strings.Split(groupData.ServerAddress, ":")
 		if len(access) > 1 {
@@ -502,11 +504,11 @@ func getJobParam(jobData ci.CloudBuildJob,jobName string, registryServer string,
 			param.RegistryServer = groupData.ServerDomain + ":" + access[1]
 		}
 		logs.Info("获取到镜像服务器地址", registryServers)
-		authuser = registryServers[0].Admin + ":" + util.Base64Decoding(registryServers[0].Password)
+		authUser = registryServers[0].Admin + ":" + util.Base64Decoding(registryServers[0].Password)
 		param.RegistryDomain = registryServers[0].ServerDomain
 	}
 
-	param.Auth = util.Base64Encoding(authuser)
+	param.Auth = util.Base64Encoding(authUser)
 	return param
 }
 
@@ -520,6 +522,7 @@ func writeJobHistory(jobData ci.CloudBuildJob, jobId string, username string, re
 		JobId:          jobData.JobId,
 		ItemName:       jobData.ItemName,
 		DockerFile:     jobData.Content,
+		Script:          jobData.Script,
 		BuildStatus:    "构建中",
 		BuildLogs:      "开始构建",
 		RegistryGroup:  jobData.RegistryServer,
@@ -539,6 +542,7 @@ func JobExecStart(jobData ci.CloudBuildJob, username string, jobname string, reg
 		file := GetDockerfileData(jobData.DockerFile)
 		if len(file) > 0 {
 			jobData.Content = file[0].Content
+			jobData.Script = file[0].Script
 		}
 	}
 
@@ -562,6 +566,7 @@ func JobExecStart(jobData ci.CloudBuildJob, username string, jobname string, reg
 	param.RegistryIp = nodeIp
 	param.AuthServerIp = authServer
 	param.AuthServerDomain = authDomain
+	param.Script = jobData.Script
 	param.ClusterName = jobData.ClusterName
 	if registryAuth != "" {
 		param.RegistryAuth = registryAuth
@@ -593,8 +598,8 @@ func (this *JobController) JobExec() {
 	cl,_ := k8s.GetClient(jobData.ClusterName)
 	param.Cl3 = cl
 	param = app.CreateSecretFile(param)
-	jobname := "job-" + util.Md5Uuid()
-	JobExecStart(jobData, getUser(this), jobname, param.Registry)
+	jobName := "job-" + util.Md5Uuid()
+	JobExecStart(jobData, getUser(this), jobName, param.Registry)
 	data, msg := util.SaveResponse(nil, "构建中")
 	util.SaveOperLog(this.GetSession("username"), *this.Ctx, "保存构建任务配置 "+msg, jobData.ItemName)
 	setJson(this, data)

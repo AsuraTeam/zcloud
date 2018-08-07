@@ -38,6 +38,8 @@ type CloudCiDockerfile struct {
     FileId int64
     //dockerfile内容
     Content string
+    // 编译脚本
+    Script string
     //创建时间
     CreateTime string
     //创建用户
@@ -87,6 +89,8 @@ type CloudBuildJob struct {
     Description string
     // 自定义dockerfile
     Content string
+    // 编译脚本
+    Script string
     // 超时时间
     TimeOut int
     // 最近tag
@@ -123,6 +127,8 @@ type CloudBuildJobHistory struct {
     JobId int64
     //
     DockerFile string
+    // 编译脚本
+    Script string
     // 仓库组
     RegistryGroup string
     // 基础镜像

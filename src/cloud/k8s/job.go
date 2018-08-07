@@ -25,6 +25,9 @@ echo AuthServerIp AuthServerDomain >> /etc/hosts
 ping REGISTRYDOMAIN -c 1
 ping AuthServerDomain -c 1
 dockerd --ip-forward=false --iptables=false --insecure-registry REGISTRY  --storage-driver=devicemapper  &>/dev/null &
+d=$(date +"%F %T")
+echo "开始编译文件,,,,"
+SCRIPT
 sleep 10
 echo $DOCKERFILE
 seq="1 2 3 4 5 6 7 8 9 10"
@@ -145,6 +148,8 @@ type JobParam struct {
 	AuthServerIp string
 	// 认证服务器域名
 	AuthServerDomain string
+	// 构建脚本
+	Script string
 }
 
 // 替换buildcmd
@@ -190,6 +195,7 @@ func setJobInitParam(param JobParam) JobParam {
 func getBuild(param JobParam) string {
 	build := replace(buildCmd, "MAXFILE", param.NoFileMax)
 	build = replace(build, "MINFILE", param.NoFileMin)
+	build = replace(build, "SCRIPT", param.Script)
 	build = replace(build, "MINPROC", param.NoProcMin)
 	build = replace(build, "MAXPROC", param.NoProcMax)
 	build = replace(build, "ITEMNAME", param.Itemname)

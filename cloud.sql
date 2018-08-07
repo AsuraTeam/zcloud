@@ -371,6 +371,7 @@ CREATE TABLE `cloud_build_job` (
   `build_status` varchar(32) DEFAULT NULL COMMENT '构建状态',
   `description` varchar(100) DEFAULT NULL,
   `content` text COMMENT 'dockerfile数据',
+  `script` text COMMENT '构建脚本',
   `time_out` int(11) DEFAULT NULL COMMENT '构建超时时间,最大3600秒,最小10秒',
   `last_tag` varchar(50) DEFAULT NULL COMMENT '最新tag',
   `base_image` varchar(200) DEFAULT NULL COMMENT '基础镜像,里面应该运行docker服务',
@@ -404,6 +405,7 @@ CREATE TABLE `cloud_build_job_history` (
   `build_status` varchar(32) DEFAULT NULL COMMENT '构建状态',
   `build_time` int(11) DEFAULT NULL COMMENT '构建时间',
   `build_logs` text COMMENT '构建日志',
+    `script` text COMMENT '构建脚本',
   `registry_group` varchar(100) DEFAULT NULL COMMENT '仓库组',
   `base_image` varchar(200) DEFAULT NULL COMMENT '基础镜像,里面应该运行docker服务',
   PRIMARY KEY (`history_id`),
@@ -427,6 +429,7 @@ DROP TABLE IF EXISTS `cloud_ci_dockerfile`;
 CREATE TABLE `cloud_ci_dockerfile` (
   `file_id` int(11) NOT NULL AUTO_INCREMENT,
   `content` text COMMENT 'dockerfile内容',
+  `script` text COMMENT '构建脚本',
   `name` varchar(100) DEFAULT NULL COMMENT '文件名称',
   `create_time` varchar(32) DEFAULT NULL COMMENT '创建时间',
   `create_user` varchar(32) DEFAULT NULL COMMENT '创建用户',

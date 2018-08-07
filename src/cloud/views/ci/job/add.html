@@ -98,6 +98,17 @@
                                     </div>
                                 </div>
                             </div>
+                                <div class="col-md-12 top10">
+                                    <div class="form-group">
+                                        <label for="field-13" class="col-md-3 fw100 control-label">构建脚本<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-9">
+                                        <textarea type="text"  rows="14" value="{{.data.Script}}" nullmsg="不能为空"
+                                                  name="Script" id="Script" onchange="checkChange('Content')"
+                                                  class="form-control" id="field-13" placeholder="构建脚本只用来打包,打包后将该包上传到docker容器中">{{.data.Script}}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
                         </div>
                         <div class="row top10" title="择构建生成的Docker镜像的tag命名规范，支持时间戳和手动俩种方式">
                             <div class="col-md-10">
