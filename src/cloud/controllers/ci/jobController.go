@@ -105,7 +105,7 @@ func (this *JobController) JobAdd() {
 	} else {
 		this.Data["ImageTag2"] = "checked"
 	}
-	dockerfile += util.GetSelectOption("", "", "") + dockerfileData
+	dockerfile += dockerfileData
 	clusterHtml += clusterData
 	this.Data["cluster"] = clusterHtml
 	this.Data["dockerfile"] = dockerfile
@@ -161,6 +161,8 @@ func (this *JobController) JobSave() {
 	}
 
 	util.SetPublicData(d, getUser(this), &d)
+	d = updateJobContent(d)
+
 	var q = sql.InsertSql(d, ci.InsertCloudBuildJob)
 	if d.JobId > 0 {
 		searchMap := sql.SearchMap{}
@@ -197,6 +199,18 @@ func checkQuota(username string) (bool,string) {
 		}
 	}
 	return true, ""
+}
+
+// 更新任务脚本和dockerfile
+func updateJobContent(jobData ci.CloudBuildJob) ci.CloudBuildJob  {
+	if jobData.DockerFile != "0" {
+		file := GetDockerfileData(jobData.DockerFile)
+		if len(file) > 0 {
+			jobData.Content = file[0].Content
+			jobData.Script = file[0].Script
+		}
+	}
+	return jobData
 }
 
 
@@ -304,12 +318,10 @@ func getJobData(this *JobController) ci.CloudBuildJob {
 	id := this.Ctx.Input.Param(":id")
 	if cache.JobDataErr == nil {
 		r := cache.JobDataCache.Get(id)
-		if r != nil {
-			rData, _ := redis.String(r, nil)
-			json.Unmarshal([]byte(rData), &jobData)
-			if jobData.JobId != 0 {
-				return jobData
-			}
+		s := util.RedisObj2Obj(r, &jobData)
+		if s {
+			logs.Info("从redis获取job数据", id, util.ObjToString(jobData))
+			return jobData
 		}
 	}
 	searchMap := sql.SearchMap{}
@@ -321,6 +333,7 @@ func getJobData(this *JobController) ci.CloudBuildJob {
 			cache.JobDataCache.Put(id, util.ObjToString(jobData), time.Minute*10)
 		}
 	}
+	logs.Info("从数据库获取job数据", util.ObjToString(jobData))
 	return jobData
 }
 
@@ -538,14 +551,7 @@ func writeJobHistory(jobData ci.CloudBuildJob, jobId string, username string, re
 // 2018-02-03 22:13
 // 执行构建任务
 func JobExecStart(jobData ci.CloudBuildJob, username string, jobname string, registryAuth string) string {
-	if jobData.DockerFile != "0" {
-		file := GetDockerfileData(jobData.DockerFile)
-		if len(file) > 0 {
-			jobData.Content = file[0].Content
-			jobData.Script = file[0].Script
-		}
-	}
-
+	jobData = updateJobContent(jobData)
 	// 按时间戳自动生成
 	jobData.LastTag = jobData.ImageTag
 	if jobData.ImageTag == "000" {

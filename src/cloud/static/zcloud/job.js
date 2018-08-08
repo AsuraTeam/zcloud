@@ -171,9 +171,9 @@ function loadJobData(key) {
  * @return {*}
  */
 function deleteJob(id) {
-    var url = "/api/ci/job/" + id
-    var result = del({}, url)
-    result = JSON.stringify(result)
+    var url = "/api/ci/job/" + id;
+    var result = del({}, url);
+    result = JSON.stringify(result);
     return result
 }
 
@@ -197,6 +197,12 @@ function saveJob(jobId) {
         }
     } else {
         data["ImageTa"] = "000";
+    }
+    var select = $("#setSelectDockerfile1").is(":checked");
+    if (select){
+        data["DockerFile"] = $("#select-docker-file").val();
+    }else{
+        data["DockerFile"] = 0
     }
     var url = "/api/ci/job";
     var result = post(data, url);

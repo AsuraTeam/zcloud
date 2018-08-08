@@ -244,7 +244,7 @@ func getJobParam(conf map[string]interface{}) v1.Job {
 // 2018-01-25 16:42
 func getJobServerParam(param JobParam) ServiceParam {
 	serviceParam := ServiceParam{}
-	serviceParam.StorageData = `[{"ContainerPath":"/var/run/docker.sock","Volume":"","HostPath":"/var/run/docker.sock"}, {"ContainerPath":"/usr/bin/docker","Volume":"","HostPath":"/usr/bin/docker"}]`
+	serviceParam.StorageData = `[{"ContainerPath":"/var/run/docker.sock","Volume":"","HostPath":"/var/run/docker.sock"}, {"ContainerPath":"/usr/bin/docker","Volume":"","HostPath":"/usr/bin/docker"},{"ContainerPath":"/etc/resolv.conf","Volume":"","HostPath":"/etc/resolv.conf"}]`
 	//serviceParam.StorageData = `[]`
 	serviceParam.Namespace = param.Namespace
 	if len(param.ConfigureData) == 0 {
