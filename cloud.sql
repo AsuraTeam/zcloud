@@ -404,7 +404,7 @@ CREATE TABLE `cloud_build_job_history` (
   `create_user` varchar(32) DEFAULT NULL COMMENT '创建用户',
   `build_status` varchar(32) DEFAULT NULL COMMENT '构建状态',
   `build_time` int(11) DEFAULT NULL COMMENT '构建时间',
-  `build_logs` text COMMENT '构建日志',
+  `build_logs` mediumtext COMMENT '构建日志',
     `script` text COMMENT '构建脚本',
   `registry_group` varchar(100) DEFAULT NULL COMMENT '仓库组',
   `base_image` varchar(200) DEFAULT NULL COMMENT '基础镜像,里面应该运行docker服务',

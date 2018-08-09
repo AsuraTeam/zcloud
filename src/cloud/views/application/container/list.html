@@ -219,7 +219,9 @@
                             + '</div>' +
                             '</div></div>'
                     }
-
+                    if( r==""){
+                        r = "<span class='text-danger'>删除中...</span>"
+                    }
                     if (full["CreateTime"].indexOf("秒前") != -1) {
                         return '<div class="Running" style="color: #3cbbb5ad !important;"><div><i class="fa fa-circle"></i><span>&nbsp;启动中</span>' +
                             '</div></div>';
