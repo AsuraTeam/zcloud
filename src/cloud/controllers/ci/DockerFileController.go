@@ -112,6 +112,7 @@ func (this *DockerFileController) DockerFileSave() {
 			ci.UpdateCloudCiDockerfile,
 			searchMap,
 			ci.UpdateDockerfileExclude)
+		DeleteJobCache(d.Name)
 	}else{
 		status, msg := checkDockerfileQuota(getDockerfileUser(this))
 		if !status {

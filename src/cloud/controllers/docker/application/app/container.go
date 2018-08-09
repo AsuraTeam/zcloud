@@ -172,37 +172,37 @@ func MakeContainerData(namespace string) {
 
 	for _, d := range data {
 		namespace := util.Namespace(d.AppName, d.ResourceName)
-		sname := namespace + d.ServiceName
+		sName := namespace + d.ServiceName
 
-		if _, ok := lockData.Get(sname); !ok {
+		if _, ok := lockData.Get(sName); !ok {
 			c, _ := k8s.GetClient(d.ClusterName)
 			appData := k8s.GetContainerStatus(namespace, c)
 			for _, all := range appData {
 				all = setAppData(all, d, c)
 				appDataLock.Put(all.AppName+all.ContainerName, all)
 				containerDatas.Put(all.AppName+all.ContainerName, "1")
-				lockData.Put(sname, "1")
+				lockData.Put(sName, "1")
 			}
 		}
 	}
 
 	// 要删除的数据
 	deleteData := util.Lock{}
-	appDatasDb := util.Lock{}
-	datas := make([]app.CloudContainerName, 0)
+	appDataDb := util.Lock{}
+	dataS := make([]app.CloudContainerName, 0)
 	containerSql := sql.SearchSql(app.CloudContainer{}, app.SelectCloudContainer, sql.SearchMap{})
-	sql.Raw(containerSql).QueryRows(&datas)
-	for _, d := range datas {
-		sname := d.AppName + d.ContainerName
-		appDatasDb.Put(sname, "1") // 将这个名称写成真
+	sql.Raw(containerSql).QueryRows(&dataS)
+	for _, d := range dataS {
+		sName := d.AppName + d.ContainerName
+		appDataDb.Put(sName, "1") // 将这个名称写成真
 		// 如果k8s里的容器没有的话就删除掉
-		if _, ok := containerDatas.Get(sname); !ok {
-			deleteData.Put(sname, d)
+		if _, ok := containerDatas.Get(sName); !ok {
+			deleteData.Put(sName, d)
 		}
 	}
 
 	// 更新或插入数据
-	go writeToDb(appDataLock, appDatasDb)
+	go writeToDb(appDataLock, appDataDb)
 	// 删除数据
 	go deleteDbContainer(deleteData)
 }

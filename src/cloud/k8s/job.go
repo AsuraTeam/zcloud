@@ -5,13 +5,12 @@ import (
 	"encoding/json"
 	"strings"
 	"cloud/util"
-	v1 "k8s.io/api/batch/v1"
+	"k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"strconv"
 	"time"
-	"github.com/garyburd/redigo/redis"
 	"cloud/cache"
 	"github.com/astaxie/beego"
 )
@@ -246,8 +245,13 @@ func getJobParam(conf map[string]interface{}) v1.Job {
 func getJobServerParam(param JobParam) ServiceParam {
 	serviceParam := ServiceParam{}
 	dir := beego.AppConfig.String("docker.data.dir")+`data/source/`
-	serviceParam.StorageData = `[{"ContainerPath":"`+dir+`","Volume":"","HostPath":"`+dir+`"},{"ContainerPath":"/var/run/docker.sock","Volume":"","HostPath":"/var/run/docker.sock"}, {"ContainerPath":"/usr/bin/docker","Volume":"","HostPath":"/usr/bin/docker"},{"ContainerPath":"/etc/resolv.conf","Volume":"","HostPath":"/etc/resolv.conf"}]`
-	//serviceParam.StorageData = `[]`
+	installDir := beego.AppConfig.String("docker.install.dir")
+	serviceParam.StorageData = `[
+        {"ContainerPath":"`+installDir+`","Volume":"","HostPath":"`+installDir+`"},
+        {"ContainerPath":"`+dir+`","Volume":"","HostPath":"`+dir+`"},
+        {"ContainerPath":"/var/run/docker.sock","Volume":"","HostPath":"/var/run/docker.sock"}, 
+        {"ContainerPath":"/usr/bin/docker","Volume":"","HostPath":"/usr/bin/docker"},
+        {"ContainerPath":"/etc/resolv.conf","Volume":"","HostPath":"/etc/resolv.conf"}]`
 	serviceParam.Namespace = param.Namespace
 	if len(param.ConfigureData) == 0 {
 		configureData := getBuildConfigdata(param)
@@ -258,9 +262,9 @@ func getJobServerParam(param JobParam) ServiceParam {
 
 // 获取是否要再指定label的机器构建
 // 2018-01-25 16;51
-func getJobLables(conf map[string]interface{}, clientset kubernetes.Clientset) map[string]interface{} {
+func getJobLables(conf map[string]interface{}, clientSet kubernetes.Clientset) map[string]interface{} {
 	// 获取是否标签有ci的,有的话就去有标签的构建
-	nodes := GetNodes(clientset, "ci=build")
+	nodes := GetNodes(clientSet, "ci=build")
 	if len(nodes) > 0 {
 		selector := `{"Lables":"ci","Value":"build"}`
 		nodeSelector := getNodeSelectorNode(selector)
@@ -383,27 +387,26 @@ func getJobPod(pod string, cl kubernetes.Clientset, namespace string) ([]corev1.
 
 
 func GetJobLogs(cl kubernetes.Clientset, pod string, namespace string) string {
-	podsdata := make([]corev1.Pod, 0)
+	podsData := make([]corev1.Pod, 0)
 	var err error
 	if cache.PodCache != nil {
 		r := cache.PodCache.Get(pod + namespace)
-		rdata, err := redis.String(r, nil)
-		if err == nil {
-			json.Unmarshal([]byte(rdata), &podsdata)
-			logs.Info("从redis获取到构建任务pod", len(podsdata), " ",pod+namespace)
+		s := util.RedisObj2Obj(r, &podsData)
+		if s {
+			logs.Info("从redis获取到构建任务pod", len(podsData), " ",pod+namespace)
 		}
 	}
-	if len(podsdata) == 0 {
-		podsdata, err = getJobPod(pod, cl, namespace)
-		if cache.PodCache != nil && len(podsdata) > 0 {
-			cache.PodCache.Put(pod+namespace, util.ObjToString(podsdata), time.Second*500)
+	if len(podsData) == 0 {
+		podsData, err = getJobPod(pod, cl, namespace)
+		if cache.PodCache != nil && len(podsData) > 0 {
+			cache.PodCache.Put(pod+namespace, util.ObjToString(podsData), time.Second*500)
 		}
 	}
-	if len(podsdata) > 0 && err == nil {
+	if len(podsData) > 0 && err == nil {
 		opt := corev1.PodLogOptions{}
 		bt := int64(1024 * 1024 * 2)
 		opt.LimitBytes = &bt
-		r := cl.CoreV1().Pods(namespace).GetLogs(podsdata[0].Name, &opt)
+		r := cl.CoreV1().Pods(namespace).GetLogs(podsData[0].Name, &opt)
 		c := r.Do()
 		l, _ := c.Raw()
 		if c.Error() == nil {

@@ -139,7 +139,7 @@ func GetPodStatus(namespace string, clientset kubernetes.Clientset) []AppPodStat
 // 2018-01-16 11:18
 func getMountPath(d v1.Pod) string {
 	volumn := d.Spec.Containers[0].VolumeMounts
-	result := []StorageData{}
+	result := make([]StorageData, 0)
 	// mount的名称和路径
 	mounts := util.Lock{}
 	for _, v := range d.Spec.Volumes {
@@ -175,11 +175,13 @@ func podStatus(app app.CloudContainer, obj v1.ContainerStatus) app.CloudContaine
 	if obj.State.Waiting != nil {
 		app.WaitingMessages = obj.State.Waiting.Message
 		app.WaitingReason = obj.State.Waiting.Reason
+		app.Status = app.WaitingReason
 	}
 
 	if 	obj.State.Terminated != nil{
 		app.TerminatedMessages = obj.State.Terminated.Message
 		app.TerminatedReason = obj.State.Terminated.Reason
+		app.Status = app.TerminatedReason
 	}
 	app.Image = obj.Image
 	app.AppName = obj.Name
@@ -189,11 +191,12 @@ func podStatus(app app.CloudContainer, obj v1.ContainerStatus) app.CloudContaine
 
 // {"name":"auto-service","image":"nginx:1.10","ports":[{"containerPort":80,"protocol":"TCP"}],"resources":{"limits":{"cpu":"1","memory":"2Gi"},"requests":{"cpu":"1","memory":"2Gi"}},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent"}
 // 获取某个namespace下面的服务
-func GetContainerStatus(namespace string, clientset kubernetes.Clientset) []app.CloudContainer {
-	data := GetPods(namespace, clientset)
-	datas := make([]app.CloudContainer, 0)
+func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.CloudContainer {
+	data := GetPods(namespace, clientSet)
+	dataS := make([]app.CloudContainer, 0)
 	for _, d := range data {
 		app := app.CloudContainer{}
+		app.Status = "true"
 		app.ServerAddress = d.Status.HostIP
 		app.ContainerIp = d.Status.PodIP
 		if len(d.Status.ContainerStatuses) == 0 {
@@ -201,7 +204,6 @@ func GetContainerStatus(namespace string, clientset kubernetes.Clientset) []app.
 		}
 
 		obj := d.Status.ContainerStatuses[0]
-
 		app = podStatus(app, obj)
 		if app.WaitingMessages == "" {
 			for _, v := range d.Status.Conditions {
@@ -217,17 +219,19 @@ func GetContainerStatus(namespace string, clientset kubernetes.Clientset) []app.
 		app.Image = d.Spec.Containers[0].Image
 		app.Memory = limit.Memory().Value() / 1024 / 1024
 
-		envs := make([]string, 0)
+		envS := make([]string, 0)
 		for _, v := range d.Spec.Containers[0].Env {
-			envs = append(envs, v.Name+"="+v.Value+"\n")
+			envS = append(envS, v.Name+"="+v.Value+"\n")
 		}
 		app.StorageData = getMountPath(d)
-		app.Env = strings.Join(envs, " ")
-		app.Status = strings.Replace(util.ObjToString(d.Status.Phase), "\"", "", -1)
+		app.Env = strings.Join(envS, " ")
+		if app.Status == "true" {
+			app.Status = strings.Replace(util.ObjToString(d.Status.Phase), "\"", "", -1)
+		}
 		app.ContainerName = d.Name
 
 		app.CreateTime = util.ReplaceTime(d.CreationTimestamp.String())
-		datas = append(datas, app)
+		dataS = append(dataS, app)
 	}
-	return datas
+	return dataS
 }

@@ -200,6 +200,7 @@
                 },
                 {
                     "data": "Status", "sWidth": "8%", "mRender": function (data, type, full) {
+                        r = data;
                     if (data == "Running") {
                         var r = '<div class="Running"><div><i class="fa fa-circle"></i><span>&nbsp;运行中</span>' +
                             "<div class='text-default brtop5'>" + 1 + "/" + 1 + "&nbsp;共" + 1 + "个运行</div>"
@@ -218,6 +219,7 @@
                             + '</div>' +
                             '</div></div>'
                     }
+
                     if (full["CreateTime"].indexOf("秒前") != -1) {
                         return '<div class="Running" style="color: #3cbbb5ad !important;"><div><i class="fa fa-circle"></i><span>&nbsp;启动中</span>' +
                             '</div></div>';
@@ -230,7 +232,7 @@
                         errmsg = full["WaitingReason"] + "\n" + full["WaitingMessages"];
                     }
                     if (errmsg) {
-                        return "<span title='" + errmsg + "'>" + r + "</span>"
+                        return "<span title='" + errmsg + "' class='text-danger'>" + r + "</span>"
                     } else {
                         return "<span>" + r + "</span>"
                     }

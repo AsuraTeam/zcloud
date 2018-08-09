@@ -188,6 +188,20 @@ func (this *JobController) JobSave() {
 	setJson(this, data)
 }
 
+// 2018-08-09 13:34
+// 删除缓存数据
+func DeleteJobCache(name string)  {
+	jobData := make([]ci.CloudBuildJob, 0)
+	searchMap := sql.SearchMap{}
+	searchMap.Put("DockerFile", name)
+	q1 := sql.SearchSql(ci.CloudBuildJob{}, ci.SelectCloudBuildJob, searchMap)
+	sql.Raw(q1).QueryRows(&jobData)
+	for _, v := range jobData{
+		logs.Info("删除job缓存", v.DockerFile)
+		cache.JobDataCache.Delete(strconv.FormatInt(v.JobId, 10))
+	}
+}
+
 // 2018-02-12 09:30
 // 检查镜像仓库配额
 // 检查资源配额是否够用
