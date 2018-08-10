@@ -144,6 +144,7 @@
     $('.selectpicker').selectpicker({//初始化
         size: 3
     });
+    var table;
     function loadContainerData(key, app, service, init) {
         key = getValue(key);
         if (key != "" && key.length < 4) {
@@ -167,12 +168,12 @@
         if (entname == "--请选择--") {
             entname = "";
         }
-        $("#app-data-table").dataTable({
+        table = $("#app-data-table").dataTable({
             "filter": false,//去掉搜索框
             "ordering": false, // 是否允许排序
             "paginationType": "full_numbers", // 页码类型
             "destroy": true,
-            "processing": true,
+            "processing": false,
             "serverSide": true,
             "scrollX": true, // 是否允许左右滑动
             "displayLength": 10, // 默认长度
@@ -316,5 +317,15 @@
         $("#select-app-select").html(html);
         $(".selectpicker").selectpicker('refresh');
     }
+
+    var timer ;
+    var count;
+    timer = setInterval(function () {
+        table.fnReloadAjax();
+        count += 1;
+        if(count > 300){
+            clearInterval(timer);
+        }
+    }, 3000);
 </script>
 </html>

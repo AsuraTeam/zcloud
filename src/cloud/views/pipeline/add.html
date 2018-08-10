@@ -202,7 +202,13 @@
     $("#select-service-id").html("{{.serviceData}}");
     $("#select-app-id").html("{{.appData}}");
     $("#select-job-id").html("{{.jobData}}");
-    $("#select-cluster-id").html("{{.cluster}}");
+    var id = '{{.data.PipelineId}}';
+
+    if(id != "0"){
+        $("#select-cluster-id").html("{{.cluster}}");
+    }else {
+        $("#select-cluster-id").html("<option>--请选择--</option>{{.cluster}}");
+    }
     $('.selectpicker').selectpicker({
         //初始化
         size: 6
