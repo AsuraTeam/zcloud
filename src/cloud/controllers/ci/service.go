@@ -151,7 +151,7 @@ func (this *ServiceController) ServiceAdd() {
 // 2018-02-17 11:20
 // router /api/ci/service/logs [get]
 func (this *ServiceController) ServiceLogs() {
-	data := []ci.CloudCiReleaseLog{}
+	data := make([]ci.CloudCiReleaseLog, 0)
 	domain := this.GetString("domain")
 	searchMap := sql.SearchMap{}
 	if domain != "" {
@@ -216,7 +216,7 @@ func (this *ServiceController) ServiceSave() {
 // router /api/ci/service/name [get]
 func (this *ServiceController) ServiceDataName() {
 	// 服务发布数据
-	data := []ci.CloudCiService{}
+	data := make([]ci.CloudCiService, 0)
 	q := sql.SearchSql(
 		ci.CloudCiService{},
 		ci.SelectCloudCiService,
@@ -229,7 +229,7 @@ func (this *ServiceController) ServiceDataName() {
 // 服务发布历史数据
 // @router /api/ci/service/history [get]
 func (this *ServiceController) ReleaseHistory() {
-	data := []ci.CloudCiReleaseHistory{}
+	data := make([]ci.CloudCiReleaseHistory, 0)
 	domain := this.GetString("domain")
 	searchMap := sql.SearchMap{}
 	if domain != "" {

@@ -175,9 +175,9 @@ func setJobInitParam(param JobParam) JobParam {
 	if param.Namespace == "" {
 		param.Namespace = util.Namespace("job", "job")
 	}
-	//if param.Images == "" {
-	param.Images = "docker"
-	//}
+	if param.Images == "" {
+	   param.Images = "docker"
+	}
 	if len(param.Command) == 0 {
 		param.Command = []string{"sh", "/build/build-cmd", ";", "exit", "0"}
 	}

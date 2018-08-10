@@ -13,6 +13,7 @@ import (
 	"golang.org/x/crypto/openpgp/errors"
 	"strings"
 	"cloud/controllers/base/storage"
+	"cloud/controllers/image"
 )
 
 type ServiceController struct {
@@ -67,6 +68,8 @@ func (this *ServiceController) ImageAdd() {
 	if len(tag) > 1 {
 		this.Data["tag"] = tag[1]
 	}
+	images := registry.GetImageTag(service.ImageTag)
+	this.Data["images"] = registry.GetImageTagSelect(images)
 	this.TplName = "application/service/image.html"
 }
 
