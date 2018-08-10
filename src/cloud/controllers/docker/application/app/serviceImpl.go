@@ -295,6 +295,15 @@ func GetUserLbService(user string, clustername string, id string) []app.CloudApp
 	return data
 }
 
+// 2018-08-10 15:36
+// 数据写入redis
+func serviceToRedis(namespace string, id int64, sv k8s.CloudApp)  {
+	cache.ServiceCache.Put(
+		namespace+strconv.FormatInt(id, 10),
+		util.ObjToString(sv),
+		time.Second*86400)
+}
+
 // 2018-01-31 16:04
 // 后台执行服务状态,更新到缓存里
 func GoServerThread(data []app.CloudAppService) {
@@ -316,13 +325,17 @@ func GoServerThread(data []app.CloudAppService) {
 			if ok {
 				sv := v.(k8s.CloudApp)
 				sv.ClusterName = d.ClusterName
-
-				cache.ServiceCache.Put(
-					namespace+strconv.FormatInt(d.ServiceId, 10),
-					util.ObjToString(sv),
-					time.Second*86400)
-
+				serviceToRedis(namespace, d.ServiceId, sv)
 				result = append(result, v)
+			}else{
+				sv := k8s.CloudApp{}
+				r := cache.ServiceCache.Get(namespace + strconv.FormatInt(d.ServiceId, 10))
+				s := util.RedisObj2Obj(r, &sv)
+				if s {
+					sv.Status = "False"
+					sv.AvailableReplicas = 0
+					serviceToRedis(namespace, d.ServiceId, sv)
+				}
 			}
 		}
 		if len(result) >= len(data) {
