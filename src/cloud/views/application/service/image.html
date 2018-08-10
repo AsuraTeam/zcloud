@@ -50,12 +50,12 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-5 top10">
+                            <div class="col-md-12 top10">
                                 <div class="form-group">
                                     <label for="field-14" class="col-md-3 fw100 control-label">版本选择</label>
                                     <div class="col-md-9" id="field-14">
                                         <select class="selectpicker"
-                                                onchange="$('#update_image_version_id').val($(this).val())"
+                                                onchange="changeImg($(this).val())"
                                                 data-live-search="true" data-style="btn-default"
                                                 id="select-image-id">
                                         </select>
@@ -94,11 +94,20 @@
         $("#update_interval_id").val(10);
     }
 
-    var imgs = '{{.imags}}';
+    var imgs = '<option>--请选择--</option>{{.images}}';
     console.log(imgs)
     $("#select-image-id").html(imgs);
     $('.selectpicker').selectpicker({
         //初始化
         size: 5
     });
+
+    /**
+     * 修改镜像
+     * @param val
+     */
+    function changeImg(val) {
+       var odl =  $('#update_image_version_id').val().split(":")[0];
+        $('#update_image_version_id').val(odl + ":" + val)
+    }
 </script>

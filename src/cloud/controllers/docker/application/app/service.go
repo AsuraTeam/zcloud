@@ -69,7 +69,7 @@ func (this *ServiceController) ImageAdd() {
 		this.Data["tag"] = tag[1]
 	}
 	images := registry.GetImageTag(service.ImageTag)
-	this.Data["images"] = registry.GetImageTagSelect(images)
+	this.Data["images"] = images
 	this.TplName = "application/service/image.html"
 }
 
