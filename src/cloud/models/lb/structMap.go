@@ -7,7 +7,7 @@ const DeleteCloudLb = "delete from cloud_lb"
 const SelectUserLbs = "select lb_id from cloud_lb where create_user in (?)"
 
 const SelectCloudLbWhere = 	`where 1=1 and (lb_name like "%?%" or description like "%?%")`
-const SelectCloudLbService = "select flow_service_name,percent,lb_type,entname,service_version,protocol,lb_method,lb_id,default_domain,domain,lb_service_id,cluster_name,last_modify_user,service_id,last_modify_time,create_time,create_user,service_name,lb_name,cert_file,description,listen_port,container_port from cloud_lb_service"
+const SelectCloudLbService = "select app_name,flow_service_name,percent,lb_type,entname,service_version,protocol,lb_method,lb_id,default_domain,domain,lb_service_id,cluster_name,last_modify_user,service_id,last_modify_time,create_time,create_user,service_name,lb_name,cert_file,description,listen_port,container_port from cloud_lb_service"
 const UpdateCloudLbService = "update cloud_lb_service"
 const UpdateLbServiceExclude  = "CreateTime,CreateUser,LbName"
 const InsertCloudLbService = "insert into cloud_lb_service" 

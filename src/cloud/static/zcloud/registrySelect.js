@@ -153,6 +153,25 @@ function getResouceData(clustername, id, url, name, appname) {
     $("#" + id).html(html);
     $('.selectpicker').selectpicker('refresh');
 }
+
+
+/**
+ * 2018-02-03 21:02
+ * 选择应用
+ * @param clustername
+ */
+function getServiceIdSelect(clustername, id, url, name, appname) {
+    appname = getValue(appname);
+    var data = get({ClusterName: clustername, AppName: appname}, url);
+    var html = "";
+    for (var i = 0; i <= data.length; i++) {
+        if (data[i]) {
+            html += "<option value='" + data[i]["ServiceId"] + "'>" + data[i][name] + "</option>";
+        }
+    }
+    $("#" + id).html(html);
+    $('.selectpicker').selectpicker('refresh');
+}
 /**
  * Created by zhaoyun on 2018/2/7.
  */

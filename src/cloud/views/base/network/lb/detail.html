@@ -196,7 +196,7 @@
                         {"data": "CreateTime"},
                         {
                             "sWidth": "150px", "data": "ServiceId", "mRender": function (data, type, full) {
-                            var r = '<button type="button" title="更新" onclick="addLbService(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
+                            var r = '<button type="button" title="更新" onclick="addLbService(' + data + ',\''+full["LbId"]+'\')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
                                 '<button type="button"  title="删除" onClick="deleteLbServiceSwal(' + data + ')" class="delete-template btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>&nbsp;';
                             if (full["LbType"] != "Nginx") {
                                 return r
@@ -222,10 +222,10 @@
                     serviceId = 0
                 }
                 lbName = getValue(lbName);
-                var url = "/base/network/lb/service/add"
-                var result = get({ClusterName: "{{.data.ClusterName}}", ServiceId: serviceId, LbId: lbName}, url)
-                $("#add_lb_service_html").html(result)
-                $("#add_post_html").modal("toggle")
+                var url = "/base/network/lb/service/add";
+                var result = get({ClusterName: "{{.data.ClusterName}}", ServiceId: serviceId, LbId: lbName}, url);
+                $("#add_lb_service_html").html(result);
+                $("#add_post_html").modal("toggle");
                 $("#check-faild-success").html("");
             }
 

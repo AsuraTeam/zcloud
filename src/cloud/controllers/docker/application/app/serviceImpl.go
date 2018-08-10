@@ -275,13 +275,13 @@ func GetServiceData(name string, cluster string, appname string) app.CloudAppSer
 
 // 2018-02-01 15:15
 // 获取某个用户的所有服务
-func GetUserLbService(user string, clustername string, id string) []app.CloudAppService {
+func GetUserLbService(user string, clusterName string, id string) []app.CloudAppService {
 	data := make([]app.CloudAppService, 0)
 	searchMap := sql.GetSearchMapV(
 		"CreateUser",
 		user,
 		"ClusterName",
-		clustername)
+		clusterName)
 
 	if id != "" {
 		searchMap.Put("ServiceId", id)
