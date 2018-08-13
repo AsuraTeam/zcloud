@@ -204,6 +204,7 @@ func getParam(d app.CloudAppService, user string) k8s.ServiceParam {
 	param.HealthData = d.HealthData
 	param.ResourceName = d.ResourceName
 	param.StorageData = d.StorageData
+	param.PortYaml = d.Yaml
 	if d.ReplicasMax > param.Replicas {
 		param.ReplicasMax = d.ReplicasMax
 	} else {
@@ -225,9 +226,9 @@ func getParam(d app.CloudAppService, user string) k8s.ServiceParam {
 	config := d.ConfigureData
 	if config != "" {
 		configureData := make([]k8s.ConfigureData, 0)
-		configdata := make([]k8s.ConfigureData, 0)
-		json.Unmarshal([]byte(config), &configdata)
-		for _, v := range configdata {
+		configData := make([]k8s.ConfigureData, 0)
+		json.Unmarshal([]byte(config), &configData)
+		for _, v := range configData {
 			v.ConfigDbData = GetConfgData(v.DataName, d.ClusterName)
 			configureData = append(configureData, v)
 		}

@@ -239,6 +239,8 @@ func init() {
 			beego.NSNamespace("/app",
 				// 获取应用名称,
 				beego.NSRouter("/name", &app.AppController{}, "get:GetAppName"),
+				// 重新部署应用,
+				beego.NSRouter("/redeploy", &app.AppController{}, "get:RedeployApp"),
 				// 删除应用,
 				beego.NSRouter("/:id:int", &app.AppController{}, "delete:AppDelete"),
 				// 启停应用接口,

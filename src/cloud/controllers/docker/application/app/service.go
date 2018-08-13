@@ -178,16 +178,12 @@ func (this *ServiceController) ServiceSave() {
 		return
 	}
 
-	serviceParam := getParam(d, d.CreateUser)
-	yaml, err := k8s.CreateServicePod(serviceParam)
+	d, err  = ExecDeploy(d, false)
 	if err != nil {
 		logs.Error("创建服务失败", "k8s执行错误", err.Error())
 		responseData(err, this, d.ServiceName, "创建服务时失败")
 		return
 	}
-
-	d.Yaml = yaml
-	saveServiceDeploy(d)
 
 	data, msg := util.SaveResponse(nil, "保存成功")
 	util.SaveOperLog(getServiceUser(this), *this.Ctx,
@@ -195,6 +191,21 @@ func (this *ServiceController) ServiceSave() {
 	setServiceJson(this, data)
 	saveAppData(d)
 
+}
+
+// 创建服务公用
+func ExecDeploy(d app.CloudAppService, isRedeploy bool) (app.CloudAppService, error) {
+	serviceParam := getParam(d, d.CreateUser)
+	serviceParam.IsRedeploy = isRedeploy
+	yaml, err := k8s.CreateServicePod(serviceParam)
+	if err != nil {
+		logs.Error("创建服务失败", "k8s执行错误", err.Error())
+		return d, err
+	}
+
+	d.Yaml = yaml
+	saveServiceDeploy(d)
+	return d, nil
 }
 
 // Service 名称数据

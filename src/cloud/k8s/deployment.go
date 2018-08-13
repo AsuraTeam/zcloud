@@ -330,7 +330,7 @@ func GetDeploymentApp(clientset kubernetes.Clientset, namespace string, service 
 func getPorts(port string, hostport string) []map[string]interface{} {
 	ports := make([]map[string]interface{}, 0)
 	hostsports := strings.Split(hostport, ",")
-	for id, p := range strings.Split(port, ",") {
+	for idx, p := range strings.Split(port, ",") {
 		pv, err := strconv.Atoi(p)
 		if err != nil {
 			continue
@@ -339,8 +339,8 @@ func getPorts(port string, hostport string) []map[string]interface{} {
 			"containerPort": pv,
 			"protocol":      "TCP",
 		}
-		if len(hostsports) > id {
-			hostport, err := strconv.Atoi(hostsports[id])
+		if len(hostsports) > idx {
+			hostport, err := strconv.Atoi(hostsports[idx])
 			if err == nil {
 				data["hostPort"] = hostport
 			}
@@ -391,13 +391,32 @@ func getServicePorts(param ServiceParam) []map[string]interface{} {
 		}
 		ports = append(ports, temp)
 	}
+	if param.IsRedeploy {
+		data := make([]map[string]interface{}, 0)
+		json.Unmarshal([]byte(param.PortYaml), &data)
+		logs.Info("yaml 数据", data)
+		if len(data) > 0 {
+			for _, v := range data{
+				d := v
+				if d != nil {
+					if d["kind"] == "Service" {
+						spec := d["spec"].(map[string]interface{})
+						if spec != nil {
+							ports := spec["ports"].([]interface{})
+							logs.Info("重建服务获取到端口", util.ObjToString(ports))
+						}
+					}
+				}
+			}
+		}
+	}
 	return ports
 }
 
 // 制作亲和性数据
 // 2018-01-11 14:55
 func getAffinity(affinityData string) []map[string]interface{} {
-	data := []Affinity{}
+	data := make([]Affinity, 0)
 	err := json.Unmarshal([]byte(affinityData), &data)
 	if err != nil {
 		logs.Error("创建Affinity数据失败", err)

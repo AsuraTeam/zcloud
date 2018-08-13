@@ -11,6 +11,8 @@ type CloudAppName struct {
 	ClusterName string
 	// 环境名称
 	Entname string
+	//
+	AppId string
 }
 
 type CloudApp struct {

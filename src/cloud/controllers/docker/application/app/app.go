@@ -91,7 +91,7 @@ func (this *AppController) AppScale() {
 // @param ClusterName
 // @router /api/app/name [get]
 func (this *AppController) GetAppName() {
-	data := []app.CloudAppName{}
+	data := make([]app.CloudAppName, 0)
 	searchMap := sql.SearchMap{}
 	q := strings.Split("Entname,ClusterName", ",")
 	searchMap = sql.GetSearchMapValue(q, *this.Ctx, searchMap)
@@ -123,7 +123,7 @@ func (this *AppController) ContainerList() {
 
 // 获取应用名称信息
 func getAppDataQ(searchMap sql.SearchMap) []app.CloudAppName {
-	data := []app.CloudAppName{}
+	data := make([]app.CloudAppName, 0)
 	searchSql := sql.SearchSql(app.CloudAppName{}, app.GetAppName, searchMap)
 	logs.Info("searchSql", searchSql, searchMap)
 	sql.Raw(searchSql).QueryRows(&data)
@@ -144,7 +144,7 @@ func GetAppHtml(cluster string, username string) string {
 // 2018-02-27 11:45
 // 加载应用数据
 func selectAppData(searchMap sql.SearchMap)[]app.CloudApp  {
-	data := []app.CloudApp{}
+	data := make([]app.CloudApp, 0)
 	searchSql := sql.SearchSql(app.CloudAppService{}, app.SelectCloudApp, searchMap)
 	sql.Raw(searchSql).QueryRows(&data)
 	return data
@@ -239,7 +239,7 @@ func (this *AppController) AppAdd() {
 // 2018-02-26 09:24
 // 重新部署应用
 // @router /api/app/redeploy [post]
-func (this *AppController) redeployApp() {
+func (this *AppController) RedeployApp() {
 	ids := this.GetString("apps")
 	user := getUser(this)
 	for _, v:= range strings.Split(ids, ","){
@@ -247,8 +247,15 @@ func (this *AppController) redeployApp() {
 		if _, err := strconv.Atoi(v); err != nil {
 			continue
 		}
-		getRedeployService(v, user)
+
+		services, status := getRedeployService(v, user)
+		if status {
+			for _, service := range services {
+				ExecDeploy(service, true)
+			}
+		}
 	}
+	SetAppDataJson(this, util.ApiResponse(true, "成功,重建中..."))
 }
 
 // 2018-02-26 09:32
@@ -267,6 +274,7 @@ func getRedeployApp(v string, user string) ([]app.CloudAppName,bool) {
 // 2018-02-26 09:54
 // 获取重建应用的服务信息
 func getRedeployService(v string, user string) ([]app.CloudAppService, bool) {
+	logs.Info("开始重建服务", util.ObjToString(v))
 	data,status := getRedeployApp(v, user)
 	if ! status {
 		return []app.CloudAppService{}, false
@@ -276,6 +284,7 @@ func getRedeployService(v string, user string) ([]app.CloudAppService, bool) {
 	searchMap.Put("Entname", data[0].Entname)
 	searchMap.Put("AppName", data[0].AppName)
 	serviceData := getServiceData(searchMap, app.SelectCloudAppService)
+	logs.Info("获取到服务数据", util.ObjToString(serviceData))
 	if len(serviceData) == 0 {
 		return []app.CloudAppService{}, false
 	}
@@ -329,7 +338,7 @@ func (this *AppController) AppDelete() {
 
 // @router /api/app [get]
 func (this *AppController) AppData() {
-	data := []app.CloudApp{}
+	data := make([]app.CloudApp, 0)
 	searchMap := sql.SearchMap{}
 	ip := this.GetString("ip")
 	searchMap = sql.GetSearchMapValue(

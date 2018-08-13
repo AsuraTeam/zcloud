@@ -68,7 +68,7 @@ func getParam(registryParam RegistryParam) ServiceParam {
 	param.Image = "registry:2"
 	param.MinReady = 1
 	param.HealthData = ""
-	//param.StorageData = `[{"ContainerPath":"/etc/localtime","Volume":"","HostPath":"/etc/localtime"}]`
+	param.StorageData = `[{"ContainerPath":"/var/lib/registry/","Volume":"","HostPath":"`+ registryParam.HostPath  +`"}]`
 	param.Command = `["sh","/start/start-cmd"]`
 	// deployment
 	c1, _ := GetYamlClient(registryParam.ClusterName, "apps", "v1beta1", "/apis")
@@ -206,12 +206,12 @@ func GetRegistryInfo(host string, username string, password string, registryName
 
 // 2018-01-29 08:44
 // 删除镜像
-func deleteImage(hub *registry.Registry, imagename string, tag string) (bool, error) {
-	digest, err := hub.ManifestDigest(imagename, tag)
+func deleteImage(hub *registry.Registry, imageName string, tag string) (bool, error) {
+	digest, err := hub.ManifestDigest(imageName, tag)
 	if err != nil {
 		return false, err
 	}
-	err = hub.DeleteManifest(imagename, digest)
+	err = hub.DeleteManifest(imageName, digest)
 	if err != nil {
 		return false, err
 	}

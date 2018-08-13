@@ -151,6 +151,7 @@ function stopApp() {
     return JSON.stringify(result)
 }
 
+
 // 停止应用
 // 2018-01-16 21:19
 function stopAppSwal() {
@@ -174,10 +175,11 @@ function redeploymentApp() {
         var value = getCheckInput("all");
         var url = "/api/app/redeploy";
         var result = get({apps:value}, url);
-        saveMsg(result);
+        // saveMsg(result);
         setTimeout(function () {
             loadAppData();
-        }, 4000)
+        }, 4000);
+       return JSON.stringify(result);
 }
 
 // 重启应用
@@ -186,6 +188,11 @@ function restartAppSwal() {
     Swal("将重启该应用", "warning", "确认操作", "不操作", "成功", "失败", "restartApp()", "loadAppData()");
 }
 
+// 重建应用
+// 2018-08-13 08:50
+function redeployAppSwal() {
+    Swal("将重建该应用,重建是应用在集群失败或意外手动删除时,重新生成应用,许保证仓库是正常的", "warning", "确认操作", "不操作", "成功", "失败", "redeploymentApp()", "loadAppData()");
+}
 
 /**
  * 删除模板弹出框

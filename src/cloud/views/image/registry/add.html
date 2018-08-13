@@ -124,6 +124,18 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row top15" title="数据存储在物理机的路径">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-12" class="col-md-2 fw100 control-label">数据路径<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" value="{{.data.HostPath}}" name="HostPath"
+                                               class="form-control" id="field-12" placeholder="数据存储在物理机的路径,默认/var/lib/registry/">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row top15">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -157,6 +169,7 @@
         $("input[name='AuthServer']").val("{{.AuthServer}}");
         $("input[name='Admin']").val("admin");
         $("input[name='Name']").val("registry");
+        $("input[name='HostPath']").val("/var/lib/registry");
     }
     $("#select-cluster-id").html("{{.cluster}}");
     $('.selectpicker').selectpicker({

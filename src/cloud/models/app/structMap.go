@@ -5,7 +5,7 @@ const SelectCloudApp = "select service_yaml,entname,yaml,node_port,uuid,is_servi
 const UpdateCloudApp = "update cloud_app"
 const InsertCloudApp = "insert into cloud_app"
 const DeleteCloudApp = "delete from cloud_app"
-const GetAppName  = "select app_name,create_user,cluster_name,entname from cloud_app"
+const GetAppName  = "select app_id, app_name,create_user,cluster_name,entname from cloud_app"
 const SelectUserApp = `select app_id from cloud_app where create_user in (?) `
 
 

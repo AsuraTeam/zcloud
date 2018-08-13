@@ -137,6 +137,10 @@ type ServiceParam struct {
 	Labels map[string]interface{}
 	// 访问状态
 	AccessMode string
+	// 老的yaml信息,主要是获取端口
+	PortYaml string
+	// 重建标志
+	IsRedeploy bool
 }
 
 // 配置服务健康检查使用的
@@ -206,6 +210,7 @@ type RegistryParam struct {
 	Master      string
 	Port        string
 	AuthServer  string
+	HostPath    string
 }
 
 // 镜像信息获取

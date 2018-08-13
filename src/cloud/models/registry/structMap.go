@@ -1,6 +1,6 @@
 package registry
 
-const SelectCloudRegistryServer = "select entname,access,auth_server, name,admin,groups_id,last_modify_time,groups,server_address,cluster_name,create_time,create_user,images_number,username,server_id,last_modify_user,prefix,password,server_domain,description from cloud_registry_server"
+const SelectCloudRegistryServer = "select entname,access,host_path,auth_server, name,admin,groups_id,last_modify_time,groups,server_address,cluster_name,create_time,create_user,images_number,username,server_id,last_modify_user,prefix,password,server_domain,description from cloud_registry_server"
 const UpdateCloudRegistryServer = "update cloud_registry_server"
 const UpdateRegistryServerExclude = "AuthServer,Name,CreateTime,CreateUser"
 const InsertCloudRegistryServer = "insert into cloud_registry_server" 

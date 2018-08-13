@@ -664,8 +664,8 @@ function Swal(title,type,yes,no,okmsg, failmsg, func, reload) {
                 buttonsStyling: false
             }).then(function () {
                 success("已发送请求");
-                var result = eval(func)
-                if (result.indexOf(okmsg) != -1) {
+                var result = eval(func);
+                if (JSON.stringify(result).indexOf(okmsg) != -1) {
                     swal(
                         okmsg,
                         result,

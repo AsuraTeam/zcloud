@@ -62,6 +62,7 @@ func deployRegistry(d registry.CloudRegistryServer) error {
 		Port:        port,
 		ClusterName: d.ClusterName,
 		AuthServer:  d.AuthServer,
+		HostPath:    d.HostPath,
 		Name:        d.Name}
 	err := k8s.CreateRegistry(param)
 	return err
@@ -95,20 +96,19 @@ func (this *ImageController) RegistryServerSave() {
 	d.Password = util.Base64Encoding(d.Password)
 	searchMap := sql.SearchMap{}
 	searchMap.Put("ServerId", d.ServerId)
-	masterData := []registry.CloudRegistryServer{}
+	masterData := make([]registry.CloudRegistryServer, 0)
 
 	q := sql.SearchSql(d, registry.SelectCloudRegistryServer, searchMap)
 	sql.Raw(q).QueryRows(&masterData)
 
 	util.SetPublicData(d, util.GetUser(this.GetSession("username")), &d)
 
-	this.ServeJSON(false)
 	if d.ServerId > 0 {
 		q = sql.UpdateSql(d, registry.UpdateCloudRegistryServer,
 			searchMap, registry.UpdateRegistryServerExclude)
 		_, err = sql.Raw(q).Exec()
 	} else {
-		serverData := []registry.CloudRegistryServer{}
+		serverData := make([]registry.CloudRegistryServer, 0)
 		search := sql.GetSearchMapV("Name", d.Name, "ClusterName", d.ClusterName)
 		q := sql.SearchSql(
 			registry.CloudRegistryServer{},
@@ -166,7 +166,7 @@ func GetRegistryServerMap() util.Lock {
 // 2018-01-26 10:37
 func GetRegistryServer(name string) []registry.CloudRegistryServer {
 	searchMap := sql.SearchMap{}
-	data := []registry.CloudRegistryServer{}
+	data := make([]registry.CloudRegistryServer, 0)
 	if name != "" && name != "1" {
 		searchMap.Put("ServerDomain", name)
 	}
@@ -177,7 +177,7 @@ func GetRegistryServer(name string) []registry.CloudRegistryServer {
 		searchMap)
 	sql.Raw(searchSql).QueryRows(&data)
 
-	result := []registry.CloudRegistryServer{}
+	result := make([]registry.CloudRegistryServer, 0)
 	for _, v := range data {
 		if name == "" {
 			v.Password = "****"
@@ -203,7 +203,7 @@ func GetRegistrySelect() string {
 // 仓库服务器数据
 // @router /api/registry [get]
 func (this *ImageController) RegistryServer() {
-	data := []registry.CloudRegistryServer{}
+	data := make([]registry.CloudRegistryServer, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	key := this.GetString("search")
@@ -225,7 +225,7 @@ func (this *ImageController) RegistryServer() {
 
 	num, _ := sql.Raw(searchSql).QueryRows(&data)
 	clusterMap := cluster.GetClusterMap()
-	result := []registry.CloudRegistryServer{}
+	result := make([]registry.CloudRegistryServer, 0)
 	namespace := util.Namespace("registryv2", "registryv2")
 	for _, v := range data {
 		if len(v.Access) > 10 {
