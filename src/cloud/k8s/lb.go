@@ -130,7 +130,8 @@ func makeNginxConfigMap(confdata map[string]interface{}, upstreamdata map[string
 		LbNginxSsl,
 		ssldata,
 		conftype))
-
+	cm := map[string]interface{}{"reload.sh": reloadNginx}
+	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(LbNginxStartPath, "", cm, ""))
 	makeNgxinConfMap(clustername, nginxConfigMap)
 }
 

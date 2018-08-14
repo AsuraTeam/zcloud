@@ -14,6 +14,7 @@ const (
 	LbNginxConfig     = "lb-nginx-config"
 	LbNginxUpstream   = "lb-nginx-upstream"
 	LbNginxSsl        = "lb-nginx-ssl"
+	LbNginxStartPath        = "/opt/"
 )
 
 // 获取默认的配置
@@ -104,7 +105,7 @@ func CreateNginxLb(param ServiceParam) {
 	param.HostPort = "80,443"
 	param.NoUpdateConfig = true
 	param.ClusterName = ""
-	//param.Command = `["/usr/local/nginx/sbin/nginx"]`
+	param.Command = `["sh","/opt/reload.sh"]`
 
 	param.StorageData = `[{"ContainerPath":"/usr/local/nginx/logs/","HostPath":"/home/data/nginx/logs/"}]`
 
