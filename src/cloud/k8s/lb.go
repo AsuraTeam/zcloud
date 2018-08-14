@@ -47,6 +47,22 @@ upstream DOMAIN {
 POD
 }
 `
+    reloadNginx = `
+#!/usr/bin/bash
+old=$(find /usr/local/nginx/conf/ -type f  |xargs md5sum)
+while [ 1 ] 
+do
+ new=$(find /usr/local/nginx/conf/ -type f  |xargs md5sum)
+ if [ "$new" != "$old"  ] ; then
+    old=$new
+    /usr/local/nginx/sbin/nginx -t 
+    if [ $? -eq 0 ] ; then
+       /usr/local/nginx/sbin/nginx -s reload
+    fi
+ fi
+ sleep 3
+done
+`
 	selectLbDomainSuffix   = "select lb_domain_suffix as domain from cloud_lb"
 	InsertCloudLbNginxConf = "insert into cloud_lb_nginx_conf"
 	SelectCloudLbNginxConf = "select cert_file,conf_id,service_id,create_user,lb_service_id,resource_name,app_name,cluster_name,last_modify_time,last_modify_user,domain,vhost,create_time,service_name from cloud_lb_nginx_conf"
@@ -57,7 +73,7 @@ POD
 // 获取配置了lb的数据
 // 2018-02-01 11:43
 func getLbServiceData() []CloudLbService {
-	data := []CloudLbService{}
+	data := make([]CloudLbService, 0)
 	q := sql.SearchSql(CloudLbService{}, SelectCloudLbService, sql.SearchMap{})
 	sql.Raw(q).QueryRows(&data)
 	return data
@@ -67,10 +83,10 @@ func getLbServiceData() []CloudLbService {
 // 2018-02-03 07:48
 func makeNgxinConfMap(clustername string, nginxConfigMap []ConfigureData) {
 	serviceParam := ServiceParam{}
-	clientset, _ := GetClient(clustername)
+	clientSet, _ := GetClient(clustername)
 	cl2, _ := GetYamlClient(clustername, "", "v1", "api")
 	serviceParam.Cl2 = cl2
-	serviceParam.Cl3 = clientset
+	serviceParam.Cl3 = clientSet
 	serviceParam.ConfigureData = nginxConfigMap
 	serviceParam.Namespace = nginxLbNamespace
 	CreateConfigmap(serviceParam)
@@ -79,7 +95,7 @@ func makeNgxinConfMap(clustername string, nginxConfigMap []ConfigureData) {
 // 2018-02-03 07:51
 // 创建用于测试的nginx配置
 func MakeTestNginxConfMap(confdata map[string]interface{}, ssldata map[string]interface{}, clustername string) {
-	nginxConfigMap := []ConfigureData{}
+	nginxConfigMap := make([]ConfigureData, 0)
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(
 		NginxConfigPath,
 		LbNginxConfig,
@@ -97,7 +113,7 @@ func MakeTestNginxConfMap(confdata map[string]interface{}, ssldata map[string]in
 // 2018-02-01 14:28
 // 创建nginx配置
 func makeNginxConfigMap(confdata map[string]interface{}, upstreamdata map[string]interface{}, ssldata map[string]interface{}, clustername string, conftype string) {
-	nginxConfigMap := []ConfigureData{}
+	nginxConfigMap := make([]ConfigureData, 0)
 
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(
 		NginxConfigPath,
@@ -158,12 +174,12 @@ func makeNodeUpstream(clientset kubernetes.Clientset, svcport string, ips []stri
 
 // 2108-02-03 11:30
 // 获取虚拟主机证书文件
-func GetCertConfigData(keyfile string, sslDbName map[string]interface{}) map[string]interface{} {
-	certData := selectCertfile(keyfile)
+func GetCertConfigData(keyFile string, sslDbName map[string]interface{}) map[string]interface{} {
+	certData := selectCertfile(keyFile)
 	// 配置证书信息 私钥
-	sslDbName[keyfile+".key"] = certData.CertValue
+	sslDbName[keyFile+".key"] = certData.CertValue
 	// 公钥
-	sslDbName[keyfile+".pem"] = certData.PemValue
+	sslDbName[keyFile+".pem"] = certData.PemValue
 	return sslDbName
 }
 
@@ -261,7 +277,7 @@ func UpdateNginxLbUpstream(param UpdateLbNginxUpstream) error{
 	upstreamTemp = strings.Replace(upstreamTemp, "POD", strings.Join(ips, "\n"), -1)
 	cm[param.Domain+".upstream"] = upstreamTemp
 
-	nginxConfigMap := []ConfigureData{}
+	nginxConfigMap := make([]ConfigureData, 0)
 
 	confData := make(map[string]interface{})
 	for k, v := range cm {
@@ -381,7 +397,7 @@ func writeNginxConfToDb(lb CloudLbService, nginxMap util.Lock, vhost string) {
 // 2018-02-01 13:41
 func selectNginxConfFromDb() util.Lock {
 	result := util.Lock{}
-	data := []CloudLbNginxConf{}
+	data := make([]CloudLbNginxConf, 0)
 	q := sql.SearchSql(CloudLbNginxConf{}, SelectCloudLbNginxConf, sql.SearchMap{})
 	sql.Raw(q).QueryRows(&data)
 	for _, v := range data {
@@ -402,9 +418,9 @@ func getClusters(data []CloudLbService) []string {
 
 // 2018-02-01 17:47
 // 查询负载机器的域名后缀
-func getLbDetail(lbname string, clustername string) CloudLbService {
+func getLbDetail(lbname string, clusterName string) CloudLbService {
 	data := CloudLbService{}
-	searchMap := sql.GetSearchMapV("ClusterName", clustername, "LbName", lbname)
+	searchMap := sql.GetSearchMapV("ClusterName", clusterName, "LbName", lbname)
 	q := sql.SearchSql(data, selectLbDomainSuffix, searchMap)
 	sql.Raw(q).QueryRow(&data)
 	return data

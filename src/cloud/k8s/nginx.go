@@ -18,14 +18,14 @@ const (
 
 // 获取默认的配置
 // 2018-02-02 16:13
-func getNgxinDefaulgConfig(containerPath string, dataname string, configdata map[string]interface{}, conftype string) ConfigureData {
-	if configdata == nil {
-		configdata = map[string]interface{}{"default": ""}
+func getNgxinDefaulgConfig(containerPath string, dataname string, configData map[string]interface{}, confType string) ConfigureData {
+	if configData == nil {
+		configData = map[string]interface{}{"default": ""}
 	}
 	return ConfigureData{
 		ContainerPath: containerPath,
-		DataName:      dataname + conftype,
-		ConfigDbData:  configdata,
+		DataName:      dataname + confType,
+		ConfigDbData:  configData,
 	}
 }
 
@@ -50,9 +50,9 @@ func nginxTestJobParam(master string, port string) JobParam {
 // 2018-02-03 07:18
 // 分析日志,获取执行结果
 func getNginxJobLog(logstr string) string {
-	logstrs := strings.Split(logstr, "\n")
+	logStr := strings.Split(logstr, "\n")
 	r := make([]string, 0)
-	for _, v := range logstrs {
+	for _, v := range logStr {
 		if strings.Contains(v, "nginx:") {
 			r = append(r, v)
 		}
@@ -68,18 +68,27 @@ func MakeTestJob(master string, port string) (string, int64) {
 	param := nginxTestJobParam(master, port)
 	r := CreateJob(param)
 	param.Jobname = r
-	logstr := getJobResult(param, "nginx:", 8, "nginx")
+	logStr := getJobResult(param, "nginx:", 8, "nginx")
 	times := time.Now().Unix() - start
-	return logstr, times
+	return logStr, times
 }
 
 // 2018-02-02 21:48
 // 获取默认需要挂载的配置
 func getNginxDefaultConf(conftype string) []ConfigureData {
-	nginxConfigMap := []ConfigureData{}
+	nginxConfigMap := make([]ConfigureData, 0)
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(NginxSslPath, LbNginxSsl+conftype, nil, ""))
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(NginxConfigPath, LbNginxConfig+conftype, nil, ""))
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(NginxUpstreamPath, LbNginxUpstream+conftype, nil, ""))
+
+	// 检查命令
+	configData := `/usr/local/nginx/sbin/nginx -t`
+	conf :=  ConfigureData{
+		ContainerPath: "/check.sh",
+		DataName:      "check.sh",
+		ConfigDbData:   map[string]interface{}{"check.sh": configData},
+	}
+	nginxConfigMap = append(nginxConfigMap, conf)
 	return nginxConfigMap
 }
 
@@ -99,10 +108,10 @@ func CreateNginxLb(param ServiceParam) {
 
 	param.StorageData = `[{"ContainerPath":"/usr/local/nginx/logs/","HostPath":"/home/data/nginx/logs/"}]`
 
-	clientset, _ := GetClient(param.ClusterName)
+	clientSet, _ := GetClient(param.ClusterName)
 	cl2, _ := GetYamlClient(param.ClusterName, "", "v1", "api")
 	param.Cl2 = cl2
-	param.Cl3 = clientset
+	param.Cl3 = clientSet
 	param.ConfigureData = getNginxDefaultConf("")
 	CreateConfigmap(param)
 	CreateDeamonSet(param)

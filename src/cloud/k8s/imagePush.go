@@ -111,7 +111,7 @@ echo "完成提交... $d"
 // 2018-02-06 09;37
 // 将操作命令挂载到容器中
 func getImagePushConfig(param ImagePushParam) []ConfigureData {
-	configureData := []ConfigureData{}
+	configureData := make([]ConfigureData, 0)
 	config := ConfigureData{}
 	config.ContainerPath = "/build"
 	config.ConfigDbData = map[string]interface{}{"push.sh": getPushCmd(param)}

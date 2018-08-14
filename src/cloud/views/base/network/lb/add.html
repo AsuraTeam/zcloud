@@ -84,16 +84,16 @@
                             </div>
                         </div>
                         <!--<div class="row top10">-->
-                            <!--<div class="col-md-12">-->
-                                <!--<div class="form-group">-->
-                                    <!--<label for="field-14" class="col-md-3 fw100 control-label">负载均衡IP地址<span-->
-                                            <!--class="text-danger">*</span></label>-->
-                                    <!--<div class="col-md-9" id="field-14">-->
-                                        <!--<textarea rows="5" name="LbIp" class="form-control"-->
-                                                  <!--placeholder="负载均衡IP,多个用逗号分隔,一般为集群IP地址">{{.data.LbIp}}</textarea>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
+                        <!--<div class="col-md-12">-->
+                        <!--<div class="form-group">-->
+                        <!--<label for="field-14" class="col-md-3 fw100 control-label">负载均衡IP地址<span-->
+                        <!--class="text-danger">*</span></label>-->
+                        <!--<div class="col-md-9" id="field-14">-->
+                        <!--<textarea rows="5" name="LbIp" class="form-control"-->
+                        <!--placeholder="负载均衡IP,多个用逗号分隔,一般为集群IP地址">{{.data.LbIp}}</textarea>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</div>-->
                         <!--</div>-->
                         <div class="row top10">
                             <div class="col-md-12">
@@ -106,7 +106,19 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="row top20 m-l-10">
+                            <div class="col-md-11 pre m-l-15">
+                                <br>
+                                nginx镜像必须条件<br>
+                                1、/usr/local/nginx/ nginx安装目录<br>
+                                2、 nginx创建目录 <br>
+                                <span class="m-l-15">mkdir /usr/local/nginx/conf/vhosts/conf/ -p        </span> <br>
+                                <span class="m-l-15">mkdir /usr/local/nginx/conf/vhosts/upstream/ -p </span><br>
+                                <span class="m-l-15">mkdir /usr/local/nginx/conf/vhosts/ssl/  -p </span><br>
+                                3、所有机器必须有 nginx:v1 的镜像 <br>
+                                <br>
+                            </div>
+                        </div>
                     </div>
                     <div class="panel-footer">
                         <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
@@ -128,7 +140,8 @@
         //初始化
         size: 10
     });
+
     function setDomain() {
-            $("input[name='LbDomainSuffix']").val("." + $("#select-cluster-id").val() + ".zcloud.com")
+        $("input[name='LbDomainSuffix']").val("." + $("#select-cluster-id").val() + ".zcloud.com")
     }
 </script>
