@@ -402,7 +402,11 @@ func getServicePorts(param ServiceParam) []map[string]interface{} {
 					if d["kind"] == "Service" {
 						spec := d["spec"].(map[string]interface{})
 						if spec != nil {
-							ports := spec["ports"].([]interface{})
+							portData := spec["ports"].([]interface{})
+							jsonData, err  := json.Marshal(portData)
+							if err == nil {
+								json.Unmarshal(jsonData, &ports)
+							}
 							logs.Info("重建服务获取到端口", util.ObjToString(ports))
 						}
 					}

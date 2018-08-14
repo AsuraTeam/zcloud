@@ -149,8 +149,8 @@ func (this *ControllerPipeline) PipelineSave() {
 // 检查流水线配额
 // 检查资源配额是否够用
 func checkPipelineQuota(username string) (bool,string) {
-	quotaDatas := quota.GetUserQuotaData(username, "")
-	for _, v := range quotaDatas {
+	quotaData := quota.GetUserQuotaData(username, "")
+	for _, v := range quotaData {
 		if v.PipelineUsed + 1 > v.PipelineNumber {
 			return false, "流水线数量超过配额限制"
 		}
@@ -252,13 +252,13 @@ func getUser(this *ControllerPipeline) string {
 // 删除流水线
 // @router /api/network/lb/service/:id:int [delete]
 func (this *ControllerPipeline) PipelineDelete() {
-	pipedata, searchMap := getPipeData(this)
+	pipeData, searchMap := getPipeData(this)
 	q := sql.DeleteSql(pipeline.DeleteCloudPipeline, searchMap)
 	r, err := sql.Raw(q).Exec()
 	data := util.DeleteResponse(err,
-		*this.Ctx, "删除流水线"+pipedata.PipelineName,
+		*this.Ctx, "删除流水线"+pipeData.PipelineName,
 		this.GetSession("username"),
-		pipedata.CreateUser,
+		pipeData.CreateUser,
 		r)
 	q = sql.DeleteSql(lb.DeleteCloudLbNginxConf, searchMap)
 	sql.Raw(q).Exec()
@@ -273,10 +273,10 @@ func setPipelineJson(this *ControllerPipeline, data interface{}) {
 
 // 2018-02-04 21:22
 // 创建镜像安全数据
-func createImagePullSecret(jobHistroyData ci2.CloudBuildJobHistory, start int64, jobName string, pipelog pipeline.CloudPipelineLog, serviceData app2.CloudAppService) bool {
-	registryServer := strings.Split(jobHistroyData.RegistryServer, ":")
+func createImagePullSecret(jobHistoryData ci2.CloudBuildJobHistory, start int64, jobName string, pipelog pipeline.CloudPipelineLog, serviceData app2.CloudAppService) bool {
+	registryServer := strings.Split(jobHistoryData.RegistryServer, ":")
 	servers := registry.GetRegistryServer(registryServer[0])
-	user := jobHistroyData.CreateUser
+	user := jobHistoryData.CreateUser
 	if len(servers) == 0 {
 		logs.Error("获取镜像服务失败", "", serviceData, user)
 		pipelog.Messages = "获取镜像服务失败"
@@ -291,7 +291,7 @@ func createImagePullSecret(jobHistroyData ci2.CloudBuildJobHistory, start int64,
 		return false
 	}
 
-	if jobHistroyData.RegistryServer == "" {
+	if jobHistoryData.RegistryServer == "" {
 		pipelog.Messages = "获取仓库服务器错误"
 		updatePipelineLog(pipelog, start, jobName, user)
 		return false
@@ -299,7 +299,7 @@ func createImagePullSecret(jobHistroyData ci2.CloudBuildJobHistory, start int64,
 
 	serviceParam := k8s.ServiceParam{
 		RegistryAuth: servers[0].Admin + ":" + util.Base64Decoding(servers[0].Password),
-		Registry:     jobHistroyData.RegistryServer,
+		Registry:     jobHistoryData.RegistryServer,
 		Namespace:    namespace,
 		Cl3:          cl,
 	}
@@ -335,49 +335,59 @@ func startPipeline(user string, pipeData pipeline.CloudPipeline) {
 	sql.Raw(q).Exec()
 
 	start := time.Now().Unix()
-	var logsr string
 	var count int
 	updatePipeLogTime("start_job_time", jobName)
 	for {
 		if count > 500 || count > job.TimeOut {
 			break
 		}
-		logsr = ci.GetJobLogs(job)
-		if strings.Contains(logsr, "构建失败") {
+		// 触发日志更新
+		ci.GetJobLogs(job)
+		jobHistory := ci.GetHistoryData(jobName)
+		if jobHistory.BuildStatus == "构建失败" {
 			updateBuildFaild(jobName, "构建失败" , "执行构建失败")
 			return
 		}
-		if strings.Contains(logsr, "构建完成") || strings.Contains(logsr, "构建失败") {
+		if jobHistory.BuildStatus == "构建超时" {
+			updateBuildFaild(jobName, "构建超时" , "执行构建超时")
+			return
+		}
+		if jobHistory.BuildStatus == "构建成功" {
 			updateBuildFaild(jobName, "构建成功" , "执行构建成功")
 			break
 		}
 		time.Sleep(time.Second * 5)
 		count += 1
+		logs.Info("job等待-->", jobName,  count)
 	}
 
 	updatePipeLogTime("end_job_time", jobName)
 	serviceData := app.GetServiceData(pipeData.ServiceName, pipeData.ClusterName, pipeData.AppName)
 	serviceStatus := updateServiceErrorStatus(serviceData, jobName)
 	if !serviceStatus{
+		logs.Error("serviceStatus 异常")
 		return
 	}
 
-	jobStatus, jobHistroyData := getHistoryDataStatus(jobName)
+	jobStatus, jobHistoryData := getHistoryDataStatus(jobName)
 	if !jobStatus {
+		logs.Error("jobStatus 异常")
 		return
 	}
 
-	logs.Info("getHistoryDataStatus", util.ObjToString(jobHistroyData))
+	logs.Info("getHistoryDataStatus", util.ObjToString(jobHistoryData))
 	// 创建拉取镜像时的安全=数据
-	createImage := createImagePullSecret(jobHistroyData, start, jobName, pipelog, serviceData)
+	createImage := createImagePullSecret(jobHistoryData, start, jobName, pipelog, serviceData)
 	if !createImage {
+		logs.Error("createImage 异常")
 		return
 	}
 
 	oldImage := serviceData.ImageTag
-	serviceStatus, serviceData = updateServiceStart(jobName, user, serviceData, jobHistroyData)
+	serviceStatus, serviceData = updateServiceStart(jobName, user, serviceData, jobHistoryData)
 	logs.Info("获取到serviceStatus", util.ObjToString(serviceData))
 	if ! serviceStatus {
+		logs.Error("serviceStatus 2 异常")
 		return
 	}
 
@@ -390,7 +400,7 @@ func startPipeline(user string, pipeData pipeline.CloudPipeline) {
 			serviceData.ImageTag = oldImage
 			app.ExecUpdate(serviceData, "image", user)
 			pipelog.Messages = "获取服务状态超时,10分钟"
-			updatePipelogStatus("update_service_end_time",
+			updatePipeLogStatus("update_service_end_time",
 				"update_service_status",
 				"失败",
 				"update_service_errormsg",
@@ -401,11 +411,12 @@ func startPipeline(user string, pipeData pipeline.CloudPipeline) {
 		go app.GoServerThread(serviceDatas)
 		data := app.GetServiceRunData(serviceDatas)
 		for _, v := range data {
+			logs.Info("更新服务中",serviceData.ImageTag, v.Image, v.Status, v.AvailableReplicas, serviceData.Replicas,v.Image == serviceData.ImageTag , v.Status == "True" , v.AvailableReplicas == int32(serviceData.Replicas))
 			if v.Image == serviceData.ImageTag && v.Status == "True" && v.AvailableReplicas == int32(serviceData.Replicas) {
 				pipelog.Messages = strings.Join([]string{v.Image, v.Status, strconv.Itoa(int(v.AvailableReplicas))}, " ")
 				updateStatus = true
 
-				updatePipelogStatus("update_service_end_time",
+				updatePipeLogStatus("update_service_end_time",
 					"update_service_status",
 					"成功",
 					"update_service_errormsg",
@@ -413,7 +424,6 @@ func startPipeline(user string, pipeData pipeline.CloudPipeline) {
 					jobName)
 				break
 			}
-			logs.Info("更新服务中",serviceData.ImageTag, v.Image, v.Status, v.AvailableReplicas, serviceData.Replicas,v.Image == serviceData.ImageTag , v.Status == "True" , v.AvailableReplicas == int32(serviceData.Replicas))
 		}
 		time.Sleep(time.Second * 5)
 		count += 1
@@ -430,7 +440,7 @@ func startPipeline(user string, pipeData pipeline.CloudPipeline) {
 // 更新拉取服务错误状态
 func updateServiceErrorStatus(serviceData app2.CloudAppService,jobName string) bool  {
 	if serviceData.ServiceId == 0 {
-		updatePipelogStatus(
+		updatePipeLogStatus(
 			"update_service_end_time",
 			"update_service_status",
 			"失败",
@@ -445,8 +455,8 @@ func updateServiceErrorStatus(serviceData app2.CloudAppService,jobName string) b
 
 // 2018-02-05 14:42
 // 更新服务启动
-func updateServiceStart(jobName string, user string, serviceData app2.CloudAppService,jobHistroyData ci2.CloudBuildJobHistory) (bool,app2.CloudAppService) {
-	serviceData.ImageTag = getImageTag(jobHistroyData)
+func updateServiceStart(jobName string, user string, serviceData app2.CloudAppService,jobHistoryData ci2.CloudBuildJobHistory) (bool,app2.CloudAppService) {
+	serviceData.ImageTag = getImageTag(jobHistoryData)
 	logs.Info("更新服务启动imageTag", serviceData.ImageTag, serviceData.ImageRegistry)
 	if serviceData.MinReady == 0 {
 		serviceData.MinReady = 50
@@ -456,7 +466,7 @@ func updateServiceStart(jobName string, user string, serviceData app2.CloudAppSe
 	err := app.ExecUpdate(serviceData, "image", user)
 
 	if err != nil {
-		updatePipelogStatus(
+		updatePipeLogStatus(
 			"update_service_end_time",
 			"update_service_status",
 			"失败",
@@ -472,7 +482,7 @@ func updateServiceStart(jobName string, user string, serviceData app2.CloudAppSe
 // 2018-02-05 14:51
 // 更新构建失败状态
 func updateBuildFaild(jobName string, status string , msg string)  {
-	updatePipelogStatus(
+	updatePipeLogStatus(
 		"end_job_time",
 		"build_job_status",
 		status,
@@ -515,12 +525,12 @@ func updatePipeLogTime(column string, jobName string){
 
 // 2018-02-05 14:09
 // 更新日志状态数据
-func updatePipelogStatus(timeColumnt string, statusColumnt string,  status string,statusMsgColumn string, statusmsg string, jobname string)  {
+func updatePipeLogStatus(timeColumn string, statusColumn string,  status string,statusMsgColumn string, statusMsg string, jobName string)  {
 	q := "update cloud_pipeline_log set " +
-		timeColumnt + `="` + util.GetDate() +
-		`",`+statusColumnt+`="`+status+`", `+
-		statusMsgColumn+`="`+statusmsg+`"
-		 where job_name="`+jobname+`"`
+		timeColumn + `="` + util.GetDate() +
+		`",`+statusColumn+`="`+status+`", `+
+		statusMsgColumn+`="`+statusMsg+`"
+		 where job_name="`+jobName+`"`
 	sql.Raw(q).Exec()
 }
 
@@ -531,10 +541,9 @@ func updatePipelineLog(pipelog pipeline.CloudPipelineLog, start int64, jobName s
 		pipelog.Messages = "更新成功"
 		pipelog.Status = "执行成功"
 	}
-
 	pipelog.RunTime = time.Now().Unix() - start
 	searchMap := sql.GetSearchMapV("JobName", jobName, "CreateUser", user, "CreateTime", pipelog.CreateTime)
-	q := sql.UpdateSql(pipelog, pipeline.UpdateCloudPipelineLog, searchMap, "LogId")
+	q := sql.UpdateSql(pipelog, pipeline.UpdateCloudPipelineLog, searchMap, pipeline.UpdateCloudPipelineLogExclude)
 	sql.Raw(q).Exec()
 }
 
