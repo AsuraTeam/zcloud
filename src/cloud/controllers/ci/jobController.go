@@ -116,8 +116,8 @@ func (this *JobController) JobAdd() {
 
 // 2018-02-03 21:37
 // 获取选项
-func GetSelectHtml(username string, clustername string) string {
-	data := GetJobName(username, clustername, "")
+func GetSelectHtml(username string, clusterName string) string {
+	data := GetJobName(username, clusterName, "")
 	var html string
 	for _, v := range data {
 		html += util.GetSelectOption(v.ItemName, v.ItemName, v.ItemName)
@@ -127,13 +127,13 @@ func GetSelectHtml(username string, clustername string) string {
 
 // 2018-02-03 21:55
 // 获取构建任务信息
-func GetJobName(username string, clustername string, itemname string) []ci.CloudBuildJob {
+func GetJobName(username string, clusterName string, itemName string) []ci.CloudBuildJob {
 	searchMap := sql.GetSearchMapV("CreateUser", username)
-	if clustername != "" {
-		searchMap.Put("ClusterName", clustername)
+	if clusterName != "" {
+		searchMap.Put("ClusterName", clusterName)
 	}
-	if itemname != "" {
-		searchMap.Put("ItemName", itemname)
+	if itemName != "" {
+		searchMap.Put("ItemName", itemName)
 	}
 	// 构建任务数据
 	data := make([]ci.CloudBuildJob, 0)
@@ -206,8 +206,8 @@ func DeleteJobCache(name string)  {
 // 检查镜像仓库配额
 // 检查资源配额是否够用
 func checkQuota(username string) (bool,string) {
-	quotaDatas := quota.GetUserQuotaData(username, "")
-	for _, v := range quotaDatas {
+	quotaData := quota.GetUserQuotaData(username, "")
+	for _, v := range quotaData {
 		if v.JobUsed + 1 > v.JobNumber {
 			return false, "构建任务数量超过配额限制"
 		}
@@ -232,11 +232,11 @@ func updateJobContent(jobData ci.CloudBuildJob) ci.CloudBuildJob  {
 // 2018-01-25 17:45
 // router /api/ci/job/name [get]
 func (this *JobController) JobDataName() {
-	clustername := this.GetString("ClusterName")
+	clusterName := this.GetString("ClusterName")
 	searchMap := sql.SearchMap{}
 	searchMap.Put("CreateUser", getUser(this))
-	if clustername != "" {
-		searchMap.Put("ClusterName", clustername)
+	if clusterName != "" {
+		searchMap.Put("ClusterName", clusterName)
 	}
 	// 构建任务数据
 	data := make([]ci.CloudBuildJob, 0)

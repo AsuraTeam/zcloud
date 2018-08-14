@@ -107,13 +107,13 @@ func init() {
 	pipelineNs :=
 		beego.NewNamespace("/pipeline",
 			// 流水线列表入口,
-			beego.NSRouter("/history/list", &pipeline.PipelineController{}, "get:PipelineHistoryList"),
+			beego.NSRouter("/history/list", &pipeline.ControllerPipeline{}, "get:PipelineHistoryList"),
 			// 流水线列表入口,
-			beego.NSRouter("/list", &pipeline.PipelineController{}, "get:PipelineList"),
+			beego.NSRouter("/list", &pipeline.ControllerPipeline{}, "get:PipelineList"),
 			// 流水线添加页面,
-			beego.NSRouter("/add", &pipeline.PipelineController{}, "get:PipelineAdd"),
+			beego.NSRouter("/add", &pipeline.ControllerPipeline{}, "get:PipelineAdd"),
 			// 流水线详情页面,
-			beego.NSRouter("/detail/:hi(.*)", &pipeline.PipelineController{}, "get:PipelineDetail"),
+			beego.NSRouter("/detail/:hi(.*)", &pipeline.ControllerPipeline{}, "get:PipelineDetail"),
 		)
 
 	registryNs :=
@@ -224,17 +224,17 @@ func init() {
 			beego.NSRouter("/container/:id:int", &app.AppController{}, "delete:ContainerDelete"),
 			beego.NSNamespace("/pipeline",
 				// 流水线保存,
-				beego.NSRouter("", &pipeline.PipelineController{}, "post:PipelineSave"),
+				beego.NSRouter("", &pipeline.ControllerPipeline{}, "post:PipelineSave"),
 				// 获取流水线数据所有数据,
-				beego.NSRouter("", &pipeline.PipelineController{}, "get:PipelineData"),
+				beego.NSRouter("", &pipeline.ControllerPipeline{}, "get:PipelineData"),
 				// 删除配额,
-				beego.NSRouter("/:id:int", &pipeline.PipelineController{}, "delete:PipelineDelete"),
+				beego.NSRouter("/:id:int", &pipeline.ControllerPipeline{}, "delete:PipelineDelete"),
 				// 获取流水线数据单条数据,
-				beego.NSRouter("/:id:int", &pipeline.PipelineController{}, "get:PipelineData"),
+				beego.NSRouter("/:id:int", &pipeline.ControllerPipeline{}, "get:PipelineData"),
 				// 执行流水线
-				beego.NSRouter("/exec/:id:int", &pipeline.PipelineController{}, "get:PipelineExec"),
+				beego.NSRouter("/exec/:id:int", &pipeline.ControllerPipeline{}, "get:PipelineExec"),
 				// 流水线历史日子
-				beego.NSRouter("/history", &pipeline.PipelineController{}, "get:PipelineHistoryData"),
+				beego.NSRouter("/history", &pipeline.ControllerPipeline{}, "get:PipelineHistoryData"),
 			),
 			beego.NSNamespace("/app",
 				// 获取应用名称,

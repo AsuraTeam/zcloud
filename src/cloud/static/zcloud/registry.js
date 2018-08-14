@@ -60,19 +60,25 @@ function loadRegistryData(key) {
             "type": 'get'
         },
         "columns": [ // 数据映射
-            {"data": "Entname","sWidth":"9%"},
-            {"data": "Name","sWidth":"10%","mRender":function (data,type, full) {
+            {"data": "Entname","sWidth":"7%"},
+            {"data": "Name","sWidth":"8%","mRender":function (data,type, full) {
                 return "<div style='word-wrap:break-word'><a  target='_self' href='/image/registry/group/list?registryName="+full["ServerDomain"]+"'>"+data+"</a></div>";
             }},
-            {"data": "AuthServer","sWidth":"11%", "mRender":function (data) {
+            {"data": "AuthServer","sWidth":"9%", "mRender":function (data) {
                 return "<div style='word-wrap:break-word'><a  target='_blank' href="+data+">"+data+"</a></div>";
             }},
             {"data": "ClusterName","sWidth":"7%","mRender":function (data) {
                 data = data.replace(/"/g,"")
                 return "<a href='/base/cluster/detail/"+data+"'>"+data+"</a>";
             }},
-            {"data": "CreateTime","sWidth":"11%"},
+            {"data": "CreateTime","sWidth":"9%"},
             {"data": "Access","sWidth":"20%"},
+            {"data": "Status","sWidth":"6%", "mRender":function (data) {
+                    if(data=="正常"){
+                         return '<div class="Running"><div><i class="fa fa-circle"></i><span>&nbsp;正常</span>'
+                    }
+                    return '<div class="Fail"><div><i class="fa fa-circle"></i><span>&nbsp;异常</span>&nbsp;'
+                }},
             {"data": "ServerId", "sWidth":"6%","mRender": function (data) {
                 return '<button type="button" title="更新" onclick="addRegistry(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
                 '<button type="button"  title="删除" onClick="deleteRegistrySwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>&nbsp;'+

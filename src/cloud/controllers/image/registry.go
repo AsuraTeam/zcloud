@@ -228,16 +228,22 @@ func (this *ImageController) RegistryServer() {
 	result := make([]registry.CloudRegistryServer, 0)
 	namespace := util.Namespace("registryv2", "registryv2")
 	for _, v := range data {
+		c, _ := k8s.GetClient(v.ClusterName)
+		appData := k8s.GetServicePort(c, namespace, v.Name)
 		if len(v.Access) > 10 {
 			v.Password = "******"
+			if len(appData.Spec.Ports) > 0 {
+				v.Status = "正常"
+			}else{
+				v.Status = "异常"
+			}
 			//v.ClusterName = util.ObjToString(clusterMap.GetV(v.ClusterName))
 			result = append(result, v)
 			continue
 		}
-		c, _ := k8s.GetClient(v.ClusterName)
-		appData := k8s.GetServicePort(c, namespace, v.Name)
 
 		if len(appData.Spec.Ports) > 0 {
+			v.Status = "正常"
 			port := strconv.Itoa(int(appData.Spec.Ports[0].NodePort))
 			v.Access = "容器内&nbsp;<br>" + v.Name + "." + namespace + ":" + port + "<br>"
 			hostdata := hosts.GetClusterHosts(v.ClusterName)
@@ -254,6 +260,8 @@ func (this *ImageController) RegistryServer() {
 					registry.UpdateRegistryServerExcludePass)
 				sql.Raw(u).Exec()
 			}
+		}else{
+			v.Status = "异常"
 		}
 		v.Password = "******"
 		v.ClusterName = util.ObjToString(clusterMap.GetV(v.ClusterName))

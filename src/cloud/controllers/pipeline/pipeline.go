@@ -21,26 +21,26 @@ import (
 	"cloud/controllers/base/quota"
 )
 
-type PipelineController struct {
+type ControllerPipeline struct {
 	beego.Controller
 }
 
 // 2018-02-03 17:30
 // 流水线入口页面
 // @router /pipeline/list [get]
-func (this *PipelineController) PipelineList() {
+func (this *ControllerPipeline) PipelineList() {
 	this.TplName = "pipeline/list.html"
 }
 
 // 流水线历史入口页面
 // @router /pipeline/history/list [get]
-func (this *PipelineController) PipelineHistoryList() {
+func (this *ControllerPipeline) PipelineHistoryList() {
 	this.TplName = "pipeline/history.html"
 }
 
 // 流水线详情页面
 // @router /pipeline/detail/:hi(.*) [get]
-func (this *PipelineController) PipelineDetail() {
+func (this *ControllerPipeline) PipelineDetail() {
 	data,_ := getPipeData(this)
 	jobName := this.Ctx.Input.Param("JobName")
 	searchMap := sql.GetSearchMapV("CreateUser", getUser(this))
@@ -62,7 +62,7 @@ func (this *PipelineController) PipelineDetail() {
 
 // 流水线管理添加页面
 // @router /pipeline/add [get]
-func (this *PipelineController) PipelineAdd() {
+func (this *ControllerPipeline) PipelineAdd() {
 	id := this.GetString("PipelineId")
 	update := pipeline.CloudPipeline{}
 	clusterData := cluster.GetClusterSelect()
@@ -103,7 +103,7 @@ func (this *PipelineController) PipelineAdd() {
 // string
 // 流水线保存
 // @router /api/pipeline [post]
-func (this *PipelineController) PipelineSave() {
+func (this *ControllerPipeline) PipelineSave() {
 	d := pipeline.CloudPipeline{}
 	err := this.ParseForm(&d)
 	if err != nil {
@@ -161,8 +161,8 @@ func checkPipelineQuota(username string) (bool,string) {
 // 2018-02-04 13:29
 // 流水线运行历史
 // @router /api/pipeline/history [get]
-func (this *PipelineController) PipelineHistoryData() {
-	data := []pipeline.CloudPipelineLog{}
+func (this *ControllerPipeline) PipelineHistoryData() {
+	data := make([]pipeline.CloudPipelineLog, 0)
 	searchMap := sql.SearchMap{}
 	key := this.GetString("key")
 	user := getUser(this)
@@ -188,8 +188,8 @@ func (this *PipelineController) PipelineHistoryData() {
 
 // 流水线数据
 // @router /api/pipeline [get]
-func (this *PipelineController) PipelineData() {
-	data := []pipeline.CloudPipeline{}
+func (this *ControllerPipeline) PipelineData() {
+	data := make([]pipeline.CloudPipeline, 0)
 	searchMap := sql.SearchMap{}
 	key := this.GetString("key")
 	user := getUser(this)
@@ -208,7 +208,7 @@ func (this *PipelineController) PipelineData() {
 		pipeline.CloudPipeline{})
 
 	appDataMap := app.GetAppServiceDataMap()
-	result := []pipeline.CloudPipeline{}
+	result := make([]pipeline.CloudPipeline, 0)
 	for _, v := range data{
 		tk := v.ClusterName + v.AppName + v.ServiceName
 		if _,ok := appDataMap.Get(tk); ! ok {
@@ -225,7 +225,7 @@ func (this *PipelineController) PipelineData() {
 
 // 2018-02-03 22:03
 // 获取流水线数据
-func getPipeData(this *PipelineController) (pipeline.CloudPipeline, sql.SearchMap) {
+func getPipeData(this *ControllerPipeline) (pipeline.CloudPipeline, sql.SearchMap) {
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	if id != "" {
@@ -244,14 +244,14 @@ func getPipeData(this *PipelineController) (pipeline.CloudPipeline, sql.SearchMa
 
 // 2018-02-05 12:56
 // 获取用户名
-func getUser(this *PipelineController) string {
+func getUser(this *ControllerPipeline) string {
 	return util.GetUser(this.GetSession("username"))
 }
 
 // json
 // 删除流水线
 // @router /api/network/lb/service/:id:int [delete]
-func (this *PipelineController) PipelineDelete() {
+func (this *ControllerPipeline) PipelineDelete() {
 	pipedata, searchMap := getPipeData(this)
 	q := sql.DeleteSql(pipeline.DeleteCloudPipeline, searchMap)
 	r, err := sql.Raw(q).Exec()
@@ -266,7 +266,7 @@ func (this *PipelineController) PipelineDelete() {
 
 }
 
-func setPipelineJson(this *PipelineController, data interface{}) {
+func setPipelineJson(this *ControllerPipeline, data interface{}) {
 	this.Data["json"] = data
 	this.ServeJSON(false)
 }
@@ -309,8 +309,8 @@ func createImagePullSecret(jobHistroyData ci2.CloudBuildJobHistory, start int64,
 
 // 2018-02-04 08:32
 // 后台执行流水线程序
-func startPipeline(user string, pipedata pipeline.CloudPipeline) {
-	jobData := ci.GetJobName(user, pipedata.ClusterName, pipedata.JobName)
+func startPipeline(user string, pipeData pipeline.CloudPipeline) {
+	jobData := ci.GetJobName(user, pipeData.ClusterName, pipeData.JobName)
 	if len(jobData) == 0 {
 		logs.Error("获取构建程序失败", jobData)
 		return
@@ -321,13 +321,13 @@ func startPipeline(user string, pipedata pipeline.CloudPipeline) {
 	go ci.JobExecStart(job, user, jobName, "")
 	pipelog := pipeline.CloudPipelineLog{}
 
-	temp, _ := json.Marshal(pipedata)
+	temp, _ := json.Marshal(pipeData)
 	json.Unmarshal(temp, &pipelog)
 	job.JobName = jobName
 
 	pipelog.JobId = job.JobId
 	pipelog.CreateUser = user
-	pipelog.CreateTime = pipedata.CreateTime
+	pipelog.CreateTime = pipeData.CreateTime
 	pipelog.JobName = jobName
 	pipelog.StartTime = util.GetDate()
 
@@ -337,7 +337,7 @@ func startPipeline(user string, pipedata pipeline.CloudPipeline) {
 	start := time.Now().Unix()
 	var logsr string
 	var count int
-	updatePipelogTime("start_job_time", jobName)
+	updatePipeLogTime("start_job_time", jobName)
 	for {
 		if count > 500 || count > job.TimeOut {
 			break
@@ -355,15 +355,15 @@ func startPipeline(user string, pipedata pipeline.CloudPipeline) {
 		count += 1
 	}
 
-	updatePipelogTime("end_job_time", jobName)
-	serviceData := app.GetServiceData(pipedata.ServiceName, pipedata.ClusterName, pipedata.AppName)
+	updatePipeLogTime("end_job_time", jobName)
+	serviceData := app.GetServiceData(pipeData.ServiceName, pipeData.ClusterName, pipeData.AppName)
 	serviceStatus := updateServiceErrorStatus(serviceData, jobName)
 	if !serviceStatus{
 		return
 	}
 
-	jobstatus, jobHistroyData := getHistoryDataStatus(jobName)
-	if !jobstatus {
+	jobStatus, jobHistroyData := getHistoryDataStatus(jobName)
+	if !jobStatus {
 		return
 	}
 
@@ -381,7 +381,7 @@ func startPipeline(user string, pipedata pipeline.CloudPipeline) {
 		return
 	}
 
-	serviceDatas := []app2.CloudAppService{}
+	serviceDatas := make([]app2.CloudAppService, 0)
 	serviceDatas = append(serviceDatas, serviceData)
 	count = 0
 	var updateStatus bool
@@ -421,10 +421,10 @@ func startPipeline(user string, pipedata pipeline.CloudPipeline) {
 			break
 		}
 	}
-	updatePipelogTime("update_service_end_time", jobName)
+	updatePipeLogTime("update_service_end_time", jobName)
 	pipelog.Messages = ""
 	updatePipelineLog(pipelog, start, jobName, user)
-	updatePipelogTime("end_time", jobName)
+	updatePipeLogTime("end_time", jobName)
 }
 
 // 更新拉取服务错误状态
@@ -437,7 +437,7 @@ func updateServiceErrorStatus(serviceData app2.CloudAppService,jobName string) b
 			"update_service_errormsg",
 			"拉取服务失败了" ,
 			jobName)
-		updatePipelogTime("end_time", jobName)
+		updatePipeLogTime("end_time", jobName)
 		return false
 	}
 	return true
@@ -452,7 +452,7 @@ func updateServiceStart(jobName string, user string, serviceData app2.CloudAppSe
 		serviceData.MinReady = 50
 	}
 
-	updatePipelogTime("update_service_start_time", jobName)
+	updatePipeLogTime("update_service_start_time", jobName)
 	err := app.ExecUpdate(serviceData, "image", user)
 
 	if err != nil {
@@ -463,7 +463,7 @@ func updateServiceStart(jobName string, user string, serviceData app2.CloudAppSe
 			"update_service_errormsg",
 			"更新服务失败" + err.Error(),
 			jobName)
-		updatePipelogTime("end_time", jobName)
+		updatePipeLogTime("end_time", jobName)
 		return false,serviceData
 	}
 	return true,serviceData
@@ -479,37 +479,37 @@ func updateBuildFaild(jobName string, status string , msg string)  {
 		"build_job_errormsg",
 		msg ,
 		jobName)
-	updatePipelogTime("end_time", jobName)
+	updatePipeLogTime("end_time", jobName)
 }
 
 // 2018-02-05 14;39
 // 获取构建任务数据,和更新流水线状态
 func getHistoryDataStatus(jobName string) (bool,ci2.CloudBuildJobHistory) {
-	jobHistroyData := ci.GetHistoryData(jobName)
-	if jobHistroyData.BuildStatus != "构建成功" {
+	jobHistoryData := ci.GetHistoryData(jobName)
+	if jobHistoryData.BuildStatus != "构建成功" {
 		updateBuildFaild(jobName, "失败", "构建任务执行失败")
-		return false,jobHistroyData
+		return false,jobHistoryData
 	}else{
 		updateBuildFaild(jobName, "成功", "构建任务成功")
 	}
-	return true,jobHistroyData
+	return true,jobHistoryData
 }
 
 // 2018-02-06 13:04
 // 获取镜像tag
-func getImageTag(jobHistroyData ci2.CloudBuildJobHistory) string {
+func getImageTag(jobHistoryData ci2.CloudBuildJobHistory) string {
 	imageTag := strings.Join([]string{
-		jobHistroyData.RegistryServer,
-		jobHistroyData.RegistryGroup,
-		jobHistroyData.ItemName},
-		"/") + ":" + jobHistroyData.ImageTag
+		jobHistoryData.RegistryServer,
+		jobHistoryData.RegistryGroup,
+		jobHistoryData.ItemName},
+		"/") + ":" + jobHistoryData.ImageTag
 	return imageTag
 }
 
 // 2018-02-05 12:59
 // 更新日志各个表的时间点
-func updatePipelogTime(columnt string, jobname string){
-	q := "update cloud_pipeline_log set " + columnt + `="` + util.GetDate() + `" where job_name="`+jobname+`"`
+func updatePipeLogTime(column string, jobName string){
+	q := "update cloud_pipeline_log set " + column + `="` + util.GetDate() + `" where job_name="`+jobName+`"`
 	sql.Raw(q).Exec()
 }
 
@@ -541,9 +541,9 @@ func updatePipelineLog(pipelog pipeline.CloudPipelineLog, start int64, jobName s
 // 执行流水线任务
 // 2018-02-03 22;01
 // @router /api/pipeline/exec/:id:int [get]
-func (this *PipelineController) PipelineExec() {
-	pipedata, _ := getPipeData(this)
+func (this *ControllerPipeline) PipelineExec() {
+	pipeData, _ := getPipeData(this)
 	user := util.GetUser(this.GetSession("username"))
-	go startPipeline(user, pipedata)
+	go startPipeline(user, pipeData)
 	setPipelineJson(this, util.ApiResponse(true, "执行中,成功"))
 }
