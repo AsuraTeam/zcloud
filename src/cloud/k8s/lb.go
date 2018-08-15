@@ -95,7 +95,7 @@ func makeNgxinConfMap(clusterName string, nginxConfigMap []ConfigureData) {
 
 // 2018-02-03 07:51
 // 创建用于测试的nginx配置
-func MakeTestNginxConfMap(confdata map[string]interface{}, ssldata map[string]interface{}, clusterName string) {
+func MakeTestNginxConfMap(confdata map[string]interface{}, sslData map[string]interface{}, clusterName string) {
 	nginxConfigMap := make([]ConfigureData, 0)
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(
 		NginxConfigPath,
@@ -105,7 +105,7 @@ func MakeTestNginxConfMap(confdata map[string]interface{}, ssldata map[string]in
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(
 		NginxSslPath,
 		LbNginxSsl,
-		ssldata,
+		sslData,
 		"-test"))
 	logs.Info("MakeTestNginxConfMap", nginxConfigMap)
 	makeNgxinConfMap(clusterName, nginxConfigMap)
@@ -113,7 +113,7 @@ func MakeTestNginxConfMap(confdata map[string]interface{}, ssldata map[string]in
 
 // 2018-02-01 14:28
 // 创建nginx配置
-func makeNginxConfigMap(confdata map[string]interface{}, upstreamdata map[string]interface{}, ssldata map[string]interface{}, clusterName string, confType string) {
+func makeNginxConfigMap(confdata map[string]interface{}, upstreamData map[string]interface{}, sslData map[string]interface{}, clusterName string, confType string) {
 	nginxConfigMap := make([]ConfigureData, 0)
 
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(
@@ -124,12 +124,12 @@ func makeNginxConfigMap(confdata map[string]interface{}, upstreamdata map[string
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(
 		NginxUpstreamPath,
 		LbNginxUpstream,
-		upstreamdata,
+		upstreamData,
 		confType))
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(
 		NginxSslPath,
 		LbNginxSsl,
-		ssldata,
+		sslData,
 		confType))
 
 	makeNgxinConfMap(clusterName, nginxConfigMap)

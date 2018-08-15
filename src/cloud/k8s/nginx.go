@@ -15,6 +15,7 @@ const (
 	LbNginxUpstream   = "lb-nginx-upstream"
 	LbNginxSsl        = "lb-nginx-ssl"
 	LbNginxStartPath        = "/start/"
+	LbNginxDaemonPath        = "/daemon/"
 )
 
 // 获取默认的配置
@@ -93,6 +94,8 @@ func getNginxDefaultConf(confType string) []ConfigureData {
 	}
 	cm := map[string]interface{}{"reload.sh": reloadNginx}
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(LbNginxStartPath, "reload.sh", cm, ""))
+	daemon := map[string]interface{}{"daemon.sh": "sh -c '/start/reload.sh'"}
+	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(LbNginxDaemonPath, "daemon.sh", daemon, ""))
 	nginxConfigMap = append(nginxConfigMap, conf)
 	return nginxConfigMap
 }
@@ -107,7 +110,7 @@ func CreateNginxLb(param ServiceParam) {
 	param.Memory = "4096"
 	param.HostPort = "80,443"
 	param.NoUpdateConfig = true
-	param.Command = `["sh","/start/reload.sh"]`
+	param.Command = `["sh","/daemon/daemon.sh"]`
 
 	clientSet, _ := GetClient(param.ClusterName)
 	cl2, _ := GetYamlClient(param.ClusterName, "", "v1", "api")
