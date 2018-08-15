@@ -41,7 +41,8 @@ func CreateConfigmap(param ServiceParam) {
 			update = true
 		}
 		if param.NoUpdateConfig == true && update {
-			return
+			logs.Error("配置不允许更新配置", v.DataName)
+			continue
 		}
 		//var d *unstructured.Unstructured
 		if update {

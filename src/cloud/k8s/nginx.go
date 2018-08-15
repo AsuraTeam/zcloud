@@ -92,11 +92,11 @@ func getNginxDefaultConf(confType string) []ConfigureData {
 		DataName:      "check.sh",
 		ConfigDbData:   map[string]interface{}{"check.sh": configData},
 	}
+	nginxConfigMap = append(nginxConfigMap, conf)
 	cm := map[string]interface{}{"reload.sh": reloadNginx}
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(LbNginxStartPath, "reload.sh", cm, ""))
-	daemon := map[string]interface{}{"daemon.sh": "sh -c '/start/reload.sh'"}
+	daemon := map[string]interface{}{"daemon.sh": "sh -c 'sh /start/reload.sh'"}
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(LbNginxDaemonPath, "daemon.sh", daemon, ""))
-	nginxConfigMap = append(nginxConfigMap, conf)
 	return nginxConfigMap
 }
 
