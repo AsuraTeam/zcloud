@@ -274,7 +274,7 @@ func (this *ServiceController) SaveNginxConf() {
 
 	q := `update cloud_lb_nginx_conf set vhost="` + sql.Replace(vhost) + `" where create_user="` + user + `" and service_id=` + this.Ctx.Input.Param(":id")
 	sql.Raw(q).Exec()
-	r, _ := util.SaveResponse(nil, "保存成功")
+	r := util.ApiResponse(true, "保存成功 " + logStr)
 	setServiceJson(this, r)
 	go k8s.CreateNginxConf("")
 }

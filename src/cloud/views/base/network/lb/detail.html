@@ -262,7 +262,7 @@
                 var result = JSON.stringify(resultdata);
                 if(result.indexOf("成功") != -1){
                     success(result)
-                    $("#check-faild-success").html("<span class='Running'>配置检查成功<br>保存成功</span>");
+                    $("#check-faild-success").html("<span class='Running'>配置检查成功<br>" +result+ "</span>");
                 }else{
                     if(resultdata["data"]) {
                         var msg =  resultdata["data"].replace(/\n/g,"<br>").replace(/\/usr\/local\/nginx\/conf/g,"");

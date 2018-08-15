@@ -131,7 +131,7 @@ func checkLbQuota(username string) (bool,string) {
 // 负载均衡数据
 // @router /base/lb [get]
 func (this *LbController) LbData() {
-	data := []lb.CloudLb{}
+	data := make([]lb.CloudLb, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	key := this.GetString("key")
