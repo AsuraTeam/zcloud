@@ -49,6 +49,7 @@ POD
 `
     reloadNginx = `
 #!/usr/bin/bash
+/usr/local/nginx/sbin/nginx
 old=$(find /usr/local/nginx/conf/ -type f  |xargs md5sum)
 while [ 1 ] 
 do
@@ -81,10 +82,10 @@ func getLbServiceData() []CloudLbService {
 
 // 创建nginx配置信息
 // 2018-02-03 07:48
-func makeNgxinConfMap(clustername string, nginxConfigMap []ConfigureData) {
+func makeNgxinConfMap(clusterName string, nginxConfigMap []ConfigureData) {
 	serviceParam := ServiceParam{}
-	clientSet, _ := GetClient(clustername)
-	cl2, _ := GetYamlClient(clustername, "", "v1", "api")
+	clientSet, _ := GetClient(clusterName)
+	cl2, _ := GetYamlClient(clusterName, "", "v1", "api")
 	serviceParam.Cl2 = cl2
 	serviceParam.Cl3 = clientSet
 	serviceParam.ConfigureData = nginxConfigMap
@@ -94,7 +95,7 @@ func makeNgxinConfMap(clustername string, nginxConfigMap []ConfigureData) {
 
 // 2018-02-03 07:51
 // 创建用于测试的nginx配置
-func MakeTestNginxConfMap(confdata map[string]interface{}, ssldata map[string]interface{}, clustername string) {
+func MakeTestNginxConfMap(confdata map[string]interface{}, ssldata map[string]interface{}, clusterName string) {
 	nginxConfigMap := make([]ConfigureData, 0)
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(
 		NginxConfigPath,
@@ -107,38 +108,37 @@ func MakeTestNginxConfMap(confdata map[string]interface{}, ssldata map[string]in
 		ssldata,
 		"-test"))
 	logs.Info("MakeTestNginxConfMap", nginxConfigMap)
-	makeNgxinConfMap(clustername, nginxConfigMap)
+	makeNgxinConfMap(clusterName, nginxConfigMap)
 }
 
 // 2018-02-01 14:28
 // 创建nginx配置
-func makeNginxConfigMap(confdata map[string]interface{}, upstreamdata map[string]interface{}, ssldata map[string]interface{}, clustername string, conftype string) {
+func makeNginxConfigMap(confdata map[string]interface{}, upstreamdata map[string]interface{}, ssldata map[string]interface{}, clusterName string, confType string) {
 	nginxConfigMap := make([]ConfigureData, 0)
 
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(
 		NginxConfigPath,
 		LbNginxConfig,
 		confdata,
-		conftype))
+		confType))
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(
 		NginxUpstreamPath,
 		LbNginxUpstream,
 		upstreamdata,
-		conftype))
+		confType))
 	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(
 		NginxSslPath,
 		LbNginxSsl,
 		ssldata,
-		conftype))
-	cm := map[string]interface{}{"reload.sh": reloadNginx}
-	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(LbNginxStartPath, "", cm, ""))
-	makeNgxinConfMap(clustername, nginxConfigMap)
+		confType))
+
+	makeNgxinConfMap(clusterName, nginxConfigMap)
 }
 
 // 2018-02-02 09:03
 // 获取pod类型的upstream
-func makePodUpstream(client kubernetes.Clientset, servicename string, namespace string) []string {
-	endpoint, err := client.CoreV1().Endpoints(namespace).Get(servicename, v1.GetOptions{})
+func makePodUpstream(client kubernetes.Clientset, serviceName string, namespace string) []string {
+	endpoint, err := client.CoreV1().Endpoints(namespace).Get(serviceName, v1.GetOptions{})
 	ips := make([]string, 0)
 	if err != nil {
 		logs.Error("获取Endpoints失败", err)
@@ -158,7 +158,7 @@ func makePodUpstream(client kubernetes.Clientset, servicename string, namespace 
 
 // 2018-02-02 08:22
 // 生成node节点方式的upstream
-func makeNodeUpstream(clientset kubernetes.Clientset, svcport string, ips []string) []string {
+func makeNodeUpstream(clientset kubernetes.Clientset, svcPort string, ips []string) []string {
 	nodes := GetNodes(clientset, "lb=nginx")
 	if len(nodes) == 0 {
 		nodes = GetNodes(clientset, "")
@@ -166,7 +166,7 @@ func makeNodeUpstream(clientset kubernetes.Clientset, svcport string, ips []stri
 	for _, v := range nodes {
 		for _, c := range v.Status.Conditions {
 			if c.Type == "Ready" && c.Status == "True" {
-				ips = append(ips, "    server "+v.Name+":"+svcport+";")
+				ips = append(ips, "    server "+v.Name+":"+svcPort+";")
 			}
 		}
 	}
@@ -295,7 +295,7 @@ func UpdateNginxLbUpstream(param UpdateLbNginxUpstream) error{
 }
 
 // 生成nginx配置文件
-func CreateNginxConf(conftype string) {
+func CreateNginxConf(confType string) {
 	configDbName := make(map[string]interface{})
 	upstreamDbName := make(map[string]interface{})
 	sslDbName := make(map[string]interface{})
@@ -364,7 +364,7 @@ func CreateNginxConf(conftype string) {
 			configDbName[v.Domain+".conf"] = vhosstTemp
 			writeNginxConfToDb(v, nginxMap, vhosstTemp)
 		}
-		makeNginxConfigMap(configDbName, upstreamDbName, sslDbName, cluster, conftype)
+		makeNginxConfigMap(configDbName, upstreamDbName, sslDbName, cluster, confType)
 	}
 }
 

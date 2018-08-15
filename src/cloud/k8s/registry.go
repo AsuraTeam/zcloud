@@ -12,6 +12,7 @@ import (
 	"crypto/tls"
 	"github.com/heroku/docker-registry-client/registry"
 	"fmt"
+	"time"
 )
 
 var (
@@ -143,6 +144,7 @@ func getHubClient(host string, username string, password string) *registry.Regis
 		logs.Error("获取仓库连接失败", url, err, username)
 		return nil
 	}
+	hub.Client.Timeout = 20 * time.Second
 	return hub
 }
 
@@ -150,6 +152,7 @@ func getHubClient(host string, username string, password string) *registry.Regis
 // 获取仓库中不同组的镜像数量和tag数量
 func GetRegistryInfo(host string, username string, password string, registryName string) (util.Lock, util.Lock, util.Lock) {
 	hub := getHubClient(host, username, password)
+
 	if hub == nil {
 		return util.Lock{}, util.Lock{}, util.Lock{}
 	}
@@ -220,7 +223,7 @@ func deleteImage(hub *registry.Registry, imageName string, tag string) (bool, er
 
 // 2018-01-29 8:27
 // 删除镜像
-func DeleteRegistryImage(host string, username string, password string, imagename string, tag string) (bool, error) {
+func DeleteRegistryImage(host string, username string, password string, imageName string, tag string) (bool, error) {
 	hub := getHubClient(host, username, password)
 	if hub == nil {
 		return false, errors.UnsupportedError("连接registry server失败")
@@ -228,18 +231,18 @@ func DeleteRegistryImage(host string, username string, password string, imagenam
 	var r bool
 	var err error
 	if tag != "" {
-		r, err = deleteImage(hub, imagename, tag)
+		r, err = deleteImage(hub, imageName, tag)
 	} else {
-		tags, err := hub.Tags(imagename)
+		tags, err := hub.Tags(imageName)
 		if err != nil {
 			return false, err
 		}
 		for _, tag := range tags {
-			r, err = deleteImage(hub, imagename, tag)
+			r, err = deleteImage(hub, imageName, tag)
 			if err != nil {
 				return false, err
 			}
-			logs.Info("删除镜像", imagename, tag)
+			logs.Info("删除镜像", imageName, tag)
 		}
 	}
 	return r, err
@@ -247,13 +250,13 @@ func DeleteRegistryImage(host string, username string, password string, imagenam
 
 // 2018-02-09 17:01
 // 检查镜像是否存在
-func CheckImageExists(host string, username string, password string, imagename string, tag string) (bool) {
+func CheckImageExists(host string, username string, password string, imageName string, tag string) (bool) {
 	hub := getHubClient(host, username, password)
 	if hub == nil {
 		logs.Error("连接失败")
 		return false
 	}
-	_, err := hub.ManifestDigest(imagename, tag)
+	_, err := hub.ManifestDigest(imageName, tag)
 	if err != nil {
 		return false
 	}

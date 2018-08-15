@@ -1,7 +1,7 @@
 <div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true"
      style="display: none;">
-    <div class="modal-dialog ">
+    <div class="modal-dialog " style="width: 60%;">
         <div class="modal-content p-0 b-0 ">
             <div class="panel panel-color panel-default">
                 <div class="panel-heading">
@@ -64,8 +64,8 @@
                                             class="text-danger">*</span></label>
                                     <div class="col-md-9" id="field-12">
                                         <select class="form-control" name="LbType" id="LbType">
-                                            <option value="HaProxy">HaProxy</option>
                                             <option value="Nginx">Nginx</option>
+                                            {{/*<option value="HaProxy">HaProxy</option>*/}}
                                         </select>
                                     </div>
                                 </div>
@@ -74,7 +74,7 @@
                         <div class="row top10">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="field-2" class="col-md-3 fw100 control-label"><span class="text-danger">*</span>域名后缀</label>
+                                    <label for="field-2" class="col-md-3 fw100 control-label">域名后缀<span class="text-danger">*</span></label>
                                     <div class="col-md-9">
                                         <input type="text" nullmsg="必须填写域名后缀" value="{{.data.LbDomainSuffix}}"
                                                name="LbDomainSuffix" class="form-control" id="field-13"
@@ -83,18 +83,18 @@
                                 </div>
                             </div>
                         </div>
-                        <!--<div class="row top10">-->
-                        <!--<div class="col-md-12">-->
-                        <!--<div class="form-group">-->
-                        <!--<label for="field-14" class="col-md-3 fw100 control-label">负载均衡IP地址<span-->
-                        <!--class="text-danger">*</span></label>-->
-                        <!--<div class="col-md-9" id="field-14">-->
-                        <!--<textarea rows="5" name="LbIp" class="form-control"-->
-                        <!--placeholder="负载均衡IP,多个用逗号分隔,一般为集群IP地址">{{.data.LbIp}}</textarea>-->
-                        <!--</div>-->
-                        <!--</div>-->
-                        <!--</div>-->
-                        <!--</div>-->
+                        <div class="row top15" title="日志数据存储在物理机的路径, 宿主机路径:容器内路径">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="HostLogPath" class="col-md-3 fw100 control-label">日志挂载路径<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="text" value="{{.data.HostLogPath}}" name="HostLogPath"
+                                               class="form-control" id="HostLogPath" placeholder="日志数据存储在物理机的路径,宿主机路径:容器内路径,默认/usr/local/nginx/logs/:/usr/local/nginx/logs/">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row top10">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -143,5 +143,10 @@
 
     function setDomain() {
         $("input[name='LbDomainSuffix']").val("." + $("#select-cluster-id").val() + ".zcloud.com")
+    }
+
+    // 日志路径默认 2018-08-15 09:16
+    if('{{.data.LbId}}' == "0"){
+        $("#HostLogPath").val("/usr/local/nginx/logs/:/usr/local/nginx/logs/");
     }
 </script>

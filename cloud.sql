@@ -990,6 +990,10 @@ CREATE TABLE `cloud_lb` (
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+alter table cloud_lb add host_log_path varchar(100) comment "log mount path";
+alter table cloud_lb add cpu varchar(10) default 2 comment "cpu";
+alter table cloud_lb add memory varchar(10) default 4096 comment "memory";
+
 --
 -- Dumping data for table `cloud_lb`
 --

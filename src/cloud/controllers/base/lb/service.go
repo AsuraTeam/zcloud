@@ -127,7 +127,7 @@ func (this *ServiceController) ServiceSave() {
 // 负载均衡数据
 // @router /api/lb/service/:hi(.*) [get]
 func (this *ServiceController) ServiceData() {
-	data := []k8s.CloudLbService{}
+	data := make([]k8s.CloudLbService, 0)
 	searchMap := sql.SearchMap{}
 	lbName := this.GetString("LbName")
 	if lbName == "" {
@@ -264,11 +264,11 @@ func (this *ServiceController) SaveNginxConf() {
 	logs.Info("获取到检查配置", util.ObjToString(configData))
 	k8s.MakeTestNginxConfMap(configData, sslDbData, conf.ClusterName)
 
-	logstr, logtime := k8s.MakeTestJob(master, port)
-	if ! strings.Contains(logstr, "test is successful") {
-		data, _ := util.SaveResponse(errors.InvalidArgumentError("配置检查失败"), logstr)
+	logStr, logTime := k8s.MakeTestJob(master, port, conf.ClusterName)
+	if ! strings.Contains(logStr, "test is successful") {
+		data, _ := util.SaveResponse(errors.InvalidArgumentError("配置检查失败"), logStr)
 		setServiceJson(this, data)
-		logs.Error("检查nginx配置失败", user, logstr, logtime)
+		logs.Error("检查nginx配置失败", user, logStr, logTime)
 		return
 	}
 
@@ -284,7 +284,7 @@ func (this *ServiceController) SaveNginxConf() {
 // 2018-02-14 14:40
 // 获取域名选项卡
 func GetDomainSelect(entname string) string {
-	data := []lb.LbServiceVersion{}
+	data := make([]lb.LbServiceVersion, 0)
 
 	q := sql.SearchSql(
 		lb.LbServiceVersion{},
@@ -311,7 +311,7 @@ func GetLbDomainData(domain string) k8s.CloudLbService {
 // 2018-02-17 21:17
 // 获取指定域名的服务
 func GetLbServiceData(domains []string) []lb.LbServiceVersion {
-	data := []lb.LbServiceVersion{}
+	data := make([]lb.LbServiceVersion, 0)
 	q := sql.SearchSql(
 		lb.LbServiceVersion{},
 		lb.SelectLbServiceVersion,

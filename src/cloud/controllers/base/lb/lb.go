@@ -9,6 +9,7 @@ import (
 	"strings"
 	"cloud/controllers/base/quota"
 	"cloud/controllers/ent"
+	"cloud/k8s"
 )
 
 type LbController struct {
@@ -70,9 +71,11 @@ func (this *LbController) LbSave() {
 		this.Ctx.WriteString("参数错误" + err.Error())
 		return
 	}
+	param := k8s.ServiceParam{}
 	util.SetPublicData(d, getLbUser(this), &d)
 	q := sql.InsertSql(d, lb.InsertCloudLb)
 	if d.LbId > 0 {
+		param.Update = true
 		searchMap := sql.SearchMap{}
 		searchMap.Put("LbId", d.LbId)
 		q = sql.UpdateSql(d, lb.UpdateCloudLb, searchMap,lb.UpdateLbExclude )
@@ -84,6 +87,23 @@ func (this *LbController) LbSave() {
 			return
 		}
 	}
+
+	param.ClusterName = d.ClusterName
+	param.Master, param.MasterPort = k8s.GetMasterIp(d.ClusterName)
+	if d.Cpu == "" {
+		d.Cpu = "2"
+	}
+	if d.Memory == "" {
+		d.Memory = "4096"
+	}
+	param.Cpu = d.Cpu
+	param.Memory = d.Memory
+	if ! strings.Contains(d.HostLogPath, ":") {
+		d.HostLogPath = d.HostLogPath + ":" + "/usr/local/nginx/logs/"
+	}
+	path := strings.Split(d.HostLogPath, ":")
+	param.StorageData = `[{"ContainerPath":"`+path[1]+`","HostPath":"`+path[0]+`"}]`
+	k8s.CreateNginxLb(param)
 	_, err = sql.Raw(q).Exec()
 
 	data, msg := util.SaveResponse(err, "名称已经被使用")

@@ -14,7 +14,7 @@ const (
 	LbNginxConfig     = "lb-nginx-config"
 	LbNginxUpstream   = "lb-nginx-upstream"
 	LbNginxSsl        = "lb-nginx-ssl"
-	LbNginxStartPath        = "/opt/"
+	LbNginxStartPath        = "/start/"
 )
 
 // 获取默认的配置
@@ -38,12 +38,13 @@ func nginxTestJobParam(master string, port string) JobParam {
 		Port:              port,
 		Timeout:           50,
 		Memory:            40,
+		Jobname:           "job-" + util.Md5Uuid(),
 		Cpu:               1,
 		Namespace:         util.Namespace("lb", "nginx"),
 		Images:            "nginx:v1",
 		ConfigureData:     getNginxDefaultConf("-test"),
 		NoUpdateConfigMap: true,
-		Command:           []string{"sh", "/check.sh"},
+		Command:           []string{"sh", "/opt/check.sh"},
 	}
 	return param
 }
@@ -64,9 +65,10 @@ func getNginxJobLog(logstr string) string {
 
 // 创建测试任务,检查nginx配置文件
 // 2018-02-02 20:30
-func MakeTestJob(master string, port string) (string, int64) {
+func MakeTestJob(master string, port string, clusterName string) (string, int64) {
 	start := time.Now().Unix()
 	param := nginxTestJobParam(master, port)
+	param.ClusterName = clusterName
 	r := CreateJob(param)
 	param.Jobname = r
 	logStr := getJobResult(param, "nginx:", 8, "nginx")
@@ -76,27 +78,28 @@ func MakeTestJob(master string, port string) (string, int64) {
 
 // 2018-02-02 21:48
 // 获取默认需要挂载的配置
-func getNginxDefaultConf(conftype string) []ConfigureData {
+func getNginxDefaultConf(confType string) []ConfigureData {
 	nginxConfigMap := make([]ConfigureData, 0)
-	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(NginxSslPath, LbNginxSsl+conftype, nil, ""))
-	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(NginxConfigPath, LbNginxConfig+conftype, nil, ""))
-	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(NginxUpstreamPath, LbNginxUpstream+conftype, nil, ""))
+	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(NginxSslPath, LbNginxSsl+confType, nil, ""))
+	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(NginxConfigPath, LbNginxConfig+confType, nil, ""))
+	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(NginxUpstreamPath, LbNginxUpstream+confType, nil, ""))
 
 	// 检查命令
 	configData := `/usr/local/nginx/sbin/nginx -t`
 	conf :=  ConfigureData{
-		ContainerPath: "/check.sh",
+		ContainerPath: "/opt/",
 		DataName:      "check.sh",
 		ConfigDbData:   map[string]interface{}{"check.sh": configData},
 	}
+	cm := map[string]interface{}{"reload.sh": reloadNginx}
+	nginxConfigMap = append(nginxConfigMap, getNgxinDefaulgConfig(LbNginxStartPath, "reload.sh", cm, ""))
 	nginxConfigMap = append(nginxConfigMap, conf)
 	return nginxConfigMap
 }
 
+// 创建nginx集群容器
 func CreateNginxLb(param ServiceParam) {
 	param.Port = "80,443"
-	param.MasterPort = "8080"
-	param.Master = "10.16.55.114"
 	param.Image = "nginx:v1"
 	param.Namespace = "lb--nginx"
 	param.Name = "nginx-lb"
@@ -104,16 +107,14 @@ func CreateNginxLb(param ServiceParam) {
 	param.Memory = "4096"
 	param.HostPort = "80,443"
 	param.NoUpdateConfig = true
-	param.ClusterName = ""
-	param.Command = `["sh","/opt/reload.sh"]`
-
-	param.StorageData = `[{"ContainerPath":"/usr/local/nginx/logs/","HostPath":"/home/data/nginx/logs/"}]`
+	param.Command = `["sh","/start/reload.sh"]`
 
 	clientSet, _ := GetClient(param.ClusterName)
 	cl2, _ := GetYamlClient(param.ClusterName, "", "v1", "api")
 	param.Cl2 = cl2
 	param.Cl3 = clientSet
 	param.ConfigureData = getNginxDefaultConf("")
+	YamlCreateNamespace(param.ClusterName, param.Namespace)
 	CreateConfigmap(param)
 	CreateDeamonSet(param)
 }

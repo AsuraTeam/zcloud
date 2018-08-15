@@ -1,5 +1,5 @@
 package lb
-const SelectCloudLb = "select service_number,entname,lb_ip,lb_type,lb_id,description,create_time,cluster_name,resource_name,last_modify_time,lb_name,lb_domain_prefix,lb_domain_suffix,create_user,last_modify_user,status from cloud_lb"
+const SelectCloudLb = "select service_number,entname,cpu,memory,host_log_path,lb_ip,lb_type,lb_id,description,create_time,cluster_name,resource_name,last_modify_time,lb_name,lb_domain_prefix,lb_domain_suffix,create_user,last_modify_user,status from cloud_lb"
 const UpdateCloudLb = "update cloud_lb"
 const UpdateLbExclude  = "CreateTime,CreateUser,LbName"
 const InsertCloudLb = "insert into cloud_lb" 

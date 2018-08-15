@@ -33,6 +33,12 @@ type CloudLb struct {
     ServiceNumber int64
     // 环境名称
     Entname string
+    // cpu
+    Cpu string
+    // Memory
+    Memory string
+    // 日志挂载路径
+    HostLogPath string
 }
 
 // 2018-02-14 13:26

@@ -58,7 +58,7 @@ func GetCertfileData(name string)[]k8s.CloudLbCert {
 		searchMap.Put("Name", name)
 	}
 	// cert数据
-	data := []k8s.CloudLbCert{}
+	data := make([]k8s.CloudLbCert, 0)
 	q := sql.SearchSql(k8s.CloudLbCert{}, k8s.SelectCloudLbCert, searchMap)
 	sql.Raw(q).QueryRows(&data)
 	return data
@@ -98,7 +98,7 @@ func (this *CertController) CertSave() {
 // cert数据
 // @router /api/network/cert [get]
 func (this *CertController) CertData() {
-	data := []k8s.CloudLbCert{}
+	data := make([]k8s.CloudLbCert, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	key := this.GetString("search")
