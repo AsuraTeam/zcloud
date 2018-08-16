@@ -221,21 +221,21 @@ func (this *AppController) GetTemplateName() {
 // @router /api/template/deploy/history [get]
 func (this *AppController) HistoryData() {
 	data := make([]app.CloudTemplateDeployHistory, 0)
-	searchMap := sql.SearchMap{}
-	id := this.Ctx.Input.Param(":id")
 	key := this.GetString("key")
-	if id != "" {
-		searchMap.Put("TemplateId", id)
-	}
-	searchSql := sql.SearchSql(app.CloudAppTemplate{}, app.SelectCloudTemplateDeployHistory, searchMap)
-	if key != "" && id == "" {
+	searchSql := sql.SearchSql(app.CloudAppTemplate{}, app.SelectCloudTemplateDeployHistory, sql.SearchMap{})
+	if key != ""{
 		searchSql += " where 1=1 and (template_name like \"%" + sql.Replace(key) + "%\" or service_name like \"%" + sql.Replace(key) + "%\")"
 	}
-	num, err := sql.Raw(searchSql).QueryRows(&data)
-	var r = util.ResponseMap(data, num, this.GetString("draw"))
-	if err != nil {
-		r = util.ResponseMapError(err.Error())
-	}
+	sql.OrderByPagingSql(searchSql, "history_id",
+		*this.Ctx.Request,
+		&data,
+		app.CloudTemplateDeployHistory{})
+	r := util.ResponseMap(data,
+		sql.CountSearchMap("cloud_template_deploy_history",
+			sql.GetSearchMapV("CreateUser", getUser(this)),
+			len(data),
+			""),
+		this.GetString("draw"))
 	this.Data["json"] = r
 	this.ServeJSON(false)
 }

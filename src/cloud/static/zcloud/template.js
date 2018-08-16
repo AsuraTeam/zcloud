@@ -142,6 +142,7 @@ function loadHistoryData(key) {
             {"data": "ServiceName","mRender":function (data) {
                     return data;
                 }},
+            {"data": "CreateUser"},
             {"data": "CreateTime"},
         ],
         "fnRowCallback": function (row, data) { // 每行创建完毕的回调
