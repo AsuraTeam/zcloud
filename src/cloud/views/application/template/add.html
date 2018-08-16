@@ -19,17 +19,7 @@
                             </div>
                         </div>
                     </div>
-                    {{/*<div class="row top10">*/}}
-                        {{/*<div class="col-md-12">*/}}
-                            {{/*<div class="form-group">*/}}
-                                {{/*<label for="field-11" class="col-md-3 fw100 control-label">资源空间<span class="text-danger">*</span></label>*/}}
-                                {{/*<div class="col-md-9" id="field-11">*/}}
-                                    {{/*<select class="form-control" name="ResourceName" id="ResourceName">*/}}
-                                    {{/*</select>*/}}
-                                {{/*</div>*/}}
-                            {{/*</div>*/}}
-                        {{/*</div>*/}}
-                    {{/*</div>*/}}
+
                     <div class="row top10">
                         <div class="col-md-12">
                             <div class="form-group">
@@ -125,9 +115,12 @@
                         <div class="col-md-11 pre m-l-15">
                             <br>
                             应用模板注意<br>
+                            <br>
                             模板创建后不可以编辑修改,如果修改的话有俩种方式<br>
                             1、删除后重建 <br>
                             2、编辑数据文件,适合高级用户使用<br>
+                            <br>
+                            服务选择格式为: 应用名称;资源名称;服务名称 <br>
                             <br>
                         </div>
                     </div>
@@ -179,7 +172,10 @@ spec:
         var result = get({ClusterName:cluster}, url);
         var html = "";
         for (var i = 0; i < result.length; i++) {
-            html += "<option value='" + result[i]["ServiceName"] + "'>" + result[i]["ServiceName"] + "</option>";
+            var t = result[i]["AppName"] +";"+ result[i]["ResourceName"]+";"+ result[i]["ServiceName"];
+            if (html.indexOf("'" + t) == -1 ) {
+                html += "<option value='" + t + "'>" + t + "</option>";
+            }
         }
         $("#undo_contact_group_redo").html(html);
     }

@@ -1,0 +1,111 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 50%">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">应用拉起</span>
+                </div>
+                <form class="cluster-form">
+                <div class="panel-body font-12 ">
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-1" class="col-md-3 fw100 control-label">模板名称<span class="text-danger">*</span></label>
+                                <div class="col-md-9" >
+                                    <input readonly type="text" nullmsg="必须填写" value="{{.data.TemplateName}}" validFunc="checkAppNameService" errmsg="接受 A-Za-z0-9-_.() 并且最大长度不超过32,最小4个字符" onchange="checkChange('TemplateName')" name="TemplateName" id="TemplateName" class="form-control" id="field-1" placeholder="必须为全英文">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-1" class="col-md-3 fw100 control-label">应用名称<span class="text-danger">*</span></label>
+                                <div class="col-md-9" >
+                                    <input  type="text" nullmsg="必须填写" onchange="checkChange('TemplateName')" name="AppName" id="AppName" class="form-control" placeholder="必须为全英文">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-11" class="col-md-3 fw100 control-label">资源空间<span class="text-danger">*</span></label>
+                                <div class="col-md-9" id="field-11">
+                                    <select class="form-control" name="ResourceName" id="ResourceName">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top10" title="">
+                        <div class="col-md-12 top10">
+                            <div class="form-group">
+                                <label for="select-entname-id"
+                                       class="col-md-3 fw100 control-label">环境选择<span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <select class="selectpicker" name="Ent"
+                                            onchange="getEntClusterData($(this).val())"
+                                            data-live-search="true" data-style="btn-default"
+                                            id="select-entname-id">
+                                        <option>请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top15" title="">
+                        <div class="col-md-12 top10">
+                            <div class="form-group">
+                                <label for="select-cluster-id"
+                                       class="col-md-3 fw100 control-label">集群名称<span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <select class="selectpicker" name="Cluster"
+                                            data-live-search="true" data-style="btn-default"
+                                            id="select-cluster-id">
+                                        <option>请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                </div>
+                    <div class="row top20 m-l-20">
+                        <div class="col-md-11 pre m-l-15">
+                            <br>
+                            应用拉起注意<br>
+                            拉起应用等于新建了一套服务,服务端口都会改变<br>
+                            <br>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                    <div class="panel-footer">
+                    <button type="button" class="btn btn-default waves-effect btn-lg" data-dismiss="modal"><i
+                            class="fa fa-times"></i>&nbsp;&nbsp;取消
+                    </button>
+                    <button type="button" onclick="saveStartDeploy('{{.data.TemplateId}}')"  class="btn btn-info  btn-lg waves-effect waves-light"><i class="fa fa-send-o"></i>&nbsp;&nbsp;拉起
+                    </button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/zcloud/registrySelect.js"></script>
+<script>
+    {{/*setQuotaName("{{.data.ResourceName}}", "ResourceName");*/}}
+    $("#select-entname-id").html("{{.entname}}");
+    $("#select-cluster-id").html("{{.cluster}}");
+    $("#ResourceName").html("{{.quotas}}");
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 10
+    });
+
+</script>

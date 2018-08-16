@@ -10,6 +10,7 @@ import (
 	"cloud/util"
 	"strings"
 	"cloud/cache"
+	"github.com/astaxie/beego/logs"
 )
 
 // 2018-02-19 10:40
@@ -123,4 +124,87 @@ func makeImageTags(tag string) string {
 		html += util.GetSelectOptionName(v)
 	}
 	return html
+}
+
+// 2018-02-26 09:32
+// 获取重建的应用信息
+func getRedeployApp(v string, user string) ([]app.CloudAppName,bool) {
+	searchMap := sql.SearchMap{}
+	searchMap.Put("AppId", v)
+	searchMap.Put("CreateUser", user)
+	r := getAppDataQ(searchMap)
+	if len(r) == 0 {
+		return []app.CloudAppName{},false
+	}
+	return r, true
+}
+
+// 2018-02-26 09:54
+// 获取重建应用的服务信息
+func getRedeployService(v string, user string) ([]app.CloudAppService, bool) {
+	logs.Info("开始重建服务", util.ObjToString(v))
+	data,status := getRedeployApp(v, user)
+	if ! status {
+		return []app.CloudAppService{}, false
+	}
+	searchMap := sql.SearchMap{}
+	searchMap.Put("ClusterName", data[0].ClusterName)
+	searchMap.Put("Entname", data[0].Entname)
+	searchMap.Put("AppName", data[0].AppName)
+	serviceData := getServiceData(searchMap, app.SelectCloudAppService)
+	logs.Info("获取到服务数据", util.ObjToString(serviceData))
+	if len(serviceData) == 0 {
+		return []app.CloudAppService{}, false
+	}
+	return serviceData, true
+}
+
+// 获取应用名称信息
+func getAppDataQ(searchMap sql.SearchMap) []app.CloudAppName {
+	data := make([]app.CloudAppName, 0)
+	searchSql := sql.SearchSql(app.CloudAppName{}, app.GetAppName, searchMap)
+	logs.Info("searchSql", searchSql, searchMap)
+	sql.Raw(searchSql).QueryRows(&data)
+	return data
+}
+
+// 2018-02-03 21:44
+// 获取选项卡
+func GetAppHtml(cluster string, username string) string {
+	data := getAppData("", cluster, username)
+	var html string
+	for _, v := range data {
+		html += util.GetSelectOptionName(v.AppName)
+	}
+	return html
+}
+
+// 2018-02-27 11:45
+// 加载应用数据
+func selectAppData(searchMap sql.SearchMap)[]app.CloudApp  {
+	data := make([]app.CloudApp, 0)
+	searchSql := sql.SearchSql(app.CloudAppService{}, app.SelectCloudApp, searchMap)
+	sql.Raw(searchSql).QueryRows(&data)
+	return data
+}
+
+// 查询某个服务的数据
+func getAppData(name string, cluster string, username string) []app.CloudApp {
+
+	searchMap := sql.GetSearchMapV("ClusterName", cluster, "CreateUser", username)
+	if name != "" {
+		searchMap.Put("AppName", name)
+	}
+	return selectAppData(searchMap)
+}
+
+// 2018-02-13 15:46
+// 获取应用选择项
+func GetAppSelect(searchMap sql.SearchMap) string {
+	data := getAppDataQ(searchMap)
+	var opt = "<option>--请选择--</option>"
+	for _, v := range data {
+		opt += util.GetSelectOptionName(v.AppName)
+	}
+	return opt
 }

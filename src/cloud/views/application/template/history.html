@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <div class="container">
+    <!-- Start content -->
+    <div class="content">
+            <div id="add_template_html"></div>
+            <div class="row ">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">应用交付中心</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">服务编排</a>
+                            </li>
+                            <li>
+                                <a href="#">编排历史</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row ">
+                <div class="col-sm-12 top-10">
+                    <div class="col-sm-1 cluster-search pull-right">
+                        <button type="button" class="btn btn-default waves-effect waves-light"
+                                onclick="loadHistoryData()"
+                                style="border-radius: 5px;">
+                            <i class="fa fa fa-refresh"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-3 pull-right">
+                        <input type="text" onkeyup="loadHistoryData($(this).val())" class="form-control"
+                               placeholder="搜索名称">
+                        <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                    </div>
+                </div>
+                <br>
+                <div class="col-sm-12 app-table" >
+                    <table id="template-data-h-table" class="table table-hover table-striped " >
+                        <thead>
+                        <tr>
+                            <th>模板名称</th>
+                            <th>环境名称</th>
+                            <th>集群名称</th>
+                            <th>资源名称</th>
+                            <th>应用名称</th>
+                            <th>服务名称</th>
+                            <th>创建时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <br>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end col -->
+{{template "template/bottom.html" .}}
+</body>
+</div>
+
+<script src="/static/zcloud/template.js"></script>
+<script>
+    loadHistoryData();
+</script>
+</html>

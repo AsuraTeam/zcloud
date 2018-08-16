@@ -22,6 +22,18 @@ function addTemplateUpdate(templateId) {
     $("#add_post_html").modal("toggle")
 }
 
+/**
+ * 2018-08-16 11:02
+ * 应用拉起页面
+ * @param templateId
+ */
+function addTemplateDeploy(templateId) {
+    var url = "/application/template/deploy/add";
+    var result = post({TemplateId:templateId}, url);
+    $("#add_template_html").html(result)
+    $("#add_post_html").modal("toggle")
+}
+
 
 /**
  * 设置删除模板的id
@@ -92,6 +104,55 @@ function deleteTemplateSwal() {
 }
 
 
+
+/**
+ * 加载数据
+ * @param key
+ */
+function loadHistoryData(key) {
+    if (!key) {
+        key = ""
+    } else {
+        if (key.length < 4) {
+            return
+        }
+    }
+
+    $("#template-data-h-table").dataTable({
+        "filter": false,//去掉搜索框
+        "ordering": false, // 是否允许排序
+        "paginationType": "full_numbers", // 页码类型
+        "destroy": true,
+        "processing": true,
+        "bPaginate": true, //是否显示（应用）分页器
+        "serverSide": true,
+        "bInfo": true, //是否显示页脚信息，DataTables插件左下角显示记录数
+        "scrollX": true, // 是否允许左右滑动
+        "displayLength": 10, // 默认长度
+        "ajax": { // 请求地址
+            "url": "/api/template/deploy/history?t=" + new Date().getTime() + "&search=" + key + "&cluster="+getClusterName(),
+            "type": 'post'
+        },
+        "columns": [ // 数据映射
+            {"data": "TemplateName"},
+            {"data": "Entname"},
+            {"data": "ClusterName"},
+            {"data": "ResourceName"},
+            {"data": "AppName"},
+            {"data": "ServiceName","mRender":function (data) {
+                    return data;
+                }},
+            {"data": "CreateTime"},
+        ],
+        "fnRowCallback": function (row, data) { // 每行创建完毕的回调
+            $(row).data('recordId', data.recordId);
+        }
+    });
+}
+
+loadTemplateData();
+
+
 /**
  * 加载数据
  * @param key
@@ -123,18 +184,24 @@ function loadTemplateData(key) {
         "columns": [ // 数据映射
             {"data": "TemplateName"},
             {"data": "ServiceName","mRender":function (data) {
+                    return data.split(",").length;
+                }},
+            {"data": "ServiceName","mRender":function (data) {
                 return data.replace(/,/, "<br>");
             }},
             {"data": "Description"},
             {"data": "CreateTime"},
             {"data": "LastModifyTime"},
             {
-                "sWidth": "150px", "data": "TemplateId", "mRender": function (data, type, full) {
-
-                    // return '<button type="button" title="更新" onclick="addTemplate(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
+                "sWidth": "150px", "data": "TemplateId", "mRender": function (data) {
                        return '<button type="button" title="编辑数据文件" onclick="addTemplateUpdate(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-edit"></i></button>&nbsp;' +
                         '<button type="button"  title="删除" onClick="setDeleteId(' + data + ')" class="delete-template btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
             }
+            },
+            {
+                "sWidth": "150px", "data": "TemplateId", "mRender": function (data) {
+                    return '<button type="button" title="应用拉起" onclick="addTemplateDeploy(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-send-o"></i></button>&nbsp;' ;
+                }
             },
         ],
         "fnRowCallback": function (row, data) { // 每行创建完毕的回调
@@ -211,6 +278,28 @@ function saveTemplateUpdate(templateId) {
         return
     }
     var url = "/api/template/update";
+    var result = post(data, url);
+    result = JSON.stringify(result);
+    if (result.indexOf("保存成功") != -1){
+        $("#add_post_html").modal("toggle");
+        success(result);
+        loadTemplateData()
+    }else{
+        faild(result)
+    }
+}
+
+/**
+ * 2018-08-16 10:51
+ * 拉起模板
+ */
+function saveStartDeploy(templateId) {
+    var data = get_form_data();
+    data["TemplateId"] = parseInt(templateId);
+    if(!checkValue(data,"TemplateName,AppName,Ent,Cluster,ResourceName")){
+        return
+    }
+    var url = "/api/template/deploy/"+ templateId;
     var result = post(data, url);
     result = JSON.stringify(result);
     if (result.indexOf("保存成功") != -1){

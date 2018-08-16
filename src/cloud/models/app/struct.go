@@ -74,6 +74,9 @@ type CloudAppServiceName struct {
 	Entname string
 	// 集群名称
 	ClusterName string
+	// 资源名称
+	ResourceName string
+
 }
 
 type CloudAppTemplate struct {
@@ -101,6 +104,8 @@ type CloudAppTemplate struct {
 	Ent string
 	// 服务名称
 	ServiceName string
+	// 应用名称
+	AppName string
 }
 
 
@@ -308,4 +313,25 @@ type CloudContainer struct {
 	Entname string
 	// 事件信息
 	Events string
+}
+//2018-08-16 16:04:25.8692888 +0800 CST
+type CloudTemplateDeployHistory struct {
+    //创建用户
+    CreateUser string
+    //环境名称
+    Entname string
+    //创建时间
+    CreateTime string
+    //service名称
+    ServiceName string
+    //应用名称
+    AppName string
+    //环境名称
+    ResourceName string
+    //集群名称
+    ClusterName string
+    //
+    TemplateName string
+    //
+    HistoryId int64
 }

@@ -97,10 +97,14 @@ func init() {
 				// 模板管理,
 				// 应用模板入口页面,
 				beego.NSRouter("/list", &app.AppController{}, "get:TemplateList"),
+				// 应用模板入口页面,
+				beego.NSRouter("/deploy/history", &app.AppController{}, "get:HistoryList"),
 				// 应用模板添加页面,
 				beego.NSRouter("/add", &app.AppController{}, "post:TemplateAdd"),
 				// 应用模板添加页面,
 				beego.NSRouter("/update/add", &app.AppController{}, "post:TemplateUpdateAdd"),
+				// 应用模板拉起页面,
+				beego.NSRouter("/deploy/add", &app.AppController{}, "post:TemplateDeployAdd"),
 			),
 			// 环境配置文件,
 			beego.NSRouter("/evnfile", &app.AppController{}, "*:EnvfileList"),
@@ -256,6 +260,10 @@ func init() {
 				beego.NSRouter("", &app.AppController{}, "post:TemplateSave"),
 				// 更细模板yaml
 				beego.NSRouter("/update", &app.AppController{}, "post:TemplateUpdate"),
+				// 拉起应用
+				beego.NSRouter("/deploy/:id:int", &app.AppController{}, "post:StartDeploy"),
+				// 拉起应用历史
+				beego.NSRouter("/deploy/history", &app.AppController{}, "post:HistoryData"),
 				// 获取应用模板数据所有数据,
 				beego.NSRouter("", &app.AppController{}, "get:TemplateData"),
 				// 获取应用模板数据所有数据的名称和ID,

@@ -1617,8 +1617,22 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+CREATE TABLE `cloud_template_deploy_history` (
+  `history_id` int(11) NOT NULL AUTO_INCREMENT,
+  `create_time` varchar(32) DEFAULT NULL COMMENT '创建时间',
+  `create_user` varchar(32) DEFAULT NULL COMMENT '创建用户',
+  `service_name` varchar(36) DEFAULT NULL COMMENT 'service名称',
+  `app_name` varchar(40) DEFAULT NULL COMMENT '应用名称',
+  `entname` varchar(100) DEFAULT NULL COMMENT '环境名称',
+  `resource_name` varchar(100) DEFAULT NULL COMMENT '环境名称',
+  `cluster_name` varchar(40) DEFAULT NULL COMMENT '集群名称',
+  `template_name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`history_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- Dump completed on 2018-03-09 12:30:13
 alter table cloud_cluster_hosts add unique index uidx_cloud_cluster_hosts_ip_api_port_host_type(host_ip,api_port,host_type);
 alter table cloud_app_template add cluster varchar(130) comment "集群名称";
 alter table cloud_app_template add ent varchar(30) comment "环境名称";
 alter table  cloud_app_template  add service_name text comment "service name";
+alter table  cloud_app_template  add app_name varchar(130) comment "应用名称";

@@ -46,3 +46,8 @@ const SelectCloudContainer = "select waiting_reason, waiting_messages,terminated
 const InsertCloudContainer = "insert into cloud_container"
 const DeleteCloudContainer = "delete from cloud_container"
 const SelectUserContainer = `select container_id from cloud_container where create_user in (?)`
+
+const SelectCloudTemplateDeployHistory = "select cluster_name,template_name,history_id,service_name,app_name,resource_name,create_time,create_user,entname from cloud_template_deploy_history"
+const UpdateCloudTemplateDeployHistory = "update cloud_template_deploy_history"
+const InsertCloudTemplateDeployHistory = "insert into cloud_template_deploy_history" 
+const DeleteCloudTemplateDeployHistory = "delete from cloud_template_deploy_history" 
