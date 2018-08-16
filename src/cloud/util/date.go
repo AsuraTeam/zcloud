@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"sort"
 	"encoding/json"
+	"bytes"
 )
 
 // 获取时间
@@ -102,6 +103,19 @@ func ObjToString(v interface{}) string  {
 	return string(t)
 }
 
+func StringsToJSON(str string) string {
+	var jsons bytes.Buffer
+	for _, r := range str {
+		rint := int(r)
+		if rint < 128 {
+			jsons.WriteRune(r)
+		} else {
+			jsons.WriteString("\\u")
+			jsons.WriteString(strconv.FormatInt(int64(rint), 16))
+		}
+	}
+	return jsons.String()
+}
 
 // 时间转成时间戳
 // 2018-01-15 13:40

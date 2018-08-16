@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"github.com/astaxie/beego/logs"
 	"reflect"
+	"database/sql"
 )
 
 func StringToUpper(str string) string {
@@ -438,6 +439,12 @@ func GetOrm() orm.Ormer {
 func Raw(q string) orm.RawSeter {
 	o := GetOrm()
 	return o.Raw(q)
+}
+
+// 执行sql语句
+func Exec(q string) (sql.Result, error) {
+	o := GetOrm()
+	return o.Raw(q).Exec()
 }
 
 func getParam(req *http.Request, key string) string {

@@ -4,6 +4,9 @@ import (
 	"cloud/sql"
 	"cloud/util"
 	"cloud/models/app"
+	"cloud/controllers/base/cluster"
+	"strings"
+	"encoding/json"
 )
 
 // 模板管理入口页面
@@ -16,14 +19,62 @@ func (this *AppController) TemplateList() {
 // @router /application/template/add [get]
 func (this *AppController) TemplateAdd() {
 	id := this.GetString("TemplateId")
+	update := app.CloudAppTemplate{}
+	this.Data["cluster"] = cluster.GetClusterSelect()
 	// 更新操作
-	if id != "" {
+	if id != "0" {
 		searchMap := sql.GetSearchMap("TemplateId", *this.Ctx)
-		update := app.CloudAppTemplate{}
 		sql.Raw(sql.SearchSql(app.CloudAppTemplate{}, app.SelectCloudAppTemplate, searchMap)).QueryRow(&update)
 		this.Data["data"] = update
+		this.Data["cluster"] = util.GetSelectOptionName(update.Cluster)
 	}
 	this.TplName = "application/template/add.html"
+}
+
+// 2018-08-16 09:45
+// 模板yaml更新添加页面
+// @router /application/template/update/add [get]
+func (this *AppController) TemplateUpdateAdd() {
+	update := app.CloudAppTemplate{}
+	searchMap := sql.GetSearchMap("TemplateId", *this.Ctx)
+	sql.Raw(sql.SearchSql(app.CloudAppTemplate{}, app.SelectCloudAppTemplate, searchMap)).QueryRow(&update)
+
+	this.Data["data"] = update
+	this.TplName = "application/template/update.html"
+}
+
+// 2018-08-16 09:16
+// yaml 获取
+// 将当期的服务信息存储,用来创建新的服务
+func getServiceYaml(serviceName string) string {
+	q := strings.Replace(app.SelectCloudAppService, "?", serviceName, -1)
+	d := make([]app.CloudAppService, 0)
+	sql.Raw(q).QueryRows(&d)
+	yaml := make([]app.CloudAppService, 0)
+	for _, v := range d {
+		v.CreateUser = ""
+		v.CreateTime = ""
+		v.LastModifyUser = ""
+		v.LastModifyTime = ""
+		yaml = append(yaml, v)
+	}
+	content, _ := json.MarshalIndent(yaml, "", "  ")
+	return strings.Replace(util.StringsToJSON(string(content)), "\\", "", -1)
+}
+
+// 2018-08-16 09:39
+// 模板更新yaml数据
+// @router /api/template/update [post]
+func (this *AppController) TemplateUpdate() {
+	d := app.CloudAppTemplate{}
+	this.ParseForm(&d)
+	util.SetPublicData(d, util.GetUser(this.GetSession("username")), &d)
+	searchMap := sql.SearchMap{}
+	searchMap.Put("TemplateId", d.TemplateId)
+	q := sql.UpdateSql(d, app.UpdateCloudAppTemplate, searchMap, "CreateTime,CreateUser,Cluster,ServiceName")
+	sql.Exec(q)
+	this.Data["json"] = util.ApiResponse(true, "更新完成")
+	this.ServeJSON(false)
 }
 
 // string
@@ -37,14 +88,17 @@ func (this *AppController) TemplateSave() {
 		return
 	}
 	util.SetPublicData(d, util.GetUser(this.GetSession("username")), &d)
+	var q string
 	if d.TemplateId > 0 {
 		searchMap := sql.SearchMap{}
 		searchMap.Put("TemplateId", d.TemplateId)
-		_, err = sql.Raw(sql.UpdateSql(d, app.UpdateCloudAppTemplate, searchMap, "CreateTime,CreateUser")).Exec()
+		q = sql.UpdateSql(d, app.UpdateCloudAppTemplate, searchMap, "CreateTime,CreateUser,Cluster,Yaml")
 	} else {
-		_, err = sql.Raw(sql.InsertSql(d, app.InsertCloudAppTemplate)).Exec()
+		d.Yaml = getServiceYaml(d.ServiceName)
+		q = sql.InsertSql(d, app.InsertCloudAppTemplate)
 	}
-	data,msg := util.SaveResponse(err, "名称已经被使用")
+	_, err = sql.Exec(q)
+	data, msg := util.SaveResponse(err, "名称已经被使用")
 	util.SaveOperLog(this.GetSession("username"), *this.Ctx, "保存模板配置 "+msg, d.TemplateName)
 	this.Data["json"] = data
 	this.ServeJSON(false)
@@ -101,15 +155,13 @@ func (this *AppController) TemplateDelete() {
 // string
 // 检查yaml是否可以转换成json格式
 // @router /api/template/yaml/check [post]
-func (this *AppController) YamlCheck()  {
+func (this *AppController) YamlCheck() {
 	yaml := this.GetString("yaml")
 	_, err := util.Yaml2Json([]byte(yaml))
 	if err != nil {
 		this.Ctx.WriteString("false")
 		return
-	}else{
+	} else {
 		this.Ctx.WriteString("true")
 	}
 }
-
-

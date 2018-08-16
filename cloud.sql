@@ -1619,3 +1619,6 @@ UNLOCK TABLES;
 
 -- Dump completed on 2018-03-09 12:30:13
 alter table cloud_cluster_hosts add unique index uidx_cloud_cluster_hosts_ip_api_port_host_type(host_ip,api_port,host_type);
+alter table cloud_app_template add cluster varchar(130) comment "集群名称";
+alter table cloud_app_template add ent varchar(30) comment "环境名称";
+alter table  cloud_app_template  add service_name text comment "service name";

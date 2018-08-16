@@ -1,0 +1,65 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 65%;">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">更新模板数据</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-1" class="col-md-3 fw100 control-label">模板名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.TemplateName}}"
+                                               validFunc="checkAppNameService"
+                                               errmsg="接受 A-Za-z0-9-_.() 并且最大长度不超过32,最小4个字符"
+                                               onchange="checkChange('TemplateName')" name="TemplateName"
+                                               id="TemplateName" class="form-control" id="field-1" placeholder="必须为全英文">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-3 fw100 control-label">模板描述</label>
+                                    <div class="col-md-9">
+                                        <input type="text" value="{{.data.Description}}" name="Description"
+                                               class="form-control" id="field-2" placeholder="模板描述信息">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-2" class="col-md-3 fw100 control-label">数据文件</label>
+                                    <div class="col-md-9">
+                                 <textarea name="Yaml"
+                                      style="min-height: 500px;padding: 20px;width:100%;max-height: 700px;overflow-y: scroll;border:none;background-color: #000000;color:#ffffff;">{{.data.Yaml}}
+                                 </textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                            <div class="panel-footer">
+                                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                        class="fa fa-times"></i>&nbsp;&nbsp;取消
+                                </button>
+                                <button type="button" onclick="saveTemplateUpdate('{{.data.TemplateId}}')"
+                                        class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                                </button>
+                            </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

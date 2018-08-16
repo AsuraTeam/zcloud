@@ -9,10 +9,11 @@ const GetAppName  = "select app_id, app_name,create_user,cluster_name,entname fr
 const SelectUserApp = `select app_id from cloud_app where create_user in (?) `
 
 
-const SelectCloudAppTemplate = "select yaml,template_name,create_time,create_user,last_modify_time,last_modify_user,resource_name,description,template_id from cloud_app_template"
+const SelectCloudAppTemplate = "select yaml,service_name,ent,cluster,template_name,create_time,create_user,last_modify_time,last_modify_user,resource_name,description,template_id from cloud_app_template"
 const UpdateCloudAppTemplate = "update cloud_app_template"
 const InsertCloudAppTemplate = "insert into cloud_app_template"
 const DeleteCloudAppTemplate = "delete from cloud_app_template"
+const SelectServiceYaml  = "select yaml from cloud_app_service where service_name in (%s)"
 
 const SelectCloudAppConfigure = "select create_user,entname,last_modify_time,cluster_name,description,configure_id,configure_name,create_time,last_modify_user from cloud_app_configure"
 const UpdateCloudAppConfigure = "update cloud_app_configure"

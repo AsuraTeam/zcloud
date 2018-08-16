@@ -1,6 +1,6 @@
 <div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
      style="display: none;">
-    <div class="modal-dialog ">
+    <div class="modal-dialog " style="width: 60%;">
         <div class="modal-content p-0 b-0 ">
             <div class="panel panel-color panel-default">
                 <div class="panel-heading">
@@ -14,22 +14,22 @@
                             <div class="form-group">
                                 <label for="field-1" class="col-md-3 fw100 control-label">模板名称<span class="text-danger">*</span></label>
                                 <div class="col-md-9" >
-                                    <input type="text" nullmsg="必须填写" value="{{.data.TemplateName}}" validFunc="checkTemplateName" errmsg="接受 A-Za-z0-9-_.() 并且最大长度不超过32,最小4个字符" onchange="checkChange('TemplateName')" name="TemplateName" id="TemplateName" class="form-control" id="field-1" placeholder="必须为全英文">
+                                    <input type="text" nullmsg="必须填写" value="{{.data.TemplateName}}" validFunc="checkAppNameService" errmsg="接受 A-Za-z0-9-_.() 并且最大长度不超过32,最小4个字符" onchange="checkChange('TemplateName')" name="TemplateName" id="TemplateName" class="form-control" id="field-1" placeholder="必须为全英文">
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row top10">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="field-11" class="col-md-3 fw100 control-label">资源空间<span class="text-danger">*</span></label>
-                                <div class="col-md-9" id="field-11">
-                                    <select class="form-control" name="ResourceName" id="ResourceName">
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {{/*<div class="row top10">*/}}
+                        {{/*<div class="col-md-12">*/}}
+                            {{/*<div class="form-group">*/}}
+                                {{/*<label for="field-11" class="col-md-3 fw100 control-label">资源空间<span class="text-danger">*</span></label>*/}}
+                                {{/*<div class="col-md-9" id="field-11">*/}}
+                                    {{/*<select class="form-control" name="ResourceName" id="ResourceName">*/}}
+                                    {{/*</select>*/}}
+                                {{/*</div>*/}}
+                            {{/*</div>*/}}
+                        {{/*</div>*/}}
+                    {{/*</div>*/}}
                     <div class="row top10">
                         <div class="col-md-12">
                             <div class="form-group">
@@ -40,20 +40,100 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row top10">
-                        <div class="col-md-12">
+                    {{/*<div class="row top10">*/}}
+                        {{/*<div class="col-md-12">*/}}
+                            {{/*<div class="form-group">*/}}
+                                {{/*<label for="field-5" class="col-md-3 fw100 control-label">k8s编排文件<span class="text-danger">*</span></label>*/}}
+                                {{/*<div class="col-md-9">*/}}
+                                    {{/*<a href="javascripv:void(0)" onclick="setTemplate()">显示Deployment模板</a>*/}}
+                                    {{/*<textarea nullmsg="k8s编排文件必须填写"  rows="10" errmsg="编排文件检查错误"  onchange="checkChange('Yaml','textarea')"  class="form-control" id="field-5" placeholder="请使用标准的k8s yaml文件格式"*/}}
+                                              {{/*name="Yaml">{{.data.Yaml}}</textarea>*/}}
+                                {{/*</div>*/}}
+                            {{/*</div>*/}}
+                        {{/*</div>*/}}
+                    {{/*</div>*/}}
+                    {{/*<div class="row top10" title="">*/}}
+                        {{/*<div class="col-md-12 top10">*/}}
+                            {{/*<div class="form-group">*/}}
+                                {{/*<label for="select-entname-id"*/}}
+                                       {{/*class="col-md-3 fw100 control-label">环境选择<span*/}}
+                                        {{/*class="text-danger">*</span></label>*/}}
+                                {{/*<div class="col-md-9">*/}}
+                                    {{/*<select class="selectpicker" name="Ent"*/}}
+                                            {{/*onchange="getEntClusterData($(this).val())"*/}}
+                                            {{/*data-live-search="true" data-style="btn-default"*/}}
+                                            {{/*id="select-entname-id">*/}}
+                                        {{/*<option>请选择</option>*/}}
+                                    {{/*</select>*/}}
+                                {{/*</div>*/}}
+                            {{/*</div>*/}}
+                        {{/*</div>*/}}
+                    {{/*</div>*/}}
+                    <div class="row top15" title="">
+                        <div class="col-md-12 top10">
                             <div class="form-group">
-                                <label for="field-5" class="col-md-3 fw100 control-label">k8s编排文件<span class="text-danger">*</span></label>
+                                <label for="select-cluster-id"
+                                       class="col-md-3 fw100 control-label">集群名称<span
+                                        class="text-danger">*</span></label>
                                 <div class="col-md-9">
-                                    <a href="javascripv:void(0)" onclick="setTemplate()">显示Deployment模板</a>
-                                    <textarea nullmsg="k8s编排文件必须填写"  rows="10" errmsg="编排文件检查错误"  onchange="checkChange('Yaml','textarea')"  class="form-control" id="field-5" placeholder="请使用标准的k8s yaml文件格式"
-                                              name="Yaml">{{.data.Yaml}}</textarea>
+                                    <select class="selectpicker" name="Cluster" onchange="setServiceName($(this).val())"
+                                            data-live-search="true" data-style="btn-default"
+                                            id="select-cluster-id">
+                                        <option>请选择</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                    <div class="col-md-12">
+                        <div class="col-md-12">
+                            <label class="col-sm-3 fw100 control-label" style="margin-left: -20px;">服务选择<span
+                                    class="text-danger">*</span></label>
+                            <label class="col-sm-4"><input placeholder="搜索服务"
+                                                           onkeyup="searchUser($(this).val(),'undo_contact_group_redo')"
+                                                           class="fa-border form-control"
+                                                           style="margin-top:-5px;margin-left:-40%;"></label>
+                            <label class="col-sm-3 fw100 control-label">已选择服务</label>
+                        </div>
+                        <div class="col-md-12" style="margin-top: 5px;"></div>
+                        <div class="col-xs-5">
+                            <select name="from" id="undo_contact_group_redo" class="form-control" size="10"
+                                    multiple="multiple">
+                            </select>
+                        </div>
+
+                        <div class="col-xs-2">
+                            <div style="margin-top: 45px;">&nbsp;</div>
+                            <button type="button" id="undo_contact_group_redo_rightSelected"
+                                    class="btn btn-primary btn-block"><i
+                                    class="glyphicon glyphicon-chevron-right"></i></button
+                            >
+                            <button type="button" id="undo_contact_group_redo_leftSelected"
+                                    class="btn btn-warning btn-block"><i
+                                    class="glyphicon glyphicon-chevron-left"></i></button>
+                        </div>
+
+                        <div class="col-xs-5">
+                            <select name="to" id="undo_contact_group_redo_to" class="form-control" size="10"
+                                    multiple="multiple"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
                 </div>
-                <div class="panel-footer">
+                    <div class="row top20 m-l-20">
+                        <div class="col-md-11 pre m-l-15">
+                            <br>
+                            应用模板注意<br>
+                            模板创建后不可以编辑修改,如果修改的话有俩种方式<br>
+                            1、删除后重建 <br>
+                            2、编辑数据文件,适合高级用户使用<br>
+                            <br>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                    <div class="panel-footer">
                     <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
                             class="fa fa-times"></i>&nbsp;&nbsp;取消
                     </button>
@@ -65,7 +145,7 @@
         </div>
     </div>
 </div>
-
+<script src="/static/js/multiselect.min.js"></script>
 <textarea id="yaml_template" style="display: none;">apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
@@ -82,5 +162,33 @@ spec:
         image: nginx:1.10</textarea>
 
 <script>
-    setQuotaName("{{.data.ResourceName}}", "ResourceName")
+    {{/*setQuotaName("{{.data.ResourceName}}", "ResourceName");*/}}
+    {{/*$("#select-entname-id").html("{{.entname}}");*/}}
+    $("#select-cluster-id").html("{{.cluster}}");
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 10
+    });
+    /**
+     * 2018-08-15 16:58
+     * 获取服务名称
+     * @param change
+     */
+    function setServiceName(cluster) {
+        var url = "/api/service/name";
+        var result = get({ClusterName:cluster}, url);
+        var html = "";
+        for (var i = 0; i < result.length; i++) {
+            html += "<option value='" + result[i]["ServiceName"] + "'>" + result[i]["ServiceName"] + "</option>";
+        }
+        $("#undo_contact_group_redo").html(html);
+    }
+    setServiceName();
+
+    jQuery(document).ready(function ($) {
+        $('#undo_contact_group_redo').multiselect({
+            keepRenderingSort: true,
+        });
+    });
+
 </script>

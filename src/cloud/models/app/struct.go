@@ -95,6 +95,12 @@ type CloudAppTemplate struct {
 	Yaml string
 	//
 	TemplateId int64
+	// 集群
+	Cluster string
+	// 环境
+	Ent string
+	// 服务名称
+	ServiceName string
 }
 
 

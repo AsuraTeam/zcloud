@@ -1,21 +1,34 @@
 
-// 添加直接
+// 添加模板
 function addTemplate(templateId) {
     if(!templateId){
         templateId = 0
     }
-    var url = "/application/template/add"
-    var result = post({ClusterName: "{{.data.ClusterName}}", TemplateId:templateId}, url)
+    var url = "/application/template/add";
+    var result = post({ClusterName: "{{.data.ClusterName}}", TemplateId:templateId}, url);
     $("#add_template_html").html(result)
     $("#add_post_html").modal("toggle")
 }
+
+/**
+ * 2018-08-16 09:57
+ * 添加模板更新
+ * @param templateId
+ */
+function addTemplateUpdate(templateId) {
+    var url = "/application/template/update/add";
+    var result = post({TemplateId:templateId}, url);
+    $("#add_template_html").html(result)
+    $("#add_post_html").modal("toggle")
+}
+
 
 /**
  * 设置删除模板的id
  * @param id
  */
 function setDeleteId(id) {
-    $("#delete_template_id").val(id)
+    $("#delete_template_id").val(id);
     deleteTemplateSwal();
 }
 
@@ -109,14 +122,17 @@ function loadTemplateData(key) {
         },
         "columns": [ // 数据映射
             {"data": "TemplateName"},
-            {"data": "ResourceName"},
+            {"data": "ServiceName","mRender":function (data) {
+                return data.replace(/,/, "<br>");
+            }},
             {"data": "Description"},
             {"data": "CreateTime"},
             {"data": "LastModifyTime"},
             {
                 "sWidth": "150px", "data": "TemplateId", "mRender": function (data, type, full) {
 
-                    return '<button type="button" title="更新" onclick="addTemplate(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
+                    // return '<button type="button" title="更新" onclick="addTemplate(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
+                       return '<button type="button" title="编辑数据文件" onclick="addTemplateUpdate(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-edit"></i></button>&nbsp;' +
                         '<button type="button"  title="删除" onClick="setDeleteId(' + data + ')" class="delete-template btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
             }
             },
@@ -160,20 +176,46 @@ function saveTemplate(templateId) {
         templateId = 0
     }
     var data = get_form_data();
-    data["TemplateId"] = parseInt(templateId)
-    if(!checkValue(data,"TemplateName,Yaml,ResourceName")){
+    data["TemplateId"] = parseInt(templateId);
+    if(!checkValue(data,"TemplateName")){
         return
     }
-    if(!checkYaml(data)){
-        setInputError($("textarea[name='Yaml']"), "errmsg")
+    var service = [];
+    $("#undo_contact_group_redo_to option").each(function () {
+        service.push($(this).val());
+    });
+    data["ServiceName"] = service.join(",");
+    if(!checkValue(data,"ServiceName")){
         return
     }
     var url = "/api/template";
-    var result = post(data, url)
-    result = JSON.stringify(result)
+    var result = post(data, url);
+    result = JSON.stringify(result);
     if (result.indexOf("保存成功") != -1){
-        $("#add_post_html").modal("toggle")
-        success(result)
+        $("#add_post_html").modal("toggle");
+        success(result);
+        loadTemplateData()
+    }else{
+        faild(result)
+    }
+}
+
+/**
+ * 2018-08-16 09:51
+ * 保存模板更新
+ */
+function saveTemplateUpdate(templateId) {
+    var data = get_form_data();
+    data["TemplateId"] = parseInt(templateId);
+    if(!checkValue(data,"TemplateName,Yaml")){
+        return
+    }
+    var url = "/api/template/update";
+    var result = post(data, url);
+    result = JSON.stringify(result);
+    if (result.indexOf("保存成功") != -1){
+        $("#add_post_html").modal("toggle");
+        success(result);
         loadTemplateData()
     }else{
         faild(result)
