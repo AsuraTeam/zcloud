@@ -141,6 +141,7 @@ func startDeploy(yaml string, appName string, ent string, clusterName string, re
 			CreateUser: user,
 			CreateTime: util.GetDate(),
 			TemplateName: templateName,
+			ServiceName:service.ServiceName,
 		}
 		sql.Exec(sql.InsertSql(history, app.InsertCloudTemplateDeployHistory))
 		ExecDeploy(service, false)
