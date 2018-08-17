@@ -224,7 +224,7 @@ func setAppData(all app.CloudContainer, d app.CloudAppService, c kubernetes.Clie
 	all.AppName = d.AppName
 	all.CreateUser = d.CreateUser
 	all.Entname = d.Entname
-	if time.Now().Unix()-util.TimeToStamp(d.CreateTime) < 300 {
+	if time.Now().Unix()-util.TimeToStamp(d.CreateTime) < 3000 {
 		events := k8s.GetEvents(namespace, all.ContainerName, c)
 		all.Events = util.ObjToString(events)
 	} else {
