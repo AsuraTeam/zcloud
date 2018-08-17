@@ -151,14 +151,15 @@ func (this *LbController) LbData() {
 }
 
 // 2018-02-01 17:27
-func GetLbData(id interface{}) lb.CloudLb {
+func GetLbData(id interface{}) k8s.CloudLb {
 	searchMap := sql.SearchMap{}
 	searchMap.Put("LbId", id)
 	data :=  k8s.GetLbDataSearchMap(searchMap)
 	if data != nil {
-		return data.(lb.CloudLb)
+		dataInterface := data.(interface{})
+		return dataInterface.(k8s.CloudLb)
 	}
-	return lb.CloudLb{}
+	return k8s.CloudLb{}
 }
 
 
