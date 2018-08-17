@@ -27,7 +27,7 @@
             <div class="panel panel-color panel-default">
                 <div class="panel-heading">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <span class="modal-title">容器事件信息详情</span>
+                    <span class="modal-title"><span id="container-name-id" class="m-r-10 text-primary"></span>容器事件信息详情</span>
                 </div>
                     <div class="panel-body font-12 " id="">
                         <ul class="sortable-list taskList list-unstyled" id="show_events_html">
@@ -295,7 +295,7 @@
                     "sWidth": "7%", "data": "ContainerId", "mRender": function (data,type,full) {
                         var event =  encodeURI(full["Events"]);
                     return     '<button type="button" title="连接到容器终端" onclick="toTty(' + data + ')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-terminal"></i></button>&nbsp;' +
-                          '<button type="button" title="显示容器事件信息" onclick="displayEvent(\'' + event + '\')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-envelope"></i></button>&nbsp;';
+                          '<button type="button" title="显示容器事件信息" onclick="displayEvent(\'' + event + '\',\''+full["ContainerName"]+'\')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-envelope"></i></button>&nbsp;';
                 }
                 },
             ],
@@ -331,7 +331,8 @@
      * 2018-08-17 13:52
      * 显示容器事件
      * */
-    function displayEvent(obj) {
+    function displayEvent(obj, name) {
+        $("#container-name-id").html(name);
         var data = decodeURI(obj);
         if (data){
             data = JSON.parse(data);
