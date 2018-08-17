@@ -250,9 +250,9 @@ function checkNetworkCart(str) {
 
 
 function setInputOk(obj) {
-    obj.css("font-size", "14px")
-    obj.css("border", "1px solid #f0f0f0")
-    obj.css("background-color", "#ffffff")
+    obj.css("font-size", "14px");
+    obj.css("border", "1px solid #f0f0f0");
+    obj.css("background-color", "#ffffff");
     obj.removeAttr("title")
 }
 
@@ -260,15 +260,15 @@ function setInputError(obj, key) {
     if (!obj) {
         return;
     }
-    obj.css("border", "1px solid #f16a7c")
-    obj.css("background-color", "#fffff6")
-    obj.css("font-size", "12px")
+    obj.css("border", "1px solid #f16a7c");
+    obj.css("background-color", "#fffff6");
+    obj.css("font-size", "12px");
 
-    var err = obj.attr(key)
+    var err = obj.attr(key);
     if (!err && key == "nullmsg") {
         err = "该项目必须填写"
     }
-    obj.attr("placeholder", err)
+    obj.attr("placeholder", err);
     obj.attr("title", err)
 }
 
@@ -286,21 +286,21 @@ function checkValue(data, keys, type) {
     if (!type) {
         type = "input"
     }
-    keys = keys.split(",")
+    keys = keys.split(",");
     for (var i = 0; i < keys.length; i++) {
-        var b = $(type + "[name='" + keys[i] + "']")
+        var b = $(type + "[name='" + keys[i] + "']");
 
         if (data[keys[i]]) {
-            var checkFunc = b.attr("validFunc")
+            var checkFunc = b.attr("validFunc");
             if (checkFunc) {
-                var evalfun = checkFunc + "('" + data[keys[i]] + "')"
+                var evalfun = checkFunc + "('" + data[keys[i]] + "')";
 
-                var check = eval(evalfun)
+                var check = eval(evalfun);
                 if (check) {
                     setInputOk(b)
                 } else {
-                    console.log(b)
-                    setInputError(b, "errmsg")
+                    console.log(b);
+                    setInputError(b, "errmsg");
                     return false
                 }
             } else {
@@ -308,8 +308,8 @@ function checkValue(data, keys, type) {
             }
             continue
         } else {
-            console.log(b)
-            setInputError(b, "nullmsg")
+            console.log(b);
+            setInputError(b, "nullmsg");
             return false
         }
     }
@@ -318,7 +318,7 @@ function checkValue(data, keys, type) {
 
 function success(msg) {
     $("#success-info-html-id").show();
-    $("#success-info-id").html(msg)
+    $("#success-info-id").html(msg);
     setTimeout(function () {
         $("#success-info-html-id").hide();
     }, 5000)
@@ -326,7 +326,7 @@ function success(msg) {
 
 function faild(msg) {
     $("#faild-info-html-id").show();
-    $("#faild-info-id").html(msg)
+    $("#faild-info-id").html(msg);
     setTimeout(function () {
         $("#faild-info-html-id").hide();
     }, 5000)

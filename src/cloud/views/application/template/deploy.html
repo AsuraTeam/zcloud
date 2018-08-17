@@ -32,6 +32,16 @@
                     <div class="row top10">
                         <div class="col-md-12">
                             <div class="form-group">
+                                <label for="field-1" class="col-md-3 fw100 control-label">域名后缀<span class="text-danger">*</span></label>
+                                <div class="col-md-9" >
+                                    <input  type="text" nullmsg="必须填写" validFunc="checkDomain" onchange="checkChange('Domain')" name="Domain" id="Domain" class="form-control" placeholder="必须为全英文">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
                                 <label for="field-11" class="col-md-3 fw100 control-label">资源空间<span class="text-danger">*</span></label>
                                 <div class="col-md-9" id="field-11">
                                     <select class="form-control" name="ResourceName" id="ResourceName">
@@ -80,6 +90,14 @@
                             <br>
                             应用拉起注意<br>
                             拉起应用等于新建了一套服务,服务端口都会改变<br>
+                            <br>
+                            域名后缀<br>
+                            在此次部署后,自动会在负载均衡生成配置<br>
+                            <br>
+                            域名完整效果为:<br>
+                            应用名称.服务名称.域名后缀<br>
+                            app01.service01.t.zcloud.com<br>
+                            app01.service01.t1.zcloud.com<br>
                             <br>
                         </div>
                     </div>

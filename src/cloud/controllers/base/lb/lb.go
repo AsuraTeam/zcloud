@@ -154,11 +154,14 @@ func (this *LbController) LbData() {
 func GetLbData(id interface{}) lb.CloudLb {
 	searchMap := sql.SearchMap{}
 	searchMap.Put("LbId", id)
-	template := lb.CloudLb{}
-	q := sql.SearchSql(template, lb.SelectCloudLb, searchMap)
-	sql.Raw(q).QueryRow(&template)
-	return template
+	data :=  k8s.GetLbDataSearchMap(searchMap)
+	if data != nil {
+		return data.(lb.CloudLb)
+	}
+	return lb.CloudLb{}
 }
+
+
 
 // json
 // 删除负载均衡

@@ -106,6 +106,8 @@ type CloudAppTemplate struct {
 	ServiceName string
 	// 应用名称
 	AppName string
+	// 域名
+	Domain string
 }
 
 
@@ -334,4 +336,6 @@ type CloudTemplateDeployHistory struct {
     TemplateName string
     //
     HistoryId int64
+    // 域名
+    Domain string
 }

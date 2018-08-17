@@ -142,6 +142,7 @@ function loadHistoryData(key) {
             {"data": "ServiceName","mRender":function (data) {
                     return data;
                 }},
+            {"data": "Domain"},
             {"data": "CreateUser"},
             {"data": "CreateTime"},
         ],

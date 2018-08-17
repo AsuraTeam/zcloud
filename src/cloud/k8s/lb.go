@@ -294,6 +294,16 @@ func UpdateNginxLbUpstream(param UpdateLbNginxUpstream) error{
 	return nil
 }
 
+
+// 2018-08-17 08:25
+// 搜索l信息
+func GetLbDataSearchMap(searchMap sql.SearchMap)  interface{} {
+	template := CloudLb{}
+	q := sql.SearchSql(template, SelectCloudLb, searchMap)
+	sql.Raw(q).QueryRow(&template)
+	return template
+}
+
 // 生成nginx配置文件
 func CreateNginxConf(confType string) {
 	configDbName := make(map[string]interface{})

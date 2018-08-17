@@ -10,6 +10,8 @@ import (
 	"cloud/controllers/ent"
 	"cloud/controllers/base/quota"
 	"github.com/astaxie/beego/logs"
+	"fmt"
+	"cloud/k8s"
 )
 
 // 模板管理入口页面
@@ -106,7 +108,7 @@ func getServiceYaml(serviceName string, clusterName string) string {
 
 //  2018-08-16 10:31
 // 拉起应用模板环境
-func startDeploy(yaml string, appName string, ent string, clusterName string, resourceName string, user string, templateName string) {
+func startDeploy(yaml string, appName string, ent string, clusterName string, resourceName string, user string, templateName string, domain string) {
 	services := make([]app.CloudAppService, 0)
 	err := json.Unmarshal([]byte(util.Base64Decoding(yaml)), &services)
 	if err != nil {
@@ -141,10 +143,60 @@ func startDeploy(yaml string, appName string, ent string, clusterName string, re
 			CreateUser: user,
 			CreateTime: util.GetDate(),
 			TemplateName: templateName,
-			ServiceName:service.ServiceName,
+			ServiceName: service.ServiceName,
+			Domain: domain,
+		}
+		if len(domain) > 0 {
+			history.Domain = fmt.Sprintf("%s.%s.%s", appName, service.ServiceName, domain)
 		}
 		sql.Exec(sql.InsertSql(history, app.InsertCloudTemplateDeployHistory))
 		ExecDeploy(service, false)
+
+	}
+
+	if len(domain) > 0 {
+		logs.Info("获取到拉起服务的域名后缀", domain)
+		for _, service := range services {
+			if len(service.ContainerPort) < 1 {
+				logs.Error("获取服务端口错误", service.ServiceName)
+				continue
+			}
+
+			searchMap := sql.SearchMap{}
+			searchMap.Put("ClusterName", clusterName)
+			searchMap.Put("Entname", ent)
+			var lbData k8s.CloudLb
+			lb := k8s.GetLbDataSearchMap(searchMap)
+			if lb!= nil{
+				lbData = lb.(k8s.CloudLb)
+			}
+			if lbData.LbId == 0 {
+				logs.Error("服务获取负载均衡失败，该集群环境没有配置负载均衡", ent, clusterName)
+				continue
+			}
+
+			conf := k8s.CloudLbService{
+				ServiceName:    service.ServiceName,
+				AppName:        appName,
+				Domain:         fmt.Sprintf("%s.%s.%s", appName, service.ServiceName, domain),
+				LbType:         "nginx",
+				ClusterName:    clusterName,
+				ResourceName:   resourceName,
+				Protocol:       "HTTP",
+				Entname:        ent,
+				ServiceVersion: "1",
+				LbMethod:       "service",
+				LbId:           lbData.LbId,
+				LbName:         lbData.LbName,
+				CreateTime:     util.GetDate(),
+				CreateUser:     user,
+				LastModifyTime: util.GetDate(),
+				LastModifyUser: user,
+				ContainerPort:  strings.Split(service.ContainerPort, ".")[0],
+			}
+			sql.Exec(sql.InsertSql(conf, "insert into cloud_lb_service" ))
+			go k8s.CreateNginxConf("")
+		}
 	}
 }
 
@@ -158,7 +210,7 @@ func (this *AppController) StartDeploy() {
 	id := this.Ctx.Input.Param(":id")
 	searchMap.Put("TemplateId", id)
 	template := getTemplateData(searchMap)
-	go startDeploy(template.Yaml, d.AppName, d.Ent, d.Cluster, d.ResourceName, util.GetUser(this.GetSession("username")), d.TemplateName)
+	go startDeploy(template.Yaml, d.AppName, d.Ent, d.Cluster, d.ResourceName, util.GetUser(this.GetSession("username")), d.TemplateName, d.Domain)
 	this.Data["json"] = util.ApiResponse(true, "保存成功,正在拉起环境,请耐心等待")
 	this.ServeJSON(false)
 }
@@ -216,14 +268,13 @@ func (this *AppController) GetTemplateName() {
 	this.ServeJSON(false)
 }
 
-
 // 模板数据
 // @router /api/template/deploy/history [get]
 func (this *AppController) HistoryData() {
 	data := make([]app.CloudTemplateDeployHistory, 0)
 	key := this.GetString("key")
 	searchSql := sql.SearchSql(app.CloudAppTemplate{}, app.SelectCloudTemplateDeployHistory, sql.SearchMap{})
-	if key != ""{
+	if key != "" {
 		searchSql += " where 1=1 and (template_name like \"%" + sql.Replace(key) + "%\" or service_name like \"%" + sql.Replace(key) + "%\")"
 	}
 	sql.OrderByPagingSql(searchSql, "history_id",

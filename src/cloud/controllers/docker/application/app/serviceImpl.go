@@ -326,13 +326,15 @@ func GoServerThread(data []app.CloudAppService) {
 			if ok {
 				sv := v.(k8s.CloudApp)
 				sv.ClusterName = d.ClusterName
+				sv.CheckTime = time.Now().Unix()
 				serviceToRedis(namespace, d.ServiceId, sv)
 				result = append(result, v)
 			}else{
 				sv := k8s.CloudApp{}
 				r := cache.ServiceCache.Get(namespace + strconv.FormatInt(d.ServiceId, 10))
 				s := util.RedisObj2Obj(r, &sv)
-				if s {
+				now :=  time.Now().Unix()
+				if s && now - sv.CheckTime > 300 {
 					sv.Status = "False"
 					sv.AvailableReplicas = 0
 					serviceToRedis(namespace, d.ServiceId, sv)
