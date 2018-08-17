@@ -631,6 +631,8 @@ type EventData struct {
 	Reason string
 	// 主机Ip
 	Host string
+	// 类型
+	Type string
 }
 
 

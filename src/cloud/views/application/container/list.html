@@ -19,6 +19,26 @@
         height: 0.11em;
     }
 </style>
+<div id="show_events" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 50%">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">容器事件信息详情</span>
+                </div>
+                    <div class="panel-body font-12 " id="">
+                        <ul class="sortable-list taskList list-unstyled" id="show_events_html">
+
+                        </ul>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="content-page">
     <div class="container">
         <!-- Start content -->
@@ -134,6 +154,18 @@
         </div>
     </div>
 </div> <!-- end col -->
+<textarea style="display: none" id="event-template">
+           <li class="task-COLOR" id="task14">
+                                <div class="clearfix"></div>
+                                <div class="m-t-20">
+                                    <p class="m-b-0"><a href="" class="text-muted"> <span class="font-bold font-secondary">事件类型: TYPE</span></a> </p>
+                                    <p class="m-b-0"><a href="" class="text-muted"> <span class="font-bold font-secondary">事件原因: REASON</span></a> </p>
+                                    <p class="m-b-0"><a href="" class="text-muted"> <span class="font-bold font-secondary">事件事件: TIME</span></a> </p>
+                                    <p class="m-b-0"><a href="" class="text-muted"> <span class="font-bold font-secondary">响应信息:<b> MESSAGES</b></span></a> </p>
+                                    <p class="m-b-0"><a href="" class="text-muted"> <span class="font-bold font-secondary">所在节点: HOST</span></a> </p>
+                                </div>
+                            </li>
+</textarea>
 {{template "template/bottom.html" .}}
 </body>
 </div>
@@ -202,7 +234,7 @@
                 }
                 },
                 {
-                    "data": "Status", "sWidth": "8%", "mRender": function (data, type, full) {
+                    "data": "Status", "sWidth": "10%", "mRender": function (data, type, full) {
                         r = data;
                     if (data == "Running") {
                         var r = '<div class="Running"><div><i class="fa fa-circle"></i><span>&nbsp;运行中</span>' +
@@ -244,7 +276,7 @@
                 }
                 },
                 {
-                    "data": "Image", "sWidth": "14%", "mRender": function (data) {
+                    "data": "Image", "sWidth": "18%", "mRender": function (data) {
                     return "<div style='word-wrap:break-word'><a>" + data + "</a></div>";
                 }
                 },
@@ -260,8 +292,10 @@
                 },
                 {"data": "CreateTime", "sWidth": "9%"},
                 {
-                    "sWidth": "5%", "data": "ContainerId", "mRender": function (data) {
-                    return '<button type="button" title="连接到容器终端" onclick="toTty(' + data + ')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-terminal"></i>终端</button>&nbsp;';
+                    "sWidth": "7%", "data": "ContainerId", "mRender": function (data,type,full) {
+                        var event =  encodeURI(full["Events"]);
+                    return     '<button type="button" title="连接到容器终端" onclick="toTty(' + data + ')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-terminal"></i></button>&nbsp;' +
+                          '<button type="button" title="显示容器事件信息" onclick="displayEvent(\'' + event + '\')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-envelope"></i></button>&nbsp;';
                 }
                 },
             ],
@@ -291,6 +325,52 @@
         }
     }
     setServiceName();
+
+
+    /**
+     * 2018-08-17 13:52
+     * 显示容器事件
+     * */
+    function displayEvent(obj) {
+        var data = decodeURI(obj);
+        if (data){
+            data = JSON.parse(data);
+            if (data.length==0){
+                faild("该容器没有事件");
+                return;
+            }
+            var template = $("#event-template").val();
+            var html = "";
+            for(var i=0;i<data.length;i++){
+                var temp = template.replace(/TIME/, data[i]["EventTime"]);
+                temp = temp.replace(/MESSAGES/, data[i]["Messages"]);
+                temp = temp.replace(/HOST/, data[i]["Host"]);
+                temp = temp.replace(/REASON/, data[i]["Reason"]);
+                temp = temp.replace(/TYPE/, data[i]["Type"]);
+                var obj = {};
+                obj = data[i];
+                if(obj.hasOwnProperty("Type")) {
+                    switch (data["i"]["Type"]) {
+                        case "Normal":
+                            temp = temp.replace(/COLOR/, "success");
+                            break;
+                        case "Warning":
+                            temp = temp.replace(/COLOR/, "warning");
+                            break;
+                        default:
+                            temp = temp.replace(/COLOR/, "danger");
+                            break
+                    }
+                }
+                temp = temp.replace(/COLOR/, "success");
+                html += temp;
+            }
+            $("#show_events_html").html(html);
+            $("#show_events").modal("toggle");
+        }else{
+            faild("该容器没有事件");
+        }
+    }
 
     /**
      * 获取app名称
