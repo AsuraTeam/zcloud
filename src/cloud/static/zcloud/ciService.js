@@ -53,6 +53,10 @@ function modifyHistory(historyId) {
 function rollingService(serviceId, version) {
     var url = "/ci/service/rolling/" + serviceId;
     var result = get({version: version}, url);
+    if (result == "资源不可用,请发布后操作"){
+        faild(result);
+        return;
+    }
     $("#add_code_html").html(result);
     $("#add_post_html").modal("toggle")
 }

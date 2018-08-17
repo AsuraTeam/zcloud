@@ -256,6 +256,8 @@ type CloudAppService struct {
 	// 如果2存在就部署一个1,
 	// 当确认发布完成 ,删除一个未使用的部署
 	ServiceVersion string
+	// 域名
+	Domain string
 }
 
 // 存储容器名称数据,在更新数据时做判断使用,不用频繁查库

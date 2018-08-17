@@ -102,6 +102,8 @@
 
                 </div>
                 <br>
+                <br>
+                <br>
                 <div class="col-sm-12 app-table">
                     <br>
                     <table id="app-data-table" class="table table-hover ">
@@ -177,7 +179,7 @@
             "serverSide": true,
             "scrollX": true, // 是否允许左右滑动
             "displayLength": 10, // 默认长度
-            "bLengthChange": false,
+            "bLengthChange": true,
             "ajax": { // 请求地址
                 "url": "/api/container?t=" + new Date().getTime() + "&cluster=" + getClusterName() + "&search=" + key + "&AppName=" + app + "&ServiceName=" + service + "&Entname=" + entname,
                 "type": 'get'

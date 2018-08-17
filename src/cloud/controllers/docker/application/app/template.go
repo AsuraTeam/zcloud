@@ -195,6 +195,9 @@ func startDeploy(yaml string, appName string, ent string, clusterName string, re
 				ContainerPort:  strings.Split(service.ContainerPort, ".")[0],
 			}
 			sql.Exec(sql.InsertSql(conf, "insert into cloud_lb_service" ))
+
+			q := fmt.Sprintf(app.UpdateServiceDomain, domain, appName, clusterName, service.ServiceName, resourceName)
+			sql.Exec(q)
 			go k8s.CreateNginxConf("")
 		}
 	}

@@ -1184,10 +1184,17 @@ function loadServiceData(key,name) {
             },
             {"data": "CreateTime", "sWidth": "7%"},
             {
-                "data": "Access", "sWidth": "16%", "mRender": function (data) {
+                "data": "Access", "sWidth": "16%", "mRender": function (data,type, full) {
+
                 if (data) {
-                    return data.join("<br>")
+                    data = data.join("<br>")
                 }
+                    if(full["Domain"]){
+                        data += "<br>域名访问: <a target='_blank' href='http://" + full["Domain"] +"'/>"+full["Domain"]+"</a><br>"
+                    }
+                   if(data){
+                    return data;
+                   }
                 return "<span class='Fail'>未知</span>"
 
             }

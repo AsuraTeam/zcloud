@@ -1637,4 +1637,5 @@ alter table cloud_app_template add ent varchar(30) comment "环境名称";
 alter table  cloud_app_template  add service_name text comment "service name";
 alter table  cloud_app_template  add app_name varchar(130) comment "应用名称";
 alter table  cloud_template_deploy_history add domain varchar(100) ;
- alter table  cloud_app_template add domain varchar(100) ;
+alter table  cloud_app_template add domain varchar(100) ;
+alter table cloud_app_service add domain varchar(100);

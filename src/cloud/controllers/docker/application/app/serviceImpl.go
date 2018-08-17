@@ -327,6 +327,7 @@ func GoServerThread(data []app.CloudAppService) {
 				sv := v.(k8s.CloudApp)
 				sv.ClusterName = d.ClusterName
 				sv.CheckTime = time.Now().Unix()
+				sv.Domain = d.Domain
 				serviceToRedis(namespace, d.ServiceId, sv)
 				result = append(result, v)
 			}else{
