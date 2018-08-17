@@ -277,7 +277,7 @@ func getUsernameSql(username string) string {
 // 获取用户权限
 // 2018-01-20 8:08
 func getPermissions(ai *authz.AuthRequestInfo) []registry.CloudRegistryPermissions {
-	permission := []registry.CloudRegistryPermissions{}
+	permission := make([]registry.CloudRegistryPermissions, 0)
 	likesql := GetLikeProjectSql(ai)
 	// 查询对象和用户的权限
 	services := strings.Split(ai.Service, ".")
@@ -475,7 +475,7 @@ func (as *AuthServer) doIndex(rw http.ResponseWriter, req *http.Request) {
 func (as *AuthServer) doAuth(rw http.ResponseWriter, req *http.Request) {
 	ar, err := as.ParseRequest(req)
 
-	ares := []authzResult{}
+	ares := make([]authzResult, 0)
 	if err != nil {
 		logs.Warn("Bad request: %s", err)
 		http.Error(rw, fmt.Sprintf("Bad request: %s", err), http.StatusBadRequest)

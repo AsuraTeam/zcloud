@@ -122,6 +122,7 @@ func CreateRegistry(param RegistryParam) (error) {
 	}
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		DisableKeepAlives: true,
 	}
 	client := &http.Client{Transport: tr}
 	r, err := client.Get(param.AuthServer)
