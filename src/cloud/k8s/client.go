@@ -35,7 +35,7 @@ func GetMasterIp(cluster string) (string, string) {
 		}
 	}
 
-	data := []CloudClusterHosts{}
+	data := make([]CloudClusterHosts, 0)
 	searchMap := sql.SearchMap{}
 	searchMap.Put("ClusterName", cluster)
 	searchMap.Put("HostType", "master")
