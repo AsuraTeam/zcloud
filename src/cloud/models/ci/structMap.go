@@ -64,3 +64,8 @@ const SelectCloudCiPermWhere = ` where dates like "%?%"`
 const UpdateCloudCiPerm = "update cloud_ci_perm"
 const InsertCloudCiPerm = "insert into cloud_ci_perm" 
 const DeleteCloudCiPerm = "delete from cloud_ci_perm" 
+
+const SelectCloudCiBatchJob = "select last_modify_user,build_status,percent,batch_id,job_ids,create_time,create_user,last_modify_time,messages,batch_name,build_id,description from cloud_ci_batch_job"
+const UpdateCloudCiBatchJob = "update cloud_ci_batch_job"
+const InsertCloudCiBatchJob = "insert into cloud_ci_batch_job" 
+const DeleteCloudCiBatchJob = "delete from cloud_ci_batch_job" 

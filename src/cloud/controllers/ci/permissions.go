@@ -60,7 +60,7 @@ func (this *CiPermController) CiPermSave() {
 	}
 	searchMap := sql.SearchMap{}
 	searchMap.Put("PermId", d.PermId)
-	masterData := []ci.CloudCiPerm{}
+	masterData := make([]ci.CloudCiPerm, 0)
 
 	q := sql.SearchSql(d, ci.SelectCloudCiPerm, searchMap)
 	sql.Raw(q).QueryRows(&masterData)
@@ -87,7 +87,7 @@ func (this *CiPermController) CiPermSave() {
 // 权限数据
 // @router /api/ci/service/perm [get]
 func (this *CiPermController) CiPerm() {
-	data := []ci.CloudCiPerm{}
+	data := make([]ci.CloudCiPerm, 0)
 	searchMap := sql.SearchMap{}
 	key := this.GetString("search")
 	searchSql := sql.SearchSql(ci.CloudCiPerm{},
@@ -150,7 +150,7 @@ func getPermUser(this *CiPermController) string {
 
 
 func setPermCache() {
-	data := []ci.CloudCiPerm{}
+	data := make([]ci.CloudCiPerm, 0)
 	sql.Raw(ci.SelectCloudCiPerm).QueryRows(&data)
 	for _, v := range data {
 		if v.Username != "" {

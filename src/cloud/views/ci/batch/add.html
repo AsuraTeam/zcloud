@@ -1,0 +1,93 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 70%;">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">添加修改批量部署</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top15" title="">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">集群名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="selectpicker" name="Cluster"
+                                                onchange="setServiceName($(this).val())"
+                                                data-live-search="true" data-style="btn-default"
+                                                id="select-cluster-id">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label class="col-sm-3 fw100 control-label" style="margin-left: -20px;">服务选择<span
+                                        class="text-danger">*</span></label>
+                                <label class="col-sm-4"><input placeholder="搜索服务"
+                                                               onkeyup="searchUser($(this).val(),'undo_contact_group_redo')"
+                                                               class="fa-border form-control"
+                                                               style="margin-top:-5px;margin-left:-40%;"></label>
+                                <label class="col-sm-3 fw100 control-label">已选择服务</label>
+                            </div>
+                            <div class="col-md-12" style="margin-top: 5px;"></div>
+                            <div class="col-xs-5">
+                                <select name="from" id="undo_contact_group_redo" class="form-control" size="10"
+                                        multiple="multiple">
+                                </select>
+                            </div>
+
+                            <div class="col-xs-2">
+                                <div style="margin-top: 45px;">&nbsp;</div>
+                                <button type="button" id="undo_contact_group_redo_rightSelected"
+                                        class="btn btn-primary btn-block"><i
+                                        class="glyphicon glyphicon-chevron-right"></i></button
+                                >
+                                <button type="button" id="undo_contact_group_redo_leftSelected"
+                                        class="btn btn-warning btn-block"><i
+                                        class="glyphicon glyphicon-chevron-left"></i></button>
+                            </div>
+
+                            <div class="col-xs-5">
+                                <select name="to" id="undo_contact_group_redo_to" class="form-control" size="10"
+                                        multiple="multiple"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-2" class="col-md-3 fw100 control-label">描述信息</label>
+                                <div class="col-md-9">
+                                    <input type="text" value="{{.data.Description}}" name="Description"
+                                           class="form-control" id="field-2" placeholder="描述信息">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+                    <br>
+                    <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveBatch('{{.data.BatchId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -218,7 +218,13 @@ func init() {
 				// 构建任务详情页面,
 				beego.NSRouter("/detail/:hi(.*)", &ci.JobController{}, "get:JobDetail"),
 			),
-
+			// 代码仓库
+			beego.NSNamespace("/batch",
+				// 代码仓库列表入口,
+				beego.NSRouter("/list", &ci.BatchController{}, "get:BatchList"),
+				// 代码仓库添加页面,
+				beego.NSRouter("/add", &ci.BatchController{}, "get:BatchAdd"),
+			),
 		)
 
 	// application
@@ -318,7 +324,6 @@ func init() {
 	ciApi :=
 		beego.NewNamespace("/api/ci",
 			beego.NSNamespace("/dockerfile",
-				beego.NSRouter("", &ci.DockerFileController{}, "get:DockerFileDatas"),
 				// 获取docker file信息
 				beego.NSRouter("/name", &ci.DockerFileController{}, "get:DockerFileDataName"),
 				// 获取docker file数据
@@ -331,6 +336,15 @@ func init() {
 				beego.NSRouter("/:id:int", &ci.DockerFileController{}, "delete:DockerFileDelete"),
 				// 获取docker file数据单条数据
 				beego.NSRouter("/:id:int", &ci.DockerFileController{}, "get:DockerFileData"),
+
+			),
+			beego.NSNamespace("/batch",
+				// 获取批量部署数据
+				beego.NSRouter("", &ci.BatchController{}, "get:BatchData"),
+				// 批量部署保存
+				beego.NSRouter("", &ci.BatchController{}, "post:BatchSave"),
+				// 删除部门团队
+				beego.NSRouter("/:id:int", &ci.BatchController{}, "delete:BatchDelete"),
 
 			),
 			beego.NSNamespace("/code",

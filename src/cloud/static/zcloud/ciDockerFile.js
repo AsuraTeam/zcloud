@@ -4,9 +4,9 @@ function addDockerFile(fileId) {
     if(!fileId){
         fileId = 0
     }
-    var url = "/ci/dockerfile/add"
-    var result = get({FileId:fileId}, url)
-    $("#add_file_html").html(result)
+    var url = "/ci/dockerfile/add";
+    var result = get({FileId:fileId}, url);
+    $("#add_file_html").html(result);
     $("#add_post_html").modal("toggle")
 }
 
@@ -90,9 +90,9 @@ function loadDockerFileData(key) {
  * @return {*}
  */
 function deleteDockerFile(id) {
-    var url = "/api/ci/dockerfile/"+id
-    var result = del({}, url)
-    result = JSON.stringify(result)
+    var url = "/api/ci/dockerfile/"+id;
+    var result = del({}, url);
+    result = JSON.stringify(result);
     return result
 }
 

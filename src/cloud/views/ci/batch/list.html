@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <div class="container">
+    <!-- Start content -->
+    <div class="content">
+            <div id="add_file_html"></div>
+            <div class="row ">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">应用交付中心</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">持续集成</a>
+                            </li>
+                            <li>
+                                <a href="#">批量部署</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row ">
+                <div class="col-sm-12 top-10">
+                    <button type="button" onclick="addBatch()"
+                            class="btn btn-primary btn-sm waves-effect waves-light">
+                        创建批量部署
+                    </button>
+                    <div class="col-sm-1 cluster-search pull-right">
+                        <button type="button" class="btn btn-default waves-effect waves-light"
+                                onclick="loadBatchData()"
+                                style="border-radius: 5px;">
+                            <i class="fa fa fa-refresh"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-3 pull-right">
+                        <input type="text" onchange="loadBatchData($(this).val())" class="form-control" id="search_user_id"
+                               placeholder="搜索名称">
+                        <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                    </div>
+                </div>
+                <br>
+                <div class="col-sm-12 app-table" >
+                    <table id="file-data-table" class="table table-hover" >
+                        <thead>
+                        <tr>
+                            <th>部署名称</th>
+                            <th>包含服务</th>
+                            <th>创建时间</th>
+                            <th>最近修改人</th>
+                            <th>最近更新时间</th>
+                            <th>描述信息</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end col -->
+{{template "template/bottom.html" .}}
+</body>
+</div>
+
+<script src="/static/zcloud/ciBatch.js"></script>
+<script>
+    loadBatchData();
+</script>
+</html>

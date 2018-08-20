@@ -1630,6 +1630,22 @@ CREATE TABLE `cloud_template_deploy_history` (
   PRIMARY KEY (`history_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+ CREATE TABLE `cloud_ci_batch_job` (
+  `batch_id` int(11) NOT NULL AUTO_INCREMENT,
+  `job_ids` varchar(200) DEFAULT NULL,
+  `create_time` varchar(32) DEFAULT NULL COMMENT '创建时间',
+  `create_user` varchar(32) DEFAULT NULL COMMENT '创建用户',
+  `last_modify_time` varchar(32) DEFAULT NULL COMMENT '最近修改时间',
+  `last_modify_user` varchar(32) DEFAULT NULL COMMENT '最近修改用户',
+  `build_id` varchar(100) DEFAULT NULL COMMENT 'build时k8s.job名称',
+  `build_status` varchar(32) DEFAULT NULL COMMENT '构建状态',
+  `percent` int(11) DEFAULT NULL,
+  `messages` text,
+  `batch_name` varchar(50) DEFAULT NULL COMMENT 'batch name',
+  `description` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`batch_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8
+
 -- Dump completed on 2018-03-09 12:30:13
 alter table cloud_cluster_hosts add unique index uidx_cloud_cluster_hosts_ip_api_port_host_type(host_ip,api_port,host_type);
 alter table cloud_app_template add cluster varchar(130) comment "集群名称";

@@ -290,3 +290,31 @@ type CloudCiPerm struct {
     //创建用户
     CreateUser string
 }
+
+//2018-08-20 08:59:20.3564562 +0800 CST
+type CloudCiBatchJob struct {
+    //build时k8s.job名称
+    BuildId string
+    //
+    Description string
+    //创建用户
+    CreateUser string
+    //最近修改时间
+    LastModifyTime string
+    //最近修改用户
+    LastModifyUser string
+    //构建状态
+    BuildStatus string
+    //
+    Percent int64
+    //
+    BatchId int64
+    //
+    JobIds string
+    //创建时间
+    CreateTime string
+    //
+    Messages string
+    //batch name
+    BatchName string
+}
