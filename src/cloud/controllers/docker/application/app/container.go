@@ -30,6 +30,31 @@ func (this *AppController) ContainerDetail() {
 	this.TplName = "application/container/detail.html"
 }
 
+// 容器镜像提交页面
+// 2018-08-21 13:34
+// @router /application/container/image [get]
+func (this *AppController) ContainerImage() {
+	data := app.CloudContainer{}
+	id,err := this.GetInt("id")
+	if err != nil {
+		this.Ctx.WriteString("参数错误")
+		return
+	}
+	searchMap := sql.SearchMap{}
+	searchMap.Put("ContainerId", id)
+	searchSql := sql.SearchSql(app.CloudContainer{}, app.SelectCloudContainer, searchMap)
+	sql.Raw(searchSql).QueryRow(&data)
+	this.Data["data"] = data
+	this.TplName = "application/container/image.html"
+}
+
+
+// 2018-08-21 14:33
+// 容器提交镜像
+// @router /api/container/commit/:id:int [delete]
+func (this *AppController) ContainerCommit() {
+}
+
 // 2018-01-16 12:20
 // 删除容器
 // @router /api/container/:id:int [delete]

@@ -33,6 +33,8 @@ type ImagePushParam struct {
 	User string
 	// 启动时间
 	CreateTime string
+	// 容器id
+	ContainerId string
 }
 
 // 2018-02-06 09:21
@@ -49,7 +51,44 @@ func replacePushCmd(cmd string, param ImagePushParam) string {
 	cmd = strings.Replace(cmd, "REGISTRYGROUP", param.RegistryGroup, -1)
 	cmd = strings.Replace(cmd, "ITEMNAME", param.ItemName, -1)
 	cmd = strings.Replace(cmd, "VERSION", param.Version, -1)
+	cmd = strings.Replace(cmd, "CONTAINERID", param.ContainerId, -1)
 	return cmd
+}
+
+// 2018-08-21 14:59
+// 提交容器镜像
+func commitContainer(param ImagePushParam) string {
+	cmd := `mkdir /root/.docker -p
+d=$(date +"%F %T")
+echo "开始提交镜像...$d"
+cat > /root/.docker/config.json <<EOF
+{
+	"auths": {
+	      "REGISTRY-1": {
+	         "auth": "AUTH-1"
+	      }
+	},
+	"HttpHeaders": {
+	      "User-Agent": "Docker-Client/18.01.0-ce (linux)"
+	}
+}
+EOF
+chmod 700 /root/.docker -R
+docker commit CONTAINERID REGISTRY-1/ITEMNAME:VERSION
+echo
+docker push REGISTRY-1/ITEMNAME:VERSION 2>&1
+if [ $? -gt 0 ] ; then
+	   echo "push镜像失败"
+	   d=$(date +"%F %T")
+       echo "完成提交... $d"
+	   exit
+fi
+echo
+d=$(date +"%F %T")
+echo "push镜像成功..."
+echo "完成提交... $d"
+`
+return replacePushCmd(cmd, param)
 }
 
 // 2018-02-06 09:06
@@ -190,4 +229,13 @@ func ImagePush(clusterName string, imagePushParam ImagePushParam) {
 	times := time.Now().Unix() - start
 	writeImagePushToHistory(logstr, times, imagePushParam)
 	logs.Info(logstr, times)
+}
+
+
+// 2018-08-21 14:36
+// 容器保存为镜像
+func ImageCommit(clusterName string, imagePushParam ImagePushParam) {
+	jobParam := imagePushJobParam(clusterName, imagePushParam)
+	jobParam.Jobname = "job-" + util.Md5Uuid()
+	CreateJob(jobParam)
 }

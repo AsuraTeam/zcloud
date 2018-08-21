@@ -66,6 +66,7 @@ func init() {
 			// 容器管理,
 			// 容器入口,
 			beego.NSRouter("/container/list", &app.AppController{}, "get:ContainerList"),
+			beego.NSRouter("/container/image", &app.AppController{}, "get:ContainerImage"),
 			// 容器详情,
 			beego.NSRouter("/container/detail/:hi(.*)", &app.AppController{}, "get:ContainerDetail"),
 			// Service管理,

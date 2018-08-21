@@ -295,7 +295,8 @@
                     "sWidth": "7%", "data": "ContainerId", "mRender": function (data,type,full) {
                         var event =  encodeURI(full["Events"]);
                     return     '<button type="button" title="连接到容器终端" onclick="toTty(' + data + ')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-terminal"></i></button>&nbsp;' +
-                          '<button type="button" title="显示容器事件信息" onclick="displayEvent(\'' + event + '\',\''+full["ContainerName"]+'\')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-envelope"></i></button>&nbsp;';
+                            '<button type="button" title="显示容器事件信息" onclick="displayEvent(\'' + event + '\',\''+full["ContainerName"]+'\')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-envelope"></i></button>&nbsp;'+
+                            '<button type="button" title="将容器保存为镜像" onclick="commitImages('+data+')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-compress"></i></button>&nbsp;';
                 }
                 },
             ],
@@ -326,6 +327,19 @@
     }
     setServiceName();
 
+    /**
+     * 2018-08-21 13:29
+     * 提交镜像
+     * */
+    function commitImages(id) {
+        if(!id){
+            return;
+        }
+        var url = "/application/container/image";
+        var result = get({id:id}, url);
+        $("#add_scale_html").html(result);
+        $("#add_post_html").modal("toggle")
+    }
 
     /**
      * 2018-08-17 13:52

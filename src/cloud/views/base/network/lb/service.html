@@ -13,9 +13,9 @@
                         <div class="row top10">
                             <div class="col-md-12 top10">
                                 <div class="form-group">
-                                    <label class="col-md-3 fw100 control-label ">环境名称<span
+                                    <label class="col-md-2 fw100 control-label ">环境名称<span
                                             class="text-danger">*</span></label>
-                                    <div class="col-md-9">
+                                 <div class="col-md-10">
                                         <input type="text"
                                                value="{{.data.Entname}}" name="Entname" readonly
                                                class="form-control">
@@ -26,9 +26,9 @@
                             <div class="col-md-12 top15">
                                 <div class="form-group">
                                     <label for="select-app-id"
-                                           class="col-md-3 fw100 control-label">应用名称<span
+                                           class="col-md-2 fw100 control-label">应用名称<span
                                             class="text-danger">*</span></label>
-                                    <div class="col-md-9">
+                                 <div class="col-md-10">
                                         <select class="selectpicker" name="AppName"
                                                 onchange="getServiceIdSelect($('#select-cluster-id').val(),'select-service-id','/api/service/name','ServiceName',$(this).val());"
                                                 data-live-search="true" data-style="btn-default"
@@ -40,7 +40,7 @@
                             </div>
                             <div class="col-md-12 top15">
                                 <div class="form-group">
-                                    <label for="field-12" class="col-md-3 fw100 control-label">服务名称<span
+                                    <label for="field-12" class="col-md-2 fw100 control-label">服务名称<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-9" id="field-12">
                                         <select class="selectpicker" name="LbServiceId" data-live-search="true"
@@ -65,7 +65,7 @@
                         <div class="row top10">
                             <div class="col-md-10">
                                 <div class="form-group">
-                                    <label class="col-md-3 fw100 control-label top10">负载方式<span
+                                    <label class="col-md-2 fw100 control-label top10">负载方式<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-3 left10" style="margin-left: 20px;">
                                         <div class="radio radio-info left10">
@@ -89,7 +89,7 @@
                         <div class="row top10" title="使用默认的后缀会使用lb配置的后缀">
                             <div class="col-md-10">
                                 <div class="form-group">
-                                    <label class="col-md-3 fw100 control-label top10">使用默认后缀</label>
+                                    <label class="col-md-2 fw100 control-label top10">使用默认后缀</label>
                                     <div class="col-md-3 left10" style="margin-left: 23px;">
                                         <div class="checkbox checkbox-info left10">
                                             <input {{.DefaultDomain}} type="checkbox" value="{{.data.DefaultDomain}}"
@@ -106,7 +106,7 @@
                             <div class="row top10">
                                 <div class="col-md-6 top10">
                                     <div class="form-group">
-                                        <label class="col-md-3 fw100 control-label left10">容器端口</label>
+                                        <label class="col-md-2 fw100 control-label left10">容器端口</label>
                                         <div class="col-md-5" style="margin-left: 90px;">
                                             <input type="number" id="ContainerPort" validFunc="checkPort" errmsg="端口错误"
                                                    onchange="checkChange('ContainerPort')" min="80" max="65535"
@@ -117,7 +117,7 @@
                                 </div>
                                 <div class="col-md-6 top10">
                                     <div class="form-group">
-                                        <label class="col-md-3 fw100 control-label left10">协议<span
+                                        <label class="col-md-2 fw100 control-label left10">协议<span
                                                 class="text-danger">*</span></label>
                                         <div class="col-md-8">
                                             <select class="form-control" name="Protocol" onchange="setProtocol();"
@@ -133,7 +133,7 @@
                             <div class="row top10">
                                 <div class="col-md-6 top10">
                                     <div class="form-group">
-                                        <label class="col-md-3 fw100 control-label left10">域名<span
+                                        <label class="col-md-2 fw100 control-label left10">域名<span
                                                 class="text-danger">*</span></label>
                                         <div class="col-md-5" style="margin-left: 90px;">
                                             <input type="text" errmsg="域名已经被使用" onchange="checkChange('Domain')"
@@ -145,7 +145,7 @@
                                 </div>
                                 <div class="col-md-6 top10" id="cert-file-2" style="display: none">
                                     <div class="form-group">
-                                        <label class="col-md-3 fw100 control-label left10">证书</label>
+                                        <label class="col-md-2 fw100 control-label left10">证书</label>
                                         <div class="col-md-8">
                                             <select class="selectpicker" name="CertFile" data-live-search="true"
                                                     data-style="btn-default"

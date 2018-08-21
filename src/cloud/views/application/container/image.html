@@ -1,0 +1,79 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 60%;">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">容器保存为镜像</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="col-md-12 top10"></div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-2 fw100 control-label">仓库地址<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <select class="form-control" name="RegistryServer" data-style="btn-pink" style="border-radius: 5px;" id="base-registry-select">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top20" title="一般仓库开头URL开头的前缀，例子 template/java8:latest">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-15" class="col-md-2 fw100 control-label">镜像名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.Image}}"  errmsg="不能已/开头和结束"
+                                               onchange="checkChange('Image')" name="Image"  validFunc="checkProject"
+                                               class="form-control" id="field-15" placeholder="镜像名称，基础镜像应该预先传到仓库服务器,template/java8:latest ">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row top20">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-21" class="col-md-2 fw100 control-label">镜像类型</label>
+                                    <div class="col-md-10">
+                                        <input type="text" name="ImageType"
+                                               class="form-control" id="field-21" placeholder="镜像类型">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top20 m-l-10">
+                        <div class="col-md-11 pre m-l-15">
+                            <br>
+                            镜像只能提交到自己的仓库组,不能提交到已经存在的镜像和版本<br>
+                                  <br>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveBase('{{.data.ContainerId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 6
+    });
+    $("#base-registry-select").html("{{.registryServer}}");
+    $('.selectpicker').selectpicker('refresh');
+</script>

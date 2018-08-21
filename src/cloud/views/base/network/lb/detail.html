@@ -139,6 +139,7 @@
                                         <th>域名</th>
                                         <th>负载</th>
                                         <th>证书</th>
+                                        <th>状态</th>
                                         <th>创建时间</th>
                                         <th>操作</th>
                                     </tr>
@@ -185,7 +186,9 @@
                         {"data": "ServiceName"},
                         {"data": "ContainerPort"},
                         {"data": "LbType"},
-                        {"data": "Domain"},
+                        {"data": "Domain","mRender":function (data) {
+                                return '<a target="_blank" href="http://'+data+'">'+data+'</a>'
+                        }},
                         {"data": "LbMethod"},
                         {"data": "CertFile","mRender":function (data) {
                             if(data && data=="0"){
@@ -194,6 +197,12 @@
                             return data;
                         }},
                         {"data": "CreateTime"},
+                        {"data": "LbServiceId","mRender":function (data) {
+                         if(!data){
+                             return  '<div class="Fail"><div><i class="fa fa-circle"></i><span>&nbsp;服务已删除</span>&nbsp;'
+                         }
+                            return '<div class="Running"><div><i class="fa fa-circle"></i><span>&nbsp;服务存在</span>'
+                        }},
                         {
                             "sWidth": "150px", "data": "ServiceId", "mRender": function (data, type, full) {
                             var r = '<button type="button" title="更新" onclick="addLbService(' + data + ',\''+full["LbId"]+'\')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +

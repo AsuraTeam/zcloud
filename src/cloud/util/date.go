@@ -45,6 +45,9 @@ func initTimeMap() {
 // 获取时间简单格式
 //util.GetMinTime("2018-01-15 14:40:49")
 func GetMinTime(ctime string) string {
+	if ctime == "" {
+		return "未知"
+	}
 	initTimeMap()
 	stamp := TimeToStamp(ctime)
 	now := time.Now().Unix()
