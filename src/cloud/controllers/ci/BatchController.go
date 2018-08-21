@@ -5,6 +5,7 @@ import (
 	"cloud/models/ci"
 	"cloud/sql"
 	"cloud/util"
+	"cloud/controllers/base/cluster"
 )
 
 // 2018-01-24 21:32
@@ -24,7 +25,7 @@ func (this *BatchController) BatchList() {
 func (this *BatchController) BatchAdd() {
 	id := this.GetString("BatchId")
 	update := ci.CloudCiBatchJob{}
-
+	this.Data["cluster"] = cluster.GetClusterSelect()
 	// 更新操作
 	if id != "0" {
 		searchMap := sql.GetSearchMap("BatchId", *this.Ctx)
@@ -33,6 +34,7 @@ func (this *BatchController) BatchAdd() {
 			ci.SelectCloudCiBatchJob,
 			searchMap)
 		sql.Raw(q).QueryRow(&update)
+		this.Data["cluster"] = util.GetSelectOptionName(update.Cluster)
 	}
 
 	this.Data["data"] = update

@@ -317,4 +317,8 @@ type CloudCiBatchJob struct {
     Messages string
     //batch name
     BatchName string
+    // 版本号
+    Version string
+    // 集群
+    Cluster string
 }

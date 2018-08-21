@@ -35,7 +35,7 @@
 </style>
 <body>
 <div style="color: #ffffff;margin:10px;"> &nbsp; 容器名称:&nbsp;{{.pod}} &nbsp; &nbsp;  所属集群:&nbsp;{{.cluster}} &nbsp; &nbsp; 操作员:&nbsp;{{.username}}&nbsp; &nbsp; 登录时间:&nbsp;{{.time}}</div>
-<div id="terminal-container"></div>
+<div id="terminal-container" style="margin-bottom: 100px;"></div>
 
 <script type="text/javascript">
 
@@ -46,11 +46,7 @@
         //去掉a点击时的虚线框
         $(".container").find("a").focus(function () {
             this.blur();
-        })
-
-
-
-
+        });
 
         $(".theme").find("a").click(function () {
             opencronTerm.theme($(this).attr("theme"));

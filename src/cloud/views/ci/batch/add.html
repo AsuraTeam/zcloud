@@ -1,7 +1,7 @@
 <div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true"
      style="display: none;">
-    <div class="modal-dialog " style="width: 70%;">
+    <div class="modal-dialog " style="width: 50%;">
         <div class="modal-content p-0 b-0 ">
             <div class="panel panel-color panel-default">
                 <div class="panel-heading">
@@ -23,6 +23,18 @@
                                                 id="select-cluster-id">
                                             <option>请选择</option>
                                         </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top15" title="本次所有构建应用使用该版本号进行构建">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-3 fw100 control-label">版本号<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" name="Version" >
                                     </div>
                                 </div>
                             </div>
@@ -91,3 +103,31 @@
         </div>
     </div>
 </div>
+
+<script>
+     $("#select-cluster-id").html("{{.cluster}}");
+     $('.selectpicker').selectpicker({
+         //初始化
+         size: 10
+     });
+
+
+     /**
+      * 2018-08-15 16:58
+      * 获取服务名称
+      * @param change
+      */
+     function setServiceName(cluster) {
+         var url = "/api/service/name";
+         var result = get({ClusterName:cluster}, url);
+         var html = "";
+         for (var i = 0; i < result.length; i++) {
+             var t = result[i]["AppName"] +";"+ result[i]["ResourceName"]+";"+ result[i]["ServiceName"];
+             if (html.indexOf("'" + t) == -1 ) {
+                 html += "<option value='" + t + "'>" + t + "</option>";
+             }
+         }
+         $("#undo_contact_group_redo").html(html);
+     }
+     setServiceName();
+</script>

@@ -28,13 +28,14 @@ dockerd --ip-forward=false --iptables=false --insecure-registry REGISTRY  --stor
 d=$(date +"%F %T")
 echo "开始编译文件,,,,"
 SCRIPT
+set +x
 sleep 10
 echo $DOCKERFILE
 seq="1 2 3 4 5 6 7 8 9 10"
 
 for i in $seq
 do
-  docker ps |grep IMAGE && continue
+  docker ps |grep IMAGE && break
   sleep 3
   d=$(date +"%F %T")
   echo "请等待.. $i  $d" 

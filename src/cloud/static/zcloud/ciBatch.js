@@ -5,7 +5,7 @@ function addBatch(fileId) {
         fileId = 0
     }
     var url = "/ci/batch/add";
-    var result = get({FileId:fileId}, url);
+    var result = get({BatchId:fileId}, url);
     $("#add_file_html").html(result);
     $("#add_post_html").modal("toggle")
 }
@@ -107,7 +107,7 @@ function saveBatch(fileId) {
         fileId = 0
     }
     var data = get_form_data();
-    data["FileId"] = parseInt(fileId);
+    data["BatchId"] = parseInt(fileId);
     if(!checkValue(data,"Name,Content")){
         return
     }
