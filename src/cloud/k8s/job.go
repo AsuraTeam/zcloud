@@ -161,6 +161,10 @@ type JobParam struct {
 	Script string
 	// 环境变量
 	Env string
+	// 类型
+	Type string
+	// 服务器地址
+	ServerAddress string
 }
 
 // 替换buildcmd
@@ -298,6 +302,10 @@ func CreateJob(param JobParam) string {
 		serviceParam.ConfigureData = param.ConfigureData
 	}
 
+	selector := map[string]interface{}{
+		"kubernetes.io/hostname": param.ServerAddress,
+	}
+
 	envList := getEnv(serviceParam.Envs)
 
 	env := map[string]interface{}{
@@ -376,6 +384,12 @@ func CreateJob(param JobParam) string {
 	}
 
 	conf = getJobLables(conf, clientSet)
+
+	if len(param.ServerAddress) > 0 {
+		conf["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["nodeSelector"] = selector
+		logs.Info("添加选择器", util.ObjToString(selector))
+	}
+
 	obj := getJobParam(conf)
 	deployments, err := clientSet.BatchV1().Jobs(param.Namespace).Create(&obj)
 
@@ -474,9 +488,9 @@ func getJobResult(jobParam JobParam, keyword string, timeout int, logtp string) 
 // 清除无效的任务计划
 // 构建完成后删除job
 // 2018-01-26 16:34
-func ClearJob(clientset kubernetes.Clientset) {
+func ClearJob(clientSet kubernetes.Clientset) {
 	namespace := util.Namespace("job", "job")
-	jobs, err := clientset.BatchV1().Jobs(namespace).List(meta_v1.ListOptions{})
+	jobs, err := clientSet.BatchV1().Jobs(namespace).List(meta_v1.ListOptions{})
 	if err != nil {
 		logs.Error("删除job获取列表失败", err)
 	}
@@ -486,15 +500,15 @@ func ClearJob(clientset kubernetes.Clientset) {
 
 	// 删除pod
 	for _, v := range jobs.Items {
-		pod, err := getJobPod(v.Name, clientset, namespace)
+		pod, err := getJobPod(v.Name, clientSet, namespace)
 		if len(pod) > 0 && err == nil {
 			if pod[0].Status.Phase == "Failed" || pod[0].Status.Phase == "Succeeded" || pod[0].Status.Phase == "Unknown" {
-				err = clientset.CoreV1().Pods(namespace).Delete(pod[0].Name, &meta_v1.DeleteOptions{})
+				err = clientSet.CoreV1().Pods(namespace).Delete(pod[0].Name, &meta_v1.DeleteOptions{})
 
 			}
 			if pod[0].Status.Phase == "Pending" {
 				if time.Now().Unix()-pod[0].CreationTimestamp.Unix() > 3000 {
-					err = clientset.CoreV1().Pods(namespace).Delete(pod[0].Name, &meta_v1.DeleteOptions{})
+					err = clientSet.CoreV1().Pods(namespace).Delete(pod[0].Name, &meta_v1.DeleteOptions{})
 				}
 			}
 			if err != nil {
@@ -508,7 +522,7 @@ func ClearJob(clientset kubernetes.Clientset) {
 	// 删除job
 	for _, v := range jobs.Items {
 		if v.Status.Failed == 1 || v.Status.Succeeded == 1 ||  v.Status.Failed == 2 {
-			err := clientset.BatchV1().Jobs(namespace).Delete(v.Name, &meta_v1.DeleteOptions{})
+			err := clientSet.BatchV1().Jobs(namespace).Delete(v.Name, &meta_v1.DeleteOptions{})
 			if err != nil {
 				logs.Error("删除构建job失败", err)
 			} else {

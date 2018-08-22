@@ -35,6 +35,10 @@ type ImagePushParam struct {
 	CreateTime string
 	// 容器id
 	ContainerId string
+	// 操作类型
+	Type string
+	// 服务器地址
+	ServerAddress string
 }
 
 // 2018-02-06 09:21
@@ -153,7 +157,11 @@ func getImagePushConfig(param ImagePushParam) []ConfigureData {
 	configureData := make([]ConfigureData, 0)
 	config := ConfigureData{}
 	config.ContainerPath = "/build"
-	config.ConfigDbData = map[string]interface{}{"push.sh": getPushCmd(param)}
+	if param.Type == "container" {
+		config.ConfigDbData = map[string]interface{}{"push.sh": commitContainer(param)}
+	}else {
+		config.ConfigDbData = map[string]interface{}{"push.sh": getPushCmd(param)}
+	}
 	name := strings.Replace(param.Registry1Domain+param.Registry1Port+param.Registry2Domain+param.Registry2Port, ".", "-", -1)
 	config.DataName = "image-push" + name
 	config.DataId = "push.sh"
@@ -164,14 +172,14 @@ func getImagePushConfig(param ImagePushParam) []ConfigureData {
 // 2018-02-06 08:57
 // 获取镜像推送的job参数
 func imagePushJobParam(clusterName string, pushParam ImagePushParam) JobParam {
+	//name := "registryv2"
+	name := "job"
 	param := JobParam{
 		ClusterName:clusterName,
-		//Master:    master,
-		//Port:      port,
 		Timeout:   600,
 		Memory:    40,
 		Cpu:       1,
-		Namespace: util.Namespace("registryv2", "registryv2"),
+		Namespace: util.Namespace(name, name),
 		//Images:            "nginx:v1", 使用默认docker镜像
 		ConfigureData: getImagePushConfig(pushParam),
 		Command:       []string{"sh", "/build/push.sh"},
@@ -192,7 +200,7 @@ func writeImagePushToHistory(messages string, runtime int64, param ImagePushPara
 	if strings.Contains(messages, "pull镜像失败"){
 		status = "失败"
 	}
-	synclog := CloudImageSyncLog{
+	syncLog := CloudImageSyncLog{
 		CreateTime:      param.CreateTime,
 		CreateUser:      param.User,
 		Messages:        messages,
@@ -206,12 +214,12 @@ func writeImagePushToHistory(messages string, runtime int64, param ImagePushPara
 	}
 	var q string
 	if runtime == 0 {
-		q = sql.InsertSql(synclog, InsertCloudImageSyncLog)
+		q = sql.InsertSql(syncLog, InsertCloudImageSyncLog)
 	}else{
 		searchMap := sql.SearchMap{}
 		searchMap.Put("Runtime", 0)
 		searchMap.Put("CreateTime", param.CreateTime)
-		q = sql.UpdateSql(synclog, UpdateCloudImageSyncLog, searchMap, "LogId")
+		q = sql.UpdateSql(syncLog, UpdateCloudImageSyncLog, searchMap, "LogId")
 	}
 	sql.Raw(q).Exec()
 }
@@ -225,17 +233,21 @@ func ImagePush(clusterName string, imagePushParam ImagePushParam) {
 	jobName := CreateJob(jobParam)
 	writeImagePushToHistory("", 0, imagePushParam)
 	jobParam.Jobname = jobName
-	logstr := getJobResult(jobParam, "完成提交", 300, "")
+	logStr := getJobResult(jobParam, "完成提交", 300, "")
 	times := time.Now().Unix() - start
-	writeImagePushToHistory(logstr, times, imagePushParam)
-	logs.Info(logstr, times)
+	writeImagePushToHistory(logStr, times, imagePushParam)
+	logs.Info(logStr, times)
 }
+
 
 
 // 2018-08-21 14:36
 // 容器保存为镜像
-func ImageCommit(clusterName string, imagePushParam ImagePushParam) {
+func ImageCommit(clusterName string, imagePushParam ImagePushParam, baseImage string) {
+	imagePushParam.Type = "container"
 	jobParam := imagePushJobParam(clusterName, imagePushParam)
 	jobParam.Jobname = "job-" + util.Md5Uuid()
+	jobParam.ServerAddress = imagePushParam.ServerAddress
+	jobParam.Images = baseImage
 	CreateJob(jobParam)
 }

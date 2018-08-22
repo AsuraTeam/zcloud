@@ -329,7 +329,7 @@
 
     /**
      * 2018-08-21 13:29
-     * 提交镜像
+     * 提交镜像页面
      * */
     function commitImages(id) {
         if(!id){
@@ -339,6 +339,27 @@
         var result = get({id:id}, url);
         $("#add_scale_html").html(result);
         $("#add_post_html").modal("toggle")
+    }
+
+    /**
+     * 2018-08-22 13:50
+     * 提交镜像操作
+     * */
+    function commitImage(id) {
+        if(!id){
+            return;
+        }
+        var url = "/api/container/commit/"+id;
+        var result = post(get_form_data(), url);
+        return JSON.stringify(result);
+    }
+
+    /**
+     * 2018-08-21 13:29
+     * 提交镜像
+     * */
+    function commitImagesSwal(id) {
+        Swal("同意后该容器即可以保存为一个新的镜像", "warning", "确认操作", "不操作", "成功", "失败", "commitImage(" + id + ")", "loadContainerData()");
     }
 
     /**

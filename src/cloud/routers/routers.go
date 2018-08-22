@@ -235,6 +235,8 @@ func init() {
 			beego.NSRouter("/container", &app.AppController{}, "get:ContainerData"),
 			// 删除容器,容器删除后会重建
 			beego.NSRouter("/container/:id:int", &app.AppController{}, "delete:ContainerDelete"),
+			// 容器保存为镜像
+			beego.NSRouter("/container/commit/:id:int", &app.AppController{}, "post:ContainerCommit"),
 			beego.NSNamespace("/pipeline",
 				// 流水线保存,
 				beego.NSRouter("", &pipeline.ControllerPipeline{}, "post:PipelineSave"),

@@ -1,7 +1,7 @@
 <div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true"
      style="display: none;">
-    <div class="modal-dialog " style="width: 60%;">
+    <div class="modal-dialog " style="width: 50%;">
         <div class="modal-content p-0 b-0 ">
             <div class="panel panel-color panel-default">
                 <div class="panel-heading">
@@ -11,13 +11,13 @@
                 <form class="cluster-form">
                     <div class="panel-body font-12 ">
                         <div class="col-md-12 top10"></div>
-                        <div class="row top10">
+                        <div class="row top10" id="select-reigstry-server-id">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="col-md-2 fw100 control-label">仓库地址<span
+                                    <label class="col-md-2 fw100 control-label">基础镜像<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-10">
-                                        <select class="form-control" name="RegistryServer" data-style="btn-pink" style="border-radius: 5px;" id="base-registry-select">
+                                        <select class="form-control" name="BaseImage" data-style="btn-pink" style="border-radius: 5px;" id="base-image-select">
                                         </select>
                                     </div>
                                 </div>
@@ -29,14 +29,24 @@
                                     <label for="field-15" class="col-md-2 fw100 control-label">镜像名称<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-10">
-                                        <input type="text" nullmsg="必须填写" value="{{.data.Image}}"  errmsg="不能已/开头和结束"
-                                               onchange="checkChange('Image')" name="Image"  validFunc="checkProject"
-                                               class="form-control" id="field-15" placeholder="镜像名称，基础镜像应该预先传到仓库服务器,template/java8:latest ">
+                                        <input type="text" nullmsg="必须填写"   errmsg="不能已/开头和结束"
+                                               onchange="checkChange('Image')" name="ItemName"  validFunc="checkProject"
+                                               class="form-control" id="field-15" placeholder="镜像名称，基础镜像应该预先传到仓库服务器,template/java8 ">
                                     </div>
                                 </div>
                             </div>
                         </div>
-
+                        <div class="row top20">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-21" class="col-md-2 fw100 control-label">镜像版本</label>
+                                    <div class="col-md-10">
+                                        <input type="text" name="Version"
+                                               class="form-control" id="field-21" placeholder="latest" value="latest">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row top20">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -56,12 +66,13 @@
                                   <br>
                         </div>
                     </div>
-                    <div class="panel-footer">
-                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                    <br>
+                    <div class="panel-footer top10">
+                        <button type="button" class="btn btn-default btn-lg waves-effect" data-dismiss="modal"><i
                                 class="fa fa-times"></i>&nbsp;&nbsp;取消
                         </button>
-                        <button type="button" onclick="saveBase('{{.data.ContainerId}}')"
-                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                        <button type="button" onclick="commitImagesSwal('{{.data.ContainerId}}')"
+                                class="btn btn-info waves-effect btn-lg waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
                         </button>
                     </div>
                 </form>
@@ -74,6 +85,8 @@
         //初始化
         size: 6
     });
-    $("#base-registry-select").html("{{.registryServer}}");
+
+    $("#base-image-select").html("{{.baseImage}}");
+
     $('.selectpicker').selectpicker('refresh');
 </script>

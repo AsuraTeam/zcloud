@@ -31,16 +31,12 @@ func (registry *Registry) Manifest(repository, reference string) (*manifestV1.Si
 		return nil, err
 	}
 
-	if resp != nil {
-		resp.Body.Close()
-	}
-
 	signedManifest := &manifestV1.SignedManifest{}
 	err = signedManifest.UnmarshalJSON(body)
 	if err != nil {
 		return nil, err
 	}
-
+	resp.Close = true
 	return signedManifest, nil
 }
 
@@ -66,6 +62,7 @@ func (registry *Registry) ManifestV2(repository, reference string) (*manifestV2.
 	}
 
 	if resp != nil {
+		resp.Close = true
 		resp.Body.Close()
 	}
 
@@ -83,6 +80,7 @@ func (registry *Registry) ManifestDigest(repository, reference string) (digest.D
 
 	resp, err := registry.Client.Head(url)
 	if resp != nil {
+		resp.Close = true
 		defer resp.Body.Close()
 	}
 	if err != nil {
@@ -101,6 +99,7 @@ func (registry *Registry) DeleteManifest(repository string, digest digest.Digest
 	}
 	resp, err := registry.Client.Do(req)
 	if resp != nil {
+		resp.Close = true
 		defer resp.Body.Close()
 	}
 	if err != nil {
@@ -127,6 +126,7 @@ func (registry *Registry) PutManifest(repository, reference string, signedManife
 	req.Header.Set("Content-Type", manifestV1.MediaTypeManifest)
 	resp, err := registry.Client.Do(req)
 	if resp != nil {
+		resp.Close = true
 		defer resp.Body.Close()
 	}
 	return err

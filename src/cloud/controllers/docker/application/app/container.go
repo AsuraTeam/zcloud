@@ -10,6 +10,8 @@ import (
 	"strings"
 	"cloud/cache"
 	"k8s.io/client-go/kubernetes"
+	"cloud/models/registry"
+	registry2 "cloud/controllers/image"
 )
 
 // 容器详情页面
@@ -45,6 +47,7 @@ func (this *AppController) ContainerImage() {
 	searchSql := sql.SearchSql(app.CloudContainer{}, app.SelectCloudContainer, searchMap)
 	sql.Raw(searchSql).QueryRow(&data)
 	this.Data["data"] = data
+	this.Data["baseImage"] = registry2.GetBaseImageSelect()
 	this.TplName = "application/container/image.html"
 }
 
@@ -53,6 +56,26 @@ func (this *AppController) ContainerImage() {
 // 容器提交镜像
 // @router /api/container/commit/:id:int [delete]
 func (this *AppController) ContainerCommit() {
+	data := app.CloudContainer{}
+	id := this.Ctx.Input.Param(":id")
+	searchMap := sql.GetSearchMapV("ContainerId", id)
+	searchSql := sql.SearchSql(app.CloudContainer{}, app.SelectCloudContainer, searchMap)
+	sql.Raw(searchSql).QueryRow(&data)
+	sync := registry.CloudImageSync{}
+	sync.ClusterName = data.ClusterName
+	sync.ImageName = data.Image
+	name := strings.Split(sync.ImageName, "/")
+	if len(name) > 2 {
+		registryData := registry2.GetRegistryServerCluster(name[2], data.ClusterName)
+		sync.Registry = registryData.Name
+		param := getImageCommitParam(sync, getUser(this))
+		param.ContainerId = data.ContainerName
+		param.ServerAddress = data.ServerAddress
+		param.Version = this.GetString("Version")
+		param.ItemName = this.GetString("ItemName")
+		k8s.ImageCommit(data.ClusterName, param, this.GetString("BaseImage"))
+	}
+	SetAppDataJson(this, util.ApiResponse(true, "保存成功,正在处理中"))
 }
 
 // 2018-01-16 12:20
@@ -278,4 +301,31 @@ func getRedisContainer(data app.CloudContainer, appName string, containerName st
 		v.Process = k8s.Exec(v.ClusterName, v.ContainerName, util.Namespace(data.AppName,data.ResourceName), data.ServiceName, cmd)
 	}
 	return v
+}
+
+
+// 2018-08-22 11:17
+// 获取容器提交参数
+func getImageCommitParam(d registry.CloudImageSync, user string) k8s.ImagePushParam {
+	registryData := registry2.GetRegistryServerMap()
+
+	imagePushParam := k8s.ImagePushParam{
+		RegistryGroup: "",
+		ItemName:      d.ImageName,
+		Version:       d.Version,
+		CreateTime:    util.GetDate(),
+		User:          user,
+	}
+	reg1, ok := registryData.Get(d.ClusterName + d.Registry)
+	if ok {
+		reg1data := reg1.(registry.CloudRegistryServer)
+		servers := strings.Split(reg1data.ServerAddress, ":")
+		imagePushParam.Registry1Domain = reg1data.ServerDomain
+		imagePushParam.Registry1Auth = util.Base64Encoding(reg1data.Admin + ":" + util.Base64Decoding(reg1data.Password))
+		if len(servers) == 2 {
+			imagePushParam.Registry1Ip = servers[0]
+			imagePushParam.Registry1Port = servers[1]
+		}
+	}
+	return imagePushParam
 }
