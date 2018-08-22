@@ -139,8 +139,8 @@ func (this *AppController) ContainerData() {
 
 // 2018-01-16 8:48
 // 更新或写入到数据库
-func writeToDb(appDatas util.Lock, appDatasDb util.Lock) {
-	for _, d := range appDatas.GetData() {
+func writeToDb(appData util.Lock, appDatasDb util.Lock) {
+	for _, d := range appData.GetData() {
 		o := d.(app.CloudContainer)
 		sName := o.AppName + o.ContainerName
 		if _, ok := appDatasDb.Get(sName); !ok {

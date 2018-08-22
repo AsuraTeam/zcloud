@@ -9,6 +9,7 @@ import (
 	"cloud/controllers/monitor"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
+	"cloud/controllers/ci"
 )
 
 // 自动刷新数据任务计划
@@ -49,5 +50,9 @@ func CronStart() {
 	cron.AddFunc("*/30 * * * * ?", func() {
 		monitor.CronAutoScale()
 	}, "CronAutoScale")
+	// 清除无效的job
+	cron.AddFunc("1 */1 * * * ?", func() {
+		ci.ClearJob()
+	}, "ClearJob")
 	cron.Start()
 }

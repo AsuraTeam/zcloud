@@ -63,10 +63,14 @@ func getEnv(envs string) []map[string]interface{} {
 	if len(envs) < 3 {
 		return data
 	}
-	envdatas := strings.Split(envs, "\n")
-	for _, v := range envdatas {
+	envData := strings.Split(envs, "\n")
+	for _, v := range envData {
 		vs := strings.Split(v, "=")
 		if len(vs) < 2 {
+			continue
+		}
+		if string(vs[0][0]) == "#" ||  string(vs[0][0]) == " "  {
+			logs.Info("环境变量获取到注释", vs[0])
 			continue
 		}
 		temp := map[string]interface{}{

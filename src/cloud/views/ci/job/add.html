@@ -16,7 +16,7 @@
                                     <label class="col-md-3 fw100 control-label">镜像项目名称<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-9">
-                                        <input type="text" nullmsg="必须填写" value="{{.data.ItemName}}" validFunc="checkImageTag"
+                                        <input type="text" nullmsg="必须填写" value="{{.data.ItemName}}" validFunc="checkAppName"
                                                onchange="checkChange('ItemName')" name="ItemName" id="ItemName"
                                                class="form-control" id="field-13" placeholder="一般以应用名命名,不能带点.比如 www sms zmc, 不能包含大写">
                                     </div>
@@ -44,6 +44,19 @@
                                         <input type="number" min="10" max="3600" nullmsg="必须填写" value="{{.data.TimeOut}}"
                                                onchange="checkChange('TimeOut')" name="TimeOut"
                                                class="form-control" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10" title="构建变量可以是任何变量数据,在构建脚本中可以使用到">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label">构建变量<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <textarea nullmsg="必须填写"
+                                               onchange="checkChange('Env')" name="Env"
+                                                  class="form-control" >{{.data.Env}}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -200,7 +213,18 @@
                             </div>
                         </div>
                     </div>
-
+                    <div class="row top20 m-l-10">
+                        <div class="col-md-11 pre m-l-20" style="margin-left: 10px;">
+                            <br>
+                            基础镜像是在这个镜像中做编译操作的镜像,该镜像需要有编译需要的环境和docker程序,参考基础镜像添加<br>
+                            <br>
+                            构建变量<br>
+                            构建变量可以将变量在构建脚本中使用,<br>
+                            比如可以添加代码分支,<br>
+                            java环境变量等<br>
+                            <br>
+                        </div>
+                    </div>
                     <br>
                     <div class="panel-footer">
                         <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i

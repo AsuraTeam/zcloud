@@ -170,7 +170,7 @@ func (this *JobController) JobSave() {
 		searchMap.Put("CreateUser", getUser(this))
 		q = sql.UpdateSql(d, ci.UpdateCloudBuildJob, searchMap, ci.UpdateCloudBuildJobExclude2)
 		cache.JobDataCache.Delete(strconv.FormatInt(d.JobId, 10))
-	}else{
+	} else {
 		status, msg := checkQuota(getUser(this))
 		if !status {
 			data := util.ApiResponse(false, msg)
@@ -190,13 +190,13 @@ func (this *JobController) JobSave() {
 
 // 2018-08-09 13:34
 // 删除缓存数据
-func DeleteJobCache(name string)  {
+func DeleteJobCache(name string) {
 	jobData := make([]ci.CloudBuildJob, 0)
 	searchMap := sql.SearchMap{}
 	searchMap.Put("DockerFile", name)
 	q1 := sql.SearchSql(ci.CloudBuildJob{}, ci.SelectCloudBuildJob, searchMap)
 	sql.Raw(q1).QueryRows(&jobData)
-	for _, v := range jobData{
+	for _, v := range jobData {
 		logs.Info("删除job缓存", v.DockerFile)
 		cache.JobDataCache.Delete(strconv.FormatInt(v.JobId, 10))
 	}
@@ -205,10 +205,10 @@ func DeleteJobCache(name string)  {
 // 2018-02-12 09:30
 // 检查镜像仓库配额
 // 检查资源配额是否够用
-func checkQuota(username string) (bool,string) {
+func checkQuota(username string) (bool, string) {
 	quotaData := quota.GetUserQuotaData(username, "")
 	for _, v := range quotaData {
-		if v.JobUsed + 1 > v.JobNumber {
+		if v.JobUsed+1 > v.JobNumber {
 			return false, "构建任务数量超过配额限制"
 		}
 	}
@@ -216,7 +216,7 @@ func checkQuota(username string) (bool,string) {
 }
 
 // 更新任务脚本和dockerfile
-func updateJobContent(jobData ci.CloudBuildJob) ci.CloudBuildJob  {
+func updateJobContent(jobData ci.CloudBuildJob) ci.CloudBuildJob {
 	if jobData.DockerFile != "0" {
 		file := GetDockerfileData(jobData.DockerFile)
 		if len(file) > 0 {
@@ -226,7 +226,6 @@ func updateJobContent(jobData ci.CloudBuildJob) ci.CloudBuildJob  {
 	}
 	return jobData
 }
-
 
 // 获取构建任务数据
 // 2018-01-25 17:45
@@ -274,7 +273,7 @@ func (this *JobController) JobHistoryDatas() {
 		searchSql += strings.Replace(ci.SelectBuildHistoryWhere, "?", key, -1)
 	}
 
-	num,err := sql.OrderByPagingSql(searchSql,
+	num, err := sql.OrderByPagingSql(searchSql,
 		"create_time",
 		*this.Ctx.Request,
 		&data,
@@ -305,7 +304,7 @@ func (this *JobController) JobDatas() {
 		key = sql.Replace(key)
 		searchSql += strings.Replace(ci.SelectCloudBuildJobWhere, "?", key, -1)
 	}
-	num,err := sql.OrderByPagingSql(searchSql,
+	num, err := sql.OrderByPagingSql(searchSql,
 		"create_time",
 		*this.Ctx.Request,
 		&data,
@@ -394,7 +393,6 @@ func (this *JobController) JobLogsPage() {
 	this.Data["data"] = history
 	this.TplName = "ci/job/log.html"
 }
-
 
 // 2018-01-26 15:59
 // 获取最近一次日志信息
@@ -506,7 +504,7 @@ func (this *JobController) JobLogs() {
 
 // 2018-02-08 12:26
 // 获取job参数
-func getJobParam(jobData ci.CloudBuildJob,jobName string, registryServer string, groupData registry2.CloudRegistryServer) k8s.JobParam{
+func getJobParam(jobData ci.CloudBuildJob, jobName string, registryServer string, groupData registry2.CloudRegistryServer) k8s.JobParam {
 	master, port := hosts.GetMaster(jobData.ClusterName)
 	param := k8s.JobParam{
 		Master:         master,
@@ -519,7 +517,8 @@ func getJobParam(jobData ci.CloudBuildJob,jobName string, registryServer string,
 		Dockerfile:     jobData.Content,
 		Script:         jobData.Script,
 		RegistryGroup:  jobData.RegistryServer,
-		Images: jobData.BaseImage,
+		Images:         jobData.BaseImage,
+		Env:            jobData.Env,
 	}
 	registryServers := registry.GetRegistryServer(groupData.ServerDomain)
 
@@ -539,17 +538,16 @@ func getJobParam(jobData ci.CloudBuildJob,jobName string, registryServer string,
 	return param
 }
 
-
 // 2018-02-08 12:30
 // 插入历史数据
-func writeJobHistory(jobData ci.CloudBuildJob, jobId string, username string, registryServer string)  {
+func writeJobHistory(jobData ci.CloudBuildJob, jobId string, username string, registryServer string) {
 	history := ci.CloudBuildJobHistory{
 		ImageTag:       jobData.LastTag,
 		JobName:        jobId,
 		JobId:          jobData.JobId,
 		ItemName:       jobData.ItemName,
 		DockerFile:     jobData.Content,
-		Script:          jobData.Script,
+		Script:         jobData.Script,
 		BuildStatus:    "构建中",
 		BuildLogs:      "开始构建",
 		RegistryGroup:  jobData.RegistryServer,
@@ -557,6 +555,7 @@ func writeJobHistory(jobData ci.CloudBuildJob, jobId string, username string, re
 		CreateTime:     util.GetDate(),
 		ClusterName:    jobData.ClusterName,
 		RegistryServer: registryServer,
+		Env:            jobData.Env,
 	}
 	i := sql.InsertSql(history, ci.InsertCloudBuildJobHistory)
 	sql.Raw(i).Exec()
@@ -615,7 +614,7 @@ func (this *JobController) JobExec() {
 	param := k8s.ServiceParam{}
 	param.Image = jobData.BaseImage
 	param.Namespace = util.Namespace("job", "job")
-	cl,_ := k8s.GetClient(jobData.ClusterName)
+	cl, _ := k8s.GetClient(jobData.ClusterName)
 	param.Cl3 = cl
 	param = app.CreateSecretFile(param)
 	jobName := "job-" + util.Md5Uuid()
@@ -626,13 +625,27 @@ func (this *JobController) JobExec() {
 }
 
 // 任务计划超时更新
-func updateTimeOutJob()  {
+func updateTimeOutJob() {
 	jobHistory := make([]ci.CloudBuildJobHistory, 0)
 	sql.Raw(ci.SelectJobTimeout).QueryRows(&jobHistory)
-	for _, v := range jobHistory{
-		if util.TimeToStamp(util.GetDate()) - util.TimeToStamp(v.CreateTime) > v.BuildTime {
+	for _, v := range jobHistory {
+		if util.TimeToStamp(util.GetDate())-util.TimeToStamp(v.CreateTime) > v.BuildTime {
 			q := ci.UpdateCloudBuildJobTimeout + util.ObjToString(v.HistoryId)
 			sql.Raw(q).Exec()
 		}
 	}
+}
+
+// 2018-08-22 09;25
+// 清除无效的job
+func ClearJob()  {
+	clusters := cluster.GetClusterName()
+	for _, v := range clusters {
+		cl, err := k8s.GetClient(v.ClusterName)
+		if err != nil {
+			continue
+		}
+		k8s.ClearJob(cl)
+	}
+
 }

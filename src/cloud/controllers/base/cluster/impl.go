@@ -123,7 +123,7 @@ func GetClusterMap() util.Lock {
 
 // 获取所有集群名称信息
 func GetClusterName() []cluster.CloudClusterName {
-	data := []cluster.CloudClusterName{}
+	data := make([]cluster.CloudClusterName, 0)
 
 	searchSql := sql.SearchSql(
 		cluster.CloudClusterName{},

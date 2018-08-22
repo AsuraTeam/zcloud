@@ -1656,3 +1656,4 @@ alter table  cloud_template_deploy_history add domain varchar(100) ;
 alter table  cloud_app_template add domain varchar(100) ;
 alter table cloud_app_service add domain varchar(100);
 alter table cloud_ci_batch_job add version varchar(100);
+alter table cloud_build_job add env varchar(4096) comment "构建时环境变量";

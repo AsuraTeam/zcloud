@@ -97,6 +97,8 @@ type CloudBuildJob struct {
     LastTag string
     // 基础镜像
     BaseImage string
+    // 环境变量
+    Env string
 }
 
 //2018-01-26 15:22:01.3732277 +0800 CST
@@ -133,6 +135,8 @@ type CloudBuildJobHistory struct {
     RegistryGroup string
     // 基础镜像
     BaseImage string
+    // 环境变量
+    Env string
 }
 
 //2018-02-10 18:22:04.0393696 +0800 CST
