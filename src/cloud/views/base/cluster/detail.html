@@ -451,7 +451,15 @@
                     return html;
                 }
                 },
-                {"data": "HostType"},
+                {
+                    "data": "HostType", "mRender": function (data) {
+                        if (data == "master"){
+                            return "master";
+                        } else{
+                            return "worker";
+                        }
+                    }
+                },
                 {
                     "data": "HostId", "mRender": function (data, type, full) {
                     var html = '<button type="button"  title="添加标签" onClick="addHostLabel(\'' + data + '\',1)" class="delete-template btn btn-xs rb-btn-oper"><i class="fa  fa-tasks"></i></button>&nbsp;';

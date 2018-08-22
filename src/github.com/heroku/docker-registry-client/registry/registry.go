@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type LogfCallback func(format string, args ...interface{})
@@ -45,6 +46,9 @@ func New(registryUrl, username, password string) (*Registry, error) {
 	tr := &http.Transport{
 		TLSClientConfig:    &tls.Config{InsecureSkipVerify: true},
 		DisableKeepAlives: true,
+		MaxIdleConns: 1,
+		MaxIdleConnsPerHost: 1,
+		IdleConnTimeout: time.Second * 10,
 	}
 	transport := tr
 
@@ -61,6 +65,9 @@ func NewInsecure(registryUrl, username, password string) (*Registry, error) {
 			InsecureSkipVerify: true,
 		},
 		DisableKeepAlives:true,
+		MaxIdleConns: 1,
+		MaxIdleConnsPerHost: 1,
+		IdleConnTimeout: time.Second * 10,
 	}
 
 	return newFromTransport(registryUrl, username, password, transport, Log)
