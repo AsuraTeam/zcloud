@@ -62,6 +62,9 @@ func (t *TokenTransport) auth(authService *authService) (string, *http.Response,
 	var authToken authToken
 	decoder := json.NewDecoder(response.Body)
 	err = decoder.Decode(&authToken)
+	if response != nil {
+		response.Body.Close()
+	}
 
 	if err != nil {
 		return "", nil, err

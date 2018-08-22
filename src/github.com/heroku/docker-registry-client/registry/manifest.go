@@ -31,6 +31,10 @@ func (registry *Registry) Manifest(repository, reference string) (*manifestV1.Si
 		return nil, err
 	}
 
+	if resp != nil {
+		resp.Body.Close()
+	}
+
 	signedManifest := &manifestV1.SignedManifest{}
 	err = signedManifest.UnmarshalJSON(body)
 	if err != nil {
@@ -59,6 +63,10 @@ func (registry *Registry) ManifestV2(repository, reference string) (*manifestV2.
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
+	}
+
+	if resp != nil {
+		resp.Body.Close()
 	}
 
 	deserialized := &manifestV2.DeserializedManifest{}
