@@ -122,6 +122,7 @@ func (registry *Registry) PutManifest(repository, reference string, signedManife
 	if err != nil {
 		return err
 	}
+
 	req.Header.Set("Content-Type", manifestV1.MediaTypeManifest)
 	resp, err := registry.Client.Do(req)
 	if resp != nil {
