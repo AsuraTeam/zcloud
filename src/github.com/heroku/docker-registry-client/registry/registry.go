@@ -44,6 +44,7 @@ func New(registryUrl, username, password string) (*Registry, error) {
 
 	tr := &http.Transport{
 		TLSClientConfig:    &tls.Config{InsecureSkipVerify: true},
+		DisableKeepAlives: true,
 	}
 	transport := tr
 
@@ -59,6 +60,7 @@ func NewInsecure(registryUrl, username, password string) (*Registry, error) {
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true,
 		},
+		DisableKeepAlives:true,
 	}
 
 	return newFromTransport(registryUrl, username, password, transport, Log)
