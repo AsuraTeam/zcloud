@@ -48,6 +48,12 @@ func (this *AppController) ContainerImage() {
 	searchSql := sql.SearchSql(app.CloudContainer{}, app.SelectCloudContainer, searchMap)
 	sql.Raw(searchSql).QueryRow(&data)
 	this.Data["data"] = data
+	if len(strings.Split(data.Image, "/")) < 2 {
+		SetAppDataJson(this, "容器没有镜像,不能提交")
+		return
+	}
+	this.Data["Group"] = strings.Split(data.Image, "/")[1]
+	this.Data["ItemName"] = strings.Split(strings.Join(strings.Split(data.Image, "/")[2:], "/"), ":")[0]
 	this.Data["baseImage"] = registry2.GetBaseImageSelect()
 	this.TplName = "application/container/image.html"
 }
@@ -74,7 +80,7 @@ func (this *AppController) ContainerCommit() {
 		param.ContainerId = data.ContainerName
 		param.ServerAddress = data.ServerAddress
 		param.Version = this.GetString("Version")
-		param.ItemName = this.GetString("ItemName")
+		param.ItemName = strings.Split(data.Image, "/")[1] + "/" + this.GetString("ItemName")
 		logs.Info("仓库数据信息", util.ObjToString(sync), util.ObjToString(registryData), util.ObjToString(param))
 		k8s.ImageCommit(data.ClusterName, param, this.GetString("BaseImage"))
 	}
