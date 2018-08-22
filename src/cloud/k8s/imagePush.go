@@ -78,7 +78,8 @@ cat > /root/.docker/config.json <<EOF
 }
 EOF
 chmod 700 /root/.docker -R
-docker commit CONTAINERID REGISTRY-1/ITEMNAME:VERSION
+id=$(docker ps |grep CONTAINERID |grep -v _POD | awk '{print $1}')
+docker commit  $id REGISTRY-1/ITEMNAME:VERSION
 echo
 docker push REGISTRY-1/ITEMNAME:VERSION 2>&1
 if [ $? -gt 0 ] ; then

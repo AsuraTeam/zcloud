@@ -12,6 +12,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"cloud/models/registry"
 	registry2 "cloud/controllers/image"
+	"github.com/astaxie/beego/logs"
 )
 
 // 容器详情页面
@@ -66,13 +67,15 @@ func (this *AppController) ContainerCommit() {
 	sync.ImageName = data.Image
 	name := strings.Split(sync.ImageName, "/")
 	if len(name) > 2 {
-		registryData := registry2.GetRegistryServerCluster(name[2], data.ClusterName)
+		registryData := registry2.GetRegistryServerCluster(strings.Split(name[0], ":")[0], data.ClusterName)
 		sync.Registry = registryData.Name
+
 		param := getImageCommitParam(sync, getUser(this))
 		param.ContainerId = data.ContainerName
 		param.ServerAddress = data.ServerAddress
 		param.Version = this.GetString("Version")
 		param.ItemName = this.GetString("ItemName")
+		logs.Info("仓库数据信息", util.ObjToString(sync), util.ObjToString(registryData), util.ObjToString(param))
 		k8s.ImageCommit(data.ClusterName, param, this.GetString("BaseImage"))
 	}
 	SetAppDataJson(this, util.ApiResponse(true, "保存成功,正在处理中"))
