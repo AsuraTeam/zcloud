@@ -712,6 +712,12 @@ func init() {
 					// 用户添加页面,
 					beego.NSRouter("/add", &users.UserController{}, "get:UserAdd"),
 				),
+				beego.NSNamespace("/perm",
+					// 权限入口
+					beego.NSRouter("/list", &users.UserPermController{}, "get:PermList"),
+					// 权限添加
+					beego.NSRouter("/add", &users.UserPermController{}, "get:PermAdd"),
+				),
 			),
 			beego.NSNamespace("/ent",
 				// 环境入口列表
@@ -744,6 +750,7 @@ func init() {
 			),
 		)
 
+
 	// 系统设置
 	systemApi :=
 		beego.NewNamespace("/api",
@@ -774,6 +781,14 @@ func init() {
 				beego.NSRouter("/name", &users.UserController{}, "get:UserDataName"),
 				// 获取用户数据,
 				beego.NSRouter("", &users.UserController{}, "get:UserDatas"),
+				beego.NSNamespace("/perm",
+					// 权限保存,
+					beego.NSRouter("", &users.UserPermController{}, "post:PermSave"),
+					// 删除权限,
+					beego.NSRouter("/:id:int", &users.UserPermController{}, "delete:PermDelete"),
+					// 获取权限数据,
+					beego.NSRouter("", &users.UserPermController{}, "get:PermData"),
+				),
 			),
 			beego.NSNamespace("/operlog",
 				beego.NSRouter("", &operlog.LogController{}, "*:OperlogDatas"),

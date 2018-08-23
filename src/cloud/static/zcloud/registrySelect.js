@@ -19,6 +19,24 @@ function selectImageGroup(registryName, target) {
     $("#" + id).selectpicker('refresh');
 }
 
+/**
+ * 2018-08-23 09:41
+ * 获取环境名称
+ * @param change
+ */
+function setEntname() {
+    var url = "/api/ent/name";
+    var result = get({}, url);
+    var html = "{{.entname}}<option>--请选择--</option>";
+    for (var i = 0; i < result.length; i++) {
+        var t = result[i]["Entname"];
+        if (html.indexOf("'" + t) == -1 ) {
+            html += "<option value='" + t + "'>" + t + "</option>";
+        }
+    }
+    $("#select-entname-id").html(html);
+    $('.selectpicker').selectpicker('refresh');
+}
 
 /**
  * 2018-01-27 18:18

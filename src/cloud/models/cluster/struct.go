@@ -54,4 +54,5 @@ type CloudClusterDetail struct {
     Services int
     Couters int
     Health string
+    OsVersion string
 }

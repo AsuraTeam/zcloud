@@ -20,6 +20,7 @@ func (registry *Registry) Manifest(repository, reference string) (*manifestV1.Si
 	}
 
 	req.Header.Set("Accept", manifestV1.MediaTypeManifest)
+	req.Header.Add("Connection", "close")
 	resp, err := registry.Client.Do(req)
 	if err != nil {
 		return nil, err
@@ -50,6 +51,7 @@ func (registry *Registry) ManifestV2(repository, reference string) (*manifestV2.
 	}
 
 	req.Header.Set("Accept", manifestV2.MediaTypeManifest)
+	req.Header.Add("Connection", "close")
 	resp, err := registry.Client.Do(req)
 	if err != nil {
 		return nil, err
@@ -79,6 +81,7 @@ func (registry *Registry) ManifestDigest(repository, reference string) (digest.D
 	registry.Logf("registry.manifest.head url=%s repository=%s reference=%s", url, repository, reference)
 
 	resp, err := registry.Client.Head(url)
+	resp.Header.Add("Connection", "close")
 	if resp != nil {
 		resp.Close = true
 		defer resp.Body.Close()
@@ -94,6 +97,7 @@ func (registry *Registry) DeleteManifest(repository string, digest digest.Digest
 	registry.Logf("registry.manifest.delete url=%s repository=%s reference=%s", url, repository, digest)
 
 	req, err := http.NewRequest("DELETE", url, nil)
+
 	if err != nil {
 		return err
 	}
@@ -119,11 +123,13 @@ func (registry *Registry) PutManifest(repository, reference string, signedManife
 
 	buffer := bytes.NewBuffer(body)
 	req, err := http.NewRequest("PUT", url, buffer)
+
 	if err != nil {
 		return err
 	}
 
 	req.Header.Set("Content-Type", manifestV1.MediaTypeManifest)
+	req.Header.Add("Connection", "close")
 	resp, err := registry.Client.Do(req)
 	if resp != nil {
 		resp.Close = true

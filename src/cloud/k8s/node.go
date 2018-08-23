@@ -138,8 +138,8 @@ func UpdateNodeLabels(clustername string, ip string, labelsData string) error {
 	return err
 }
 
-func GetNodeFromCluster(clientset kubernetes.Clientset) ClusterStatus {
-	nodes := GetNodes(clientset, "")
+func GetNodeFromCluster(clientSet kubernetes.Clientset) ClusterStatus {
+	nodes := GetNodes(clientSet, "")
 	clusterStatus := ClusterStatus{}
 	for _, item := range nodes {
 		if clusterStatus.MemSize == 0 && clusterStatus.CpuNum == 0 {
@@ -151,10 +151,12 @@ func GetNodeFromCluster(clientset kubernetes.Clientset) ClusterStatus {
 			clusterStatus.MemSize = clusterStatus.MemSize + item.Status.Capacity.Memory().Value()
 			clusterStatus.Nodes = clusterStatus.Nodes + 1
 		}
+		clusterStatus.OsVersion = item.Status.NodeInfo.OSImage
 	}
-	clusterStatus.PodNum = GetPodsNumber("", clientset)
-	clusterStatus.Services = GetServiceNumber(clientset, "")
+	clusterStatus.PodNum = GetPodsNumber("", clientSet)
+	clusterStatus.Services = GetServiceNumber(clientSet, "")
 	clusterStatus.MemSize = clusterStatus.MemSize / 1024 / 1024 / 1024
+
 	return clusterStatus
 }
 
@@ -190,6 +192,7 @@ func GetNodesFromIp(ip string, clientset kubernetes.Clientset, nodes []v1.Node) 
 			}
 			nodeStatus.ImageNum = len(item.Status.Images)
 			nodeStatus.K8sVersion = item.Status.NodeInfo.KubeletVersion
+			nodeStatus.OsVersion = item.Status.NodeInfo.OSImage
 			lables := make([]string, 0)
 			for _, v := range item.Labels {
 				if ! strings.Contains(v, "kubernetes") {

@@ -1644,6 +1644,25 @@ CREATE TABLE `cloud_template_deploy_history` (
   `batch_name` varchar(50) DEFAULT NULL COMMENT 'batch name',
   `description` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`batch_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `cloud_user_perm` (
+  `perm_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_name` varchar(100) DEFAULT NULL,
+  `group_name` varchar(100) DEFAULT NULL,
+  `parent_user` varchar(100) DEFAULT NULL,
+  `sub_user` varchar(100) DEFAULT NULL,
+  `resource_type` varchar(100) DEFAULT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `create_user` varchar(32) DEFAULT NULL,
+  `create_time` varchar(32) DEFAULT NULL,
+  `last_modify_user` varchar(32) DEFAULT NULL,
+  `last_modify_time` varchar(32) DEFAULT NULL,
+  `cluster_name` varchar(100) DEFAULT NULL,
+  `resource_name` varchar(100) DEFAULT NULL,
+  `ent` varchar(100) DEFAULT NULL,
+  `description` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`perm_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8
 
 -- Dump completed on 2018-03-09 12:30:13

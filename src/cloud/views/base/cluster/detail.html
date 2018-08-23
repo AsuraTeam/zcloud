@@ -220,12 +220,13 @@
                                         <th>主机IP</th>
                                         <th>主机标签</th>
                                         <th>状态</th>
-                                        <th>创建时间</th>
                                         <th>Pod</th>
                                         <th>Cpu</th>
                                         <th>内存大小</th>
                                         <th>Images</th>
+                                        <th>版本</th>
                                         <th>主机类型</th>
+                                        <th>创建时间</th>
                                         <th>操作</th>
                                     </tr>
                                     </thead>
@@ -437,7 +438,7 @@
                     return "<span title='" + full["ErrorMsg"] + "'>" + r + "</span>"
                 }
                 },
-                {"data": "CreateTime"},
+
                 {"data": "PodNum"},
                 {"data": "CpuNum"},
                 {
@@ -452,6 +453,11 @@
                 }
                 },
                 {
+                    "data": "K8sVersion", "mRender": function (data, type, full) {
+                        return data + "<br>" + full["OsVersion"];
+                    }
+                },
+                {
                     "data": "HostType", "mRender": function (data) {
                         if (data == "master"){
                             return "master";
@@ -460,6 +466,7 @@
                         }
                     }
                 },
+                {"data": "CreateTime"},
                 {
                     "data": "HostId", "mRender": function (data, type, full) {
                     var html = '<button type="button"  title="添加标签" onClick="addHostLabel(\'' + data + '\',1)" class="delete-template btn btn-xs rb-btn-oper"><i class="fa  fa-tasks"></i></button>&nbsp;';

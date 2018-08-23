@@ -48,7 +48,7 @@ func (this *EntController) EntAdd() {
 // router /api/ent [get]
 func (this *EntController) EntData() {
 	// 环境数据
-	data := []ent.CloudEnt{}
+	data := make([]ent.CloudEnt, 0)
 	q := sql.SearchSql(ent.CloudEnt{}, ent.SelectCloudEnt, sql.SearchMap{})
 	sql.Raw(q).QueryRows(&data)
 	setEntJson(this, data)
@@ -103,7 +103,7 @@ func GetEntnameSelect() string {
 // 获取环境信息
 func getEntdata() []ent.CloudEnt {
 	// 环境数据
-	data := []ent.CloudEnt{}
+	data := make([]ent.CloudEnt, 0)
 	q := sql.SearchSql(ent.CloudEnt{}, ent.SelectCloudEnt, sql.SearchMap{})
 	sql.Raw(q).QueryRows(&data)
 	return data
@@ -119,7 +119,7 @@ func (this *EntController) EntDataName() {
 // 环境数据
 // @router /api/ent [get]
 func (this *EntController) EntDatas() {
-	data := []ent.CloudEnt{}
+	data := make([]ent.CloudEnt, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	key := this.GetString("search")

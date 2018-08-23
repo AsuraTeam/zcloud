@@ -1,0 +1,195 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 60%;">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">添加修改权限</span>
+                </div>
+                <form class="cluster-form">
+                <div class="panel-body font-12 ">
+                    <div class="row top10" title="">
+                        <div class="col-md-12 top10">
+                            <div class="form-group">
+                                <label for="select-entname-id"
+                                       class="col-md-3 fw100 control-label">权限类型<span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <select class="form-control" name="ResourceType"
+                                            onchange="loadReourceData($(this).val())"
+                                            data-live-search="true" data-style="btn-default"
+                                            id="select-resouce-type-id">
+                                        <option>--请选择--</option>
+                                        <option value="应用">应用</option>
+                                        <option value="服务">服务</option>
+                                        <option value="应用模板">应用模板</option>
+                                        <option value="配置管理">配置管理</option>
+                                        <option value="镜像仓库组">镜像仓库组</option>
+                                        <option value="构建项目">构建项目</option>
+                                        <option value="服务发布">服务发布</option>
+                                        <option value="流水线">流水线</option>
+                                        <option value="批量部署">批量部署</option>
+                                        <option value="DockerFile">DockerFile</option>
+                                        <option value="负载均衡">负载均衡</option>
+                                        <option value="证书">证书</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row top10" title="">
+                        <div class="col-md-12 top10">
+                            <div class="form-group">
+                                <label for="select-entname-id"
+                                       class="col-md-3 fw100 control-label">环境选择<span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <select class="selectpicker" name="Ent"
+                                            onchange="getEntClusterData($(this).val())"
+                                            data-live-search="true" data-style="btn-default"
+                                            id="select-entname-id">
+                                        <option>请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top15" title="">
+                        <div class="col-md-12 top10">
+                            <div class="form-group">
+                                <label for="select-cluster-id"
+                                       class="col-md-3 fw100 control-label">集群名称<span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <select class="selectpicker" name="Cluster" onchange="setServiceName($(this).val())"
+                                            data-live-search="true" data-style="btn-default"
+                                            id="select-cluster-id">
+                                        {{.cluster}}
+                                        <option>请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                    <div class="col-md-12">
+                        <div class="col-md-12">
+                            <label class="col-sm-3 fw100 control-label" style="margin-left: -20px;">资源选择<span
+                                    class="text-danger">*</span></label>
+                            <label class="col-sm-4"><input placeholder="搜索服务"
+                                                           onkeyup="searchUser($(this).val(),'undo_contact_group_redo')"
+                                                           class="fa-border form-control"
+                                                           style="margin-top:-5px;margin-left:-40%;"></label>
+                            <label class="col-sm-3 fw100 control-label">已选择资源</label>
+                        </div>
+                        <div class="col-md-12" style="margin-top: 5px;"></div>
+                        <div class="col-xs-5">
+                            <select name="from" id="undo_contact_group_redo" class="form-control" size="10"
+                                    multiple="multiple">
+                            </select>
+                        </div>
+
+                        <div class="col-xs-2">
+                            <div style="margin-top: 45px;">&nbsp;</div>
+                            <button type="button" id="undo_contact_group_redo_rightSelected"
+                                    class="btn btn-primary btn-block"><i
+                                    class="glyphicon glyphicon-chevron-right"></i></button
+                            >
+                            <button type="button" id="undo_contact_group_redo_leftSelected"
+                                    class="btn btn-warning btn-block"><i
+                                    class="glyphicon glyphicon-chevron-left"></i></button>
+                        </div>
+
+                        <div class="col-xs-5">
+                            <select name="to" id="undo_contact_group_redo_to" class="form-control" size="10"
+                                    multiple="multiple"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+
+                    <div class="row top10">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-2" class="col-md-3 fw100 control-label">权限描述</label>
+                                <div class="col-md-9">
+                                    <input type="text" value="{{.data.Description}}"  name="Description" class="form-control" id="field-2" placeholder="权限描述信息">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <div class="row top20 m-l-20">
+                        <div class="col-md-11 pre m-l-15">
+                            <br>
+                            权限帮助<br>
+                            <br>
+                            1、权限具有继承授权和继承取消的功能<br>
+                            2、不同的权限可以添加多条记录<br>
+                            <br>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                    <div class="panel-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                            class="fa fa-times"></i>&nbsp;&nbsp;取消
+                    </button>
+                    <button type="button" onclick="savePerm('{{.data.PermId}}')"  class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
+                    </button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/js/multiselect.min.js"></script>
+<script src="/static/zcloud/registrySelect.js"></script>
+<script>
+    $("#select-entname-id").html("{{.entname}}");
+    {{/*$("#select-cluster-id").html("{{.cluster}}");*/}}
+    $('.selectpicker').selectpicker({
+        //初始化
+        size: 10
+    });
+
+
+    setEntname();
+
+    /**
+     * 2018-08-23 09:58
+     *  @param tp
+     *  加载权限资源
+     * */
+    function loadReourceData(tp) {
+
+    }
+
+    /**
+     * 2018-08-15 16:58
+     * 获取服务名称
+     * @param change
+     */
+    function setServiceName(cluster) {
+        var url = "/api/service/name";
+        var result = get({ClusterName:cluster}, url);
+        var html = "";
+        for (var i = 0; i < result.length; i++) {
+            var t = result[i]["AppName"] +";"+ result[i]["ResourceName"]+";"+ result[i]["ServiceName"];
+            if (html.indexOf("'" + t) == -1 ) {
+                html += "<option value='" + t + "'>" + t + "</option>";
+            }
+        }
+        $("#undo_contact_group_redo").html(html);
+    }
+    setServiceName();
+
+    jQuery(document).ready(function ($) {
+        $('#undo_contact_group_redo').multiselect({
+            keepRenderingSort: true,
+        });
+    });
+
+</script>

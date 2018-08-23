@@ -642,6 +642,7 @@ type NodeStatus struct {
 	K8sVersion string
 	ErrorMsg   string
 	MemSize    int64
+	OsVersion string
 }
 
 type ClusterStatus struct {
@@ -652,6 +653,7 @@ type ClusterStatus struct {
 	ClusterName  string
 	Nodes        int64
 	Services     int
+	OsVersion string
 }
 
 type ClusterResources struct {

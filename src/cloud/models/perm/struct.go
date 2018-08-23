@@ -63,3 +63,38 @@ type CloudApiResource struct {
     //最近修改时间
     LastModifyTime string
 }
+
+
+//2018-08-23 08:38:08.9273685 +0800 CST
+type CloudUserPerm struct {
+    //
+    ResourceType string
+    //
+    LastModifyTime string
+    //
+    LastModifyUser string
+    //
+    Ent string
+    //
+    Description string
+    //
+    ParentUser string
+    //
+    Name string
+    //
+    UserName string
+    //
+    ResourceName string
+    //
+    SubUser string
+    //
+    CreateUser string
+    //
+    CreateTime string
+    //
+    ClusterName string
+    //
+    PermId int64
+    //
+    GroupName string
+}

@@ -52,6 +52,7 @@ func CacheClusterDetailData(name string) {
 		detail.ClusterMem = clusterStatus.MemSize
 		detail.ClusterNode = clusterStatus.Nodes
 		detail.ClusterPods = clusterStatus.PodNum
+		detail.OsVersion = clusterStatus.OsVersion
 		if detail.ClusterCpu > 0 && detail.ClusterMem > 0 {
 			used := k8s.GetClusterUsed(c)
 			detail.UsedMem = used.UsedMem
