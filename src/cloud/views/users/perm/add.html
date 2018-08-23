@@ -9,35 +9,7 @@
                 </div>
                 <form class="cluster-form">
                 <div class="panel-body font-12 ">
-                    <div class="row top10" title="">
-                        <div class="col-md-12 top10">
-                            <div class="form-group">
-                                <label for="select-entname-id"
-                                       class="col-md-3 fw100 control-label">权限类型<span
-                                        class="text-danger">*</span></label>
-                                <div class="col-md-9">
-                                    <select class="form-control" name="ResourceType"
-                                            onchange="loadReourceData($(this).val())"
-                                            data-live-search="true" data-style="btn-default"
-                                            id="select-resouce-type-id">
-                                        <option>--请选择--</option>
-                                        <option value="应用">应用</option>
-                                        <option value="服务">服务</option>
-                                        <option value="应用模板">应用模板</option>
-                                        <option value="配置管理">配置管理</option>
-                                        <option value="镜像仓库组">镜像仓库组</option>
-                                        <option value="构建项目">构建项目</option>
-                                        <option value="服务发布">服务发布</option>
-                                        <option value="流水线">流水线</option>
-                                        <option value="批量部署">批量部署</option>
-                                        <option value="DockerFile">DockerFile</option>
-                                        <option value="负载均衡">负载均衡</option>
-                                        <option value="证书">证书</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
 
 
                     <div class="row top10" title="">
@@ -69,6 +41,34 @@
                                             id="select-cluster-id">
                                         {{.cluster}}
                                         <option>请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top10" title="">
+                        <div class="col-md-12 top10">
+                            <div class="form-group">
+                                <label for="select-entname-id"
+                                       class="col-md-3 fw100 control-label">权限类型<span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <select class="form-control" name="ResourceType"
+                                            onchange="loadReourceData($(this).val())"
+                                            data-live-search="true" data-style="btn-default"
+                                            id="select-resouce-type-id">
+                                        <option>--请选择--</option>
+                                        <option value="应用">应用</option>
+                                        <option value="服务">服务</option>
+                                        <option value="应用模板">应用模板</option>
+                                        <option value="配置管理">配置管理</option>
+                                        <option value="镜像仓库组">镜像仓库组</option>
+                                        <option value="构建项目">构建项目</option>
+                                        <option value="服务发布">服务发布</option>
+                                        <option value="流水线">流水线</option>
+                                        <option value="批量部署">批量部署</option>
+                                        <option value="DockerFile">DockerFile</option>
+                                        <option value="负载均衡">负载均衡</option>
                                     </select>
                                 </div>
                             </div>
@@ -164,7 +164,16 @@
      *  加载权限资源
      * */
     function loadReourceData(tp) {
-
+        var url = "/api/resource/name";
+        var data = get_form_data();
+        if(!data["Cluster"]){
+            data["Cluster"] = ""
+        }
+        if(!data["Ent"]){
+            data["Ent"] = ""
+        }
+        var result = get({ClusterName:data["Cluster"], EntName: data["Ent"], Type: data["ResourceType"]}, url);
+        $("#undo_contact_group_redo").html(result);
     }
 
     /**

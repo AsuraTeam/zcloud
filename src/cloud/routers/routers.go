@@ -28,6 +28,7 @@ import (
 	"cloud/controllers/ent"
 	"cloud/controllers/perm"
 	"cloud/controllers/monitor"
+	"cloud/controllers/resource"
 )
 
 func init() {
@@ -41,6 +42,7 @@ func init() {
 	beego.Router("/api/user/login", &index.IndexController{}, "post:Login")
 	beego.Router("/api/user/logout", &index.IndexController{}, "*:OutLogin")
 	beego.Router("/webtty/:id:int", &index.IndexController{}, "*:WebTty")
+	beego.Router("/api/resource/name", &resource.ControllerResource{}, "get:GetResourceSelect")
 
 	applicationNs :=
 		beego.NewNamespace("/application",
