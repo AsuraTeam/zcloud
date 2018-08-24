@@ -5,6 +5,7 @@ import (
 	"cloud/sql"
 	"strings"
 	"cloud/util"
+	"github.com/astaxie/beego/logs"
 )
 
 
@@ -54,7 +55,8 @@ func GetResourceName(tp string, user string) util.Lock {
 // 2018-08-24 16:08
 // 检查用户拥有权限的资源是存存在
 func CheckPerm(name string,cluster string, ent string, data util.Lock) bool {
-	if _, ok := data.Get(name + cluster + ent) ; ok {
+	v := name + cluster + ent
+	if _, ok := data.Get(v) ; ok {
 		return true
 	}
 	return false

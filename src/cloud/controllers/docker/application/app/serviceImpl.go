@@ -152,8 +152,7 @@ func GetServiceRunData(data []app.CloudAppService, user string) []k8s.CloudApp {
 	result := make([]k8s.CloudApp, 0)
 	for _, d := range data {
 
-		if ! userperm.CheckPerm(d.AppName+";"+d.ResourceName+";"+d.ServiceName, d.ClusterName, d.ServiceName, perm) && len(user) > 0 {
-			logs.Error("权限失败", util.ObjToString(perm), user, d.AppName+";"+d.ResourceName+";"+d.ServiceName)
+		if ! userperm.CheckPerm(d.AppName+";"+d.ResourceName+";"+d.ServiceName, d.ClusterName, d.Entname, perm) && len(user) > 0 {
 			continue
 		}
 
