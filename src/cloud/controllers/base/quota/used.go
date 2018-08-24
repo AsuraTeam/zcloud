@@ -89,7 +89,7 @@ func setQuotaUserUsed(username string, used quota.QuotaUsed) quota.QuotaUsed {
 // 2018-02-11 16:45
 // 获取组的配额使用情况
 func setQuotaGroupUsed(groupname string, used quota.QuotaUsed) quota.QuotaUsed {
-	usersData := getGroupUsers([]string{groupname})
+	usersData := GetGroupUsers([]string{groupname})
 	used = getQuotaUsed(usersData, used)
 	return used
 }
@@ -99,13 +99,13 @@ func setQuotaGroupUsed(groupname string, used quota.QuotaUsed) quota.QuotaUsed {
 // 没有授权的用户可以查询
 func getUsers(username string) string {
 	depts := users.GetUserDept(username)
-	usersData := getGroupUsers(depts)
+	usersData := GetGroupUsers(depts)
 	return usersData
 }
 
 // 2018-02-11 16:55
 // 获取多个组里的所有用户
-func getGroupUsers(depts []string) string {
+func GetGroupUsers(depts []string) string {
 	userDepts := make([]string, 0)
 	for _,v := range depts {
 		userDepts = append(userDepts, `"` + v +`"`)
@@ -117,7 +117,7 @@ func getGroupUsers(depts []string) string {
 // 2018-02-11 15:30
 // 获取服务使用数量
 func getService(userData string, quotaName string) int64 {
-	services := []app.CloudAppService{}
+	services := make([]app.CloudAppService, 0)
 	q := replace(
 		userData,
 		app.SelectUserServices)
@@ -132,7 +132,7 @@ func getService(userData string, quotaName string) int64 {
 // 2018-02-11 15:35
 // 获取用户服务使用量
 func getPods(userData string, quotaName string) int64 {
-	pods := []app.CloudContainer{}
+	pods := make([]app.CloudContainer, 0)
 	q := replace(
 		userData,
 		app.SelectUserContainer)
@@ -147,7 +147,7 @@ func getPods(userData string, quotaName string) int64 {
 // 2018-02-11 15:39
 // 获取用户应用数量
 func getApps(userData string, quotaName string) int64 {
-	apps := []app.CloudApp{}
+	apps := make([]app.CloudApp, 0)
 	q := replace(
 		userData,
 		app.SelectUserApp)
@@ -163,7 +163,7 @@ func getApps(userData string, quotaName string) int64 {
 // 2018-02-11 16:00
 // 获取cpu或内存
 func getCpuMemory(q string, key string) int64 {
-	maps := []orm.Params{}
+	maps := make([]orm.Params, 0)
 
 	sql.Raw(q).Values(&maps)
 	if len(maps) > 0 {
@@ -206,7 +206,7 @@ func getCpu(userData string, quotaName string) int64 {
 // 2018-02-11 15:46
 // 获取用户负载均衡数量
 func getLb(userData string) int64 {
-	lbs := []lb.CloudLb{}
+	lbs := make([]lb.CloudLb, 0)
 	sql.Raw(
 		replace(
 			userData,
@@ -217,7 +217,7 @@ func getLb(userData string) int64 {
 // 2018-02-12 09:35
 // 获取用户负载均衡数量
 func getDockerFile(userData string) int64 {
-	dockerFile := []ci.CloudCiDockerfile{}
+	dockerFile := make([]ci.CloudCiDockerfile, 0)
 	sql.Raw(
 		replace(
 			userData,
@@ -228,7 +228,7 @@ func getDockerFile(userData string) int64 {
 // 2018-02-12 08:05
 // 获取用户负载均衡数量
 func getRegistryGroup(userData string) int64 {
-	groups := []registry.CloudRegistryGroup{}
+	groups := make([]registry.CloudRegistryGroup, 0)
 	sql.Raw(
 		replace(
 			userData,
@@ -239,7 +239,7 @@ func getRegistryGroup(userData string) int64 {
 // 获取用户构建任务数量
 // 获取job数量
 func getJob(userData string) int64 {
-	jobs := []ci.CloudBuildJob{}
+	jobs := make([]ci.CloudBuildJob, 0)
 	sql.Raw(
 		replace(
 			userData,
@@ -250,7 +250,7 @@ func getJob(userData string) int64 {
 // 2018-02-11 15:41
 // 获取用户流水线数量
 func getPipeline(userData string) int64 {
-	pipelines := []pipeline.CloudPipeline{}
+	pipelines := make([]pipeline.CloudPipeline, 0)
 	sql.Raw(
 		replace(
 			userData,

@@ -409,7 +409,7 @@ func startPipeline(user string, pipeData pipeline.CloudPipeline) {
 			break
 		}
 		go app.GoServerThread(serviceDatas)
-		data := app.GetServiceRunData(serviceDatas)
+		data := app.GetServiceRunData(serviceDatas, "")
 		for _, v := range data {
 			logs.Info("更新服务中",serviceData.ImageTag, v.Image, v.Status, v.AvailableReplicas, serviceData.Replicas,v.Image == serviceData.ImageTag , v.Status == "True" , v.AvailableReplicas == int32(serviceData.Replicas))
 			if v.Image == serviceData.ImageTag && v.Status == "True" && v.AvailableReplicas == int32(serviceData.Replicas) {

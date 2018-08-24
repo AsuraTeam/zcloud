@@ -254,7 +254,7 @@ func (this *ServiceController) ServiceData() {
 		&data,
 		app.CloudAppService{})
 
-	result := GetServiceRunData(data)
+	result := GetServiceRunData(data, user)
 	setServiceJson(this,
 		util.GetResponseResult(err, this.GetString("draw"),
 			result,

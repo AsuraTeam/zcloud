@@ -14,6 +14,7 @@ import (
 	"time"
 	"cloud/models/ci"
 	"cloud/cache"
+	"cloud/userperm"
 )
 
 // 2018-02-13 16:36
@@ -145,10 +146,17 @@ func CronServiceCache() {
 
 // 2018-02-04
 // 从redis里获取应用服务运行状态数据
-func GetServiceRunData(data []app.CloudAppService) []k8s.CloudApp {
+func GetServiceRunData(data []app.CloudAppService, user string) []k8s.CloudApp {
 	//result := make([]interface{}, 0)
+	perm := userperm.GetResourceName("服务", user)
 	result := make([]k8s.CloudApp, 0)
 	for _, d := range data {
+
+		if ! userperm.CheckPerm(d.AppName+";"+d.ResourceName+";"+d.ServiceName, d.ClusterName, d.ServiceName, perm) && len(user) > 0 {
+			logs.Error("权限失败", util.ObjToString(perm), user, d.AppName+";"+d.ResourceName+";"+d.ServiceName)
+			continue
+		}
+
 		namespace := util.Namespace(d.AppName, d.ResourceName) +
 			d.ServiceName
 		if d.ServiceVersion != "" {

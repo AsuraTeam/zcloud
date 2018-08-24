@@ -97,7 +97,7 @@ func GetGroupsSelect() string {
 // 获取组的名称和id数据
 // 2018-01-22 11:02
 func getGroupsData()  []groups.CloudUserGroupsName {
-	data := []groups.CloudUserGroupsName{}
+	data := make([]groups.CloudUserGroupsName, 0)
 	searchSql := sql.SearchSql(
 		groups.CloudUserGroups{},
 		groups.SelectCloudUserGroups,
@@ -123,7 +123,7 @@ func (this *GroupsController) GetGroupsMap() {
 // 部门团队数据
 // @router /api/groups [get]
 func (this *GroupsController) GroupsData() {
-	data := []groups.CloudUserGroups{}
+	data := make([]groups.CloudUserGroups, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	key := this.GetString("search")
@@ -185,7 +185,7 @@ func setGroupsJson(this *GroupsController, data interface{})  {
 // 获取用户部门
 func GetUserDept(username string) []string {
 	username = sql.Replace(username)
-	data := []groups.CloudUserGroups{}
+	data := make([]groups.CloudUserGroups, 0)
 	q := groups.SelectCloudUserDept
 	q = strings.Replace(q, "?", username, -1)
 	sql.Raw(q).QueryRows(&data)
@@ -200,7 +200,7 @@ func GetUserDept(username string) []string {
 // 获取组的用户
 func GetGroupUsers(groupname []string) []string {
 	result := make([]string, 0)
-	data := []groups.CloudUserGroups{}
+	data := make([]groups.CloudUserGroups, 0)
 	q := strings.Replace(groups.SelectGroupUsers, "?", strings.Join(groupname, ","), -1)
 	sql.Raw(q).QueryRows(&data)
 	for _,v := range data{

@@ -48,8 +48,8 @@ function get(paramter, url) {
 }
 //获取from数据
 function get_form_data() {
-    var result = {}
-    var forch = ["input", "textarea", "select"]
+    var result = {};
+    var forch = ["input", "textarea", "select"];
     for (i = 0; i < forch.length; i++) {
         $.each($("form " + forch[i]),
             function (name, object) {
@@ -62,7 +62,7 @@ function get_form_data() {
 
 function loginOut() {
     var url = "/api/user/logout";
-    post({}, url)
+    post({}, url);
     setTimeout(function () {
         window.location.href = "/login"
     }, 2000)
@@ -83,8 +83,8 @@ function checkChange(keys, type) {
  * @param obj
  */
 function checkYaml(data) {
-    var url = "/api/template/yaml/check"
-    var result = post({yaml: data["Yaml"]}, url)
+    var url = "/api/template/yaml/check";
+    var result = post({yaml: data["Yaml"]}, url);
     if (result == "true") {
         return true
     }
@@ -100,7 +100,7 @@ function checkDockerInstallDir(str) {
     if (str.length < 3) {
         return false
     }
-    var regEx = /^([\/][\w-]+)*$/i
+    var regEx = /^([\/][\w-]+)*$/i;
     if (regEx.test(str)) {
         return true
     }
@@ -118,7 +118,7 @@ function checkImageTag(str) {
     if (str.length < 3) {
         return false
     }
-    var regEx =  /^[0-9a-zA-Z]*$/i
+    var regEx =  /^[0-9a-zA-Z]*$/i;
     if (regEx.test(str)) {
         return true
     }
@@ -199,7 +199,7 @@ function checkAppNameService(str) {
     var regEx = /^[a-zA-Z]\w{2,35}/;
     if (regEx.test(str)) {
         var url = "/api/service/name?AppName=" + str + "&ClusterName=" + cluster+"&ServiceName="+serviceName;
-        var data = get({}, url)
+        var data = get({}, url);
         if (data.length == 0) {
             return true;
         }
@@ -448,7 +448,7 @@ function getClusterName(alias) {
  * 2018-01-04
  */
 function loadClusterSelect(id,nil, select) {
-    var url = "/api/cluster/name"
+    var url = "/api/cluster/name";
     var html = ""
     if (nil){
         html += "<option>--请选择--</option>"
@@ -456,9 +456,9 @@ function loadClusterSelect(id,nil, select) {
     if(select){
         html += "<option value='"+select+"'>"+getClusterAlias(select)+"</option>";
     }
-    var result = get({}, url)
+    var result = get({}, url);
     //  先获取cookie选择好的
-    var cluster = getClusterName()
+    var cluster = getClusterName();
     for (var i = 0; i < result.length; i++) {
         if (!cluster) {
             cluster = setSelectCluster(result[i]["ClusterName"])
@@ -468,7 +468,7 @@ function loadClusterSelect(id,nil, select) {
     if (html.length < 5) {
         html = "<option>还没有集群哦</option>"
     }
-    $("#"+id).html(html)
+    $("#"+id).html(html);
     $("#cluster_data").val(JSON.stringify(result))
 }
 
@@ -753,7 +753,7 @@ function checkSignValue() {
 // 将选择好的用户设置好
 // 2018-01-20 13:53
 function setSelectUser(users, id) {
-    var html = ""
+    var html = "";
     var users = users.split(",");
     for (var i=0;i<users.length;i++){
         if (users[i]){
@@ -851,7 +851,7 @@ function setSelectGroups(groups,id) {
 // 2018-01-21 9:24
 function searchGroups(val, id) {
     var temp = "";
-    var data = $('#select_groups_id').val()
+    var data = $('#select_groups_id').val();
     if(data) {
         data = data.split("\n");
     }else{

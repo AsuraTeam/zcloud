@@ -128,7 +128,7 @@ func (this *ControllerQuota) QuotaSave() {
 // 配额数据
 // @router /base/quota [get]
 func (this *ControllerQuota) QuotaData() {
-	data := []quota.CloudQuota{}
+	data := make([]quota.CloudQuota, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	key := this.GetString("key")
@@ -150,7 +150,7 @@ func (this *ControllerQuota) QuotaData() {
 
 	num, err := sql.Raw(searchSql).QueryRows(&data)
 
-	result := []quota.CloudQuota{}
+	result := make([]quota.CloudQuota, 0)
 	for _, v := range data{
 		v.Status = "<span class='RunningNoTop'>未使用</span>"
 		if _, ok := usedData.Get(v.QuotaName) ; ok {
@@ -169,7 +169,7 @@ func (this *ControllerQuota) QuotaData() {
 
 // @router /api/quota/name [get]
 func (this *ControllerQuota) GetQuotaName() {
-	data := []quota.CloudQuotaName{}
+	data := make([]quota.CloudQuotaName, 0)
 
 	searchSql := sql.SearchSql(
 		quota.CloudQuota{},
@@ -183,7 +183,7 @@ func (this *ControllerQuota) GetQuotaName() {
 
 // 2018-02-11 18:30
 func getQuotaData(searchMap sql.SearchMap) []quota.CloudQuota {
-	template := []quota.CloudQuota{}
+	template := make([]quota.CloudQuota, 0)
 	q := sql.SearchSql(quota.CloudQuota{}, quota.SelectCloudQuota, searchMap)
 	sql.Raw(q).QueryRows(&template)
 	return template
@@ -372,7 +372,7 @@ func queryAppQuotaUsed(quotaName string) util.Lock {
 	}
 	qgroupby := strings.Replace(quota.SelectAppQuotaUsed, "?", qname, -1)
 
-	qdata := []quota.QuotaAppUsed{}
+	qdata := make([]quota.QuotaAppUsed, 0)
 	sql.Raw(qgroupby).QueryRows(&qdata)
 	mapData := util.Lock{}
 	for _, v := range qdata{
