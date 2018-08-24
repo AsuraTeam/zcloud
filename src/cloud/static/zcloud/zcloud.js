@@ -810,6 +810,7 @@ function setUserData(id) {
         id = "select_user_id";
     }
     $('#'+id).val(select + html);
+    $('#'+id).html(select + html);
 }
 
 // 修改状态使用
@@ -872,18 +873,22 @@ function searchGroups(val, id) {
  * 2018-01-21 9:21
  * 设置组数据
  */
-function setGroupsData(id) {
+function setGroupsData(id, key) {
+    if(!key){
+        key = "GroupsId";
+    }
     var url = "/api/groups/name";
     var result = eval(get({}, url));
     var html = "";
     var select = "";
     for (var i = 0; i < result.length; i++) {
-        html += "<option class='mulgroup' value=" + result[i]["GroupsId"] + ">" + result[i]["GroupsName"] + "</option>\n";
+        html += "<option class='mulgroup' value=" + result[i][key] + ">" + result[i]["GroupsName"] + "</option>\n";
     }
     if(!id){
         id = "select_groups_id";
     }
     $('#'+id).val(select + html);
+    $('#'+id).html(select + html);
 }
 
 

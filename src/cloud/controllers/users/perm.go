@@ -29,6 +29,7 @@ func (this *UserPermController) PermAdd() {
 		sql.Raw(sql.SearchSql(perm.CloudUserPerm{}, perm.SelectCloudUserPerm, searchMap)).QueryRow(&update)
 		entHtml = util.GetSelectOptionName(update.Ent)
 		this.Data["cluster"] = util.GetSelectOptionName(update.ClusterName)
+		this.Data["resourceType"] = util.GetSelectOptionName(update.ResourceType)
 	}
 	this.Data["entname"] = entHtml
 	this.Data["data"] = update
@@ -77,8 +78,8 @@ func (this *UserPermController) PermData() {
 		key = sql.Replace(key)
 		searchSql += " where 1=1 and (description like \"%" + key + "%\")"
 	}
-	num, _ := sql.OrderByPagingSql(searchSql, "user_id", *this.Ctx.Request, &data, perm.CloudUserPerm{})
-    r := util.ResponseMap(data, sql.Count("cloud_perm", int(num), key), this.GetString("draw"))
+	num, _ := sql.OrderByPagingSql(searchSql, "perm_id", *this.Ctx.Request, &data, perm.CloudUserPerm{})
+    r := util.ResponseMap(data, sql.Count("cloud_user_perm", int(num), key), this.GetString("draw"))
 	setPermJson(this, r)
 }
 

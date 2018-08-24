@@ -1456,7 +1456,7 @@ CREATE TABLE `cloud_registry_server` (
   PRIMARY KEY (`server_id`),
   UNIQUE KEY `uidx_cloud_registry_server_clsuter_name` (`cluster_name`,`name`),
   UNIQUE KEY `uidx_cloud_registry_server_server_domain` (`server_domain`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1464,8 +1464,6 @@ CREATE TABLE `cloud_registry_server` (
 --
 
 LOCK TABLES `cloud_registry_server` WRITE;
-/*!40000 ALTER TABLE `cloud_registry_server` DISABLE KEYS */;
-INSERT INTO `cloud_registry_server` VALUES (27,'reg2.asura.com:49000','reg2.asura.com','2018-03-02 11:34:11','admin','2018-01-31 09:36:25','zhaozq14','',0,'存储服务',0,'','','V1ZkU2RHRlhORDA9','glusterfs-cluster',NULL,'registry','https://registry.asura.com:5001/auth','admin','容器内&nbsp;<br>registry.registryv2--registryv2:49000<br>集群外&nbsp;<br><a target=\'_blank\' href=\'https://reg2.asura.com:49000/v2/\'>reg2.asura.com:49000</a>','生产环境',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `cloud_registry_server` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1494,7 +1492,7 @@ CREATE TABLE `cloud_storage` (
   `status` varchar(100) DEFAULT NULL COMMENT '使用状态',
   PRIMARY KEY (`storage_id`),
   UNIQUE KEY `uidx_cloud_storage_name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1530,7 +1528,7 @@ CREATE TABLE `cloud_storage_mount_info` (
   `resource_name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`mount_id`),
   KEY `idx_name_cluster` (`storage_name`,`cluster_name`,`service_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1539,7 +1537,6 @@ CREATE TABLE `cloud_storage_mount_info` (
 
 LOCK TABLES `cloud_storage_mount_info` WRITE;
 /*!40000 ALTER TABLE `cloud_storage_mount_info` DISABLE KEYS */;
-INSERT INTO `cloud_storage_mount_info` VALUES (3,'storage-1',NULL,'2018-01-31 15:36:27','zhaozq14','glusterfs-cluster','/mnt',NULL,NULL,NULL,'1','crm-nfs','dfsad'),(5,'storage-1',NULL,'2018-02-04 16:57:44','zhaozq14','glusterfs-cluster','/mnt',NULL,NULL,'共享型','1','crm-nfs','dfsad'),(7,'glusterfs-app',NULL,'2018-02-22 21:31:37','admin','glusterfs-cluster','/mnt',NULL,NULL,NULL,'1','glusterfs-crm-1g','admin-quota'),(9,'glusterfs-app',NULL,'2018-02-22 21:35:16','admin','glusterfs-cluster','/mnt',NULL,NULL,'Glusterfs','1','glusterfs-crm-1g','admin-quota'),(11,'glusterfs-app',NULL,'2018-02-22 21:42:24','admin','glusterfs-cluster','/mnt',NULL,NULL,'Glusterfs','1','glusterfs-crm-1g','admin-quota'),(13,'config-test',NULL,'2018-02-27 10:29:28','admin','glusterfs-cluster','/mnt',NULL,NULL,'Nfs','1','zmc-nfs','admin-quota');
 /*!40000 ALTER TABLE `cloud_storage_mount_info` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1574,7 +1571,6 @@ CREATE TABLE `cloud_storage_server` (
 
 LOCK TABLES `cloud_storage_server` WRITE;
 /*!40000 ALTER TABLE `cloud_storage_server` DISABLE KEYS */;
-INSERT INTO `cloud_storage_server` VALUES (5,NULL,'2018-02-08 09:58:00','zhaozq14','2018-02-08 09:58:00','zhaozq14','nfs存储提供者','glusterfs-cluster','Nfs',NULL,'生产环境',NULL),(9,NULL,'2018-02-22 14:29:44','admin','2018-02-22 14:29:44','admin','glusterfs服务提供','glusterfs-cluster','Glusterfs',NULL,'生产环境','/dev/vdb');
 /*!40000 ALTER TABLE `cloud_storage_server` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1663,7 +1659,7 @@ CREATE TABLE `cloud_user_perm` (
   `ent` varchar(100) DEFAULT NULL,
   `description` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`perm_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- Dump completed on 2018-03-09 12:30:13
 alter table cloud_cluster_hosts add unique index uidx_cloud_cluster_hosts_ip_api_port_host_type(host_ip,api_port,host_type);

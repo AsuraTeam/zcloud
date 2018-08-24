@@ -101,6 +101,23 @@ function savePerm(userId) {
     if(!checkValue(data,"ResourceType,Ent,ClusterName")){
         return
     }
+    var users = [];
+    $("#undo_contact_group_redo_to option").each(function () {
+        users.push($(this).val());
+    });
+    data["UserName"] = users.join(",");
+
+    var groups = [];
+    $("#undo_perm_group_redo_to option").each(function () {
+        groups.push($(this).val());
+    });
+    data["GroupName"] = groups.join(",");
+    var resource = [];
+    $("#undo_resource_redo_to option").each(function () {
+        resource.push($(this).val());
+    });
+    data["Name"] = resource.join(",");
+
     var url = "/api/users/perm";
     var result = post(data, url);
     result = JSON.stringify(result);

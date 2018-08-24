@@ -1,3 +1,8 @@
+<style>
+    select[multiple], select[size] {
+        height: 230px;
+    }
+</style>
 <div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
      style="display: none;">
     <div class="modal-dialog " style="width: 60%;">
@@ -19,10 +24,11 @@
                                        class="col-md-3 fw100 control-label">环境选择<span
                                         class="text-danger">*</span></label>
                                 <div class="col-md-9">
-                                    <select class="selectpicker" name="Ent"
+                                    <select class="form-control" name="Ent"
                                             onchange="getEntClusterData($(this).val())"
                                             data-live-search="true" data-style="btn-default"
                                             id="select-entname-id">
+                                    {{.entname}}
                                         <option>请选择</option>
                                     </select>
                                 </div>
@@ -36,7 +42,7 @@
                                        class="col-md-3 fw100 control-label">集群名称<span
                                         class="text-danger">*</span></label>
                                 <div class="col-md-9">
-                                    <select class="selectpicker" name="Cluster" onchange="setServiceName($(this).val())"
+                                    <select class="form-control" name="ClusterName"
                                             data-live-search="true" data-style="btn-default"
                                             id="select-cluster-id">
                                         {{.cluster}}
@@ -57,6 +63,7 @@
                                             onchange="loadReourceData($(this).val())"
                                             data-live-search="true" data-style="btn-default"
                                             id="select-resouce-type-id">
+                                        {{.resourceType}}
                                         <option>--请选择--</option>
                                         <option value="应用">应用</option>
                                         <option value="服务">服务</option>
@@ -87,7 +94,41 @@
                         </div>
                         <div class="col-md-12" style="margin-top: 5px;"></div>
                         <div class="col-xs-5">
-                            <select name="from" id="undo_contact_group_redo" class="form-control" size="10"
+                            <select name="from" id="undo_resource_redo" class="form-control" size="10"
+                                    multiple="multiple">
+                            </select>
+                        </div>
+
+                        <div class="col-xs-2">
+                            <div style="margin-top: 45px;">&nbsp;</div>
+                            <button type="button" id="undo_resource_redo_rightSelected"
+                                    class="btn btn-primary btn-block"><i
+                                    class="glyphicon glyphicon-chevron-right"></i></button
+                            >
+                            <button type="button" id="undo_resource_redo_leftSelected"
+                                    class="btn btn-warning btn-block"><i
+                                    class="glyphicon glyphicon-chevron-left"></i></button>
+                        </div>
+
+                        <div class="col-xs-5">
+                            <select name="to" id="undo_resource_redo_to" class="form-control" size="10"
+                                    multiple="multiple"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                    <div class="col-md-12 top10" title="ctrl + 点击单选, shift 加点击可多选">
+                        <div class="col-md-12">
+                            <label class="col-sm-3 fw100 control-label" style="margin-left: -20px;">用户选择<span
+                                    class="text-danger">*</span></label>
+                            <label class="col-sm-4"><input placeholder="搜索用户"
+                                                           onkeyup="searchUser($(this).val(),'undo_contact_group_redo')"
+                                                           class="fa-border form-control"
+                                                           style="margin-top:-5px;margin-left:-40%;"></label>
+                            <label class="col-sm-3 fw100 control-label">已选择用户</label>
+                        </div>
+                        <div class="col-md-12" style="margin-top: 5px;"></div>
+                        <div class="col-xs-5">
+                            <select name="from" id="undo_contact_group_redo" class="form-control" size="7"
                                     multiple="multiple">
                             </select>
                         </div>
@@ -104,12 +145,45 @@
                         </div>
 
                         <div class="col-xs-5">
-                            <select name="to" id="undo_contact_group_redo_to" class="form-control" size="10"
+                            <select name="to" id="undo_contact_group_redo_to" class="form-control" size="7"
                                     multiple="multiple"></select>
                         </div>
                     </div>
                     <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                    <div class="col-md-12" title="ctrl + 点击单选, shift 加点击可多选">
+                        <div class="col-md-12">
+                            <label class="col-sm-3 fw100 control-label" style="margin-left: -20px;">团队选择<span
+                                    class="text-danger">*</span></label>
+                            <label class="col-sm-4"><input placeholder="搜索团队"
+                                                           onkeyup="searchUser($(this).val(),'undo_perm_group_redo')"
+                                                           class="fa-border form-control"
+                                                           style="margin-top:-5px;margin-left:-40%;"></label>
+                            <label class="col-sm-3 fw100 control-label">已选择团队</label>
+                        </div>
+                        <div class="col-md-12" style="margin-top: 5px;"></div>
+                        <div class="col-xs-5">
+                            <select name="from" id="undo_perm_group_redo" class="form-control" size="7"
+                                    multiple="multiple">
+                            </select>
+                        </div>
 
+                        <div class="col-xs-2">
+                            <div style="margin-top: 45px;">&nbsp;</div>
+                            <button type="button" id="undo_perm_group_redo_rightSelected"
+                                    class="btn btn-primary btn-block"><i
+                                    class="glyphicon glyphicon-chevron-right"></i></button
+                            >
+                            <button type="button" id="undo_perm_group_redo_leftSelected"
+                                    class="btn btn-warning btn-block"><i
+                                    class="glyphicon glyphicon-chevron-left"></i></button>
+                        </div>
+
+                        <div class="col-xs-5">
+                            <select name="to" id="undo_perm_group_redo_to" class="form-control" size="7"
+                                    multiple="multiple"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
                     <div class="row top10">
                         <div class="col-md-12">
                             <div class="form-group">
@@ -128,6 +202,8 @@
                             <br>
                             1、权限具有继承授权和继承取消的功能<br>
                             2、不同的权限可以添加多条记录<br>
+                            3、可对单个部门团队或用户进行授权<br>
+                            4、用户和团队至少选择一个<br>
                             <br>
                         </div>
                     </div>
@@ -149,7 +225,6 @@
 <script src="/static/zcloud/registrySelect.js"></script>
 <script>
     $("#select-entname-id").html("{{.entname}}");
-    {{/*$("#select-cluster-id").html("{{.cluster}}");*/}}
     $('.selectpicker').selectpicker({
         //初始化
         size: 10
@@ -157,6 +232,14 @@
 
 
     setEntname();
+    var id = '{{.data.PermId}}';
+    if(id != "0"){
+        $("#select-entname-id").html("{{.entname}}");
+        $("#select-cluster-id").html("{{.cluster}}");
+        $("#select-resouce-type-id").html("{{.resourceType}}");
+        $('.selectpicker').selectpicker("refresh");
+        setResource("{{.data.Name}}");
+    }
 
     /**
      * 2018-08-23 09:58
@@ -166,39 +249,60 @@
     function loadReourceData(tp) {
         var url = "/api/resource/name";
         var data = get_form_data();
-        if(!data["Cluster"]){
-            data["Cluster"] = ""
+        if(!data["ClusterName"]){
+            data["ClusterName"] = ""
         }
         if(!data["Ent"]){
             data["Ent"] = ""
         }
-        var result = get({ClusterName:data["Cluster"], EntName: data["Ent"], Type: data["ResourceType"]}, url);
-        $("#undo_contact_group_redo").html(result);
+        var result = get({ClusterName:data["ClusterName"], EntName: data["Ent"], Type: data["ResourceType"]}, url);
+        $("#undo_resource_redo").html(result);
+        return result;
     }
 
-    /**
-     * 2018-08-15 16:58
-     * 获取服务名称
-     * @param change
-     */
-    function setServiceName(cluster) {
-        var url = "/api/service/name";
-        var result = get({ClusterName:cluster}, url);
-        var html = "";
-        for (var i = 0; i < result.length; i++) {
-            var t = result[i]["AppName"] +";"+ result[i]["ResourceName"]+";"+ result[i]["ServiceName"];
-            if (html.indexOf("'" + t) == -1 ) {
-                html += "<option value='" + t + "'>" + t + "</option>";
-            }
-        }
-        $("#undo_contact_group_redo").html(html);
-    }
-    setServiceName();
+    jQuery(document).ready(function ($) {
+        $('#undo_resource_redo').multiselect({
+            keepRenderingSort: true,
+        });
+    });
 
     jQuery(document).ready(function ($) {
         $('#undo_contact_group_redo').multiselect({
             keepRenderingSort: true,
         });
+        $('#undo_perm_group_redo').multiselect({
+            keepRenderingSort: true,
+        });
     });
 
+    /**
+     * 2018-08-24 08:20
+     * 渲染资源数据
+     */
+    function setResource(data){
+        var select = data.split(",");
+        var html = "";
+        for(var i =0; i< select.length;i++){
+            html += "<option class='mulgroup' value="+ select[i] + ">" + select[i] + "</option>\n";
+        }
+        $("#undo_resource_redo_to").html(html);
+        var data = loadReourceData('{{.data.ResourceType}}');
+        var unselect = data.split("\n");
+        var html2 = "";
+        for(var i =0; i< unselect.length;i++){
+            if (html.indexOf(">" + unselect[i] + "<") == -1 ){
+                html2 += unselect[i];
+            }
+        }
+        $("#undo_resource_redo").html(html2);
+    }
+
+
+    setUserData("undo_contact_group_redo");
+    searchUser("",'undo_contact_group_redo');
+    setSelectUser("{{.data.UserName}}");
+
+    setGroupsData("undo_perm_group_redo", "GroupsName");
+    searchGroups("",'undo_perm_group_redo');
+    setSelectGroups("{{.data.GroupName}}")
 </script>
