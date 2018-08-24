@@ -5,7 +5,6 @@ import (
 	"cloud/sql"
 	"strings"
 	"cloud/util"
-	"github.com/astaxie/beego/logs"
 )
 
 
