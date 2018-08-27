@@ -53,7 +53,8 @@ func (this *UserPermController) PermSave() {
 	if d.PermId > 0 {
 		searchMap := sql.SearchMap{}
 		searchMap.Put("PermId", d.PermId)
-		q = sql.UpdateSql(d, perm.UpdateCloudUserPerm, searchMap, "CreateTime,CreatePerm")
+		searchMap.Put("CreateUser", util.GetUser(this.GetSession("username")))
+		q = sql.UpdateSql(d, perm.UpdateCloudUserPerm, searchMap, "CreateTime,CreateUser")
 	}
 	_, err = sql.Raw(q).Exec()
 
@@ -68,13 +69,10 @@ func (this *UserPermController) PermSave() {
 func (this *UserPermController) PermData() {
 	data := make([]perm.CloudUserPerm, 0)
 	searchMap := sql.SearchMap{}
-	id := this.Ctx.Input.Param(":id")
+	searchMap.Put("CreateUser", util.GetUser(this.GetSession("username")))
 	key := this.GetString("search")
-	if id != "" {
-		searchMap.Put("PermId", id)
-	}
 	searchSql := sql.SearchSql(perm.CloudUserPerm{}, perm.SelectCloudUserPerm, searchMap)
-	if key != "" && id == "" {
+	if key != ""  {
 		key = sql.Replace(key)
 		searchSql += " where 1=1 and (description like \"%" + key + "%\")"
 	}
@@ -89,6 +87,7 @@ func (this *UserPermController) PermData() {
 // @router /api/users/perm/:id:int [delete]
 func (this *UserPermController) PermDelete() {
 	searchMap := sql.GetSearchMap("PermId", *this.Ctx)
+	searchMap.Put("CreateUser", util.GetUser(this.GetSession("username")))
 	permData := perm.CloudUserPerm{}
 	sql.Raw(sql.SearchSql(permData, perm.SelectCloudUserPerm, searchMap)).QueryRow(&permData)
 	r, err := sql.Raw(sql.DeleteSql(perm.DeleteCloudUserPerm, searchMap)).Exec()

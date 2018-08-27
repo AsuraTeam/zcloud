@@ -16,6 +16,7 @@ import (
 	"time"
 	"k8s.io/apimachinery/pkg/util/rand"
 	"net"
+	"cloud/userperm"
 )
 
 type RegistryGroupController struct {
@@ -92,7 +93,7 @@ func (this *RegistryGroupController) SaveRegistryGroup() {
 	searchMap.Put("GroupId", d.GroupId)
 	searchMap.Put("CreateUser", getUser(this))
 
-	masterData := []registry.CloudRegistryGroup{}
+	masterData := make([]registry.CloudRegistryGroup, 0)
 	q := sql.SearchSql(d, registry.SelectCloudRegistryGroup, searchMap)
 	sql.Raw(q).QueryRows(&masterData)
 	util.SetPublicData(d, getUser(this), &d)
@@ -133,7 +134,7 @@ func checkQuota(username string) (bool, string) {
 // 2018-01-29 16:41
 // @router /api/registry/group/images/log [get]
 func (this *RegistryGroupController) RegistryImagesLog() {
-	data := []registry.CloudImageLog{}
+	data := make([]registry.CloudImageLog, 0)
 
 	searchMap := sql.GetSearchMapV("RepositoriesGroup",
 		this.GetString("GroupName"),
@@ -153,6 +154,7 @@ func (this *RegistryGroupController) RegistryImagesLog() {
 		*this.Ctx.Request,
 		&data,
 		registry.CloudImageLog{})
+
 
 	r := util.ResponseMap(data,
 		sql.Count("cloud_image_log", int(num), key),
@@ -245,13 +247,25 @@ func (this *RegistryGroupController) RegistryGroup() {
 		searchSql += strings.Replace(registry.SelectCloudRegistryGroupWhere, "?", key, -1)
 	}
 
+	user := getUser(this)
+	perm := userperm.GetResourceName("镜像仓库组", user)
+
 	num, err := sql.OrderByPagingSql(searchSql,
 		"create_time",
 		*this.Ctx.Request,
 		&data,
 		registry.CloudRegistryGroup{})
 
-	r := util.ResponseMap(data, num, this.GetString("draw"))
+	result := make([]registry.CloudRegistryGroup, 0)
+	for _, v := range data{
+		if v.CreateUser !=  user && v.GroupType != "公开" {
+			if ! userperm.CheckPerm(v.GroupName, v.ClusterName, "", perm) {
+				continue
+			}
+		}
+		result = append(result, v)
+	}
+	r := util.ResponseMap(result, num, this.GetString("draw"))
 	if err != nil {
 		r = util.ResponseMapError(err.Error())
 	}

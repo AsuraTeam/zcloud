@@ -56,6 +56,7 @@ function loadPermData(key) {
             {"data": "Name"},
             {"data": "UserName"},
             {"data": "GroupName"},
+            {"data": "CreateUser"},
             {"data": "CreateTime"},
             {"data": "LastModifyTime"},
             {
