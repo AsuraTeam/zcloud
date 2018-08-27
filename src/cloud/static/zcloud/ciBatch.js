@@ -100,6 +100,7 @@ function deleteBatch(id) {
 
 
 /**
+ * 2018-08-27 11:23
  * 保存batch
  */
 function saveBatch(fileId) {
@@ -108,8 +109,12 @@ function saveBatch(fileId) {
     }
     var data = get_form_data();
     data["BatchId"] = parseInt(fileId);
-    if(!checkValue(data,"Name,Content")){
+    if(!checkValue(data,"Ent,Cluster,Version")){
         return
+    }
+    data["BuildType"] = "1";
+    if($("#selectStorageType1").is(":checked")){
+        data["BuildType"] = "0";
     }
     var url = "/api/ci/batch";
     var result = post(data, url);

@@ -325,4 +325,8 @@ type CloudCiBatchJob struct {
     Version string
     // 集群
     Cluster string
+    // 环境
+    Ent string
+    // 构建类型
+    BuildType string
 }

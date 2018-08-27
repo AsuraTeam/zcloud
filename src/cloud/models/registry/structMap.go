@@ -15,6 +15,7 @@ const InsertCloudRegistryPermissions = "insert into cloud_registry_permissions"
 const DeleteCloudRegistryPermissions = "delete from cloud_registry_permissions"
 const UpdateCloudRedisPermExclude  = "AuthServer,Name,CreateTime,CreateUser"
 const SelectCloudRegistryPermWhere  = ` and (service_name like "?" or user_name like "?" or project like "?")`
+const UpdateClusterName  = `update cloud_registry_permissions a , cloud_registry_server b set a.cluster_name=b.cluster_name where substring_index(service_name,":",1)=b.server_domain`
 
 const SelectCloudRegistryGroup = "select tag_number,cluster_name,server_domain,group_name,last_modify_time,image_number,create_time,create_user,group_type,last_modify_user,size_totle,group_id from cloud_registry_group"
 const SelectCloudRegistryGroupWhere  = `and (group_name like "%?%"  or create_user like "?")`

@@ -284,7 +284,7 @@ func getPermissions(ai *authz.AuthRequestInfo) []registry.CloudRegistryPermissio
 	if len(services) < 2 {
 		services = append(services, "")
 	}
-	searchMap := sql.GetSearchMapV("ServiceName", services[0], "ClusterName", services[1])
+	searchMap := sql.GetSearchMapV("ClusterName", services[1])
 	q := sql.SearchSql(registry.CloudRegistryPermissions{}, registry.SelectCloudRegistryPermissions, searchMap)
 	q += likesql
 

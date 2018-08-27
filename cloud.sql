@@ -1635,6 +1635,8 @@ CREATE TABLE `cloud_template_deploy_history` (
   `last_modify_user` varchar(32) DEFAULT NULL COMMENT '最近修改用户',
   `build_id` varchar(100) DEFAULT NULL COMMENT 'build时k8s.job名称',
   `build_status` varchar(32) DEFAULT NULL COMMENT '构建状态',
+  `ent` varchar(100) DEFAULT NULL COMMENT '构建环境',
+  `build_type` varchar(32) DEFAULT NULL COMMENT '构建类型',
   `percent` int(11) DEFAULT NULL,
   `messages` text,
   `batch_name` varchar(50) DEFAULT NULL COMMENT 'batch name',

@@ -10,6 +10,26 @@
                 </div>
                 <form class="cluster-form">
                     <div class="panel-body font-12 ">
+
+                        <div class="row top10" title="">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="select-entname-id"
+                                           class="col-md-3 fw100 control-label">环境选择<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" name="Ent"
+                                                onchange="getEntClusterData($(this).val())"
+                                                data-live-search="true" data-style="btn-default"
+                                                id="select-entname-id">
+                                        {{.entname}}
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row top15" title="">
                             <div class="col-md-12 top10">
                                 <div class="form-group">
@@ -74,7 +94,34 @@
                             </div>
                         </div>
                         <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
+                        <div class="row top10" title="">
+                            <div class="col-md-10">
+                                <div class="form-group">
+                                    <label class="col-md-3 fw100 control-label top10">构建类型<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-3 left10" style="margin-left: 20px;">
+                                        <div class="radio radio-info left10">
+                                            <input id="selectStorageType1"  type="radio"
+                                                   value="0"
+                                                   name="BuildType">
+                                            <label for="selectStorageType1" class="fw100 control-label">只构建镜像
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 ">
+                                        <div class="radio radio-info left10">
+                                            <input id="selectStorageType2"  type="radio"
+                                                   value="1"
+                                                   name="BuildType">
 
+                                            <label for="selectStorageType2" class="fw100 control-label">构建并更新服务
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin-top: 5px;">&nbsp;</div>
                     <div class="row top10">
                         <div class="col-md-12">
                             <div class="form-group">
@@ -103,14 +150,38 @@
         </div>
     </div>
 </div>
-
+<script src="/static/js/multiselect.min.js"></script>
+<script src="/static/zcloud/registrySelect.js"></script>
 <script>
      $("#select-cluster-id").html("{{.cluster}}");
      $('.selectpicker').selectpicker({
          //初始化
          size: 10
      });
+     setEntname();
 
+
+     jQuery(document).ready(function ($) {
+         $('#undo_contact_group_redo_to').multiselect({
+             keepRenderingSort: true,
+         });
+         $('#undo_contact_group_redo').multiselect({
+             keepRenderingSort: true,
+         });
+     });
+
+     var id = '{{.data.BatchId}}';
+     if(id=="0"){
+         $("#selectStorageType1").attr("checked","true");
+     }else {
+         var t = '{{.data.BuildType}}';
+         if(t=="0"){
+             $("#selectStorageType1").attr("checked","true");
+         }else{
+             $("#selectStorageType2").attr("checked","true");
+
+         }
+     }
 
      /**
       * 2018-08-15 16:58

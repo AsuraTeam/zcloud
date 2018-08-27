@@ -76,7 +76,7 @@ func (this *RegistryPermController) RegistryPermSave() {
 			registry.UpdateCloudRedisPermExclude)
 	}
 	sql.Raw(q).Exec()
-
+	sql.Exec(registry.UpdateClusterName)
 	data, msg := util.SaveResponse(err, "名称已经被使用")
 	util.SaveOperLog(
 		this.GetSession("username"),
