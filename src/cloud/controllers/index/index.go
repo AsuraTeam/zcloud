@@ -186,7 +186,7 @@ func RecordLoginUser(username string, password string) (bool, error) {
 // 获取用户是否禁用
 // 2018-01-22 09:18
 func getUserIsDel(username string) bool {
-	data := []index.DockerCloudAuthorityUser{}
+	data := make([]index.DockerCloudAuthorityUser, 0)
 	searchMap := sql.SearchMap{}
 	searchMap.Put("IsDel", 1)
 	searchMap.Put("UserName", username)

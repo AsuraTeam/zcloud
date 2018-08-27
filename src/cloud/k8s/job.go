@@ -329,17 +329,19 @@ func CreateJob(param JobParam) string {
 					"name": param.Jobname,
 				},
 				"spec": map[string]interface{}{
+
 					"containers": []map[string]interface{}{
 						map[string]interface{}{
 							"name":            param.Jobname,
 							"image":           param.Images,
-							"imagePullPolicy": "Never",
+							"imagePullPolicy": "IfNotPresent",
 							"command":         param.Command,
 							"volumeMounts":    volumeMounts,
 							"securityContext": map[string]interface{}{
 								"capabilities": map[string]interface{}{},
 								"privileged":   true,
 							},
+
 							"resources": map[string]interface{}{
 								"limits": map[string]interface{}{
 									"memory": strconv.Itoa(param.Memory) + "Mi",
@@ -377,6 +379,16 @@ func CreateJob(param JobParam) string {
 	cl2, _ := GetYamlClient(param.ClusterName, "", "v1", "api")
 	serviceParam.Cl2 = cl2
 	serviceParam.Cl3 = clientSet
+
+	secretsName := GetDockerImagePullName(strings.Split(param.Images, "/")[0])
+	isExists := SecretIsExists(clientSet, param.Namespace, secretsName)
+	if isExists{
+		conf["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["imagePullSecrets"] = []map[string]interface{}{
+			map[string]interface{}{
+				"name": secretsName,
+			},
+		}
+	}
 
 	if ! param.NoUpdateConfigMap {
 		logs.Info("获取到job的configmap", serviceParam.ConfigureData)

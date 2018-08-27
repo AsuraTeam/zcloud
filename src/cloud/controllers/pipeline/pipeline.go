@@ -19,6 +19,7 @@ import (
 	"cloud/controllers/image"
 	ci2 "cloud/models/ci"
 	"cloud/controllers/base/quota"
+	"cloud/userperm"
 )
 
 type ControllerPipeline struct {
@@ -193,7 +194,7 @@ func (this *ControllerPipeline) PipelineData() {
 	searchMap := sql.SearchMap{}
 	key := this.GetString("key")
 	user := getUser(this)
-	searchMap.Put("CreateUser", user)
+	//searchMap.Put("CreateUser", user)
 	searchSql := sql.SearchSql(pipeline.CloudPipeline{},
 		pipeline.SelectCloudPipeline,
 		searchMap)
@@ -207,12 +208,19 @@ func (this *ControllerPipeline) PipelineData() {
 		&data,
 		pipeline.CloudPipeline{})
 
+	perm := userperm.GetResourceName("流水线", getUser(this))
 	appDataMap := app.GetAppServiceDataMap()
 	result := make([]pipeline.CloudPipeline, 0)
 	for _, v := range data{
 		tk := v.ClusterName + v.AppName + v.ServiceName
 		if _,ok := appDataMap.Get(tk); ! ok {
 			v.Status = "false"
+		}
+		// 不是自己创建的才检查
+		if v.CreateUser != user {
+			if ! userperm.CheckPerm(v.PipelineName, v.ClusterName, "", perm) && len(user) > 0 {
+				continue
+			}
 		}
 		result = append(result, v)
 	}
@@ -235,10 +243,18 @@ func getPipeData(this *ControllerPipeline) (pipeline.CloudPipeline, sql.SearchMa
 	if name != "" {
 		searchMap.Put("PipelineName", name)
 	}
-	searchMap.Put("CreateUser", getUser(this))
+	//searchMap.Put("CreateUser", getUser(this))
 	data := pipeline.CloudPipeline{}
 	q := sql.SearchSql(data, pipeline.SelectCloudPipeline, searchMap)
 	sql.Raw(q).QueryRow(&data)
+	user := getUser(this)
+	perm := userperm.GetResourceName("流水线", user)
+	// 不是自己创建的才检查
+	if data.CreateUser != user {
+		if ! userperm.CheckPerm(data.PipelineName, data.ClusterName, "", perm) {
+			return pipeline.CloudPipeline{}, sql.SearchMap{}
+		}
+	}
 	return data, searchMap
 }
 
@@ -312,7 +328,7 @@ func createImagePullSecret(jobHistoryData ci2.CloudBuildJobHistory, start int64,
 func startPipeline(user string, pipeData pipeline.CloudPipeline) {
 	jobData := ci.GetJobName(user, pipeData.ClusterName, pipeData.JobName)
 	if len(jobData) == 0 {
-		logs.Error("获取构建程序失败", jobData)
+		logs.Error("获取构建程序失败", jobData, pipeData.ClusterName, pipeData.JobName)
 		return
 	}
 

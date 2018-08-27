@@ -14,6 +14,7 @@ import (
 	"cloud/controllers/ent"
 	"cloud/controllers/base/quota"
 	"strconv"
+	"cloud/userperm"
 )
 
 type AppController struct {
@@ -268,7 +269,7 @@ func (this *AppController) AppData() {
 		sql.MKeyV("AppName"),
 		*this.Ctx, searchMap)
 
-	searchMap.Put("CreateUser", getUser(this))
+	//searchMap.Put("CreateUser", getUser(this))
 	searchSql := sql.SearchSql(app.CloudApp{}, app.SelectCloudApp, searchMap)
 	if ip != "" {
 		q := ` and (app_name like "%?%")`
@@ -279,8 +280,21 @@ func (this *AppController) AppData() {
 		*this.Ctx.Request, &data,
 		app.CloudApp{})
 
+	user := getUser(this)
+	permApp := userperm.GetResourceName("应用", user)
 	cloudApps := getCacheAppData(data)
-	r := util.ResponseMap(cloudApps, len(data), this.GetString("draw"))
+	result := make([]k8s.CloudApp, 0)
+	for _, d := range cloudApps{
+		// 不是自己创建的才检查
+		if d.CreateUser != user {
+				if ! userperm.CheckPerm(d.AppName, d.ClusterName, d.Entname, permApp) {
+					continue
+				}
+		}
+		result = append(result, d)
+	}
+
+	r := util.ResponseMap(result, len(data), this.GetString("draw"))
 
 	this.Data["json"] = r
 	this.ServeJSON(false)

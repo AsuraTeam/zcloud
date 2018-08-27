@@ -21,6 +21,7 @@ import (
 	"cloud/controllers/docker/application/app"
 	"cloud/controllers/base/quota"
 	"cloud/cache"
+	"cloud/userperm"
 )
 
 // 2018-01-25 17:54
@@ -128,7 +129,8 @@ func GetSelectHtml(username string, clusterName string) string {
 // 2018-02-03 21:55
 // 获取构建任务信息
 func GetJobName(username string, clusterName string, itemName string) []ci.CloudBuildJob {
-	searchMap := sql.GetSearchMapV("CreateUser", username)
+	perm := userperm.GetResourceName("构建项目", username)
+	searchMap := sql.SearchMap{}
 	if clusterName != "" {
 		searchMap.Put("ClusterName", clusterName)
 	}
@@ -139,6 +141,13 @@ func GetJobName(username string, clusterName string, itemName string) []ci.Cloud
 	data := make([]ci.CloudBuildJob, 0)
 	q := sql.SearchSql(ci.CloudBuildJob{}, ci.SelectCloudBuildJob, searchMap)
 	sql.Raw(q).QueryRows(&data)
+	logs.Info("获取到job数据", util.ObjToString(data))
+	// 不是自己创建的才检查
+	if len(data) > 0 && data[0].CreateUser != username {
+		if ! userperm.CheckPerm(data[0].ItemName, data[0].ClusterName, "", perm)  {
+			return make([]ci.CloudBuildJob, 0)
+		}
+	}
 	return data
 }
 
@@ -297,7 +306,7 @@ func (this *JobController) JobDatas() {
 	if id != "" {
 		searchMap.Put("JobId", id)
 	}
-	searchMap.Put("CreateUser", getUser(this))
+	//searchMap.Put("CreateUser", getUser(this))
 	searchSql := sql.SearchSql(ci.CloudBuildJob{}, ci.SelectCloudBuildJob, searchMap)
 
 	if key != "" && id == "" {
@@ -312,9 +321,17 @@ func (this *JobController) JobDatas() {
 
 	clusterMap := cluster.GetClusterMap()
 	result := make([]ci.CloudBuildJob, 0)
-	for _, v := range data {
-		v.ClusterName = clusterMap.GetVString(v.ClusterName)
-		result = append(result, v)
+	perm := userperm.GetResourceName("构建项目", getUser(this))
+	user := getUser(this)
+	for _, d := range data {
+		d.ClusterName = clusterMap.GetVString(d.ClusterName)
+		// 不是自己创建的才检查
+		if d.CreateUser != user {
+			if ! userperm.CheckPerm(d.ItemName, d.ClusterName, "", perm) && len(user) > 0 {
+				continue
+			}
+		}
+		result = append(result, d)
 	}
 
 	r := util.GetResponseResult(err,
@@ -337,10 +354,16 @@ func getJobData(this *JobController) ci.CloudBuildJob {
 			return jobData
 		}
 	}
+	perm := userperm.GetResourceName("构建项目", getUser(this))
 	searchMap := sql.SearchMap{}
 	searchMap.Put("JobId", id)
-	searchMap.Put("CreateUser", getUser(this))
+	//searchMap.Put("CreateUser", getUser(this))
 	sql.Raw(sql.SearchSql(jobData, ci.SelectCloudBuildJob, searchMap)).QueryRow(&jobData)
+	if jobData.CreateUser != getUser(this) {
+		if ! userperm.CheckPerm(jobData.ItemName, jobData.ClusterName, "", perm)  {
+			return ci.CloudBuildJob{}
+		}
+	}
 	if jobData.JobId > 0 {
 		if cache.JobDataCache != nil {
 			cache.JobDataCache.Put(id, util.ObjToString(jobData), time.Minute*10)
@@ -609,6 +632,10 @@ func JobExecStart(jobData ci.CloudBuildJob, username string, jobname string, reg
 func (this *JobController) JobExec() {
 
 	jobData := getJobData(this)
+	if jobData.JobId == 0 {
+		setJson(this, util.ApiResponse(false, "无权限"))
+		return
+	}
 	logs.Info("获取到job数据", util.ObjToString(jobData))
 	// 创建私密文件
 	param := k8s.ServiceParam{}

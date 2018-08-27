@@ -5,6 +5,7 @@ import (
 	"cloud/sql"
 	"strings"
 	"cloud/util"
+	"fmt"
 )
 
 
@@ -45,7 +46,9 @@ func GetResourceName(tp string, user string) util.Lock {
 	for _, v := range data{
 		vs := strings.Split(v.Name, ",")
 		for _, n := range vs {
-			lock.Put(n +  v.ClusterName+v.Ent, "1")
+			lock.Put(fmt.Sprintf("%v;%v;%v", n , v.ClusterName,v.Ent), "1")
+			lock.Put(fmt.Sprintf("%v;%v;", n , v.ClusterName), "1")
+			lock.Put(fmt.Sprintf("%v;", n), "1")
 		}
 	}
 	return lock
@@ -54,9 +57,25 @@ func GetResourceName(tp string, user string) util.Lock {
 // 2018-08-24 16:08
 // 检查用户拥有权限的资源是存存在
 func CheckPerm(name string,cluster string, ent string, data util.Lock) bool {
-	v := name + cluster + ent
+	// 都检查
+	v := fmt.Sprintf("%v;%v;%v", name , cluster, ent)
 	if _, ok := data.Get(v) ; ok {
 		return true
+	}
+
+	// 只检查集群和环境
+	if len(ent) == 0 {
+		v = fmt.Sprintf("%v;%v;", name , cluster)
+		if _, ok := data.Get(v) ; ok {
+			return true
+		}
+	}
+	// 只检查集群
+	if len(cluster) == 0 && len(ent) == 0 {
+		v = fmt.Sprintf("%v;", name)
+		if _, ok := data.Get(v) ; ok {
+			return true
+		}
 	}
 	return false
 }

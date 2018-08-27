@@ -81,7 +81,7 @@ func ExecUpdate(service app.CloudAppService, updateType string, username string)
 	if err == nil {
 		updateServiceData(service, username)
 		go updateContainerData(service)
-	}else{
+	} else {
 		logs.Error("ExecUpdate 失败 ", err.Error())
 	}
 	return err
@@ -149,11 +149,17 @@ func CronServiceCache() {
 func GetServiceRunData(data []app.CloudAppService, user string) []k8s.CloudApp {
 	//result := make([]interface{}, 0)
 	perm := userperm.GetResourceName("服务", user)
+	permApp := userperm.GetResourceName("应用", user)
+
 	result := make([]k8s.CloudApp, 0)
 	for _, d := range data {
-
-		if ! userperm.CheckPerm(d.AppName+";"+d.ResourceName+";"+d.ServiceName, d.ClusterName, d.Entname, perm) && len(user) > 0 {
-			continue
+		// 不是自己创建的才检查
+		if d.CreateUser != user {
+			if ! userperm.CheckPerm(d.AppName+";"+d.ResourceName+";"+d.ServiceName, d.ClusterName, d.Entname, perm) && len(user) > 0 {
+				if ! userperm.CheckPerm(d.AppName, d.ClusterName, d.Entname, permApp) {
+					continue
+				}
+			}
 		}
 
 		namespace := util.Namespace(d.AppName, d.ResourceName) +
@@ -179,8 +185,6 @@ func GetServiceRunData(data []app.CloudAppService, user string) []k8s.CloudApp {
 	}
 	return result
 }
-
-
 
 // 修改数据时公共数据
 // 2018-01-14 13:35
@@ -305,7 +309,7 @@ func GetUserLbService(user string, clusterName string, id string) []app.CloudApp
 
 // 2018-08-10 15:36
 // 数据写入redis
-func serviceToRedis(namespace string, id int64, sv k8s.CloudApp)  {
+func serviceToRedis(namespace string, id int64, sv k8s.CloudApp) {
 	cache.ServiceCache.Put(
 		namespace+strconv.FormatInt(id, 10),
 		util.ObjToString(sv),
@@ -337,12 +341,12 @@ func GoServerThread(data []app.CloudAppService) {
 				sv.Domain = d.Domain
 				serviceToRedis(namespace, d.ServiceId, sv)
 				result = append(result, v)
-			}else{
+			} else {
 				sv := k8s.CloudApp{}
 				r := cache.ServiceCache.Get(namespace + strconv.FormatInt(d.ServiceId, 10))
 				s := util.RedisObj2Obj(r, &sv)
-				now :=  time.Now().Unix()
-				if s && now - sv.CheckTime > 300 {
+				now := time.Now().Unix()
+				if s && now-sv.CheckTime > 300 {
 					sv.Status = "False"
 					sv.AvailableReplicas = 0
 					serviceToRedis(namespace, d.ServiceId, sv)

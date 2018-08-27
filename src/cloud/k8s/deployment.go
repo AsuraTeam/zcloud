@@ -49,6 +49,7 @@ func GetDeploymentsVersion(namespace string, name string, client kubernetes.Clie
 	return ""
 }
 
+
 // 2018-02-04 19:55
 // 更新镜像
 func UpdateDeploymentImage(param RollingParam) (bool, error) {
@@ -128,9 +129,9 @@ func GetDeploymentsService(namespace string, clientset kubernetes.Clientset, ser
 
 // 获取某个uuid标签的下面的pod服务
 // 在创建完pod后自动创建service使用
-func GetPodsFromUUid(namespace string, uuid string, clientset kubernetes.Clientset) []ServicePod {
-	pmap := []ServicePod{}
-	deployments := GetDeployments(namespace, clientset)
+func GetPodsFromUUid(namespace string, uuid string, clientSet kubernetes.Clientset) []ServicePod {
+	pmap := make([]ServicePod, 0)
+	deployments := GetDeployments(namespace, clientSet)
 	logs.Info("deployments", deployments)
 	name := strings.Split(namespace, "--")
 	resouceName := name[1]
@@ -159,11 +160,11 @@ func GetPodsFromUUid(namespace string, uuid string, clientset kubernetes.Clients
 }
 
 // 删除 deployment
-func DeletelDeployment(namespace string, isService bool, name string, clustername string) error {
-	cl, err := GetYamlClient(clustername, "apps", "v1beta1", "/apis")
+func DeletelDeployment(namespace string, isService bool, name string, clusterName string) error {
+	cl, err := GetYamlClient(clusterName, "apps", "v1beta1", "/apis")
 	resource := &metav1.APIResource{Name: "Deployments", Namespaced: true}
 	opt := metav1.DeleteOptions{}
-	client, err := GetClient(clustername)
+	client, err := GetClient(clusterName)
 	deploments := GetDeployments(namespace, client)
 	if len(deploments) < 0 {
 		logs.Error("删除yaml的deployment服务失败,没有找到对应的记录")
@@ -191,7 +192,7 @@ func DeletelDeployment(namespace string, isService bool, name string, clusternam
 	}
 
 	obj := metav1.ListOptions{}
-	rcl, _ := GetClient(clustername)
+	rcl, _ := GetClient(clusterName)
 	replications, err := rcl.ExtensionsV1beta1().ReplicaSets(namespace).List(obj)
 
 	// 删除 Replicationcontrollers
@@ -233,12 +234,12 @@ func DeletelDeployment(namespace string, isService bool, name string, clusternam
 	if isService {
 		logs.Info("开始删除Service Service ... ", namespace)
 		if name != "" {
-			err = DeleteService(clustername, namespace, name)
+			err = DeleteService(clusterName, namespace, name)
 		} else {
 			services, err := GetServices(rcl, namespace)
 			if err == nil {
 				for _, v := range services {
-					err = DeleteService(clustername, namespace, v.Name)
+					err = DeleteService(clusterName, namespace, v.Name)
 					if err == nil {
 						logs.Info("删除服务成功", namespace, v.Name)
 					} else {
@@ -258,7 +259,7 @@ func DeletelDeployment(namespace string, isService bool, name string, clusternam
 func GetDeploymentApp(clientset kubernetes.Clientset, namespace string, service string) map[string]CloudApp {
 	result := map[string]CloudApp{}
 
-	deployments := []v1beta12.Deployment{}
+	deployments := make([]v1beta12.Deployment, 0)
 	if service != "" {
 		deployments = GetDeploymentsService(namespace, clientset, service)
 	} else {

@@ -13,6 +13,7 @@ import (
 	"cloud/models/registry"
 	registry2 "cloud/controllers/image"
 	"github.com/astaxie/beego/logs"
+	"cloud/userperm"
 )
 
 // 容器详情页面
@@ -127,7 +128,7 @@ func (this *AppController) ContainerData() {
 		*this.Ctx,
 		sql.SearchMap{})
 
-	searchMap.Put("CreateUser", getUser(this))
+	//searchMap.Put("CreateUser", getUser(this))
 
 	searchSql := sql.SearchSql(app.CloudContainer{},
 		app.SelectCloudContainer,
@@ -143,9 +144,25 @@ func (this *AppController) ContainerData() {
 		&data,
 		app.CloudContainer{})
 
+	user := getUser(this)
+	perm := userperm.GetResourceName("服务", user)
+	permApp := userperm.GetResourceName("应用", user)
 	datas := make([]interface{}, 0)
 	for _, cv := range data {
 		key := cv.AppName + cv.ContainerName
+		d := cv
+		// 不是自己创建的才检查
+		if d.CreateUser != user {
+			service := strings.Replace(d.ServiceName, "--1", "", -1)
+			service = strings.Replace(service, "--2", "", -1)
+			logs.Info(d.AppName+";"+d.ResourceName+";"+service, util.ObjToString(perm))
+			if ! userperm.CheckPerm(d.AppName+";"+d.ResourceName+";"+service, d.ClusterName, d.Entname, perm) && len(user) > 0 {
+				if ! userperm.CheckPerm(d.AppName, d.ClusterName, d.Entname, permApp) {
+					continue
+				}
+			}
+		}
+
 		r := cache.ContainerCache.Get(key)
 		var v interface{}
 		status := util.RedisObj2Obj(r, &v)

@@ -85,7 +85,7 @@ func getJobName(searchMap sql.SearchMap, clusterName string, html []string) stri
 	q := sql.SearchSql(ci.CloudBuildJob{}, ci.SelectCloudBuildJob, searchMap)
 	sql.Raw(q).QueryRows(&data)
 	for _, v := range data {
-		html = append(html, util.GetSelectOptionName(v.JobName))
+		html = append(html, util.GetSelectOptionName(v.ItemName))
 	}
 	return strings.Join(html, "\n")
 }

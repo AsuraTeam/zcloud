@@ -236,7 +236,7 @@ func (this *ServiceController) ServiceData() {
 	qk := strings.Split(app.ServiceSearchKey, ",")
 	user := getServiceUser(this)
 	searchMap := sql.GetSearchMapValue(qk, *this.Ctx, sql.SearchMap{})
-	searchMap.Put("CreateUser", user)
+	//searchMap.Put("CreateUser", user)
 
 	searchSql := sql.SearchSql(
 		app.CloudAppService{},
