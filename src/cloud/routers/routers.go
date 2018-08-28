@@ -29,6 +29,8 @@ import (
 	"cloud/controllers/perm"
 	"cloud/controllers/monitor"
 	"cloud/controllers/resource"
+	"fmt"
+	"cloud/sql"
 )
 
 func init() {
@@ -713,6 +715,8 @@ func init() {
 					beego.NSRouter("/list", &users.UserController{}, "get:UserList"),
 					// 用户添加页面,
 					beego.NSRouter("/add", &users.UserController{}, "get:UserAdd"),
+					// 获取用户token,
+					beego.NSRouter("/token/:id:int", &users.UserController{}, "get:UserToken"),
 				),
 				beego.NSNamespace("/perm",
 					// 权限入口
@@ -779,6 +783,7 @@ func init() {
 				beego.NSRouter("/:id:int", &users.UserController{}, "delete:UserDelete"),
 				// 获取用户数据单条数据,
 				beego.NSRouter("/:id:int", &users.UserController{}, "get:UserData"),
+
 				// 获取用户信息,
 				beego.NSRouter("/name", &users.UserController{}, "get:UserDataName"),
 				// 获取用户数据,
@@ -897,6 +902,7 @@ func init() {
 	// 过滤器功能实现,拦截未登陆请求
 	var FilterUser = func(ctx *context.Context) {
 		uri := ctx.Request.RequestURI
+		setUserLogin(ctx)
 		if !strings.Contains(uri, "/static/") && !strings.Contains(uri, "/api/user/login") {
 			_, ok := ctx.Input.Session("username").(string)
 			uris := strings.Split(uri, "?referer=/")
@@ -907,5 +913,61 @@ func init() {
 			}
 		}
 	}
+
+	var DeleteUser = func(ctx *context.Context) {
+		ok := ctx.Input.CruSession.Get("api-token")
+		if ok != nil {
+			ctx.Input.CruSession.Delete("username")
+			ctx.Input.CruSession.Delete("api-token")
+		}
+	}
+
 	beego.InsertFilter("/*", beego.BeforeRouter, FilterUser)
+	beego.InsertFilter("/api/*", beego.AfterExec,  DeleteUser, false)
+}
+
+
+// 查询用户token使用
+type User struct {
+	IsDel int64
+	//用户名称
+	UserName string
+	// token
+	Token string
+}
+
+// 设置用户登录信息
+func setUserLogin(ctx *context.Context)  {
+	uri := ctx.Request.RequestURI
+	tokenHeader := ctx.Request.Header
+	var token = ""
+	if !strings.Contains(uri, "/api/"){
+		return
+	}
+	if len(tokenHeader.Get("token")) == 0 {
+		uris := strings.Split(uri, "token=")
+		if len(uris) > 1{
+			t := strings.Split(uris[1], "&")
+			token = t[0]
+		}
+	}else {
+		token = tokenHeader.Get("token")
+	}
+	if len(token) == 0 {
+		return
+	}
+	user := getTokenUser(token)
+	if len(user) > 0 {
+		ctx.Input.CruSession.Set("username", user)
+		ctx.Input.CruSession.Set("api-token", 1)
+
+	}
+}
+
+//
+func getTokenUser(token string) string {
+	u := User{}
+	q := fmt.Sprintf(`select user_name from cloud_authority_user where token='%v' and is_del=0`, token)
+	sql.Raw(q).QueryRow(&u)
+	return u.UserName
 }

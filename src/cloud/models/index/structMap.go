@@ -11,7 +11,7 @@ const UpdateDockerCloudCiEnv = "update docker_cloud_ci_env"
 const InsertDockerCloudCiEnv = "insert into docker_cloud_ci_env"
 const DeleteDockerCloudCiEnv = "delete from docker_cloud_ci_env"
 
-const SelectDockerCloudAuthorityUser= "select create_time,create_user,last_modify_time,last_modify_user,dept,description,real_name,is_del,user_name,third_id,third_true_name,user_email,is_valid,user_id,user_pic,user_mobile,pwd from cloud_authority_user"
+const SelectDockerCloudAuthorityUser= "select create_time,token,create_user,last_modify_time,last_modify_user,dept,description,real_name,is_del,user_name,third_id,third_true_name,user_email,is_valid,user_id,user_pic,user_mobile,pwd from cloud_authority_user"
 const SelectUserWhere = ` where 1=1 and (user_name like "%?%" or description like "%?%" or user_email like "%?%")`
 
 const UpdateDockerCloudAuthorityUser= "update cloud_authority_user"

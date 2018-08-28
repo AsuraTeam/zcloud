@@ -110,6 +110,8 @@ type DockerCloudAuthorityUser struct {
     LastModifyUser string
     //创建时间
     CreateTime string
+    // token
+    Token string
 }
 
 type CloudLoginRecord struct {

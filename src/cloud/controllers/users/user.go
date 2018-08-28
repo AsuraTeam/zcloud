@@ -57,7 +57,7 @@ func GetUserSelect() string {
 // 2018-02-11 11;03
 func getUserData() []index.CloudAuthorityUser {
 	// 用户数据
-	data := []index.CloudAuthorityUser{}
+	data := make([]index.CloudAuthorityUser, 0)
 	q := sql.SearchSql(
 		index.CloudAuthorityUser{},
 		index.SelectDockerCloudAuthorityUser,
@@ -74,6 +74,8 @@ func (this *UserController) UserData() {
 	setUserJson(this, data)
 }
 
+
+
 // string
 // 用户保存
 // @router /api/user [post]
@@ -81,7 +83,13 @@ func (this *UserController) UserSave() {
 	d := index.DockerCloudAuthorityUser{}
 	err := this.ParseForm(&d)
 	if err != nil {
-		this.Ctx.WriteString("参数错误" + err.Error())
+		setUserJson(this, util.ApiResponse(false,err.Error()))
+		return
+	}
+
+	u := util.GetUser(this.GetSession("username"))
+	if u != "admin" {
+		setUserJson(this, util.ApiResponse(false, "无权限"))
 		return
 	}
 	util.SetPublicData(d, util.GetUser(this.GetSession("username")), &d)
@@ -110,7 +118,7 @@ func (this *UserController) UserSave() {
 // router /api/users/name [get]
 func (this *UserController) UserDataName() {
 	// 用户数据
-	data := []index.CloudAuthorityUser{}
+	data := make([]index.CloudAuthorityUser, 0)
 	q := sql.SearchSql(index.CloudAuthorityUser{}, index.SelectDockerCloudAuthorityUser, sql.SearchMap{})
 	sql.Raw(q).QueryRows(&data)
 	setUserJson(this, data)
@@ -119,12 +127,17 @@ func (this *UserController) UserDataName() {
 // 用户数据
 // @router /api/user [get]
 func (this *UserController) UserDatas() {
-	data := []index.DockerCloudAuthorityUser{}
+	data := make([]index.DockerCloudAuthorityUser, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	key := this.GetString("search")
 	if id != "" {
 		searchMap.Put("UserId", id)
+	}
+
+	u := util.GetUser(this.GetSession("username"))
+	if u != "admin" {
+		searchMap.Put("UserName", u)
 	}
 	searchSql := sql.SearchSql(
 		index.DockerCloudAuthorityUser{},
@@ -142,7 +155,7 @@ func (this *UserController) UserDatas() {
 		&data,
 		index.DockerCloudAuthorityUser{})
 
-	result := []index.DockerCloudAuthorityUser{}
+	result := make([]index.DockerCloudAuthorityUser, 0)
 	for _, v := range data {
 		v.Pwd = "******"
 		result = append(result, v)
@@ -154,6 +167,24 @@ func (this *UserController) UserDatas() {
 		this.GetString("draw"))
 	setUserJson(this, r)
 
+}
+
+// 获取用户token
+// 2018-08-28 09:12
+// @router /system/users/user/token/:id:int [get]
+func (this *UserController) UserToken() {
+	searchMap := sql.GetSearchMap("UserId", *this.Ctx)
+	searchMap.Put("UserName", util.GetUser(this.GetSession("username")))
+	userData := index.DockerCloudAuthorityUser{}
+	q := sql.SearchSql(userData, index.SelectDockerCloudAuthorityUser, searchMap)
+	sql.Raw(q).QueryRow(&userData)
+	if len(userData.Token) == 0 {
+		userData.Token = util.Md5String(userData.UserName + util.GetDate())
+		q = sql.UpdateSql(userData, index.UpdateDockerCloudAuthorityUser, searchMap, "")
+		sql.Exec(q)
+	}
+	this.Data["data"] = userData
+	this.TplName = "users/user/token.html"
 }
 
 // json

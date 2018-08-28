@@ -4,9 +4,24 @@ function addUser(userId) {
     if(!userId){
         userId = 0
     }
-    var url = "/system/users/user/add"
-    var result = get({UserId:userId}, url)
-    $("#add_groups_html").html(result)
+    var url = "/system/users/user/add";
+    var result = get({UserId:userId}, url);
+    $("#add_groups_html").html(result);
+    $("#add_post_html").modal("toggle")
+}
+
+/**
+ * 2018-08-28 09:08
+ * 获取用户token
+ * @param userId
+ */
+function showToken(userId) {
+    if(!userId){
+        userId = 0
+    }
+    var url = "/system/users/user/token/"+userId;
+    var result = get({UserId:userId}, url);
+    $("#add_groups_html").html(result);
     $("#add_post_html").modal("toggle")
 }
 
@@ -67,8 +82,9 @@ function loadUserData(key) {
             {"data": "LastModifyTime"},
             {
                 "sWidth": "150px", "data": "UserId", "mRender": function (data) {
-                    return '<button type="button" title="更新" onclick="addUser(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
-                        '<button type="button"  title="删除" onClick="deleteUserSwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
+                    return '<button type="button" title="更新" onclick="addUser(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>' +
+                        '<button type="button"  title="删除" onClick="deleteUserSwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper m-l-5"><i class="fa fa-trash-o"></i></button>'+
+                        '<button type="button"  title="显示用户token" onClick="showToken(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper m-l-5"><i class="fa fa-user-secret"></i></button>';
             }
             },
         ],

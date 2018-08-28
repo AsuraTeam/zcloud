@@ -1,0 +1,64 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">用户token</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-1" class="col-md-2 fw100 control-label">用户名<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.UserName}}"
+                                               onchange="checkChange('UserName')" name="UserName"
+                                               class="form-control" id="field-1" placeholder="必须为全英文">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-12" class="col-md-2 fw100 control-label">token</label>
+                                    <div class="col-md-10">
+                                        <input type="text" value="{{.data.Token}}" name="Token"
+                                               class="form-control" id="field-12" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top20 m-l-20">
+                            <div class="col-md-11 pre m-l-15">
+                                <br>
+                                注意:<br>
+                                <br>
+                                <span class="text-danger">token注意保密,该token拥有用户完全权限</span><br>
+                                1、get<br>
+                                get方法直接传参数 ?token={{.data.Token}}<br>
+                                curl http://xxx/api/xxx?token={{.data.Token}}<br>
+                                <br>
+                                2、post<br>
+                                post方法需要将token加到header中  {"token": "{{.data.Token}}"<br>
+                                curl -H "token: {{.data.Token}}" -d '{}' ttp://xxx/api/xxx<br>
+                                <br>
+                            </div>
+                        </div>
+                        <div class="row top20 m-l-20"></div>
+                        <div class="panel-footer">
+                            <button type="button" class="btn btn-default btn-lg waves-effect" data-dismiss="modal"><i
+                                    class="fa fa-times"></i>&nbsp;&nbsp;关闭
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

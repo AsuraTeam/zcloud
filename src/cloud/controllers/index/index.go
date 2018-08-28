@@ -165,6 +165,7 @@ func RecordLoginUser(username string, password string) (bool, error) {
 		v.Pwd = util.Md5String(password)
 		v.UserName = username
 		v.LastModifyTime = util.GetDate()
+		v.Token = util.Md5String(username + util.GetDate())
 		searchMap := sql.GetSearchMapV("UserName", username)
 		user := index.DockerCloudAuthorityUser{}
 		q := sql.SearchSql(v, index.SelectDockerCloudAuthorityUser, searchMap)
@@ -174,7 +175,7 @@ func RecordLoginUser(username string, password string) (bool, error) {
 			sql.Raw(q).Exec()
 		} else {
 			if ! writeLock(username) {
-				q = sql.UpdateSql(v, index.UpdateDockerCloudAuthorityUser, searchMap, "")
+				q = sql.UpdateSql(v, index.UpdateDockerCloudAuthorityUser, searchMap, "Token")
 				sql.Raw(q).Exec()
 			}
 		}
