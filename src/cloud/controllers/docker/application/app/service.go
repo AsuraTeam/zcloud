@@ -25,6 +25,7 @@ type ServiceController struct {
 // Service 管理入口页面
 // @router /application/service/list [get]
 func (this *ServiceController) ServiceList() {
+	go registry.UpdateGroupImageInfo()
 	this.Data["ServiceName"] = this.GetString("name")
 	this.TplName = "application/service/list.html"
 }
