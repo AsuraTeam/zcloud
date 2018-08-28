@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+{{template "template/head.html" .}}
+<style>
+    p {
+        line-height: 2;
+    }
+    .index-cart{
+        height: 139px !important;
+    }
+</style>
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <!-- Start content -->
+    <div class="content">
+        <div class="container">
+            <div id="add_cluster_html"></div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">全局大盘</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">快捷入口</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- end row -->
+                <div id="detail_used_id">
+
+                </div>
+                <div class="col-sm-12 top-10">
+                </div>
+                <div class="col-md-12 top10">
+                    <div id="cluster_html_content_id">
+                    </div>
+                    <!-- end row -->
+                </div><!-- end col -->
+                <!-- end row -->
+            </div>
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+    <div class="row m-l-10">
+        <div class="col-sm-2">
+            <div class="wigdet-four-content pull-left">
+                <p class="font-secondary text-muted">容器管理</p>
+            </div>
+        </div><!-- end col -->
+    </div>
+    <div class="col-sm-12"></div>
+    <div class="row m-l-10">
+
+        <div class="col-sm-2">
+            <div class="card-box widget-box-four index-cart" onclick="loadpage('/application/app/list')"
+                 onmousemove="setBorderMove($(this))"
+                 onmouseout="setBorderOut($(this))">
+                <div class="wigdet-four-content text-center">
+                    <p class="font-secondary text-muted m-t-10 text-center"><a><i
+                            class="fa m-r-10 m-l-10 fa-plus-square-o"></i></a>应用管理
+                    </p>
+                    <span class="font-secondary text-muted">业务线自己的应用查看</span>
+                </div>
+
+                <div class="clearfix"></div>
+            </div>
+        </div><!-- end col -->
+
+        <div class="col-sm-2" onclick="loadpage('/application/service/list')">
+            <div class="card-box widget-box-four index-cart" onmousemove="setBorderMove($(this))"
+                 onmouseout="setBorderOut($(this))">
+                <div class="wigdet-four-content text-center">
+                    <p class="font-secondary text-muted"><a><i
+                            class="fa m-r-10 m-l-10  fa-plus-square-o"></i></a>服务管理<br></p>
+                    <span class="font-secondary text-muted">业务线自己的应用查看和管理,升级扩容等</span>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div><!-- end col -->
+
+        <div class="col-sm-2" onclick="loadpage('/application/container/list')">
+            <div class="card-box widget-box-four index-cart" onmousemove="setBorderMove($(this))"
+                 onmouseout="setBorderOut($(this))">
+                <div class="wigdet-four-content text-center">
+                    <p class="font-secondary text-muted"><a><i
+                            class="fa m-r-10 m-l-10  fa-plus-square-o"></i></a>容器管理<br></p>
+                    <span class="font-secondary text-muted">管理应用容器,删除,登录容器操作</span>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div><!-- end col -->
+    </div>
+    <div class="row m-l-10">
+        <div class="col-sm-2">
+            <div class="wigdet-four-content pull-left">
+                <p class="font-secondary text-muted">镜像管理</p>
+            </div>
+        </div><!-- end col -->
+    </div>
+    <div class="row m-l-10">
+        <div class="col-sm-2" onclick="loadpage('/image/registry/group/list')">
+            <div class="card-box widget-box-four index-cart" onmousemove="setBorderMove($(this))"
+                 onmouseout="setBorderOut($(this))">
+                <div class="wigdet-four-content text-center">
+                    <p class="font-secondary text-muted"><a><i class="fa m-r-10 m-l-10  fa-plus-square-o"></i></a>镜像仓库组<br></p>
+                    <span class="font-secondary text-muted">查看提交的镜像信息</span>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div><!-- end col -->
+    </div>
+    <div class="row m-l-10">
+        <div class="col-sm-2">
+            <div class="wigdet-four-content pull-left">
+                <p class="font-secondary text-muted">编排管理</p>
+            </div>
+        </div><!-- end col -->
+    </div>
+    <div class="row m-l-10">
+        <div class="col-sm-2" onclick="loadpage('/ci/job/list')">
+        <div class="card-box widget-box-four index-cart" onmousemove="setBorderMove($(this))"
+             onmouseout="setBorderOut($(this))">
+            <div class="wigdet-four-content text-center">
+                <p class="font-secondary text-muted"><a><i class="fa m-r-10 m-l-10 fa-plus-square-o"></i></a>构建项目<br></p>
+                <span class="font-secondary text-muted">构建docker镜像或打包程序到镜像</span>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        </div><!-- end col -->
+        <div class="col-sm-2" onclick="loadpage('/pipeline/list')">
+            <div class="card-box widget-box-four index-cart" onmousemove="setBorderMove($(this))"
+                 onmouseout="setBorderOut($(this))">
+                <div class="wigdet-four-content text-center">
+                    <p class="font-secondary text-muted"><a><i class="fa m-r-10 m-l-10 fa-plus-square-o"></i></a>流水线项目<br></p>
+                    <span class="font-secondary text-muted">一键发布和构建,包括打包镜像,更新服务</span>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div><!-- end col -->
+        <div class="col-sm-2" onclick="loadpage('/ci/batch/list')">
+            <div class="card-box widget-box-four index-cart" onmousemove="setBorderMove($(this))"
+                 onmouseout="setBorderOut($(this))">
+                <div class="wigdet-four-content text-center">
+                    <p class="font-secondary text-muted"><a><i class="fa m-r-10 m-l-10  fa-plus-square-o"></i></a>部署配置<br></p>
+                    <span class="font-secondary text-muted">暂无功能</span>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div><!-- end col -->
+        <div class="col-sm-2" onclick="loadpage('/ci/dockerfile/list')">
+            <div class="card-box widget-box-four index-cart" onmousemove="setBorderMove($(this))"
+                 onmouseout="setBorderOut($(this))">
+                <div class="wigdet-four-content text-center">
+                    <p class="font-secondary text-muted"><a><i class="fa m-r-10 m-l-10  fa-plus-square-o"></i></a>Dockerfile<br></p>
+                    <span class="font-secondary text-muted">构建docker镜像使用的构建脚本和Dockerfile</span>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div><!-- end col -->
+    </div>
+{{template "template/bottom.html" .}}
+    </body>
+</div>
+<script>
+
+    /**
+     * 2018-03-25 7:00
+     * 点击图标页面跳转
+     * @param url
+     */
+    function loadpage(url) {
+        window.location.href = url;
+    }
+
+    function setBorderMove(obj) {
+        obj.css("border", "2px solid #24a7e3")
+    }
+
+    function setBorderOut(obj) {
+        obj.css("border", "1px solid #54a8e3")
+    }
+</script>
+
+</html>

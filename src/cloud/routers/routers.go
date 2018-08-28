@@ -38,6 +38,7 @@ func init() {
 	// 公共入口
 	beego.Router("/", &index.IndexController{}, "get:Index")
 	beego.Router("/index", &index.IndexController{}, "get:Index")
+	beego.Router("/shortcut", &index.IndexController{}, "get:Shortcut")
 	beego.Router("/index/detail/:hi(.*)", &index.IndexController{}, "get:IndexDetail")
 	beego.Router("/login", &index.IndexController{}, "get:LoginPage")
 	beego.Router("/api/user", &index.IndexController{}, "get:GetUser")

@@ -131,7 +131,7 @@ func VerifyUser(user string, pass string, service string) bool {
 	if redisr == cacheStr {
 		return true
 	}
-	d := []registry.CloudRegistryServer{}
+	d := make([]registry.CloudRegistryServer, 0)
 	pass = util.Base64Encoding(pass)
 	searchMap := sql.GetSearchMapV("Admin", user, "Password", pass, "Name", services[0], "ClusterName", services[1])
 	q := sql.SearchSql(registry.CloudRegistryServer{}, registry.SelectCloudRegistryServer, searchMap)
@@ -239,10 +239,16 @@ func (this *IndexController) Login() {
 	}
 }
 
+// 快捷入口页面
+// @router /shortcut [get]
+func (this *IndexController) Shortcut() {
+	// 获取全部集群数据
+	this.TplName = "index/shortcut.html"
+}
+
 // @router /index [get]
 func (this *IndexController) Index() {
 	// 获取全部集群数据
-	//this.Data["data"] = cluster.GetClusterData("")
 	this.TplName = "index/index.html"
 }
 
