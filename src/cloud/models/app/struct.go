@@ -317,6 +317,8 @@ type CloudContainer struct {
 	Entname string
 	// 事件信息
 	Events string
+	// 重启次数
+	Restart int32
 }
 //2018-08-16 16:04:25.8692888 +0800 CST
 type CloudTemplateDeployHistory struct {

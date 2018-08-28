@@ -42,7 +42,7 @@ const SelectUsersMemory  = `select sum(memory * replicas) as memory from cloud_a
 const SelectUsersCpu = `select sum(cpu * replicas) as cpu from cloud_app_service where create_user in (?) `
 const SelectCurrentVersion = "select service_version,image_tag,service_id from cloud_app_service"
 
-const SelectCloudContainer = "select waiting_reason, waiting_messages,terminated_messages,terminated_reason,process,storage_data,cpu,memory,env,resource_name,create_time,create_user,service_name,cluster_name,image,status,container_id,container_name,server_address,container_ip,app_name from cloud_container"
+const SelectCloudContainer = "select waiting_reason, restart, waiting_messages,terminated_messages,terminated_reason,process,storage_data,cpu,memory,env,resource_name,create_time,create_user,service_name,cluster_name,image,status,container_id,container_name,server_address,container_ip,app_name from cloud_container"
 const InsertCloudContainer = "insert into cloud_container"
 const DeleteCloudContainer = "delete from cloud_container"
 const SelectUserContainer = `select container_id from cloud_container where create_user in (?)`

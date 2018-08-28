@@ -142,6 +142,7 @@
                             <th class="th">镜像</th>
                             <th class="th">资源</th>
                             <th class="th">IP地址</th>
+                            <th class="th">重启次数</th>
                             <th class="th">创建时间</th>
                             <th class="th">操作</th>
                         </tr>
@@ -276,7 +277,7 @@
                 }
                 },
                 {
-                    "data": "Image", "sWidth": "18%", "mRender": function (data) {
+                    "data": "Image", "sWidth": "13%", "mRender": function (data) {
                     return "<div style='word-wrap:break-word'><a>" + data + "</a></div>";
                 }
                 },
@@ -290,7 +291,8 @@
                     return "<span class='text-default'>" + data + "</span><br><span class='brtop5'>" + full["ServerAddress"] + "</span>"
                 }
                 },
-                {"data": "CreateTime", "sWidth": "9%"},
+                {"data": "Restart", "sWidth": "6%"},
+                {"data": "CreateTime", "sWidth": "6%"},
                 {
                     "sWidth": "7%", "data": "ContainerId", "mRender": function (data,type,full) {
                         var event =  encodeURI(full["Events"]);

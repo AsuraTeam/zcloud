@@ -762,6 +762,7 @@ CREATE TABLE `cloud_container` (
   `env` text,
   `process` text,
   `storage_data` text,
+  `restart` int(11),
   `waiting_messages` text COMMENT '容器等待时的信息',
   `waiting_reason` varchar(100) DEFAULT NULL COMMENT '容器等待原因',
   `terminated_reason` varchar(100) DEFAULT NULL COMMENT '容器停止原因',

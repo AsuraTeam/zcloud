@@ -214,6 +214,10 @@ func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.
 			}
 		}
 
+		if len( d.Status.ContainerStatuses) > 0 {
+			app.Restart = d.Status.ContainerStatuses[0].RestartCount
+		}
+
 		limit := d.Spec.Containers[0].Resources.Limits
 		app.Cpu = limit.Cpu().Value()
 		app.Image = d.Spec.Containers[0].Image
