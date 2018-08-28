@@ -132,6 +132,16 @@ func (this *AppController) AppDetail() {
 		this.TplName = "application/app/list.html"
 		return
 	}
+
+	permApp := userperm.GetResourceName("应用", getUser(this))
+	// 不是自己创建的才检查
+	if data.CreateUser != getUser(this) {
+			if ! userperm.CheckPerm(data.AppName, data.ClusterName, data.Entname, permApp) {
+				this.TplName = "application/app/list.html"
+				return
+			}
+	}
+
 	yamlShow := this.GetString("yaml")
 	this.Data["detault"] = "active"
 	this.Data["yamlActive"] = ""
@@ -197,6 +207,9 @@ func (this *AppController) AppAdd() {
 func (this *AppController) RedeployApp() {
 	ids := this.GetString("apps")
 	user := getUser(this)
+	perm := userperm.GetResourceName("服务", user)
+	permApp := userperm.GetResourceName("应用", user)
+
 	for _, v:= range strings.Split(ids, ","){
 
 		if _, err := strconv.Atoi(v); err != nil {
@@ -206,6 +219,15 @@ func (this *AppController) RedeployApp() {
 		services, status := getRedeployService(v, user)
 		if status {
 			for _, service := range services {
+				d := service
+				// 不是自己创建的才检查
+				if d.CreateUser != user {
+					if ! userperm.CheckPerm(d.AppName+";"+d.ResourceName+";"+d.ServiceName, d.ClusterName, d.Entname, perm)  {
+						if ! userperm.CheckPerm(d.AppName, d.ClusterName, d.Entname, permApp) {
+							continue
+						}
+					}
+				}
 				ExecDeploy(service, true)
 			}
 		}

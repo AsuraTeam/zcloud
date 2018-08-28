@@ -83,6 +83,7 @@ func getK8sAppData(data []app.CloudApp)  {
 				app.AppId = d.AppId
 				app.Entname = d.Entname
 				app.ClusterName = d.ClusterName
+				app.CreateUser = d.CreateUser
 				if cache.AppCacheErr == nil {
 					putAppDataToRedis(app.AppId, app)
 				}
