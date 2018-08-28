@@ -184,7 +184,7 @@ func GetAppHtml(cluster string, username string) string {
 // 加载应用数据
 func selectAppData(searchMap sql.SearchMap)[]app.CloudApp  {
 	data := make([]app.CloudApp, 0)
-	searchSql := sql.SearchSql(app.CloudAppService{}, app.SelectCloudApp, searchMap)
+	searchSql := sql.SearchSql(app.CloudApp{}, app.SelectCloudApp, searchMap)
 	sql.Raw(searchSql).QueryRows(&data)
 	return data
 }
