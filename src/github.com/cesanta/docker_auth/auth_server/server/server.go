@@ -42,6 +42,7 @@ import (
 	"strconv"
 	"github.com/garyburd/redigo/redis"
 	"cloud/cache"
+	registry2 "cloud/controllers/image"
 )
 
 var (
@@ -344,9 +345,23 @@ func SelectUserPermissions(ai *authz.AuthRequestInfo) []string {
 	}
 	for k := range set.GetData() {
 		actions = append(actions, k)
+		// 有push操作时触发更新镜像信息
+		if k == "push" {
+			go updateImageInfo()
+		}
 	}
 	return actions
 }
+
+// 2018-08-29 08:49
+func updateImageInfo()  {
+	time.Sleep(time.Second * 15)
+	for i :=0 ;i < 5 ; i ++ {
+		registry2.UpdateGroupImageInfo()
+		time.Sleep(time.Second * 10)
+	}
+}
+
 
 // 验证用户权限
 func (as *AuthServer) authorizeScope(ai *authz.AuthRequestInfo) ([]string, error) {
@@ -371,7 +386,7 @@ func (as *AuthServer) authorizeScope(ai *authz.AuthRequestInfo) ([]string, error
 
 func (as *AuthServer) Authorize(ar *authRequest) ([]authzResult, error) {
 
-	ares := []authzResult{}
+	ares := make([]authzResult, 0)
 	for _, scope := range ar.Scopes {
 		ai := &authz.AuthRequestInfo{
 			Account: ar.Account,

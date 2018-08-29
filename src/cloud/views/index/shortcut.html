@@ -164,6 +164,36 @@
                 <div class="clearfix"></div>
             </div>
         </div><!-- end col -->
+
+    </div>
+    <div class="row m-l-10">
+        <div class="col-sm-2">
+            <div class="wigdet-four-content pull-left">
+                <p class="font-secondary text-muted">基础设施</p>
+            </div>
+        </div><!-- end col -->
+    </div>
+    <div class="row m-l-10">
+        <div class="col-sm-2" onclick="loadpage('/base/quota/list')">
+            <div class="card-box widget-box-four index-cart" onmousemove="setBorderMove($(this))"
+                 onmouseout="setBorderOut($(this))">
+                <div class="wigdet-four-content text-center">
+                    <p class="font-secondary text-muted"><a><i class="fa m-r-10 m-l-10  fa-plus-square-o"></i></a>资源配额<br></p>
+                    <span class="font-secondary text-muted">对资源使用镜像限制,cpu,内存,服务数量,应用数量等多种资源的限制</span>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div><!-- end col -->
+        <div class="col-sm-2" onclick="loadpage('/base/network/lb/list')">
+            <div class="card-box widget-box-four index-cart" onmousemove="setBorderMove($(this))"
+                 onmouseout="setBorderOut($(this))">
+                <div class="wigdet-four-content text-center">
+                    <p class="font-secondary text-muted"><a><i class="fa m-r-10 m-l-10  fa-plus-square-o"></i></a>负载均衡<br></p>
+                    <span class="font-secondary text-muted">负载均衡查看和配置</span>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div><!-- end col -->
     </div>
 {{template "template/bottom.html" .}}
     </body>
