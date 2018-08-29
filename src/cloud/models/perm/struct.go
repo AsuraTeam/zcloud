@@ -62,6 +62,10 @@ type CloudApiResource struct {
     ApiType string
     //最近修改时间
     LastModifyTime string
+    // 请求方法
+    Method string
+    // 父节点
+	Parent string
 }
 
 

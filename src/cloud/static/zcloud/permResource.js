@@ -46,30 +46,18 @@ function loadResourceData(key) {
         "bLengthChange": false,
         "bInfo": true, //是否显示页脚信息，DataTables插件左下角显示记录数
         "scrollX": true, // 是否允许左右滑动
-        "displayLength": 10, // 默认长度
+        "displayLength": 30, // 默认长度
         "ajax": { // 请求地址
             "url": "/api/perm/resource?t=" + new Date().getTime() + "&search=" + key ,
             "type": 'get'
         },
         "columns": [ // 数据映射
-            {"data": "RealName"},
-            {"data": "ResourceName"},
-            {"data": "IsDel","mRender":function (data) {
-                if(data == 0){
-                    return  '<div class="Running"><div><i class="fa fa-circle"></i><span>&nbsp;有效</span>';
-                }else{
-                    return  '<div class="Fail"><div><i class="fa fa-circle"></i><span>&nbsp;已禁用</span>';
-                }
-            }},
-            {"data": "Description"},
+            {"data": "Name"},
+            {"data": "ApiUrl"},
+            {"data": "Method"},
+            {"data": "ApiType"},
+            {"data": "Parent"},
             {"data": "CreateTime"},
-            {"data": "LastModifyTime"},
-            {
-                "sWidth": "150px", "data": "ResourceId", "mRender": function (data) {
-                    return '<button type="button" title="更新" onclick="addResource(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
-                        '<button type="button"  title="删除" onClick="deleteResourceSwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
-            }
-            },
         ],
         "fnRowCallback": function (row, data) { // 每行创建完毕的回调
             $(row).data('recordId', data.recordId);

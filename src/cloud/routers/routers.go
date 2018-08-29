@@ -53,11 +53,11 @@ func init() {
 			// 容器治理,
 			// 应用管理页面,
 			beego.NSNamespace("/app",
-				beego.NSRouter("/list", &app.AppController{}, "get:AppList"),
+				beego.NSRouter("/list", &app.AppController{}, "get:AppList", "应用管理列表", "应用管理", "容器治理"),
 				// 添加应用页面,
-				beego.NSRouter("/add", &app.AppController{}, "get:AppAdd"),
+				beego.NSRouter("/add", &app.AppController{}, "get:AppAdd", "创建应用", "应用管理", "容器治理"),
 				// 应用详情页面,
-				beego.NSRouter("/detail/:id:int", &app.AppController{}, "get:AppDetail"),
+				beego.NSRouter("/detail/:id:int", &app.AppController{}, "get:AppDetail", "应用详情", "应用管理", "容器治理"),
 			),
 			beego.NSNamespace("/configure",
 				beego.NSRouter("/list", &app.ConfigureController{}, "get:ConfigureList"),
@@ -70,28 +70,28 @@ func init() {
 			),
 			// 容器管理,
 			// 容器入口,
-			beego.NSRouter("/container/list", &app.AppController{}, "get:ContainerList"),
+			beego.NSRouter("/container/list", &app.AppController{}, "get:ContainerList", "容器管理列表", "容器管理", "应用交付中心"),
 			beego.NSRouter("/container/image", &app.AppController{}, "get:ContainerImage"),
 			// 容器详情,
-			beego.NSRouter("/container/detail/:hi(.*)", &app.AppController{}, "get:ContainerDetail"),
+			beego.NSRouter("/container/detail/:hi(.*)", &app.AppController{}, "get:ContainerDetail", "容器详情", "容器管理列表", "容器管理"),
 			// Service管理,
 			// 应用Service入口页面,
 			beego.NSNamespace("/service",
-				beego.NSRouter("/list", &app.ServiceController{}, "get:ServiceList"),
+				beego.NSRouter("/list", &app.ServiceController{}, "get:ServiceList", "服务管理列表", "服务管理", "容器治理"),
 				// 应用Service添加页面,
-				beego.NSRouter("/add", &app.ServiceController{}, "get:ServiceAdd"),
+				beego.NSRouter("/add", &app.ServiceController{}, "get:ServiceAdd", "创建应用服务", "服务管理列表", "服务管理"),
 				// 应用Service 手动扩展页面,
-				beego.NSRouter("/scale/add/:id:int", &app.ServiceController{}, "get:ScaleAdd"),
+				beego.NSRouter("/scale/add/:id:int", &app.ServiceController{}, "get:ScaleAdd", "服务扩容", "服务管理列表", "服务管理"),
 				// 应用Service 修改配置页面,
-				beego.NSRouter("/config/add/:id:int", &app.ServiceController{}, "get:ConfigAdd"),
+				beego.NSRouter("/config/add/:id:int", &app.ServiceController{}, "get:ConfigAdd", "服务配置更新", "服务管理列表", "服务管理"),
 				// 应用Service 修改滚动升级页面,
-				beego.NSRouter("/image/add/:id:int", &app.ServiceController{}, "get:ImageAdd"),
+				beego.NSRouter("/image/add/:id:int", &app.ServiceController{}, "get:ImageAdd", "服务升级操作", "服务管理列表", "服务管理"),
 				// 应用Service 修改环境变量页面,
-				beego.NSRouter("/env/add/:id:int", &app.ServiceController{}, "get:EnvAdd"),
+				beego.NSRouter("/env/add/:id:int", &app.ServiceController{}, "get:EnvAdd", "服务环境变量", "服务管理列表", "服务管理"),
 				// 应用Service 修改健康检查页面,
-				beego.NSRouter("/health/add/:id:int", &app.ServiceController{}, "get:HealthChange"),
+				beego.NSRouter("/health/add/:id:int", &app.ServiceController{}, "get:HealthChange", "服务健康检查", "服务管理列表", "服务管理"),
 				// 应用Service 修改端口页面,
-				beego.NSRouter("/port/add/:id:int", &app.ServiceController{}, "get:PortChange"),
+				beego.NSRouter("/port/add/:id:int", &app.ServiceController{}, "get:PortChange", "服务端口修改", "服务管理列表", "服务管理"),
 				// 创建服务添加存储页面,
 				beego.NSRouter("/storage/add", &app.ServiceController{}, "get:StorageAdd"),
 				// 创建服务添加健康检查页面,
@@ -102,15 +102,15 @@ func init() {
 			beego.NSNamespace("/template",
 				// 模板管理,
 				// 应用模板入口页面,
-				beego.NSRouter("/list", &app.AppController{}, "get:TemplateList"),
+				beego.NSRouter("/list", &app.AppController{}, "get:TemplateList", "应用模板", "服务编排", "应用交付中心"),
 				// 应用模板入口页面,
-				beego.NSRouter("/deploy/history", &app.AppController{}, "get:HistoryList"),
+				beego.NSRouter("/deploy/history", &app.AppController{}, "get:HistoryList", "部署历史", "服务编排", "应用交付中心"),
 				// 应用模板添加页面,
-				beego.NSRouter("/add", &app.AppController{}, "post:TemplateAdd"),
+				beego.NSRouter("/add", &app.AppController{}, "post:TemplateAdd", "创建应用模板", "应用模板", "服务编排"),
 				// 应用模板添加页面,
-				beego.NSRouter("/update/add", &app.AppController{}, "post:TemplateUpdateAdd"),
+				beego.NSRouter("/update/add", &app.AppController{}, "post:TemplateUpdateAdd", "更新模板数据", "应用模板", "服务编排"),
 				// 应用模板拉起页面,
-				beego.NSRouter("/deploy/add", &app.AppController{}, "post:TemplateDeployAdd"),
+				beego.NSRouter("/deploy/add", &app.AppController{}, "post:TemplateDeployAdd", "应用拉起页面", "应用模板", "服务编排"),
 			),
 			// 环境配置文件,
 			beego.NSRouter("/evnfile", &app.AppController{}, "*:EnvfileList"),
@@ -119,13 +119,13 @@ func init() {
 	pipelineNs :=
 		beego.NewNamespace("/pipeline",
 			// 流水线列表入口,
-			beego.NSRouter("/history/list", &pipeline.ControllerPipeline{}, "get:PipelineHistoryList"),
+			beego.NSRouter("/history/list", &pipeline.ControllerPipeline{}, "get:PipelineHistoryList", "运行历史", "流水线", "应用交付中心"),
 			// 流水线列表入口,
-			beego.NSRouter("/list", &pipeline.ControllerPipeline{}, "get:PipelineList"),
+			beego.NSRouter("/list", &pipeline.ControllerPipeline{}, "get:PipelineList", "流水线项目", "流水线", "应用交付中心"),
 			// 流水线添加页面,
-			beego.NSRouter("/add", &pipeline.ControllerPipeline{}, "get:PipelineAdd"),
+			beego.NSRouter("/add", &pipeline.ControllerPipeline{}, "get:PipelineAdd", "创建流水线", "流水线项目", "流水线"),
 			// 流水线详情页面,
-			beego.NSRouter("/detail/:hi(.*)", &pipeline.ControllerPipeline{}, "get:PipelineDetail"),
+			beego.NSRouter("/detail/:hi(.*)", &pipeline.ControllerPipeline{}, "get:PipelineDetail", "流水线详情", "流水线项目", "流水线"),
 		)
 
 	registryNs :=
@@ -141,9 +141,9 @@ func init() {
 			beego.NSNamespace("/registry",
 				// 镜像中心,
 				// 仓库配置入口页面,
-				beego.NSRouter("/list", &registry.ImageController{}, "get:RegistryServerList"),
+				beego.NSRouter("/list", &registry.ImageController{}, "get:RegistryServerList", "镜像仓库", "镜像中心", "应用交付中心"),
 				// 仓库配置页面,
-				beego.NSRouter("/add", &registry.ImageController{}, "get:RegistryServerAdd"),
+				beego.NSRouter("/add", &registry.ImageController{}, "get:RegistryServerAdd", "创建镜像仓库", "镜像仓库", "镜像中心"),
 				// 镜像中心,
 				// 仓库权限入口页面,
 				beego.NSNamespace("/perm",
@@ -159,11 +159,11 @@ func init() {
 				),
 				beego.NSNamespace("/group",
 					// 仓库分组
-					beego.NSRouter("/list", &registry.RegistryGroupController{}, "get:RegistryGroupList"),
+					beego.NSRouter("/list", &registry.RegistryGroupController{}, "get:RegistryGroupList","镜像仓库组", "镜像中心", "应用交付中心"),
 					// 仓库分组添加
-					beego.NSRouter("/add", &registry.RegistryGroupController{}, "get:RegistryGroupAdd"),
+					beego.NSRouter("/add", &registry.RegistryGroupController{}, "get:RegistryGroupAdd","镜像仓库组添加", "镜像仓库组", "镜像中心"),
 					// 仓库分组详情页面
-					beego.NSRouter("/detail/:id:int", &registry.RegistryGroupController{}, "get:GroupDetailPage"),
+					beego.NSRouter("/detail/:id:int", &registry.RegistryGroupController{}, "get:GroupDetailPage", "镜像仓库组详情", "镜像仓库组", "镜像中心"),
 				),
 			),
 		)
@@ -526,30 +526,30 @@ func init() {
 				// 获取集群的节点,
 				beego.NSRouter("/nodes", &cluster.ClusterController{}, "*:NodesData"),
 				// 保存集群,
-				beego.NSRouter("", &cluster.ClusterController{}, "post:Save"),
+				beego.NSRouter("", &cluster.ClusterController{}, "post:Save", "保存集群", "集群管理", "基础设施"),
 				// 删除集群,
-				beego.NSRouter("/:id:int", &cluster.ClusterController{}, "delete:Delete"),
+				beego.NSRouter("/:id:int", &cluster.ClusterController{}, "delete:Delete", "删除集群", "集群管理", "基础设施"),
 				// 集群数据,
-				beego.NSRouter("", &cluster.ClusterController{}, "get:ClusterData"),
+				beego.NSRouter("", &cluster.ClusterController{}, "get:ClusterData", "集群数据", "集群管理", "基础设施"),
 				// 集群数据,直返回,集群名称和id的数据,
-				beego.NSRouter("/name", &cluster.ClusterController{}, "get:ClusterName"),
+				beego.NSRouter("/name", &cluster.ClusterController{}, "get:ClusterName", "获取集群名称", "集群管理", "基础设施"),
 				// 单条数据,
 				beego.NSRouter("/:id:int", &cluster.ClusterController{}, "get:ClusterData"),
 				// 保存标签,
-				beego.NSRouter("/label", &hosts.HostsController{}, "post:LabelSave"),
+				beego.NSRouter("/label", &hosts.HostsController{}, "post:LabelSave", "保存主机标签", "主机", "集群管理"),
 				beego.NSNamespace("/hosts",
 					// 保存主机,
-					beego.NSRouter("", &hosts.HostsController{}, "post:Save"),
+					beego.NSRouter("", &hosts.HostsController{}, "post:Save", "保存主机", "主机", "集群管理"),
 					// 删除主机,
-					beego.NSRouter("/:id:int", &hosts.HostsController{}, "delete:Delete"),
+					beego.NSRouter("/:id:int", &hosts.HostsController{}, "delete:Delete","删除主机", "主机", "集群管理"),
 					// 主机数据,
-					beego.NSRouter("", &hosts.HostsController{}, "get:HostsData"),
+					beego.NSRouter("", &hosts.HostsController{}, "get:HostsData", "获取主机数据", "主机", "集群管理"),
 					// 单条主机数据,
 					beego.NSRouter("/:id:int", &hosts.HostsController{}, "get:HostsData"),
 					// 调度维护设置
-					beego.NSRouter("/:id:int", &hosts.HostsController{}, "post:Schedulable"),
+					beego.NSRouter("/:id:int", &hosts.HostsController{}, "post:Schedulable", "主机调度操作", "主机", "集群管理"),
 					// 调度维护设置
-					beego.NSRouter("/images/:id:int", &hosts.HostsController{}, "get:GetHostImages"),
+					beego.NSRouter("/images/:id:int", &hosts.HostsController{}, "get:GetHostImages", "获取主机镜像", "主机", "集群管理"),
 				),
 			),
 			beego.NSNamespace("/storage",
@@ -757,7 +757,6 @@ func init() {
 			),
 		)
 
-
 	// 系统设置
 	systemApi :=
 		beego.NewNamespace("/api",
@@ -826,7 +825,7 @@ func init() {
 				beego.NSRouter("", &perm.PermController{}, "get:PermDatas"),
 				beego.NSNamespace("/role",
 					// 角色保存,
-					beego.NSRouter("", &perm.PermRoleController{}, "post:PermRoleSave"),
+					beego.NSRouter("", &perm.PermRoleController{}, "post:PermRoleSave", "角色保存"),
 					// 删除角色,
 					beego.NSRouter("/:id:int", &perm.PermRoleController{}, "delete:PermRoleDelete"),
 					// 获取角色数据单条数据,
@@ -872,9 +871,9 @@ func init() {
 			beego.NSNamespace("/monitor",
 				beego.NSNamespace("/scale",
 					// 自动伸缩保存,
-					beego.NSRouter("", &monitor.AutoScaleController{}, "post:AutoScaleSave"),
+					beego.NSRouter("", &monitor.AutoScaleController{}, "post:AutoScaleSave", "自动伸缩保存", "自动伸缩"),
 					// 删除自动伸缩
-					beego.NSRouter("/:id:int", &monitor.AutoScaleController{}, "delete:AutoScaleDelete"),
+					beego.NSRouter("/:id:int", &monitor.AutoScaleController{}, "delete:AutoScaleDelete", "删除自动伸缩", "自动伸缩"),
 					// 获取自动伸缩数据单条数据,
 					beego.NSRouter("/:id:int", &monitor.AutoScaleController{}, "get:AutoScaleData"),
 					// 获取自动伸缩数据,
@@ -924,9 +923,8 @@ func init() {
 	}
 
 	beego.InsertFilter("/*", beego.BeforeRouter, FilterUser)
-	beego.InsertFilter("/api/*", beego.AfterExec,  DeleteUser, false)
+	beego.InsertFilter("/api/*", beego.AfterExec, DeleteUser, false)
 }
-
 
 // 查询用户token使用
 type User struct {
@@ -938,20 +936,20 @@ type User struct {
 }
 
 // 设置用户登录信息
-func setUserLogin(ctx *context.Context)  {
+func setUserLogin(ctx *context.Context) {
 	uri := ctx.Request.RequestURI
 	tokenHeader := ctx.Request.Header
 	var token = ""
-	if !strings.Contains(uri, "/api/"){
+	if !strings.Contains(uri, "/api/") {
 		return
 	}
 	if len(tokenHeader.Get("token")) == 0 {
 		uris := strings.Split(uri, "token=")
-		if len(uris) > 1{
+		if len(uris) > 1 {
 			t := strings.Split(uris[1], "&")
 			token = t[0]
 		}
-	}else {
+	} else {
 		token = tokenHeader.Get("token")
 	}
 	if len(token) == 0 {

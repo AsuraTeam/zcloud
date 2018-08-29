@@ -10,7 +10,7 @@ const UpdateCloudPerm = "update cloud_perm"
 const InsertCloudPerm = "insert into cloud_perm" 
 const DeleteCloudPerm = "delete from cloud_perm" 
 
-const SelectCloudApiResource = "select last_modify_time,last_modify_user,description,api_url,name,api_type,resource_id,create_time,create_user from cloud_api_resource"
+const SelectCloudApiResource = "select last_modify_time,method,parent,last_modify_user,description,api_url,name,api_type,resource_id,create_time,create_user from cloud_api_resource"
 const UpdateCloudApiResource = "update cloud_api_resource"
 const InsertCloudApiResource = "insert into cloud_api_resource" 
 const DeleteCloudApiResource = "delete from cloud_api_resource" 

@@ -5,6 +5,7 @@ import (
 	"cloud/util"
 	"github.com/astaxie/beego"
 	"cloud/models/perm"
+	"strings"
 )
 
 type ResourceController struct {
@@ -72,7 +73,7 @@ func (this *ResourceController) ResourceSave() {
 // router /api/perm/resource/name [get]
 func (this *ResourceController) ResourceDataName() {
 	// api资源数据
-	data := []perm.CloudApiResource{}
+	data := make([]perm.CloudApiResource, 0)
 	q := sql.SearchSql(perm.CloudApiResource{},
 		perm.SelectCloudApiResource,
 		sql.SearchMap{})
@@ -83,7 +84,26 @@ func (this *ResourceController) ResourceDataName() {
 // api资源数据
 // @router /api/perm/resource [get]
 func (this *ResourceController) ResourceDatas() {
-	data := []perm.CloudApiResource{}
+	apis := beego.APIS
+	for _, v := range apis{
+		vs := strings.Split(v, "|")
+		if len(vs)> 4 {
+			if len(vs[2]) >  0 {
+				p := perm.CloudApiResource{}
+				p.CreateUser = "system"
+				p.CreateTime = util.GetDate()
+				p.ApiUrl = vs[0]
+				p.ApiUrl = strings.Replace(p.ApiUrl, "//" ,"/", -1)
+				p.Method = strings.Replace(strings.Split(vs[1], ":")[0], "[", "", -1)
+				p.Method = strings.Replace(p.Method, "map", "", -1)
+				p.Name = vs[2]
+				p.ApiType = vs[3]
+				p.Parent = vs[4]
+				sql.Exec(sql.InsertSql(p, perm.InsertCloudApiResource))
+			}
+		}
+	}
+	data := make([]perm.CloudApiResource, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	key := this.GetString("search")

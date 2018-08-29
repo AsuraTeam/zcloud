@@ -30,10 +30,10 @@
             <!-- end row -->
             <div class="row ">
                 <div class="col-sm-12 top-10">
-                    <button type="button" onclick="addResource()"
-                            class="btn btn-primary btn-sm waves-effect waves-light">
-                        创建资源
-                    </button>
+                    {{/*<button type="button" onclick="addResource()"*/}}
+                            {{/*class="btn btn-primary btn-sm waves-effect waves-light">*/}}
+                        {{/*创建资源*/}}
+                    {{/*</button>*/}}
                     <div class="col-sm-1 cluster-search pull-right">
                         <button type="button" class="btn btn-default waves-effect waves-light"
                                 onclick="loadResourceData()"
@@ -52,13 +52,12 @@
                     <table id="user-data-table" class="table table-hover" >
                         <thead>
                         <tr>
-                            <th>真实名称</th>
-                            <th>登录名</th>
-                            <th>状态</th>
-                            <th>描述信息</th>
+                            <th>资源名称</th>
+                            <th>url地址</th>
+                            <th>请求方法</th>
+                            <th>资源属组</th>
+                            <th>资源上级</th>
                             <th>创建时间</th>
-                            <th>最近更新时间</th>
-                            <th>操作</th>
                         </tr>
                         </thead>
                         <tbody>
