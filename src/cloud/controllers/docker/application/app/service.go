@@ -186,6 +186,11 @@ func (this *ServiceController) ServiceSave() {
 		return
 	}
 
+	if len(d.Domain) > 0 {
+		createLbConfig(d, d.ClusterName, d.Entname, d.AppName, d.Domain, getServiceUser(this), d.ResourceName)
+		go k8s.CreateNginxConf("")
+	}
+
 	data, msg := util.SaveResponse(nil, "保存成功")
 	util.SaveOperLog(getServiceUser(this), *this.Ctx,
 		"保存Service 配置 "+msg, d.ServiceName)

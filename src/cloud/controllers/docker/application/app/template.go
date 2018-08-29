@@ -157,50 +157,57 @@ func startDeploy(yaml string, appName string, ent string, clusterName string, re
 	if len(domain) > 0 {
 		logs.Info("获取到拉起服务的域名后缀", domain)
 		for _, service := range services {
-			if len(service.ContainerPort) < 1 {
-				logs.Error("获取服务端口错误", service.ServiceName)
-				continue
-			}
-
-			searchMap := sql.SearchMap{}
-			searchMap.Put("ClusterName", clusterName)
-			searchMap.Put("Entname", ent)
-			var lbData k8s.CloudLb
-			lb := k8s.GetLbDataSearchMap(searchMap)
-			if lb!= nil{
-				lbData = lb.(k8s.CloudLb)
-			}
-			if lbData.LbId == 0 {
-				logs.Error("服务获取负载均衡失败，该集群环境没有配置负载均衡", ent, clusterName)
-				continue
-			}
-
-			conf := k8s.CloudLbService{
-				ServiceName:    service.ServiceName,
-				AppName:        appName,
-				Domain:         fmt.Sprintf("%s.%s.%s", appName, service.ServiceName, domain),
-				LbType:         "nginx",
-				ClusterName:    clusterName,
-				ResourceName:   resourceName,
-				Protocol:       "HTTP",
-				Entname:        ent,
-				ServiceVersion: "1",
-				LbMethod:       "service",
-				LbId:           lbData.LbId,
-				LbName:         lbData.LbName,
-				CreateTime:     util.GetDate(),
-				CreateUser:     user,
-				LastModifyTime: util.GetDate(),
-				LastModifyUser: user,
-				ContainerPort:  strings.Split(service.ContainerPort, ".")[0],
-			}
-			sql.Exec(sql.InsertSql(conf, "insert into cloud_lb_service" ))
-
-			q := fmt.Sprintf(app.UpdateServiceDomain, domain, appName, clusterName, service.ServiceName, resourceName)
-			sql.Exec(q)
-			go k8s.CreateNginxConf("")
+			createLbConfig(service, clusterName, ent, appName, domain, user, resourceName)
 		}
+		go k8s.CreateNginxConf("")
 	}
+}
+
+// 2018-08-29 07:51
+// 创建负载均衡配置
+func createLbConfig(service app.CloudAppService, clusterName string, ent string, appName string, domain string, user string, resourceName string)  {
+	if len(service.ContainerPort) < 1 {
+		logs.Error("获取服务端口错误", service.ServiceName)
+		return
+	}
+
+	searchMap := sql.SearchMap{}
+	searchMap.Put("ClusterName", clusterName)
+	searchMap.Put("Entname", ent)
+	var lbData k8s.CloudLb
+	lb := k8s.GetLbDataSearchMap(searchMap)
+	if lb!= nil{
+		lbData = lb.(k8s.CloudLb)
+	}
+	if lbData.LbId == 0 {
+		logs.Error("服务获取负载均衡失败，该集群环境没有配置负载均衡", ent, clusterName)
+		return
+	}
+
+	conf := k8s.CloudLbService{
+		ServiceName:    service.ServiceName,
+		AppName:        appName,
+		Domain:         fmt.Sprintf("%s.%s.%s", appName, service.ServiceName, domain),
+		LbType:         "nginx",
+		ClusterName:    clusterName,
+		ResourceName:   resourceName,
+		Protocol:       "HTTP",
+		Entname:        ent,
+		ServiceVersion: "1",
+		LbMethod:       "service",
+		LbId:           lbData.LbId,
+		LbName:         lbData.LbName,
+		CreateTime:     util.GetDate(),
+		CreateUser:     user,
+		LastModifyTime: util.GetDate(),
+		LastModifyUser: user,
+		ContainerPort:  strings.Split(service.ContainerPort, ".")[0],
+	}
+	sql.Exec(sql.InsertSql(conf, "insert into cloud_lb_service" ))
+
+	q := fmt.Sprintf(app.UpdateServiceDomain, domain, appName, clusterName, service.ServiceName, resourceName)
+	sql.Exec(q)
+
 }
 
 // 2018-08-16 10:35

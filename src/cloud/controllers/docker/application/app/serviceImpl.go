@@ -165,7 +165,7 @@ func GetServiceRunData(data []app.CloudAppService, user string) []k8s.CloudApp {
 		namespace := util.Namespace(d.AppName, d.ResourceName) +
 			d.ServiceName
 		if d.ServiceVersion != "" {
-			namespace = namespace + "--" + d.ServiceVersion
+			namespace = util.Namespace(namespace, d.ServiceVersion)
 		}
 		namespace += strconv.FormatInt(d.ServiceId, 10)
 
@@ -402,11 +402,22 @@ func getService(this *ServiceController) app.CloudAppService {
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	searchMap.Put("ServiceId", id)
-	searchMap.Put("CreateUser", getServiceUser(this))
-	service := app.CloudAppService{}
-	q := sql.SearchSql(service, app.SelectCloudAppService, searchMap)
-	sql.Raw(q).QueryRow(&service)
-	return service
+	user := getServiceUser(this)
+	perm := userperm.GetResourceName("服务", user)
+	permApp := userperm.GetResourceName("应用", user)
+
+	d := app.CloudAppService{}
+	q := sql.SearchSql(d, app.SelectCloudAppService, searchMap)
+	sql.Raw(q).QueryRow(&d)
+	// 不是自己创建的才检查
+	if d.CreateUser != user {
+		if ! userperm.CheckPerm(d.AppName+";"+d.ResourceName+";"+d.ServiceName, d.ClusterName, d.Entname, perm) {
+			if ! userperm.CheckPerm(d.AppName, d.ClusterName, d.Entname, permApp) {
+				return app.CloudAppService{}
+			}
+		}
+	}
+	return d
 }
 
 // 设置json数据

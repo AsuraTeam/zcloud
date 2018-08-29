@@ -135,9 +135,10 @@
                                     <tr>
                                         <th>服务名称</th>
                                         <th>容器端口</th>
+                                        <th>负载类型</th>
                                         <th>协议</th>
                                         <th>域名</th>
-                                        <th>负载</th>
+                                        <th>负载方式    </th>
                                         <th>证书</th>
                                         <th>状态</th>
                                         <th>创建时间</th>
@@ -186,8 +187,9 @@
                         {"data": "ServiceName"},
                         {"data": "ContainerPort"},
                         {"data": "LbType"},
+                        {"data": "Protocol"},
                         {"data": "Domain","mRender":function (data) {
-                                return '<a target="_blank" href="http://'+data+'">'+data+'</a>'
+                                return '<div style="word-break: break-all"><a target="_blank" href="http://'+data+'">'+data+'</a></div>'
                         }},
                         {"data": "LbMethod"},
                         {"data": "CertFile","mRender":function (data) {

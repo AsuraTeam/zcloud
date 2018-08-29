@@ -235,6 +235,21 @@ func (this *AppController) RedeployApp() {
 	SetAppDataJson(this, util.ApiResponse(true, "成功,重建中..."))
 }
 
+// 2018-082-9 08:28
+// 判断服务数量,数量大于0不让删应用
+func checkServiceNumber(d app.CloudApp)  int {
+	searchMap := sql.GetSearchMapV(
+		"AppName", d.AppName,
+		"Entname", d.Entname,
+		"ClusterName", d.ClusterName)
+	data := make([]app.CloudAppService, 0)
+	q := sql.SearchSql(app.CloudAppService{}, app.SelectCloudAppService, searchMap)
+	sql.Raw(q).QueryRows(&data)
+	if len(data) > 0 {
+		return len(data)
+	}
+	return 0
+}
 
 
 // 删除应用
@@ -242,7 +257,13 @@ func (this *AppController) RedeployApp() {
 func (this *AppController) AppDelete() {
 	force := this.GetString("force")
 	d, searchMap := getApp(this)
-
+	n := checkServiceNumber(d)
+	if n > 0 {
+		msg := "还有"+strconv.Itoa(n)+"个服务未删除,删除后操作!"
+		SetAppDataJson(this, util.ApiResponse(false, msg))
+		util.SaveOperLog(getUser(this), *this.Ctx, msg, d.ClusterName)
+		return
+	}
 	// 先去服务器删除,成功后再删除数据库
 	namespace := util.Namespace(d.AppName, d.ResourceName)
 

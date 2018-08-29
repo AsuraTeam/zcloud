@@ -101,10 +101,8 @@ func (this *ServiceController) ServiceSave() {
 
 	serviceData := app.GetUserLbService(user, d.ClusterName, d.LbServiceId)
 	if len(serviceData) > 0 {
-		d.ServiceName = serviceData[0].ServiceName
-		d.AppName = serviceData[0].AppName
-		d.ClusterName = serviceData[0].ClusterName
-		d.ResourceName = serviceData[0].ResourceName
+		service := serviceData[0]
+		d.ServiceName,d.AppName, d.ClusterName, d.ResourceName = service.ServiceName, service.AppName,service.ClusterName,service.ResourceName
 	}
 
 	q := sql.InsertSql(d, lb.InsertCloudLbService)
