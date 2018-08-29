@@ -23,6 +23,7 @@ func GetClusterStatus(clusterName string) string {
 	cl, err := GetClient(clusterName)
 	if err != nil {
 		logs.Error("获取集群连接失败", clusterName, err)
+		return ""
 	}
 	data ,err := cl.CoreV1().ComponentStatuses().List(metav1.ListOptions{})
 	if err == nil {

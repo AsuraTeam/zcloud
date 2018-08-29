@@ -81,9 +81,9 @@ func (this *ResourceController) ResourceDataName() {
 	setResourceJson(this, data)
 }
 
-// api资源数据
-// @router /api/perm/resource [get]
-func (this *ResourceController) ResourceDatas() {
+// 2018-08-29 14:31
+// 更新资源
+func updateResource()  {
 	apis := beego.APIS
 	for _, v := range apis{
 		vs := strings.Split(v, "|")
@@ -103,6 +103,12 @@ func (this *ResourceController) ResourceDatas() {
 			}
 		}
 	}
+}
+
+// api资源数据
+// @router /api/perm/resource [get]
+func (this *ResourceController) ResourceDatas() {
+
 	data := make([]perm.CloudApiResource, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
@@ -116,7 +122,7 @@ func (this *ResourceController) ResourceDatas() {
 		searchSql += " where 1=1 and (api_url like \"%" + key + "%\" or description like \"%" + key + "%\")"
 	}
 
-	num, _ := sql.OrderByPagingSql(searchSql, "resource_id",
+	num, _ := sql.OrderByPagingSql(searchSql, "api_url",
 		*this.Ctx.Request,
 		&data,
 		perm.CloudApiResource{})

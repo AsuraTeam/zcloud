@@ -249,7 +249,11 @@ func MakeContainerData(namespace string) {
 		sName := namespace + d.ServiceName
 
 		if _, ok := lockData.Get(sName); !ok {
-			c, _ := k8s.GetClient(d.ClusterName)
+			c,err := k8s.GetClient(d.ClusterName)
+			if err != nil {
+				logs.Error("获取客户端错误", err.Error())
+				continue
+			}
 			appData := k8s.GetContainerStatus(namespace, c)
 			for _, all := range appData {
 				all = setAppData(all, d, c)

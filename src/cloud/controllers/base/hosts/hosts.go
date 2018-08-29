@@ -117,7 +117,9 @@ func (this *HostsController) HostsData() {
 		r = util.ResponseMapError(err.Error())
 	}
 	setHostJson(this, r)
-	go CacheNodeStatus(data, c)
+	if err == nil {
+		go CacheNodeStatus(data, c)
+	}
 }
 
 

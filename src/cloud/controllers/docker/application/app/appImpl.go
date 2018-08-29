@@ -76,7 +76,11 @@ func getK8sAppData(data []app.CloudApp)  {
 		namespace := util.Namespace(d.AppName, d.ResourceName)
 		number := 0
 		if _, ok := allData.Get(namespace); !ok {
-			c, _ := k8s.GetClient(d.ClusterName)
+			c, err := k8s.GetClient(d.ClusterName)
+			if err != nil {
+				logs.Error("获取客户端失败", err.Error())
+				continue
+			}
 			cloudAppData := k8s.GetDeploymentApp(c, namespace, "")
 			for _, app := range cloudAppData {
 				app.ResourceName = d.ResourceName

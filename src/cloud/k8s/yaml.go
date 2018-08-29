@@ -63,7 +63,10 @@ func YamlDeployment(clustername string, yaml []byte, namespace string, isService
 		return err
 	}
 	logs.Info("开始创建 Service ...")
-	client, _ := GetClient(clustername)
+	client, err := GetClient(clustername)
+	if err != nil {
+		return err
+	}
 	serviceData := GetPodsFromUUid(namespace, labels["uuid"], client)
 	fmt.Println(serviceData)
 	cl2, _ := GetYamlClient(clustername, "", "v1", "api")

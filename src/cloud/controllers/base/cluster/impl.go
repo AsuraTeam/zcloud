@@ -198,8 +198,8 @@ func getUsername(this *ClusterController) string {
 // 缓存集群信息到redis中,不用每次查库
 // 任务计划自动更新数据
 func CacheClusterData() {
-	cData := []k8s.ClusterStatus{}
-	data := []cluster.CloudClusterDetail{}
+	cData := make([]k8s.ClusterStatus, 0)
+	data := make([]cluster.CloudClusterDetail, 0)
 	sql.Raw(cluster.SelectCloudCluster).QueryRows(&data)
 	for _, k := range data {
 		go CacheClusterDetailData(k.ClusterName)
@@ -226,7 +226,7 @@ func CacheClusterData() {
 // 2018-02-19 08:53
 // 获取缓存的集群数据数据
 func getClusterCacheData() []k8s.ClusterStatus {
-	cData := []k8s.ClusterStatus{}
+	cData := make([]k8s.ClusterStatus, 0)
 	r := cache.ClusterCache.Get("data")
 	status := util.RedisObj2Obj(r, &cData)
 	if ! status {
