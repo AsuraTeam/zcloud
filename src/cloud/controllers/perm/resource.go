@@ -83,12 +83,20 @@ func (this *ResourceController) ResourceDataName() {
 
 // 2018-08-29 14:31
 // 更新资源
-func updateResource()  {
+func UpdateResource()  {
+	lock := util.Lock{}
+	data := make([]perm.CloudApiResource, 0)
+	sql.Raw(perm.SelectCloudApiResource).QueryRows(&data)
+	for _, v := range data {
+		lock.Put(v.Name+v.ApiUrl+v.Method+v.ApiType+v.Parent, "1")
+	}
+	//sql.Raw(perm.DeleteCloudApiResource).Exec()
 	apis := beego.APIS
 	for _, v := range apis{
 		vs := strings.Split(v, "|")
 		if len(vs)> 4 {
 			if len(vs[2]) >  0 {
+
 				p := perm.CloudApiResource{}
 				p.CreateUser = "system"
 				p.CreateTime = util.GetDate()
@@ -99,6 +107,9 @@ func updateResource()  {
 				p.Name = vs[2]
 				p.ApiType = vs[3]
 				p.Parent = vs[4]
+				if _, ok := lock.Get(p.Name + p.ApiUrl + p.Method + p.ApiType + p.Parent); ok {
+					continue
+				}
 				sql.Exec(sql.InsertSql(p, perm.InsertCloudApiResource))
 			}
 		}
@@ -108,7 +119,6 @@ func updateResource()  {
 // api资源数据
 // @router /api/perm/resource [get]
 func (this *ResourceController) ResourceDatas() {
-
 	data := make([]perm.CloudApiResource, 0)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")

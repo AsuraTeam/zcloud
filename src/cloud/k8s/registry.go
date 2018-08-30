@@ -187,20 +187,22 @@ func getHubClient(host string, username string, password string) *registry.Regis
     var hub2 , ok = HubLockCache.Get(host)
 	if !ok {
 		hub3, err := registry.New(url, username, password)
-		hub = *hub3
 		if err != nil {
 			logs.Error("获取仓库连接失败", err.Error())
 			return nil
 		}
+		hub = *hub3
 		HubLockCache.Put(host, &hub)
 	}else{
 		if hub2 == nil{
 			hub3, err := registry.New(url, username, password)
-			if err != nil {
+			if err == nil {
+				hub = *hub3
 				HubLockCache.Put(host, hub3)
 			}
+		}else{
+			hub = *hub2
 		}
-		hub = *hub2
 		logs.Info("从缓存获取仓库连接成功...")
 	}
 	hub.Client.Timeout = 20 * time.Second
