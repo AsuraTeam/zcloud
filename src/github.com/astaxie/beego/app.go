@@ -237,8 +237,8 @@ func (app *App) Run(mws ...MiddleWare) {
 //  beego.Router("/api/create",&RestController{},"post:CreateFood")
 //  beego.Router("/api/update",&RestController{},"put:UpdateFood")
 //  beego.Router("/api/delete",&RestController{},"delete:DeleteFood")
-func Router(rootpath string, c ControllerInterface, mappingMethods ...string) *App {
-	BeeApp.Handlers.Add(rootpath, c, mappingMethods...)
+func Router(rootpath string, c ControllerInterface, mappingMethods string) *App {
+	BeeApp.Handlers.Add(rootpath, c, mappingMethods)
 	return BeeApp
 }
 
@@ -356,8 +356,8 @@ func Include(cList ...ControllerInterface) *App {
 // its' controller implements beego.ControllerInterface and
 // defines a param "pattern/:objectId" to visit each resource.
 func RESTRouter(rootpath string, c ControllerInterface) *App {
-	Router(rootpath, c)
-	Router(path.Join(rootpath, ":objectId"), c)
+	Router(rootpath, c, "")
+	Router(path.Join(rootpath, ":objectId"), c, "")
 	return BeeApp
 }
 
