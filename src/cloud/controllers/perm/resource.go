@@ -54,7 +54,7 @@ func (this *ResourceController) ResourceSave() {
 		return
 	}
 	util.SetPublicData(d, util.GetUser(this.GetSession("username")), &d)
-	
+
 	q := sql.InsertSql(d, perm.InsertCloudApiResource)
 	if d.ResourceId > 0 {
 		searchMap := sql.SearchMap{}
@@ -83,7 +83,7 @@ func (this *ResourceController) ResourceDataName() {
 
 // 2018-08-29 14:31
 // 更新资源
-func UpdateResource()  {
+func UpdateResource() {
 	lock := util.Lock{}
 	data := make([]perm.CloudApiResource, 0)
 	sql.Raw(perm.SelectCloudApiResource).QueryRows(&data)
@@ -92,16 +92,16 @@ func UpdateResource()  {
 	}
 	//sql.Raw(perm.DeleteCloudApiResource).Exec()
 	apis := beego.APIS
-	for _, v := range apis{
+	for _, v := range apis {
 		vs := strings.Split(v, "|")
-		if len(vs)> 4 {
-			if len(vs[2]) >  0 {
+		if len(vs) > 4 {
+			if len(vs[2]) > 0 {
 
 				p := perm.CloudApiResource{}
 				p.CreateUser = "system"
 				p.CreateTime = util.GetDate()
 				p.ApiUrl = vs[0]
-				p.ApiUrl = strings.Replace(p.ApiUrl, "//" ,"/", -1)
+				p.ApiUrl = strings.Replace(p.ApiUrl, "//", "/", -1)
 				p.Method = strings.Replace(strings.Split(vs[1], ":")[0], "[", "", -1)
 				p.Method = strings.Replace(p.Method, "map", "", -1)
 				p.Name = vs[2]
@@ -114,6 +114,47 @@ func UpdateResource()  {
 			}
 		}
 	}
+}
+
+// 2018-08-30 15:24
+// 获取资源树
+// @router /api/perm/resource/tree [get]
+func (this *ResourceController) GetResourceTree() {
+	data3 := make([]perm.CloudApiResource, 0)
+	data4 := make([]perm.CloudApiResource, 0)
+	sql.Raw(perm.SelectPerm3).QueryRows(&data3)
+	sql.Raw(perm.SelectPerm4).QueryRows(&data4)
+	d := map[string]interface{}{
+	}
+	// 获取一级菜单
+	for _, v := range data3 {
+		if _, ok := d[v.Parent]; !ok {
+			d[v.Parent] = map[string]interface{}{
+				v.ApiType: map[string]interface{}{
+					v.Name: map[string]interface{}{
+					},
+				},
+			}
+		} else {
+			d[v.Parent].(map[string]interface{})[v.ApiType] = map[string]interface{}{
+				v.Name: map[string]interface{}{
+				},
+			}
+		}
+		for _, v2 := range data4 {
+			if v2.ApiType == v.Name  {
+				if _, ok := 	d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name] ; !ok {
+					d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name] = map[string]interface{}{
+						v2.Name: map[string]interface{}{},
+					}
+				}else {
+					d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name].(map[string]interface{})[v2.Name] = map[string]interface{}{
+					}
+				}
+			}
+		}
+	}
+	setResourceJson(this, d)
 }
 
 // api资源数据
@@ -137,7 +178,7 @@ func (this *ResourceController) ResourceDatas() {
 		&data,
 		perm.CloudApiResource{})
 
-    r := util.ResponseMap(data, sql.Count("cloud_api_resource", int(num), key), this.GetString("draw"))
+	r := util.ResponseMap(data, sql.Count("cloud_api_resource", int(num), key), this.GetString("draw"))
 	setResourceJson(this, r)
 }
 

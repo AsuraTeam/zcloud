@@ -13,7 +13,9 @@ const DeleteCloudPerm = "delete from cloud_perm"
 const SelectCloudApiResource = "select last_modify_time,method,parent,last_modify_user,description,api_url,name,api_type,resource_id,create_time,create_user from cloud_api_resource"
 const UpdateCloudApiResource = "update cloud_api_resource"
 const InsertCloudApiResource = "insert into cloud_api_resource" 
-const DeleteCloudApiResource = "delete from cloud_api_resource" 
+const DeleteCloudApiResource = "delete from cloud_api_resource"
+const SelectPerm3 = `select name,api_type,parent  from cloud_api_resource where api_type in  (select  distinct parent from cloud_api_resource where parent  in (select api_type  from cloud_api_resource where api_type is not null) )`
+const SelectPerm4 = `select name,api_type,parent  from cloud_api_resource where api_type in  (select name from cloud_api_resource where api_type  in  (select  distinct parent from cloud_api_resource where parent  in (select api_type  from cloud_api_resource where api_type is not null) ))`
 
 const SelectCloudUserPerm = "select create_time,cluster_name,perm_id,group_name,sub_user,create_user,resource_type,last_modify_time,description,parent_user,name,last_modify_user,ent,user_name,resource_name from cloud_user_perm"
 const UpdateCloudUserPerm = "update cloud_user_perm"
