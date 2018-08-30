@@ -117,6 +117,9 @@ type ControllerInfo struct {
 	handler        http.Handler
 	runFunction    FilterFunc
 	routerType     int
+	comment string
+	api_type string
+	parent string
 	initialize     func() ControllerInterface
 	methodParams   []*param.MethodParam
 }
@@ -153,16 +156,16 @@ func NewControllerRegister() *ControllerRegister {
 //	Add("/api/delete",&RestController{},"delete:DeleteFood")
 //	Add("/api",&RestController{},"get,post:ApiFunc"
 //	Add("/simple",&SimpleController{},"get:GetFunc;post:PostFunc")
-func (p *ControllerRegister) Add(pattern string, c ControllerInterface, mappingMethods ...string) {
-	p.addWithMethodParams(pattern, c, nil, mappingMethods...)
+func (p *ControllerRegister) Add(pattern string, c ControllerInterface, mappingMethods string, comment ...string) {
+	p.addWithMethodParams(pattern, c, nil, mappingMethods, comment...)
 }
 
-func (p *ControllerRegister) addWithMethodParams(pattern string, c ControllerInterface, methodParams []*param.MethodParam, mappingMethods ...string) {
+func (p *ControllerRegister) addWithMethodParams(pattern string, c ControllerInterface, methodParams []*param.MethodParam, mappingMethods string, comment ...string) {
 	reflectVal := reflect.ValueOf(c)
 	t := reflect.Indirect(reflectVal).Type()
 	methods := make(map[string]string)
 	if len(mappingMethods) > 0 {
-		semi := strings.Split(mappingMethods[0], ";")
+		semi := strings.Split(mappingMethods, ";")
 		for _, v := range semi {
 			colon := strings.Split(v, ":")
 			if len(colon) != 2 {
@@ -213,6 +216,15 @@ func (p *ControllerRegister) addWithMethodParams(pattern string, c ControllerInt
 	}
 
 	route.methodParams = methodParams
+	if len(comment) > 0 {
+		route.comment = comment[0]
+	}
+	if len(comment) > 1 {
+		route.api_type = comment[1]
+	}
+	if len(comment) > 2 {
+		route.parent = comment[2]
+	}
 	if len(methods) == 0 {
 		for m := range HTTPMETHOD {
 			p.addToRouter(m, pattern, route)

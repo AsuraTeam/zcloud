@@ -17,10 +17,12 @@ package beego
 import (
 	"net/http"
 	"strings"
+	"fmt"
 
 	beecontext "github.com/astaxie/beego/context"
 )
 
+var APIS = make([]string, 0)
 type namespaceCond func(*beecontext.Context) bool
 
 // LinkNamespace used as link action
@@ -98,8 +100,8 @@ func (n *Namespace) Filter(action string, filter ...FilterFunc) *Namespace {
 
 // Router same as beego.Rourer
 // refer: https://godoc.org/github.com/astaxie/beego#Router
-func (n *Namespace) Router(rootpath string, c ControllerInterface, mappingMethods ...string) *Namespace {
-	n.handlers.Add(rootpath, c, mappingMethods...)
+func (n *Namespace) Router(rootpath string, c ControllerInterface, mappingMethods string, comment ...string) *Namespace {
+	n.handlers.Add(rootpath, c, mappingMethods, comment...)
 	return n
 }
 
@@ -234,8 +236,11 @@ func (n *Namespace) Namespace(ns ...*Namespace) *Namespace {
 // AddNamespace register Namespace into beego.Handler
 // support multi Namespace
 func AddNamespace(nl ...*Namespace) {
+
 	for _, n := range nl {
+
 		for k, v := range n.handlers.routers {
+
 			if t, ok := BeeApp.Handlers.routers[k]; ok {
 				addPrefix(v, n.prefix)
 				BeeApp.Handlers.routers[k].AddTree(n.prefix, v)
@@ -270,6 +275,8 @@ func addPrefix(t *Tree, prefix string) {
 		if c, ok := l.runObject.(*ControllerInfo); ok {
 			if !strings.HasPrefix(c.pattern, prefix) {
 				c.pattern = prefix + c.pattern
+				APIS = append(APIS, fmt.Sprintf("%v|%v|%v|%v|%v", c.pattern, c.methods, c.comment, c.api_type, c.parent))
+				//Info(c.pattern, c.methods, c.comment)
 			}
 		}
 	}
@@ -304,9 +311,9 @@ func NSInclude(cList ...ControllerInterface) LinkNamespace {
 }
 
 // NSRouter call Namespace Router
-func NSRouter(rootpath string, c ControllerInterface, mappingMethods ...string) LinkNamespace {
+func NSRouter(rootpath string, c ControllerInterface, mappingMethods string, comment ...string) LinkNamespace {
 	return func(ns *Namespace) {
-		ns.Router(rootpath, c, mappingMethods...)
+		ns.Router(rootpath, c, mappingMethods, comment...)
 	}
 }
 
