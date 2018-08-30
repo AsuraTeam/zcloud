@@ -210,15 +210,18 @@ func CacheClusterData() {
 		if len(cData) >= len(data) {
 			break
 		}
-		time.Sleep(time.Second * 1)
+		time.Sleep(time.Second * 3)
 		if counter > 3 {
 			break
 		}
 		counter += 3
 	}
 	if cache.ClusterCacheErr == nil {
+		for _, v := range cData {
+			cache.ClusterCache.Put("data" + v.ClusterName, util.ObjToString(v), time.Hour*80)
+		}
 		// 80 小时
-		cache.ClusterCache.Put("data", util.ObjToString(cData), time.Hour*80)
+		//cache.ClusterCache.Put("data", util.ObjToString(cData), time.Hour*80)
 	}
 
 }
