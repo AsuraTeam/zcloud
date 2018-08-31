@@ -37,7 +37,7 @@ func (this *ResourceController) ResourceAdd() {
 // router /api/perm/resource [get]
 func (this *ResourceController) ResourceData() {
 	// api资源数据
-	data := []perm.CloudApiResource{}
+	data := make([]perm.CloudApiResource, 0)
 	q := sql.SearchSql(perm.CloudApiResource{}, perm.SelectCloudApiResource, sql.SearchMap{})
 	sql.Raw(q).QueryRows(&data)
 	setResourceJson(this, data)
