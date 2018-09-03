@@ -122,8 +122,12 @@ func (this *ServiceController) HealthChange() {
 	conf.HealthCmd = "ls /tmp"
 	conf.HealthInitialDelay = "30"
 	if len(service.HealthData) > 10 {
-		json.Unmarshal([]byte(service.HealthData), &conf)
+		err := json.Unmarshal([]byte(service.HealthData), &conf)
+		if err != nil{
+			logs.Error("检查检查转换错误", err.Error())
+		}
 	}
+	logs.Info(util.ObjToString(conf), service.HealthData)
 	this.Data["config"] = conf
 	this.Data["data"] = service
 	this.TplName = "application/service/change_health.html"

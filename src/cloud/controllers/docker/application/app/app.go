@@ -122,7 +122,6 @@ func (this *AppController) AppDetail() {
 	data := app.CloudApp{}
 	searchMap := sql.SearchMap{}
 	searchMap.Put("AppId", id)
-	//searchMap.Put("CreateUser", getUser(this))
 
 	datas := selectAppData(searchMap)
 	if len(datas) > 0 {

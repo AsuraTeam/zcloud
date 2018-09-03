@@ -26,8 +26,10 @@ ping REGISTRYDOMAIN -c 1
 ping AuthServerDomain -c 1
 dockerd --ip-forward=false --iptables=false --insecure-registry REGISTRY  --storage-driver=devicemapper  &>/dev/null &
 d=$(date +"%F %T")
-echo "开始编译文件,,,,"
+echo "$d 开始编译文件,,,,"
 SCRIPT
+d=$(date +"%F %T")
+echo "$d 编译完成..."
 set +x
 sleep 10
 echo $DOCKERFILE

@@ -37,7 +37,7 @@ const (
           listen      80;
           access_log  logs/DOMAIN_access.log;
           error_log   logs/DOMAIN_error.log;
-          server_name DOMAIN;
+          server_name DOMAIN_NAME;
 
           location / {
                 proxy_pass http://DOMAIN;
@@ -338,7 +338,8 @@ func CreateNginxConf(confType string) {
 			upstreamTemp = strings.Replace(upstreamTemplate, "DOMAIN", v.Domain, -1)
 			key := v.ClusterName + v.Domain
 
-			vhostTemp = strings.Replace(nginxTemplate, "DOMAIN", replaceDomain(v.Domain), -1)
+			vhostTemp = strings.Replace(nginxTemplate, "DOMAIN_NAME", replaceDomain(v.Domain), -1)
+			vhostTemp = strings.Replace(vhostTemp, "DOMAIN", v.Domain, -1)
 			if _, ok := nginxMap.Get(key); ok {
 				vhostTemp = nginxMap.GetVString(key)
 			}

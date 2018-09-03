@@ -1017,14 +1017,15 @@ function envSave() {
  * 2018-01-14 12:02
  */
 function saveHealth() {
-    var d = {}
+    var d = {};
     d["HealthType"] = $("input[name='HealthType']").val();
     d["HealthPort"] = $("input[name='HealthPort']").val();
     d["HealthCmd"] = $("input[name='HealthCmd']").val();
+    d["HealthInitialDelay"] = $("input[name='HealthInitialDelay']").val();
     d["HealthPath"] = $("input[name='HealthPath']").val();
-    d["HealthInterval"] = $("input[name='HealthInterval']").val();
-    d["HealthFailureThreshold"] = $("input[name='HealthFailureThreshold']").val();
-    d["HealthTimeout"] = $("input[name='HealthTimeout']").val();
+    d["HealthInterval"] = $("input[name='HealthInterval']").prop("value");
+    d["HealthFailureThreshold"] = $("input[name='HealthFailureThreshold']").prop("value");
+    d["HealthTimeout"] = $("input[name='HealthTimeout']").prop("value");
     if (!checkHealthData(d["HealthType"], d["HealthPort"], d["HealthCmd"], d["HealthPath"])) {
         return
     }
@@ -1114,6 +1115,11 @@ function loadServiceData(key,name) {
     if (!app) {
         app = ""
     }
+    // 应用详情页面使用 2018-01-18 08:02
+    var cluster = $("#detail_add_cluster_name").val();
+    if (!cluster) {
+        cluster = ""
+    }
 
     $("#service-data-table").dataTable({
         "filter": false,//去掉搜索框
@@ -1128,7 +1134,7 @@ function loadServiceData(key,name) {
         "scrollX": true, // 是否允许左右滑动
         "displayLength": 10, // 默认长度
         "ajax": { // 请求地址
-            "url": "/api/service?t=" + new Date().getTime() + "&key=" + key + "&AppName=" + app +"&ServiceName="+name,
+            "url": "/api/service?t=" + new Date().getTime() + "&key=" + key + "&AppName=" + app +"&ServiceName="+name + "&ClusterName="+cluster,
             "type": 'get'
         },
         "columns": [ // 数据映射
