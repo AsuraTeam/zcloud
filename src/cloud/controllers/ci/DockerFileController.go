@@ -52,6 +52,7 @@ func GetDockerFileSelect() string {
 // @router /ci/dockerfile/add [get]
 func (this *DockerFileController) DockerFileAdd() {
 	id := this.GetString("FileId")
+	copy := this.GetString("Copy")
 	update := ci.CloudCiDockerfile{}
 
 	// 更新操作
@@ -62,6 +63,9 @@ func (this *DockerFileController) DockerFileAdd() {
 			ci.SelectCloudCiDockerfile,
 			searchMap)
 		sql.Raw(q).QueryRow(&update)
+	}
+	if copy == "1" {
+		 update.FileId = 0
 	}
 
 	this.Data["data"] = update

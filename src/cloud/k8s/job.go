@@ -210,7 +210,7 @@ func setJobInitParam(param JobParam) JobParam {
 func getBuild(param JobParam) string {
 	build := replace(buildCmd, "MAXFILE", param.NoFileMax)
 	build = replace(build, "MINFILE", param.NoFileMin)
-	build = replace(build, "SCRIPT", param.Script)
+	build = replace(build, "SCRIPT", replaceVar(param.Itemname, param.Script))
 	build = replace(build, "MINPROC", param.NoProcMin)
 	build = replace(build, "MAXPROC", param.NoProcMax)
 	build = replace(build, "ITEMNAME", param.Itemname)
@@ -291,6 +291,13 @@ func getJobLables(conf map[string]interface{}, clientSet kubernetes.Clientset) m
 	return conf
 }
 
+// 替换环境变量
+// 替换项目名称
+func replaceVar(item string, str string)  string{
+  str = strings.Replace(str, "$item", item, -1)
+  return str
+}
+
 // 创建job，主要在构建时使用
 // 2018-01-25 10:41
 func CreateJob(param JobParam) string {
@@ -310,7 +317,7 @@ func CreateJob(param JobParam) string {
 
 	env := map[string]interface{}{
 		"name":  "DOCKERFILE",
-		"value": param.Dockerfile,
+		"value": replaceVar(param.Itemname, param.Dockerfile),
 	}
 	envList = append(envList, env)
 	logs.Info("job获取到环境变量", util.ObjToString(envList))
