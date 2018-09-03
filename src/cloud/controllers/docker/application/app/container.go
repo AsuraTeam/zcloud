@@ -155,14 +155,13 @@ func (this *AppController) ContainerData() {
 		if d.CreateUser != user {
 			service := strings.Replace(d.ServiceName, "--1", "", -1)
 			service = strings.Replace(service, "--2", "", -1)
-			logs.Info(d.AppName+";"+d.ResourceName+";"+service, util.ObjToString(perm))
+
 			if ! userperm.CheckPerm(d.AppName+";"+d.ResourceName+";"+service, d.ClusterName, d.Entname, perm) && len(user) > 0 {
 				if ! userperm.CheckPerm(d.AppName, d.ClusterName, d.Entname, permApp) {
 					continue
 				}
 			}
 		}
-
 		r := cache.ContainerCache.Get(key)
 		var v interface{}
 		status := util.RedisObj2Obj(r, &v)
@@ -243,11 +242,9 @@ func MakeContainerData(namespace string) {
 	containerDatas := util.Lock{}
 	appDataLock := util.Lock{}
 	lockData := util.Lock{}
-
 	for _, d := range data {
 		namespace := util.Namespace(d.AppName, d.ResourceName)
-		sName := namespace + d.ServiceName
-
+		sName := namespace + d.ServiceName + d.ClusterName
 		if _, ok := lockData.Get(sName); !ok {
 			c,err := k8s.GetClient(d.ClusterName)
 			if err != nil {

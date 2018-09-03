@@ -11,6 +11,7 @@ import (
 	v12 "k8s.io/api/core/v1"
 	"k8s.io/client-go/util/integer"
 	"golang.org/x/crypto/openpgp/errors"
+	"fmt"
 )
 
 const (
@@ -304,6 +305,14 @@ func GetLbDataSearchMap(searchMap sql.SearchMap)  interface{} {
 	return template
 }
 
+// 更新nginx的server_name名称
+// 2018-09-03 13:42
+func replaceDomain(domain string)  string {
+	domains := strings.Split(domain, ".")
+	domains[0] = strings.Replace(domains[0], domains[0], fmt.Sprintf("~%v(.*)", domains[0]), -1)
+	return strings.Join(domains, ".")
+}
+
 // 生成nginx配置文件
 func CreateNginxConf(confType string) {
 	configDbName := make(map[string]interface{})
@@ -318,7 +327,7 @@ func CreateNginxConf(confType string) {
 
 	for _, cluster := range clusters {
 		var upstreamTemp string
-		var vhosstTemp string
+		var vhostTemp string
 		client, _ := GetClient(cluster)
 
 		for _, v := range data {
@@ -329,9 +338,9 @@ func CreateNginxConf(confType string) {
 			upstreamTemp = strings.Replace(upstreamTemplate, "DOMAIN", v.Domain, -1)
 			key := v.ClusterName + v.Domain
 
-			vhosstTemp = strings.Replace(nginxTemplate, "DOMAIN", v.Domain, -1)
+			vhostTemp = strings.Replace(nginxTemplate, "DOMAIN", replaceDomain(v.Domain), -1)
 			if _, ok := nginxMap.Get(key); ok {
-				vhosstTemp = nginxMap.GetVString(key)
+				vhostTemp = nginxMap.GetVString(key)
 			}
 
 			namespace := util.Namespace(v.AppName, v.ResourceName)
@@ -365,14 +374,14 @@ func CreateNginxConf(confType string) {
 					logs.Info("开始获取证书配置", sslDbName)
 
 					if _, ok := nginxMap.Get(key); !ok {
-						vhosstTemp = strings.Replace(nginxSslTemplate, "DOMAIN", v.Domain, -1)
-						vhosstTemp = strings.Replace(vhosstTemp, "CERTKEY", v.CertFile, -1)
+						vhostTemp = strings.Replace(nginxSslTemplate, "DOMAIN", v.Domain, -1)
+						vhostTemp = strings.Replace(vhostTemp, "CERTKEY", v.CertFile, -1)
 					}
 				}
 			}
 
-			configDbName[v.Domain+".conf"] = vhosstTemp
-			writeNginxConfToDb(v, nginxMap, vhosstTemp)
+			configDbName[v.Domain+".conf"] = vhostTemp
+			writeNginxConfToDb(v, nginxMap, vhostTemp)
 		}
 		makeNginxConfigMap(configDbName, upstreamDbName, sslDbName, cluster, confType)
 	}
