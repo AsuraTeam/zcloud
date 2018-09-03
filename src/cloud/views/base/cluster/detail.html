@@ -524,8 +524,8 @@
         if(!id){
             id = 0;
         }
-        var url = "/base/cluster/add"
-        var result = post({ClusterId:id}, url)
+        var url = "/base/cluster/add?ClusterId"+id;
+        var result = get({ClusterId:id}, url)
         $("#add_cluster_html").html(result)
         $("#add_post_html").modal("toggle")
     }

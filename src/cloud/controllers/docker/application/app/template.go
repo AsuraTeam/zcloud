@@ -12,6 +12,7 @@ import (
 	"github.com/astaxie/beego/logs"
 	"fmt"
 	"cloud/k8s"
+	"strconv"
 )
 
 // 模板管理入口页面
@@ -183,11 +184,17 @@ func createLbConfig(service app.CloudAppService, clusterName string, ent string,
 		logs.Error("服务获取负载均衡失败，该集群环境没有配置负载均衡", ent, clusterName)
 		return
 	}
-
+	searchMap.Put("AppName", appName)
+	searchMap.Put("ResourceName", resourceName)
+	searchMap.Put("ServiceName", service.ServiceName)
+	services := getServiceData(searchMap, "")
+	if len(services) > 0 {
+		service.ServiceId = services[0].ServiceId
+	}
 	conf := k8s.CloudLbService{
 		ServiceName:    service.ServiceName,
 		AppName:        appName,
-		Domain:         fmt.Sprintf("%s.%s.%s", appName, service.ServiceName, domain),
+		Domain:         fmt.Sprintf("%s.%s", service.ServiceName, domain),
 		LbType:         "nginx",
 		ClusterName:    clusterName,
 		ResourceName:   resourceName,
@@ -197,6 +204,7 @@ func createLbConfig(service app.CloudAppService, clusterName string, ent string,
 		LbMethod:       "service",
 		LbId:           lbData.LbId,
 		LbName:         lbData.LbName,
+		LbServiceId:    strconv.FormatInt(service.ServiceId, 10),
 		CreateTime:     util.GetDate(),
 		CreateUser:     user,
 		LastModifyTime: util.GetDate(),

@@ -1678,4 +1678,6 @@ alter table cloud_build_job add env varchar(4096) comment "构建时环境变量
 alter table cloud_authority_user add token varchar(32);
 alter table cloud_api_resource add method varchar(32) comment "请求方法";
  alter table cloud_api_resource add parent varchar(132) comment "父节点";
+ alter table cloud_code_repostitory add branch  text ;
+ alter table cloud_code_repostitory add tag text ;
 alter table cloud_api_resource add unique index uidx_api_url_name_method(api_url,name,method);

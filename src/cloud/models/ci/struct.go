@@ -26,6 +26,10 @@ type CloudCodeRepostitory struct {
     CodeUrl string
     // 描述信息
     Description string
+    //
+    Tag string
+    //
+    Branch string
 }
 
 //2018-01-24 21:30:36.1428558 +0800 CST

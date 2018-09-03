@@ -61,14 +61,14 @@
 </div>
 <script>
     function addCluster() {
-        var url = "/base/cluster/add"
-        var result = post({}, url)
-        $("#add_cluster_html").html(result)
+        var url = "/base/cluster/add";
+        var result = get({}, url);
+        $("#add_cluster_html").html(result);
         $("#add_post_html").modal("toggle")
     }
 
     function clusterDetail(clusterName) {
-        var url = "/base/cluster/detail/"+clusterName
+        var url = "/base/cluster/detail/"+clusterName;
         window.location.href = url
     }
 
@@ -98,18 +98,18 @@
             '                                <div class="clearfix"></div>' +
             '                            </div>' +
             '                        </div>';
-        var url = "/api/cluster?key="+key
-        var data = get({},url)
-        data = data["data"]
-        var obj = $("#cluster_html_content_id")
+        var url = "/api/cluster?key="+key;
+        var data = get({},url);
+        data = data["data"];
+        var obj = $("#cluster_html_content_id");
         for (var i=0;i<data.length;i++){
-            var html = template.replace(/CLUSTER_NAME/g, data[i]["ClusterName"])
-            html = html.replace("CLUSTER_ALIAS", data[i]["ClusterAlias"])
-            html = html.replace("CLUSTER_TYPE", data[i]["ClusterType"])
-            html = html.replace("CLUSTER_SERVICE", data[i]["Services"])
-            html = html.replace("CLUSTER_NODE", data[i]["Nodes"])
-            html = html.replace("CLUSTER_CPU", data[i]["CpuNum"])
-            html = html.replace("CLUSTER_MEM", data[i]["MemSize"])
+            var html = template.replace(/CLUSTER_NAME/g, data[i]["ClusterName"]);
+            html = html.replace("CLUSTER_ALIAS", data[i]["ClusterAlias"]);
+            html = html.replace("CLUSTER_TYPE", data[i]["ClusterType"]);
+            html = html.replace("CLUSTER_SERVICE", data[i]["Services"]);
+            html = html.replace("CLUSTER_NODE", data[i]["Nodes"]);
+            html = html.replace("CLUSTER_CPU", data[i]["CpuNum"]);
+            html = html.replace("CLUSTER_MEM", data[i]["MemSize"]);
             obj.append(html)
         }
     }

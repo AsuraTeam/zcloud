@@ -258,6 +258,8 @@ func GetRegistryInfo(host string, username string, password string, registryName
 				for _, mani := range m.Layers {
 					size += mani.Size
 				}
+			}else{
+				continue
 			}
 			img.Repositories = registryName
 			img.LayersNumber = len(m.Layers)

@@ -162,6 +162,7 @@ func (this *ServiceController) ServiceSave() {
 	util.SetPublicData(d, getServiceUser(this), &d)
 
 	serviceData := GetServiceData(d.ServiceName, d.ClusterName, d.AppName)
+
 	if serviceData.ServiceId > 0 {
 		logs.Error("创建服务失败", "该服务已经存在")
 		responseData(err, this, d.ServiceName, "该服务已经存在")

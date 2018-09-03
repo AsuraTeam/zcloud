@@ -1,6 +1,6 @@
 package ci
 
-const SelectCloudCodeRepostitory = "select create_time,create_user,description,code_url,code_source,username,gitlab_token,type,repostitory_id,last_modify_time,last_modify_user,password from cloud_code_repostitory"
+const SelectCloudCodeRepostitory = "select create_time,tag, branch, create_user,description,code_url,code_source,username,gitlab_token,type,repostitory_id,last_modify_time,last_modify_user,password from cloud_code_repostitory"
 const UpdateCloudCodeRepostitory = "update cloud_code_repostitory"
 const InsertCloudCodeRepostitory = "insert into cloud_code_repostitory"
 const DeleteCloudCodeRepostitory = "delete from cloud_code_repostitory"

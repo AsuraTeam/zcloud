@@ -22,7 +22,7 @@ func getServiceData(searchMap sql.SearchMap, q string) []app.CloudAppService {
 	if q == "" {
 		q = app.SelectCloudAppService
 	}
-	data := []app.CloudAppService{}
+	data := make([]app.CloudAppService, 0)
 	searchSql := sql.SearchSql(
 		app.CloudAppService{}, q, searchMap)
 
