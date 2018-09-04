@@ -142,7 +142,9 @@ function loadHistoryData(key) {
             {"data": "ServiceName","mRender":function (data) {
                     return data;
                 }},
-            {"data": "Domain"},
+            {"data": "Domain","mRender":function (data) {
+                    return "<div style='word-break: break-all'>"+data+"</div>";
+                }},
             {"data": "CreateUser"},
             {"data": "CreateTime"},
         ],
@@ -150,6 +152,7 @@ function loadHistoryData(key) {
             $(row).data('recordId', data.recordId);
         }
     });
+    $("#template-data-h-table_wrapper").css("cssText", "margin-top:20px !important;");
 }
 
 loadTemplateData();

@@ -124,7 +124,7 @@
                 <br>
                 <br>
                 <br>
-                <div class="col-sm-12 app-table">
+                <div class="col-sm-12 app-table" style="margin-top: -15px;">
                     <br>
                     <table id="app-data-table" class="table table-hover ">
                         <thead>
@@ -287,7 +287,7 @@
                 }
                 },
                 {
-                    "data": "ContainerIp", "sWidth": "8%", "mRender": function (data, type, full) {
+                    "data": "ContainerIp", "sWidth": "7%", "mRender": function (data, type, full) {
                     return "<span class='text-default'>" + data + "</span><br><span class='brtop5'>" + full["ServerAddress"] + "</span>"
                 }
                 },
@@ -306,7 +306,7 @@
                 $(row).data('recordId', data.recordId);
             }
         });
-        $("#app-data-table_wrapper").css("cssText", "margin-top:-40px !important;");
+        $("#app-data-table_wrapper").css("cssText", "margin-top:10px !important;");
 
     }
 
