@@ -757,8 +757,8 @@ func CreateServicePod(param ServiceParam) (string, error) {
 	healthdata, ok := getHealthData(param.HealthData)
 	if ok {
 		// readinessProbe
-		v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["containers"].([]map[string]interface{})[0]["livenessProbe"] = make(map[string]interface{})
-		v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["containers"].([]map[string]interface{})[0]["livenessProbe"] = healthdata
+		v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["containers"].([]map[string]interface{})[0]["readinessProbe"] = make(map[string]interface{})
+		v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["containers"].([]map[string]interface{})[0]["readinessProbe"] = healthdata
 	}
 	v = setImagePullPolice(param, v)
 	if param.Command != "" {

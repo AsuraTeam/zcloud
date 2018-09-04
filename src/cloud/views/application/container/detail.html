@@ -135,29 +135,29 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="field-11" class="col-md-3 fw100 control-label titleSpan"><h5
-                                            class="top2">基本信息</h5></span></label>
+                                            class="top2">基本信息</h5></label>
                                     <div class="col-md-9" id="field-11">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-12 ">
                                 <div class="form-group">
-                                    <label class="col-md-3 font999 control-label">名称</span></label>
-                                    <label class="col-md-4 font999 control-label">镜像</span></label>
-                                    <label class="col-md-4 font999 control-label">所属节点</span></label>
+                                    <label class="col-md-3 font999 control-label">名称</label>
+                                    <label class="col-md-4 font999 control-label">镜像</label>
+                                    <label class="col-md-4 font999 control-label">所属节点</label>
                                 </div>
                             </div>
                             <div class="col-md-12 ">
                                 <div class="form-group">
-                                    <label class="col-md-3 font999 control-label">{{.data.ContainerName}}</span></label>
-                                    <label class="col-md-4 font999 control-label">{{.data.Image}}</span></label>
-                                    <label class="col-md-4 font999 control-label">{{.data.ServerAddress}}</span></label>
+                                    <label class="col-md-3 font999 control-label">{{.data.ContainerName}}</label>
+                                    <label class="col-md-4 font999 control-label">{{.data.Image}}</label>
+                                    <label class="col-md-4 font999 control-label">{{.data.ServerAddress}}</label>
                                 </div>
                             </div>
                             <div class="col-md-12 topbr">
                                 <div class="form-group">
                                     <label for="field-11" class="col-md-3 fw100 control-label titleSpan"><h5
-                                            class="top2">资源配置</h5></span></label>
+                                            class="top2">资源配置</h5></label>
                                     <div class="col-md-9">
                                         &nbsp;
                                     </div>
@@ -165,22 +165,22 @@
                             </div>
                             <div class="col-md-12 ">
                                 <div class="form-group">
-                                    <label class="col-md-3 font999 control-label">CPU</span></label>
-                                    <label class="col-md-4 font999 control-label">内存</span></label>
-                                    <label class="col-md-4 font999 control-label">系统盘</span></label>
+                                    <label class="col-md-3 font999 control-label">CPU</label>
+                                    <label class="col-md-4 font999 control-label">内存</label>
+                                    <label class="col-md-4 font999 control-label">系统盘</label>
                                 </div>
                             </div>
                             <div class="col-md-12 ">
                                 <div class="form-group">
-                                    <label class="col-md-3 font999 control-label">{{.data.Cpu}}核</span></label>
-                                    <label class="col-md-4 font999 control-label">{{.data.Memory}}M</span></label>
-                                    <label class="col-md-4 font999 control-label">10G</span></label>
+                                    <label class="col-md-3 font999 control-label">{{.data.Cpu}}核</label>
+                                    <label class="col-md-4 font999 control-label">{{.data.Memory}}M</label>
+                                    <label class="col-md-4 font999 control-label">10G</label>
                                 </div>
                             </div>
                             <div class="col-md-12 topbr">
                                 <div class="form-group">
                                     <label for="field-11" class="col-md-3 fw100 control-label titleSpan"><h5
-                                            class="top2">环境变量</h5></span></label>
+                                            class="top2">环境变量</h5></label>
                                     <div class="col-md-9">
                                         &nbsp;
                                     </div>
@@ -188,8 +188,8 @@
                             </div>
                             <div class="col-md-12 ">
                                 <div class="form-group">
-                                    <label class="col-md-3 font999 control-label">变量名</span></label>
-                                    <label class="col-md-4 font999 control-label">变量值</span></label>
+                                    <label class="col-md-3 font999 control-label">变量名</label>
+                                    <label class="col-md-4 font999 control-label">变量值</label>
                                 </div>
                             </div>
                             <div class="form-group" id="env_var_html_id">
@@ -198,16 +198,16 @@
                             <div class="col-md-12 topbr">
                                 <div class="form-group">
                                     <label for="field-11" class="col-md-3 fw100 control-label titleSpan"><h5
-                                            class="top2">存储卷</h5></span></label>
+                                            class="top2">存储卷</h5></label>
                                     <div class="col-md-9">
                                         &nbsp;
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="col-md-3 font999 control-label">存储类型</span></label>
-                                        <label class="col-md-4 font999 control-label">存储</span></label>
-                                        <label class="col-md-5 font999 control-label">容器目录</span></label>
+                                        <label class="col-md-3 font999 control-label">存储类型</label>
+                                        <label class="col-md-4 font999 control-label">存储</label>
+                                        <label class="col-md-5 font999 control-label">容器目录</label>
                                     </div>
                                 </div>
                                 <div class="form-group" id="storage_html_id">
@@ -224,6 +224,7 @@
                             </div>
                         </div>
                         <div class="tab-pane" id="events-b1">
+                            {{.data.Events}}
                         </div>
                         <div class="tab-pane" id="process-bl">
                             {{.data.Process}}
@@ -247,7 +248,7 @@
     // 2018-01-16 09:28
     function setEnvHtml() {
         var html = "";
-        var template = '<div class="col-md-12 "><label class="col-md-3 font999 control-label">NAME</span></label> <label class="col-md-4 font999 control-label">VALUE</span></label></div>';
+        var template = '<div class="col-md-12 "><label class="col-md-3 font999 control-label">NAME</label> <label class="col-md-4 font999 control-label">VALUE</label></div>';
         var env = '{{.data.Env}}';
         var envs = env.split("\n");
         for (var i = 0; i < envs.length; i++) {
@@ -268,9 +269,9 @@
         var html = "";
         var template = '<div class="col-md-12">' +
             '<div class="form-group"> ' +
-            '<label class="col-md-3 font999 control-label">存储类型</span></label>     ' +
-            '<label class="col-md-4 font999 control-label">存储</span></label>' +
-            ' <label class="col-md-5 font999 control-label">容器目录</span></label></div></div>';
+            '<label class="col-md-3 font999 control-label">存储类型</label>     ' +
+            '<label class="col-md-4 font999 control-label">存储</label>' +
+            ' <label class="col-md-5 font999 control-label">容器目录</label></div></div>';
         var data = '{{.data.StorageData}}';
         if (data.length > 10) {
             data = JSON.parse(data)

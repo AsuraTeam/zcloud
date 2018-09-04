@@ -144,7 +144,7 @@ func GetJobName(username string, clusterName string, itemName string) []ci.Cloud
 	logs.Info("获取到job数据", util.ObjToString(data))
 	// 不是自己创建的才检查
 	if len(data) > 0 && data[0].CreateUser != username {
-		if ! userperm.CheckPerm(data[0].ItemName, data[0].ClusterName, "", perm)  {
+		if ! userperm.CheckPerm(data[0].ItemName, "", "", perm)  {
 			return make([]ci.CloudBuildJob, 0)
 		}
 	}

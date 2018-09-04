@@ -326,7 +326,7 @@ func createImagePullSecret(jobHistoryData ci2.CloudBuildJobHistory, start int64,
 // 2018-02-04 08:32
 // 后台执行流水线程序
 func startPipeline(user string, pipeData pipeline.CloudPipeline) {
-	jobData := ci.GetJobName(user, pipeData.ClusterName, pipeData.JobName)
+	jobData := ci.GetJobName(user, "", pipeData.JobName)
 	if len(jobData) == 0 {
 		logs.Error("获取构建程序失败", jobData, pipeData.ClusterName, pipeData.JobName)
 		return

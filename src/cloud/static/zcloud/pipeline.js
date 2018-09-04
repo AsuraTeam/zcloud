@@ -45,7 +45,7 @@ function deletePipelineSwal(id, detail) {
  * @param id
  */
 function startExecPipeline(id) {
-    Swal("是否执行该流水线", "warning", "确认操作", "不操作", "成功", "失败", " execPipeline(" + id + ")", "loadPipelineData()");
+    Swal("是否执行该流水线,返回成功后, 请等待几秒钟后再查看日志", "warning", "确认操作", "不操作", "成功", "失败", " execPipeline(" + id + ")", "loadPipelineData()");
 }
 
 /**
@@ -104,15 +104,19 @@ function loadPipelineData(key) {
             }
             },
             {"data": "JobName", "sWidth": "9%"},
-            {"data": "Description", "sWidth": "10%"},
+            {"data": "Description", "sWidth": "8%"},
             {"data": "LastModifyTime", "sWidth": "9%"},
             {
-                "data": "PipelineId", "sWidth": "9%", "mRender": function (data, type, full) {
+                "data": "PipelineId", "sWidth": "6%", "mRender": function (data, type, full) {
+                   return '<button type="button" title="立刻构建" onclick="startExecPipeline(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-transgender-alt"></i></button>&nbsp;' +
+                       '<button type="button" title="最近流水线日志" onclick="jobLog(' + full["JobId"] + ')" class="btn btn-xs rb-btn-oper"><i class="fa  fa-hospital-o"></i></button>&nbsp;' +
+                       '<button type="button"  title="流水线历史" onClick="buildHistory(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-history"></i></button>';
+                }
+            },
+            {
+                "data": "PipelineId", "sWidth": "5%", "mRender": function (data, type, full) {
                 return '<button type="button" title="更新" onclick="addPipeline(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
-                    '<button type="button" title="立刻构建" onclick="startExecPipeline(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-transgender-alt"></i></button>&nbsp;' +
-                    '<button type="button" title="最近流水线日志" onclick="jobLog(' + full["JobId"] + ')" class="btn btn-xs rb-btn-oper"><i class="fa  fa-hospital-o"></i></button>&nbsp;' +
-                    '<button type="button"  title="删除" onClick="deletePipelineSwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>&nbsp;' +
-                    '<button type="button"  title="流水线历史" onClick="buildHistory(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-history"></i></button>';
+                    '<button type="button"  title="删除" onClick="deletePipelineSwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>&nbsp;' ;
             }
             },
         ],
