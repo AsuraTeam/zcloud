@@ -686,6 +686,11 @@ func CreateServicePod(param ServiceParam) (string, error) {
 		CreateConfigmap(param)
 	}
 
+	if param.TerminationSeconds == 0 {
+		logs.Info("使用默认 TerminationSeconds 50秒")
+		param.TerminationSeconds = 50
+	}
+
 	yamldata := make([]interface{}, 0)
 	volumes, volumeMounts := getVolumes(param.StorageData, param.ConfigureData, param)
 	name := param.ServiceName
@@ -703,7 +708,7 @@ func CreateServicePod(param ServiceParam) (string, error) {
 			"minReadySeconds": param.MinReady, // 滚动升级多少秒认为该pod就绪
 			"strategy": map[string]interface{}{
 				"rollingUpdate": map[string]interface{}{ // 假如replicas =3 ， 滚动升级pod数量到2-4个之间
-					"maxSurge":       1, // 滚动升级时会先启动1个pod
+					"maxSurge":       2, // 滚动升级时会先启动1个pod
 					"maxUnavailable": 1, // 滚动升级时允许的最大Unavailable的pod个数
 					//例如，该值设置成30%，启动rolling update后旧的ReplicatSet将会立即缩容到期望的Pod数量的70%。
 					// 新的Pod ready后，随着新的ReplicaSet的扩容，旧的ReplicaSet会进一步缩容，确保在升级的所有时刻可以用的Pod数量至少是期望Pod数量的70%。
@@ -722,7 +727,7 @@ func CreateServicePod(param ServiceParam) (string, error) {
 				},
 				"spec": map[string]interface{}{
 					"nodeSelector": getNodeSelectorNode(param.Selector),
-					//"terminationGracePeriodSeconds": 60, // 优雅的关闭进程,默认30秒
+					"terminationGracePeriodSeconds": param.TerminationSeconds, // 优雅的关闭进程,默认30秒
 					"containers": []map[string]interface{}{
 						map[string]interface{}{
 							"image": param.Image,

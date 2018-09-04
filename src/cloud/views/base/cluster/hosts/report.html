@@ -1,0 +1,77 @@
+<div id="images_show_html" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 80%;">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">资源使用详情 &nbsp;&nbsp;<span class="text-default"></span></span>
+                </div>
+                <div class="panel-body font-12 ">
+                    <table id="host-image-table" class="table table-hover font-default">
+                        <thead>
+                        <tr>
+                            <th>IP</th>
+                            <th>Namespace</th>
+                            <th>Name</th>
+                            <th>CpuRequests</th>
+                            <th>CpuLimits</th>
+                            <th>MemoryRequests</th>
+                            <th>MemoryLimits</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    /**
+     * 加载镜像
+     * @param id
+     */
+    function loadImages() {
+
+        $("#host-image-table").dataTable({
+            "filter": false,//去掉搜索框
+            "ordering": false, // 是否允许排序
+            "paginationType": "full_numbers", // 页码类型
+            "destroy": true,
+            "processing": true,
+            "bLengthChange": false,
+            "bPaginate": false, //是否显示（应用）分页器
+            "serverSide": true,
+            "bInfo": false, //是否显示页脚信息，DataTables插件左下角显示记录数
+            "scrollX": true, // 是否允许左右滑动
+            "displayLength": 1110, // 默认长度
+            "ajax": { // 请求地址
+                "url": "/api/cluster/hosts/report/{{.hostId}}" ,
+                "type": 'get'
+            },
+            "columns": [ // 数据映射
+                {"data": "Ip", },
+                {"data": "Namespace", },
+                {"data": "Name","mRender":function (data) {
+                    return "<div style='word-wrap:break-word'>" + data + "</div>";
+                }},
+                {"data": "CpuRequests","mRender":function (data) {
+                    return "<div style='word-wrap:break-word'>" + data + "</div>";
+                }},
+                {"data": "CpuLimits", },
+                {"data": "MemoryRequests", },
+                {"data": "MemoryLimits", },
+            ],
+            "fnRowCallback": function (row, data) { // 每行创建完毕的回调
+                $(row).data('recordId', data.recordId);
+            }
+        });
+
+    }
+    setTimeout(function () {
+        loadImages();
+    },1000);
+
+</script>

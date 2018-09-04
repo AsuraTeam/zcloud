@@ -412,7 +412,12 @@
                 "type": 'get'
             },
             "columns": [ // 数据映射
-                {"data": "HostIp"},
+                {
+                    "data": "HostIp", "mRender": function (data, type, full) {
+                        var html = '<a onClick="showReport(' + full["HostId"] + ')">' + data + '</a>';
+                        return html;
+                    }
+                },
                 {
                     "data": "HostLabel", "mRender": function (data) {
                     if (data) {
@@ -520,13 +525,16 @@
         $("#plugin-b1").html(html);
     }
 
+    /**
+     *
+     * */
     function addCluster(id) {
         if(!id){
             id = 0;
         }
         var url = "/base/cluster/add?ClusterId"+id;
-        var result = get({ClusterId:id}, url)
-        $("#add_cluster_html").html(result)
+        var result = get({ClusterId:id}, url);
+        $("#add_cluster_html").html(result);
         $("#add_post_html").modal("toggle")
     }
 
@@ -540,8 +548,23 @@
             id = 0;
         }
         var url = "/base/cluster/image/"+id;
-        var result = get({ClusterId:id}, url)
-        $("#img_html").html(result)
+        var result = get({ClusterId:id}, url);
+        $("#img_html").html(result);
+        $("#images_show_html").modal("toggle");
+    }
+
+    /**
+     * 2018-09-04 10:35
+     * 查看镜像详情弹出页面
+     * @param id
+     */
+    function showReport(id) {
+        if(!id){
+            id = 0;
+        }
+        var url = "/base/cluster/report/"+id;
+        var result = get({ClusterId:id}, url);
+        $("#img_html").html(result);
         $("#images_show_html").modal("toggle");
     }
 </script>

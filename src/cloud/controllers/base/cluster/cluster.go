@@ -29,6 +29,13 @@ func (this *ClusterController) Images() {
 	this.TplName = "base/cluster/img.html"
 }
 
+// 节点报表入口页面
+// @router /base/cluster/report/:id:int [get]
+func (this *ClusterController) Report() {
+	this.Data["hostId"] = this.Ctx.Input.Param(":id")
+	this.TplName = "base/cluster/report.html"
+}
+
 
 // 添加集群
 // @router /base/cluster/add [get]

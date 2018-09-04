@@ -258,6 +258,8 @@ type CloudAppService struct {
 	ServiceVersion string
 	// 域名
 	Domain string
+	// pod关闭时间
+	TerminationSeconds int
 }
 
 // 存储容器名称数据,在更新数据时做判断使用,不用频繁查库

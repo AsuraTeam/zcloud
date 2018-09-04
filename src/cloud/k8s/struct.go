@@ -141,6 +141,8 @@ type ServiceParam struct {
 	PortYaml string
 	// 重建标志
 	IsRedeploy bool
+	// pod关闭时间
+	TerminationSeconds int
 }
 
 // 配置服务健康检查使用的
@@ -731,4 +733,17 @@ type CertData struct {
 	CertData string
 	// node证书私钥内容
 	KeyData string
+}
+
+// 2018-09-04 09:51
+// 集群节点资源使用情况
+type NodeReport struct {
+	//
+	Ip string
+	Namespace string
+	Name string
+	CpuRequests string
+	MemoryRequests string
+	CpuLimits string
+	MemoryLimits string
 }

@@ -25,7 +25,7 @@ func GetNamespaces(clientset kubernetes.Clientset) ([]v1.Namespace, error) {
 func GetNamespaceApp(clientset kubernetes.Clientset) []CloudApp {
 	namespaces, _ := GetNamespaces(clientset)
 	fmt.Println(namespaces)
-	datas := []CloudApp{}
+	datas := make([]CloudApp, 0)
 	for _, v := range namespaces {
 		data := CloudApp{}
 		data.Status = string(v.Status.Phase)

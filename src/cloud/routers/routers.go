@@ -548,8 +548,10 @@ func init() {
 					beego.NSRouter("/:id:int", &hosts.HostsController{}, "get:HostsData"),
 					// 调度维护设置
 					beego.NSRouter("/:id:int", &hosts.HostsController{}, "post:Schedulable", "主机调度操作", "主机", "集群管理"),
-					// 调度维护设置
+					// 获取主机镜像信息
 					beego.NSRouter("/images/:id:int", &hosts.HostsController{}, "get:GetHostImages", "获取主机镜像", "主机", "集群管理"),
+					// 获取主机报表数据
+					beego.NSRouter("/report/:id:int", &hosts.HostsController{}, "get:GetHostReport", "获取主机报表", "主机", "集群管理"),
 				),
 			),
 			beego.NSNamespace("/storage",
@@ -632,7 +634,9 @@ func init() {
 				// 集群管理,
 				beego.NSRouter("/list", &cluster.ClusterController{}, "get:List", "集群列表", "集群管理", "基础设施"),
 				// 主机镜像详情弹出页面
-				beego.NSRouter("/image/:id:int", &cluster.ClusterController{}, "get:Images", "获取镜像", "集群列表", "集群管理"),
+				beego.NSRouter("/image/:id:int", &cluster.ClusterController{}, "get:Images", "获取镜像页面", "集群列表", "集群管理"),
+				// 主机镜像详情弹出页面
+				beego.NSRouter("/report/:id:int", &cluster.ClusterController{}, "get:Report", "获取报表页面", "集群列表", "集群管理"),
 				// 添加集群页面,
 				beego.NSRouter("/add", &cluster.ClusterController{}, "get:Add", "创建集群", "集群列表", "集群管理"),
 				// 集群详情数据页面,

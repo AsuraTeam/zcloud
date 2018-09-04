@@ -57,10 +57,10 @@ type AppPodStatus struct {
 }
 
 // 获取pods数量
-func GetPodsNumber(namespace string, clientset kubernetes.Clientset) int {
+func GetPodsNumber(namespace string, clientSet kubernetes.Clientset) int {
 	opt := metav1.ListOptions{}
 
-	pods, err := clientset.CoreV1().Pods(namespace).List(opt)
+	pods, err := clientSet.CoreV1().Pods(namespace).List(opt)
 	if err != nil {
 		logs.Error("获取k8s Pods失败", err.Error())
 		return 0
@@ -70,17 +70,17 @@ func GetPodsNumber(namespace string, clientset kubernetes.Clientset) int {
 
 // 2018-01-16 12:25
 // 删除某个pod后自动重建
-func DeletePod(namespace string, name string, clientset kubernetes.Clientset) error {
-	err := clientset.CoreV1().Pods(namespace).Delete(name, &metav1.DeleteOptions{})
+func DeletePod(namespace string, name string, clientSet kubernetes.Clientset) error {
+	err := clientSet.CoreV1().Pods(namespace).Delete(name, &metav1.DeleteOptions{})
 	return err
 }
 
 // 获取pod数据
 //fmt.Println(p.Status.HostIP)
 //{"metadata":{"name":"zhaoyun1-rc-28fp6","generateName":"zhaoyun1-rc-","namespace":"default","selfLink":"/api/v1/namespaces/default/pods/zhaoyun1-rc-28fp6","uid":"29676a19-dbbd-11e7-a7e2-0894ef37b2d2","resourceVersion":"287211","creationTimestamp":"2017-12-08T02:11:54Z","labels":{"app":"www-gg-com","max-scale":"3","min-scale":"3"},"annotations":{"kubernetes.io/created-by":"{\"kind\":\"SerializedReference\",\"apiVersion\":\"v1\",\"reference\":{\"kind\":\"ReplicationController\",\"namespace\":\"default\",\"name\":\"zhaoyun1-rc\",\"uid\":\"2966d58b-dbbd-11e7-a7e2-0894ef37b2d2\",\"apiVersion\":\"v1\",\"resourceVersion\":\"287184\"}}\n"},"ownerReferences":[{"apiVersion":"v1","kind":"ReplicationController","name":"zhaoyun1-rc","uid":"2966d58b-dbbd-11e7-a7e2-0894ef37b2d2","controller":true,"blockOwnerDeletion":true}]},"spec":{"containers":[{"name":"zhaoyun1","image":"nginx:1.11","ports":[{"containerPort":80,"protocol":"TCP"}],"resources":{"limits":{"cpu":"1","memory":"0"},"requests":{"cpu":"1","memory":"0"}},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","nodeName":"10.16.55.103","securityContext":{},"schedulerName":"default-scheduler"},"status":{"phase":"Running","conditions":[{"type":"Initialized","status":"True","lastProbeTime":null,"lastTransitionTime":"2017-12-08T02:10:19Z"},{"type":"Ready","status":"True","lastProbeTime":null,"lastTransitionTime":"2017-12-08T02:10:23Z"},{"type":"PodScheduled","status":"True","lastProbeTime":null,"lastTransitionTime":"2017-12-08T02:11:54Z"}],"hostIP":"10.16.55.103","podIP":"172.16.8.15","startTime":"2017-12-08T02:10:19Z","containerStatuses":[{"name":"zhaoyun1","state":{"running":{"startedAt":"2017-12-08T02:10:22Z"}},"lastState":{},"ready":true,"restartCount":0,"image":"nginx:1.11","imageID":"docker-pullable://nginx@sha256:e6693c20186f837fc393390135d8a598a96a833917917789d63766cab6c59582","containerID":"docker://c0a1cae85d6146d415996252750add084373c0f0e90c68fb129e3aa440262645"}],"qosClass":"Burstable"}}
-func GetPods(namespace string, clientset kubernetes.Clientset) []v1.Pod {
+func GetPods(namespace string, clientSet kubernetes.Clientset) []v1.Pod {
 	opt := metav1.ListOptions{}
-	pods, err := clientset.CoreV1().Pods(namespace).List(opt)
+	pods, err := clientSet.CoreV1().Pods(namespace).List(opt)
 	if err != nil {
 		logs.Error("获取Pods错误", err.Error())
 		return make([]v1.Pod, 0)
@@ -88,14 +88,41 @@ func GetPods(namespace string, clientset kubernetes.Clientset) []v1.Pod {
 	return pods.Items
 }
 
+// 2018-09-04 08:59
+// 获取某个节点的数据
+func GetPodsFromNode(node string, clientSet kubernetes.Clientset) v1.PodList {
+	podData := v1.PodList{}
+	namespaces,err := GetNamespaces(clientSet)
+	if err != nil{
+		return podData
+	}
+
+	opt := metav1.ListOptions{}
+	//opt.FieldSelector = "status.hostIP=" + node
+	for _, name := range namespaces{
+		pods, err := clientSet.CoreV1().Pods(name.Name).List(opt)
+		if err != nil {
+			logs.Error(err)
+			continue
+		}
+		for _, item := range pods.Items{
+			if node == item.Status.HostIP {
+				podData.Items = append(podData.Items, item)
+			}
+		}
+
+	}
+	return podData
+}
+
 // 获取某个服务的pods
 // @param namespace
 // @param serviceName
 // 2018-01-18 9:53
-func GetPodsService(namespace string, serviceName string, clientset kubernetes.Clientset) []v1.Pod  {
+func GetPodsService(namespace string, serviceName string, clientSet kubernetes.Clientset) []v1.Pod  {
 	opt := metav1.ListOptions{}
 	opt.LabelSelector = "name="+ serviceName
-	pods, err := clientset.CoreV1().Pods(namespace).List(opt)
+	pods, err := clientSet.CoreV1().Pods(namespace).List(opt)
 	if err != nil {
 		logs.Error("获取Pods错误", err.Error())
 		return make([]v1.Pod, 0)
@@ -115,8 +142,8 @@ func GetIpPodNumber(pods []v1.Pod, ip string) int {
 }
 
 // 获取某个namespace下面的服务
-func GetPodStatus(namespace string, clientset kubernetes.Clientset) []AppPodStatus {
-	data := GetPods(namespace, clientset)
+func GetPodStatus(namespace string, clientSet kubernetes.Clientset) []AppPodStatus {
+	data := GetPods(namespace, clientSet)
 	datas := make([]AppPodStatus, 0)
 	for _, d := range data {
 		app := AppPodStatus{}

@@ -216,6 +216,12 @@ func getParam(d app.CloudAppService, user string) k8s.ServiceParam {
 	param.ResourceName = d.ResourceName
 	param.StorageData = d.StorageData
 	param.PortYaml = d.Yaml
+
+	// 关闭容器时间
+	if param.TerminationSeconds == 0 {
+		param.TerminationSeconds = 50
+	}
+
 	if d.ReplicasMax > param.Replicas {
 		param.ReplicasMax = d.ReplicasMax
 	} else {

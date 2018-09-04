@@ -66,16 +66,19 @@ func CacheAppData()  {
 // 将应用数据写入到redis
 func putAppDataToRedis(id int64, app interface{})  {
 	key := strconv.FormatInt(id, 10)
-	cache.AppCache.Put(key, util.ObjToString(app), time.Second * 86400)
+	cache.AppCache.Put(key, util.ObjToString(app), time.Second * 300)
 }
 
+// 2018-09-04 08:06
+// 生产应用缓存数据
 func getK8sAppData(data []app.CloudApp)  {
 	allData := util.Lock{}
 	for _, d := range data {
 		putAppDataToRedis(d.AppId, d)
 		namespace := util.Namespace(d.AppName, d.ResourceName)
+		sNamespace := namespace + d.ClusterName
 		number := 0
-		if _, ok := allData.Get(namespace); !ok {
+		if _, ok := allData.Get(sNamespace); !ok {
 			c, err := k8s.GetClient(d.ClusterName)
 			if err != nil {
 				logs.Error("获取客户端失败", err.Error())
@@ -91,7 +94,7 @@ func getK8sAppData(data []app.CloudApp)  {
 				if cache.AppCacheErr == nil {
 					putAppDataToRedis(app.AppId, app)
 				}
-				allData.Put(namespace, "1")
+				allData.Put(sNamespace, "1")
 				number += app.ContainerNumber
 			}
 		}
