@@ -26,19 +26,19 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row top15">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="col-md-2 fw100 control-label">构建时间<span
-                                            class="text-danger">*</span></label>
-                                    <div class="col-md-10">
-                                        <input type="text" nullmsg="必须填写" value="{{.data.ExecTime}}"
-                                               onchange="checkChange('ExecTime')" name="ExecTime"
-                                               class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {{/*<div class="row top15">*/}}
+                            {{/*<div class="col-md-12">*/}}
+                                {{/*<div class="form-group">*/}}
+                                    {{/*<label class="col-md-2 fw100 control-label">构建时间<span*/}}
+                                            {{/*class="text-danger">*</span></label>*/}}
+                                    {{/*<div class="col-md-10">*/}}
+                                        {{/*<input type="text" nullmsg="必须填写" value="{{.data.ExecTime}}"*/}}
+                                               {{/*onchange="checkChange('ExecTime')" name="ExecTime"*/}}
+                                               {{/*class="form-control">*/}}
+                                    {{/*</div>*/}}
+                                {{/*</div>*/}}
+                            {{/*</div>*/}}
+                        {{/*</div>*/}}
                         <div class="row top15">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -110,7 +110,7 @@
                                                class="col-md-4 fw100 control-label">服务名称<span
                                                 class="text-danger">*</span></label>
                                         <div class="col-md-8">
-                                            <select class="selectpicker" name="ServiceName" data-live-search="true"
+                                            <select class="selectpicker" name="ServiceName" onchange="getResouceData($('#select-cluster-id').val(),'select-job-id','/api/ci/job/name','ItemName',$(this).val());" data-live-search="true"
                                                     data-style="btn-default"
                                                     id="select-service-id">
                                                 <option value="">请选择</option>

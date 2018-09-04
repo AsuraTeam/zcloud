@@ -240,17 +240,33 @@ func updateJobContent(jobData ci.CloudBuildJob) ci.CloudBuildJob {
 // 2018-01-25 17:45
 // router /api/ci/job/name [get]
 func (this *JobController) JobDataName() {
-	clusterName := this.GetString("ClusterName")
+	//clusterName := this.GetString("ClusterName")
 	searchMap := sql.SearchMap{}
-	searchMap.Put("CreateUser", getUser(this))
-	if clusterName != "" {
-		searchMap.Put("ClusterName", clusterName)
-	}
+
+	//if clusterName != "" {
+	//	searchMap.Put("ClusterName", clusterName)
+	//}
+
 	// 构建任务数据
 	data := make([]ci.CloudBuildJob, 0)
 	q := sql.SearchSql(ci.CloudBuildJob{}, ci.SelectCloudBuildJob, searchMap)
 	sql.Raw(q).QueryRows(&data)
-	setJson(this, data)
+	clusterMap := cluster.GetClusterMap()
+	perm := userperm.GetResourceName("构建项目", getUser(this))
+	user := getUser(this)
+	result := make([]ci.CloudBuildJob, 0)
+	for _, d := range data {
+		d.ClusterName = clusterMap.GetVString(d.ClusterName)
+		// 不是自己创建的才检查
+		if d.CreateUser != user && user != "admin" {
+			if ! userperm.CheckPerm(d.ItemName, d.ClusterName, "", perm) && len(user) > 0 {
+				continue
+			}
+		}
+		result = append(result, d)
+	}
+
+	setJson(this, result)
 }
 
 // 设置json数据

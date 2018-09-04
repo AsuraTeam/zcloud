@@ -114,7 +114,7 @@ func (this *ControllerPipeline) PipelineSave() {
 
 	user := getUser(this)
 	util.SetPublicData(d, user, &d)
-	jobData := ci.GetJobName(user, d.ClusterName, d.JobName)
+	jobData := ci.GetJobName(user, "", d.JobName)
 
 	if len(jobData) == 0 {
 		this.Ctx.WriteString("参数错误" + err.Error())

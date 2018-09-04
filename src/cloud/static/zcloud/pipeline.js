@@ -170,7 +170,7 @@ function savePipeline(pipelineId) {
     var data = get_form_data();
 
     data["PipelineId"] = parseInt(pipelineId);
-    if (!checkValue(data, "JobName,ServiceName,AppName,PipelineName,ClusterName,ExecTime")) {
+    if (!checkValue(data, "JobName,ServiceName,AppName,PipelineName,ClusterName")) {
         return
     }
     if ($("#setSelectFailAction1").is(":checked")) {
