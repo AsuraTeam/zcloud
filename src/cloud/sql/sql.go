@@ -484,6 +484,10 @@ func GetSearchMap(key string, ctx context.Context) SearchMap {
 	if id != "" {
 		searchMap.Put(key, id)
 	}
+	str := ctx.Input.Param(":hi")
+	if str != "" {
+		searchMap.Put(key, str)
+	}
 	return searchMap
 }
 

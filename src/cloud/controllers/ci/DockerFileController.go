@@ -8,6 +8,7 @@ import (
 	"strings"
 	"cloud/controllers/base/quota"
 	"cloud/userperm"
+	"github.com/astaxie/beego/logs"
 )
 
 // 2018-01-24 21:32
@@ -31,6 +32,7 @@ func (this *DockerFileController) DockerFileDetail() {
 	q := sql.SearchSql(data, ci.SelectCloudCiDockerfile, searchMap)
 	sql.Raw(q).QueryRow(&data)
 	this.Data["data"] = data
+	logs.Info(util.ObjToString(data))
 	this.Data["content"] = len(strings.Split(data.Content,"\n"))
 	this.TplName = "ci/dockerfile/detail.html"
 }
