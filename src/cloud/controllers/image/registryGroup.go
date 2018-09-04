@@ -31,10 +31,14 @@ func (this *RegistryGroupController) RegistryGroupList() {
 
 // 2018-01-28 9:24
 // 仓库组详情入口页面
+// @route /image/registry/group/detail/:hi(.*) [get]
 // @router /image/registry/group/detail/:id:int [get]
 func (this *RegistryGroupController) GroupDetailPage() {
 	registrData := getRegistryGroup(this)
 	this.Data["ServiceName"] = registrData.ServerDomain
+
+
+
 	reg := GetRegistryServerCluster(registrData.ServerDomain, registrData.ClusterName)
 	if len(reg.ServerAddress) > 10 {
 		s := strings.Split(reg.ServerAddress, ":")
@@ -313,6 +317,10 @@ func GetImageTagSelect(tag string) string {
 // 2018-01-28 10:33
 func getRegistryGroup(this *RegistryGroupController) registry.CloudRegistryGroup {
 	searchMap := sql.GetSearchMap("GroupId", *this.Ctx)
+	imageName := this.Ctx.Input.Param(":hi")
+	if len(imageName) > 0 {
+		searchMap.Put("GroupName", imageName)
+	}
 	registryData := registry.CloudRegistryGroup{}
 	q := sql.SearchSql(registryData, registry.SelectCloudRegistryGroup, searchMap)
 	sql.Raw(q).QueryRow(&registryData)

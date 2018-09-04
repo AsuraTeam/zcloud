@@ -100,7 +100,7 @@ function loadPipelineData(key) {
                 if(full["Status"] == "false"){
                     return "<span class='Fail'>"+data+"</span><br><span class='text-default FailTop5'>服务不存在</span>"
                 }
-                return "<span class='Running'>"+data+"</span>"
+                return "<span class='Running'><a target='_blank' href='/application/service/list'>"+data+"</a></span>"
             }
             },
             {"data": "JobName", "sWidth": "9%"},

@@ -164,6 +164,8 @@ func init() {
 					beego.NSRouter("/add", &registry.RegistryGroupController{}, "get:RegistryGroupAdd", "镜像仓库组添加", "镜像仓库组", "镜像中心"),
 					// 仓库分组详情页面
 					beego.NSRouter("/detail/:id:int", &registry.RegistryGroupController{}, "get:GroupDetailPage", "镜像仓库组详情", "镜像仓库组", "镜像中心"),
+					// 仓库分组详情页面
+					beego.NSRouter("/detail/:hi(.*)", &registry.RegistryGroupController{}, "get:GroupDetailPage", "镜像仓库组详情", "镜像仓库组", "镜像中心"),
 				),
 			),
 		)

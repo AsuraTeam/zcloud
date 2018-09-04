@@ -144,10 +144,10 @@ function loadJobData(key) {
             },
             {"data": "LastModifyTime", "sWidth": "9%"},
             {
-                "data": "JobId", "sWidth": "8%", "mRender": function (data) {
+                "data": "JobId", "sWidth": "8%", "mRender": function (data,type, full) {
                 return '<button type="button" title="立刻构建" onclick="startExecJob(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-transgender-alt"></i></button>&nbsp;' +
                     '<button type="button" title="最近构建日志" onclick="jobLog(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa  fa-hospital-o"></i></button>&nbsp;' +
-                    '<button type="button" title="查看构建仓库组信息" onclick="toRegistryGroup()" class="btn btn-xs rb-btn-oper"><i class="mdi mdi-arrange-send-to-back"></i></button>&nbsp;';
+                    '<button type="button" title="查看构建仓库组信息" onclick="toRegistryGroup(\''+full["RegistryServer"]+'\')" class="btn btn-xs rb-btn-oper"><i class="mdi mdi-arrange-send-to-back"></i></button>&nbsp;';
             }
             },
             {
@@ -333,6 +333,6 @@ function toCreateApp(histroyId) {
  * 转到镜像仓库组
  * 2018-01-31 22:14
  */
-function toRegistryGroup() {
-    window.location.href = "/image/registry/group/list"
+function toRegistryGroup(name) {
+    window.open( "/image/registry/group/detail/" + name, "_blank");
 }
