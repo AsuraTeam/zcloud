@@ -39,7 +39,7 @@ func (this *ImageController) RegistryServerAdd() {
 		searchMap := sql.GetSearchMap("UserId", *this.Ctx)
 		q := sql.SearchSql(registry.CloudRegistryServer{}, registry.SelectCloudRegistryServer, searchMap)
 		sql.Raw(q).QueryRow(&update)
-
+		update.Password = util.Base64Decoding(update.Password)
 		this.Data["readonly"] = "readonly"
 		entHtml = util.GetSelectOptionName(update.Entname)
 		clusterHtml = util.GetSelectOptionName(update.ClusterName)

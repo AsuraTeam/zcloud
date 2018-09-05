@@ -1151,7 +1151,7 @@ function loadServiceData(key,name) {
             },
             {
                 "data": "ServiceName", "sWidth": "8%", "mRender": function (data, type, full) {
-                return "<a href='javascript:void(0)' onclick='toServiceDetail(\"" + data + "\")'>" + data + "<br></a><span class='text-default'>应用:&nbsp;" + full["AppName"] + "</span>";
+                return "<a href='javascript:void(0)' oncl1ick='toServiceDetail(\"" + data + "\")'>" + data + "<br></a><span class='text-default'>应用:&nbsp;" + full["AppName"] + "</span>";
             }
             },
             {
