@@ -137,6 +137,7 @@ func VerifyUser(user string, pass string, service string) bool {
 	q := sql.SearchSql(registry.CloudRegistryServer{}, registry.SelectCloudRegistryServer, searchMap)
 	sql.Raw(q).QueryRows(&d)
 	if len(d) < 1 {
+		cache.RedisUserCache.Delete(key)
 		return false
 	}
 	cache.RedisUserCache.Put(key, cacheStr, time.Minute*20)
