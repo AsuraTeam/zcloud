@@ -242,6 +242,8 @@ func init() {
 			beego.NSRouter("/container", &app.AppController{}, "get:ContainerData", "获取容器数据", "配置管理列表", "容器治理"),
 			// 删除容器,容器删除后会重建
 			beego.NSRouter("/container/:id:int", &app.AppController{}, "delete:ContainerDelete", "删除容器", "配置管理列表", "容器治理"),
+			// 获取容器日志
+			beego.NSRouter("/container/logs/:hi(.*)", &app.AppController{}, "get:GetDockerLogs", "获取容器日志", "配置管理列表", "容器治理"),
 			// 容器保存为镜像
 			beego.NSRouter("/container/commit/:id:int", &app.AppController{}, "post:ContainerCommit", "容器保存到镜像", "配置管理列表", "容器治理"),
 			beego.NSNamespace("/pipeline",

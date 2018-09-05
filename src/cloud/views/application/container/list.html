@@ -144,7 +144,7 @@
                             <th class="th">IP地址</th>
                             <th class="th">重启次数</th>
                             <th class="th">创建时间</th>
-                            <th class="th">操作</th>
+                            <th class="th">终端/事件/镜像/日志</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -277,7 +277,7 @@
                 }
                 },
                 {
-                    "data": "Image", "sWidth": "13%", "mRender": function (data) {
+                    "data": "Image", "sWidth": "11%", "mRender": function (data) {
                     return "<div style='word-wrap:break-word'><a>" + data + "</a></div>";
                 }
                 },
@@ -294,11 +294,13 @@
                 {"data": "Restart", "sWidth": "6%"},
                 {"data": "CreateTime", "sWidth": "6%"},
                 {
-                    "sWidth": "7%", "data": "ContainerId", "mRender": function (data,type,full) {
+                    "sWidth": "9%", "data": "ContainerId", "mRender": function (data,type,full) {
                         var event =  encodeURI(full["Events"]);
                     return     '<button type="button" title="连接到容器终端" onclick="toTty(' + data + ')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-terminal"></i></button>&nbsp;' +
                             '<button type="button" title="显示容器事件信息" onclick="displayEvent(\'' + event + '\',\''+full["ContainerName"]+'\')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-envelope"></i></button>&nbsp;'+
-                            '<button type="button" title="将容器保存为镜像" onclick="commitImages('+data+')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-compress"></i></button>&nbsp;';
+                            '<button type="button" title="将容器保存为镜像" onclick="commitImages('+data+')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-compress"></i></button>&nbsp;' +
+                            '<button type="button" title="显示容器日志" onclick="displayLog(\''+full["ContainerName"]+'\')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-history"></i></button>&nbsp;'
+                            ;
                 }
                 },
             ],
@@ -341,6 +343,14 @@
         var result = get({id:id}, url);
         $("#add_scale_html").html(result);
         $("#add_post_html").modal("toggle")
+    }
+
+    /**
+     * 2018-09-05 108:04
+     * 显示容器日志
+     * */
+    function displayLog(name) {
+        window.open("/api/container/logs/" + name, "_blank");
     }
 
     /**

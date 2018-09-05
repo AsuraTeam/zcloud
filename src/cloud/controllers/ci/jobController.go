@@ -514,7 +514,7 @@ func GetJobLogs(jobData ci.CloudBuildJob) string {
 		logs.Info("获取到开始构建")
 		return history.BuildLogs
 	}
-	logsR := k8s.GetJobLogs(cl, history.JobName, util.Namespace("job", "job"))
+	logsR := k8s.GetJobLogs(cl, history.JobName, util.Namespace("job", "job"), 200000)
 	if logsR == "" {
 		logsR = "没有找到日志<span style='display:none;'></span>"
 		return logsR

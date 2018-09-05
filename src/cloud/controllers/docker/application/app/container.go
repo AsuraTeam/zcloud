@@ -16,15 +16,21 @@ import (
 	"cloud/userperm"
 )
 
-// 容器详情页面
-// 2018-01-16 08:34
-// @router /application/container/detail/:hi:string [get]
-func (this *AppController) ContainerDetail() {
+// 获取详情数据
+func getContainerData(this *AppController)  app.CloudContainer{
 	data := app.CloudContainer{}
 	name := this.Ctx.Input.Param(":hi")
 	searchMap := sql.GetSearchMapV("ContainerName", name)
 	searchSql := sql.SearchSql(app.CloudContainer{}, app.SelectCloudContainer, searchMap)
 	sql.Raw(searchSql).QueryRow(&data)
+	return data
+}
+
+// 容器详情页面
+// 2018-01-16 08:34
+// @router /application/container/detail/:hi:string [get]
+func (this *AppController) ContainerDetail() {
+	data := getContainerData(this)
 	v := getRedisContainer(data, "", "")
 	if v.ContainerId != 0 {
 		this.Data["data"] = v
@@ -219,6 +225,25 @@ func deleteDbContainer(deleteData util.Lock) {
 
 		go sql.Raw(deleteSql).Exec()
 	}
+}
+
+// 2018-09-04 18:19
+// 获取容器日志
+// @router /api/container/logs/:hi(.*) [get]
+func (this *AppController) GetDockerLogs() {
+	data := getContainerData(this)
+	cl, err := k8s.GetClient(data.ClusterName)
+	if err != nil {
+		this.Ctx.WriteString(err.Error())
+		return
+	}
+	line, err  := this.GetInt64("tailLine")
+	if err != nil {
+		line = 5000
+	}
+	log := k8s.GetJobLogs(cl, data.ContainerName, util.Namespace(data.AppName, data.ResourceName), line)
+	logs.Info(log, data.ClusterName, data.AppName, data.ResourceName)
+	this.Ctx.WriteString(log)
 }
 
 // 2018-01-15 15:25

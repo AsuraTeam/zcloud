@@ -427,6 +427,12 @@ func getJobPod(pod string, cl kubernetes.Clientset, namespace string) ([]corev1.
 	listOpt := meta_v1.ListOptions{}
 	listOpt.LabelSelector = "job-name=" + pod
 	pods, err := cl.CoreV1().Pods(namespace).List(listOpt)
+	if len(pods.Items) == 0 {
+		pods, err := cl.CoreV1().Pods(namespace).Get(pod, meta_v1.GetOptions{})
+		s := make([]corev1.Pod, 0)
+		s = append(s, *pods)
+		return s, err
+	}
 	return pods.Items, err
 }
 
@@ -435,9 +441,13 @@ func getJobPod(pod string, cl kubernetes.Clientset, namespace string) ([]corev1.
 //cl,_ := k8s.GetClient("10.16.55.114","8080")
 //k8s.GetJobLogs(cl, "job-33e87d842bb7712c9688ed4f99c94336-ss8hw")
 
-func GetJobLogs(cl kubernetes.Clientset, pod string, namespace string) string {
+func GetJobLogs(cl kubernetes.Clientset, pod string, namespace string, line int64 ) string {
 	podsData := make([]corev1.Pod, 0)
 	var err error
+	if line  > 200000 {
+		// 大概4M左右
+		line = 200000
+	}
 	if cache.PodCache != nil {
 		r := cache.PodCache.Get(pod + namespace)
 		s := util.RedisObj2Obj(r, &podsData)
@@ -446,15 +456,22 @@ func GetJobLogs(cl kubernetes.Clientset, pod string, namespace string) string {
 		}
 	}
 	if len(podsData) == 0 {
+		logs.Info(pod, namespace)
 		podsData, err = getJobPod(pod, cl, namespace)
+		if err != nil{
+			return err.Error()
+		}
 		if cache.PodCache != nil && len(podsData) > 0 {
 			cache.PodCache.Put(pod+namespace, util.ObjToString(podsData), time.Second*500)
 		}
 	}
+	logs.Info("获取到pod", podsData[0].Name)
 	if len(podsData) > 0 && err == nil {
 		opt := corev1.PodLogOptions{}
-		bt := int64(1024 * 1024 * 2)
-		opt.LimitBytes = &bt
+		//bt := int64(1024 * 1024 * 2)
+		//opt.LimitBytes = &bt
+		line := line
+		opt.TailLines = &line
 		r := cl.CoreV1().Pods(namespace).GetLogs(podsData[0].Name, &opt)
 		c := r.Do()
 		l, _ := c.Raw()
@@ -491,7 +508,7 @@ func getJobResult(jobParam JobParam, keyword string, timeout int, logtp string) 
 	cl, _ := GetClient(jobParam.ClusterName)
 	count := 0
 	for {
-		log := GetJobLogs(cl, jobParam.Jobname, jobParam.Namespace)
+		log := GetJobLogs(cl, jobParam.Jobname, jobParam.Namespace, 200000)
 		logs.Info("获取到log", log)
 		if strings.Contains(log, keyword) || count > timeout {
 			DeleteJob(cl, jobParam.Jobname, jobParam.Namespace)
