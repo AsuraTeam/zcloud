@@ -63,7 +63,10 @@ func getParam(registryParam RegistryParam) ServiceParam {
 	param.Cpu = 1
 	param.ClusterName = registryParam.ClusterName
 	param.PortData = "5000"
-	param.Replicas = 1
+	if registryParam.Replicas == 0 {
+		registryParam.Replicas = 1
+	}
+	param.Replicas = registryParam.Replicas
 	param.Namespace = util.Namespace("registryv2", "registryv2")
 	param.Memory = "2048"
 	param.Port = "5000"
@@ -78,6 +81,7 @@ func getParam(registryParam RegistryParam) ServiceParam {
 	cl2, _ := GetYamlClient(registryParam.ClusterName, "", "v1", "api")
 	cl3, _ := GetClient(registryParam.ClusterName)
 	param.Cl3 = cl3
+	param.SessionAffinity = "ClientIP"
 	param.Cl2 = cl2
 	param.C1 = c1
 	param.Envs = "TZ=Asia/Shanghai"

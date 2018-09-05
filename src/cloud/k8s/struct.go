@@ -143,6 +143,8 @@ type ServiceParam struct {
 	IsRedeploy bool
 	// pod关闭时间
 	TerminationSeconds int
+    // session 亲和性
+	SessionAffinity  string
 }
 
 // 配置服务健康检查使用的
@@ -215,6 +217,7 @@ type RegistryParam struct {
 	Port        string
 	AuthServer  string
 	HostPath    string
+	Replicas    int64
 }
 
 // 镜像信息获取

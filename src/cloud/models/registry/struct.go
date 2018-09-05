@@ -71,6 +71,9 @@ type CloudRegistryServer struct {
     HostPath string
     // 运行状态
     Status string
+    // 副本数量
+    Replicas int64
+
 }
 
 //2018-01-19 22:15:41.9929294 +0800 CST

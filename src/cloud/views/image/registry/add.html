@@ -124,6 +124,18 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row top15" title="启动几个副本">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-12" class="col-md-2 fw100 control-label">服务副本<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" value="{{.data.Replicas}}" name="Replicas"
+                                               class="form-control" id="field-12" placeholder="启动几个副本">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row top15" title="数据存储在物理机的路径">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -145,6 +157,14 @@
                                                class="form-control" id="field-2" placeholder="描述信息">
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="row top20 m-l-10">
+                            <div class="col-md-11 pre m-l-15">
+                                <br>
+                                仓库必须条件<br>
+                                请保证所有宿主机都挂载了数据路径,该路径数据为共享文件<br>
+                                <br>
                             </div>
                         </div>
                     </div>

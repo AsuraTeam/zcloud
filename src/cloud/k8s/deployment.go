@@ -601,6 +601,10 @@ func createService(ports []map[string]interface{}, param ServiceParam) (interfac
 		}
 	}
 
+	if param.SessionAffinity  != "" {
+		conf["spec"].(map[string]interface{})["sessionAffinity"] = param.SessionAffinity
+	}
+
 	resource := &metav1.APIResource{Name: "Services", Namespaced: true}
 	obj := unstructured.Unstructured{Object: conf}
 

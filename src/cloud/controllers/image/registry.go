@@ -31,7 +31,7 @@ func (this *ImageController) RegistryServerAdd() {
 	entData := ent.GetEntnameSelect()
 
 	update := registry.CloudRegistryServer{}
-
+	update.Replicas = 1
 	id := this.GetString("ServerId")
 	// 更新操作
 	if id != "0" {
@@ -63,7 +63,9 @@ func deployRegistry(d registry.CloudRegistryServer) error {
 		ClusterName: d.ClusterName,
 		AuthServer:  d.AuthServer,
 		HostPath:    d.HostPath,
-		Name:        d.Name}
+		Name:        d.Name,
+		Replicas:    d.Replicas,
+	}
 	err := k8s.CreateRegistry(param)
 	return err
 }
