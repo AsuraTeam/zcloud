@@ -296,8 +296,11 @@
                 {
                     "sWidth": "9%", "data": "ContainerId", "mRender": function (data,type,full) {
                         var event =  encodeURI(full["Events"]);
-                    return     '<button type="button" title="连接到容器终端" onclick="toTty(' + data + ')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-terminal"></i></button>&nbsp;' +
-                            '<button type="button" title="显示容器事件信息" onclick="displayEvent(\'' + event + '\',\''+full["ContainerName"]+'\')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-envelope"></i></button>&nbsp;'+
+                        var html = "";
+                        if (full["Status"] == "Running"){
+                            html =  '<button type="button" title="连接到容器终端" onclick="toTty(' + data + ')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-terminal"></i></button>&nbsp;' ;
+                        }
+                        return  html +   '<button type="button" title="显示容器事件信息" onclick="displayEvent(\'' + event + '\',\''+full["ContainerName"]+'\')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-envelope"></i></button>&nbsp;'+
                             '<button type="button" title="将容器保存为镜像" onclick="commitImages('+data+')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-compress"></i></button>&nbsp;' +
                             '<button type="button" title="显示容器日志" onclick="displayLog(\''+full["ContainerName"]+'\')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-history"></i></button>&nbsp;'
                             ;

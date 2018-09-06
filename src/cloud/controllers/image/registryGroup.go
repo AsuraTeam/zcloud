@@ -172,7 +172,7 @@ func (this *RegistryGroupController) RegistryImagesLog() {
 // 仓库组镜像数据
 // @router /api/registry/group/images [get]
 func (this *RegistryGroupController) RegistryGroupImages() {
-	data := []k8s.CloudImage{}
+	data := make([]k8s.CloudImage, 0)
 	searchMap := sql.SearchMap{}
 	group := this.GetString("GroupName")
 	searchMap.Put("RepositoriesGroup", group)
@@ -376,11 +376,13 @@ func GetImageDatas(searchMap sql.SearchMap) []k8s.CloudImage {
 
 // 获取镜像数据
 func getImageData(this *RegistryGroupController) k8s.CloudImage {
-	searchMap := sql.GetSearchMap("ImageId", *this.Ctx)
+	searchMap := sql.SearchMap{}
 	imageName := this.Ctx.Input.Param(":hi")
 	if len(imageName) > 0 {
 		searchMap.Put("Name", imageName)
 		searchMap.Put("RepositoriesGroup", this.GetString("GroupName"))
+	}else{
+		sql.GetSearchMap("ImageId", *this.Ctx)
 	}
 	logs.Info("searchMap", searchMap)
 	imgData := GetImageDatas(searchMap)
