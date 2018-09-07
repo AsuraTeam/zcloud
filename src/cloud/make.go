@@ -13,7 +13,7 @@ import (
 func init() {
 	orm.Debug = true
 	orm.RegisterDriver("mysql", orm.DRMySQL)
-	orm.RegisterDataBase("default", "mysql", "zhaoyun1:zhaoyun1@tcp(192.168.54.30:3306)/zcloud?charset=utf8")
+	orm.RegisterDataBase("default", "mysql", "###:###@tcp(###:3306)/zcloud?charset=utf8")
 }
 
 func StringToUpper(str string) string {
