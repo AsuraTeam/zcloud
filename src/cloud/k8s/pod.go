@@ -260,6 +260,7 @@ func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.
 			app.Status = strings.Replace(util.ObjToString(d.Status.Phase), "\"", "", -1)
 		}
 		app.ContainerName = d.Name
+		app.Service = strings.Split(d.Name, "--")[0]
 
 		app.CreateTime = util.ReplaceTime(d.CreationTimestamp.String())
 		dataS = append(dataS, app)

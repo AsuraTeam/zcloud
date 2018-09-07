@@ -151,7 +151,7 @@
             "displayLength": 100, // 默认长度
             "bLengthChange": false,
             "ajax": { // 请求地址
-                "url": "/api/container?t=" + new Date().getTime() + "&cluster=" + cluster + "&AppName=" + app + "&ServiceName=" + service,
+                "url": "/api/container?t=" + new Date().getTime() + "&clusteName=" + cluster + "&AppName=" + app + "&Service=" + service,
                 "type": 'get'
             },
             "columns": [ // 数据映射
@@ -304,6 +304,6 @@
         if (count > 300) {
             clearInterval(timer);
         }
-    }, 30000);
+    }, 5000);
 </script>
 </html>

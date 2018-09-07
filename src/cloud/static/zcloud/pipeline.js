@@ -119,7 +119,7 @@ function loadPipelineData(key) {
             {
                 "data": "PipelineId", "sWidth": "6%", "mRender": function (data, type, full) {
                    return '<button type="button" title="立刻构建" onclick="startExecPipeline(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-transgender-alt"></i></button>&nbsp;' +
-                       '<button type="button" title="最近流水线日志" onclick="loadContainer(' + full["JobId"] + ')" class="btn btn-xs rb-btn-oper"><i class="fa  fa-hospital-o"></i></button>&nbsp;' +
+                       '<button type="button" title="最近流水线日志" onclick="loadContainer(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa  fa-hospital-o"></i></button>&nbsp;' +
                        '<button type="button"  title="流水线历史" onClick="buildHistory(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-history"></i></button>';
                 }
             },

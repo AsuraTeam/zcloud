@@ -128,7 +128,7 @@ func (this *AppController) ContainerData() {
 	data := make([]app.CloudContainer, 0)
 	search := this.GetString("search")
 
-	key := sql.MKeyV("Entname", "ServiceName", "AppName")
+	key := sql.MKeyV("Entname", "Service", "AppName")
 
 	searchMap := sql.GetSearchMapValue(key,
 		*this.Ctx,
@@ -182,7 +182,7 @@ func (this *AppController) ContainerData() {
 
 	r := util.ResponseMap(datas,
 		sql.CountSearchMap("cloud_container",
-			sql.GetSearchMapV("CreateUser", getUser(this)),
+			sql.SearchMap{},
 			len(datas),
 			search),
 		this.GetString("draw"))
