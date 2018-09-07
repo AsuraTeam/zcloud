@@ -76,6 +76,8 @@ type CloudAppServiceName struct {
 	ClusterName string
 	// 资源名称
 	ResourceName string
+	// 创建用户
+	CreateUser string
 
 }
 

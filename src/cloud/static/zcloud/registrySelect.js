@@ -168,6 +168,9 @@ function getResouceData(clustername, id, url, name, appname) {
             html += "<option value='" + data[i][name] + "'>" + data[i][name] + "</option>";
         }
     }
+    if(html.indexOf("请选择") == -1 ){
+        html = "<option value=''>--请选择--</option>" + html;
+    }
     $("#" + id).html(html);
     $('.selectpicker').selectpicker('refresh');
 }

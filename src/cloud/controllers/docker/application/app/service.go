@@ -14,6 +14,7 @@ import (
 	"strings"
 	"cloud/controllers/base/storage"
 	"cloud/controllers/image"
+	"cloud/userperm"
 )
 
 type ServiceController struct {
@@ -229,14 +230,30 @@ func (this *ServiceController) GetServiceName() {
 	key := strings.Split(app.ServiceSearchKey, ",")
 
 	searchMap := sql.GetSearchMapValue(key, *this.Ctx, sql.SearchMap{})
-	searchMap.Put("CreateUser", getServiceUser(this))
 	searchSql := sql.SearchSql(
 		app.CloudAppService{},
 		app.SelectCloudAppService,
 		searchMap)
 
 	sql.Raw(searchSql).QueryRows(&data)
-	setServiceJson(this, data)
+
+	user := getServiceUser(this)
+	perm := userperm.GetResourceName("服务", user)
+	permApp := userperm.GetResourceName("应用", user)
+	result := make([]app.CloudAppServiceName, 0)
+	for _, d := range data {
+		// 不是自己创建的才检查
+		if d.CreateUser != user && user != "admin" {
+			if ! userperm.CheckPerm(d.AppName+";"+d.ResourceName+";"+d.ServiceName, d.ClusterName, d.Entname, perm) {
+				if ! userperm.CheckPerm(d.AppName, d.ClusterName, d.Entname, permApp) {
+					continue
+				}
+			}
+		}
+		result = append(result, d)
+	}
+
+	setServiceJson(this, result)
 }
 
 // Service 数据

@@ -104,7 +104,7 @@ func (this *AppController) GetAppName() {
 	user :=  getUser(this)
 	for _, data := range datas {
 		if data.CreateUser != getUser(this) &&  user != "admin"{
-			if ! userperm.CheckPerm(data.AppName, data.ClusterName, data.Entname, permApp) {
+			if ! userperm.CheckPerm(data.AppName, "", "", permApp) {
 				continue
 			}
 		}
