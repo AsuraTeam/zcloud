@@ -236,8 +236,9 @@ func (this *RegistryGroupController) RegistryGroup() {
 
 	if clusterMame != "" {
 		searchMap.Put("ClusterName", clusterMame)
-		searchMap.Put("CreateUser", getUser(this))
+		//searchMap.Put("CreateUser", getUser(this))
 	}
+
 	key := this.GetString("search")
 	if groupTp == "公开" {
 		searchMap.Put("GroupType", "公开")
