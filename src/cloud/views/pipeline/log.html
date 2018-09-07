@@ -1,0 +1,66 @@
+
+
+
+                <div class="panel-heading">
+                    <span class="modal-title">构建日志{{.data.JobName}}</span>
+                </div>
+                <form class="cluster-form">
+                    <div id="history_log_id" style="min-height: 400px;padding: 20px;max-height: 800px;overflow-y: scroll;background-color: #000000;color: #ffffff;">
+
+                    </div>
+                </form>
+<script src="/static/js/jquery.min.js"></script>
+<script>
+    var timer;
+    var counter = 0;
+    var logs = "请稍等";
+    logs = logs.replace(/\n/g, "<br>");
+    $("#history_log_id").html(logs);
+    if (logs.indexOf("构建成功") == -1 && logs.indexOf("构建失败") == -1 && logs.indexOf("构建完成") == -1){
+        timer = setInterval(function () {
+            loadLog("{{.data.JobId}}");
+            if ( counter > 10 ){
+                clearInterval(timer);
+            }
+        }, 5000);
+    }
+    setScrollBottom();
+
+    /**
+     *  让滚动条到底部
+     *  2018-01-27 5:50
+     * */
+    function setScrollBottom() {
+        var div = document.getElementById('history_log_id');
+        div.scrollTop = div.scrollHeight + 150;
+    }
+
+    /**
+     * 加载日志
+     * 2018-01-26 16:04
+     * @param id
+     */
+    function loadLog(id) {
+        if(id==0){
+            $("#history_log_id").html("<span class='left80 text-danger top10' ><p><p><p style='margin-left: 54px;'>无法找到构建日志!</span>");
+            clearInterval(timer);
+            return
+        }
+        var url = "/api/ci/job/logs/" + id;
+        var result = get({}, url);
+        result = result.replace(/\n/g, "<br>");
+        $("#history_log_id").html(result);
+
+        if (result.indexOf("构建完成") != -1 || result.indexOf("构建失败") != -1 || result.indexOf("构建成功") != -1){
+            clearInterval(timer);
+            return;
+        }
+        $("#history_log_id").append("<div style='align-content: center;'><br><img src='/static/img/logloading.gif' /><br></div>");
+        setScrollBottom();
+    }
+    $(function () { $('#add_post_html').on('hide.bs.modal', function () {
+        clearInterval(timer);
+    })
+    });
+
+</script>

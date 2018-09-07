@@ -124,6 +124,8 @@ func init() {
 			beego.NSRouter("/list", &pipeline.ControllerPipeline{}, "get:PipelineList", "流水线项目", "流水线", "应用交付中心"),
 			// 流水线添加页面,
 			beego.NSRouter("/add", &pipeline.ControllerPipeline{}, "get:PipelineAdd", "创建流水线", "流水线项目", "流水线"),
+			// 流水线添加页面,
+			beego.NSRouter("/container/:id:int", &pipeline.ControllerPipeline{}, "get:GetPipelineContainer", "发布容器状态", "流水线项目", "流水线"),
 			// 流水线详情页面,
 			beego.NSRouter("/detail/:hi(.*)", &pipeline.ControllerPipeline{}, "get:PipelineDetail", "流水线详情", "流水线项目", "流水线"),
 		)

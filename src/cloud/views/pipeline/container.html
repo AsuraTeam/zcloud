@@ -1,0 +1,309 @@
+
+
+
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div id="show_events" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 50%">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title"><span id="container-name-id"
+                                                    class="m-r-10 text-primary"></span>容器事件信息详情</span>
+                </div>
+                <div class="panel-body font-12 " id="">
+                    <ul class="sortable-list taskList list-unstyled" id="show_events_html">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .th {
+        border-bottom: 1px solid #ccc;
+    }
+
+    ::-webkit-scrollbar {
+        width: 0.11em;
+    }
+
+    ::-webkit-scrollbar:horizontal {
+        height: 0.11em;
+    }
+</style>
+
+<div class="content-page">
+    <div class="container">
+        <!-- Start content -->
+        <div class="content">
+            <div id="add_job_html"></div>
+            <div id="add_pipeline_html"></div>
+            <div class="row ">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">应用交付中心</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#">流水线</a>
+                            </li>
+                            <li>
+                                <a href="/pipeline/list">流水线项目</a>
+                            </li>
+                            <li>
+                                <a href="#">构建容器详情</a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row ">
+                <div class="col-sm-12 app-table" style="margin-top: -15px;">
+                    <br>
+                    <button type="button" onclick="window.location.href='/pipeline/list'"
+                            class="btn btn-default btn-sm waves-effect waves-light">
+                        返回流水线
+                    </button>
+                    <button type="button" onclick="window.location.href='/application/service/list'"
+                            class="btn btn-default btn-sm waves-effect waves-light">
+                        服务管理
+                    </button>
+                    <br>
+                    <table id="app-data-table" class="table table-hover ">
+                        <thead>
+                        <tr>
+                            <th class="th">容器名称</th>
+                            <th class="th">运行状态</th>
+                            <th class="th">镜像</th>
+                            <th class="th">IP地址</th>
+                            <th class="th">重启</th>
+                            <th class="th">创建时间</th>
+                            <th class="th">终端/事件/镜像/日志</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {{template "pipeline/log.html" .}}
+        </div>
+    </div>
+</div>
+</div>
+</div> <!-- end col -->
+<textarea style="display: none" id="event-template">
+           <li class="task-COLOR" id="task14">
+                                <div class="clearfix"></div>
+                                <div class="m-t-20">
+                                    <p class="m-b-0"><a href="" class="text-muted"> <span
+                                            class="font-bold font-secondary">事件类型: TYPE</span></a> </p>
+                                    <p class="m-b-0"><a href="" class="text-muted"> <span
+                                            class="font-bold font-secondary">事件原因: REASON</span></a> </p>
+                                    <p class="m-b-0"><a href="" class="text-muted"> <span
+                                            class="font-bold font-secondary">事件事件: TIME</span></a> </p>
+                                    <p class="m-b-0"><a href="" class="text-muted"> <span
+                                            class="font-bold font-secondary">响应信息:<b> MESSAGES</b></span></a> </p>
+                                    <p class="m-b-0"><a href="" class="text-muted"> <span
+                                            class="font-bold font-secondary">所在节点: HOST</span></a> </p>
+                                </div>
+                            </li>
+</textarea>
+{{template "template/bottom.html" .}}
+</body>
+</div>
+<input id="delete_service_force_id" type="hidden">
+<input id="delete_service_id" type="hidden">
+<script src="/static/zcloud/service.js"></script>
+<!-- Range slider js -->
+
+<script>
+    $('.selectpicker').selectpicker({//初始化
+        size: 3
+    });
+    var table;
+
+    function loadContainerData() {
+        var app = "{{.data.AppName}}";
+        var service = "{{.data.ServiceName}}";
+        var cluster = "{{.data.ClusterName}}";
+        table = $("#app-data-table").dataTable({
+            "filter": false,//去掉搜索框
+            "ordering": false, // 是否允许排序
+            "paginationType": "full_numbers", // 页码类型
+            "destroy": true,
+            "processing": false,
+            "serverSide": true,
+            "scrollX": true, // 是否允许左右滑动
+            "displayLength": 100, // 默认长度
+            "bLengthChange": false,
+            "ajax": { // 请求地址
+                "url": "/api/container?t=" + new Date().getTime() + "&cluster=" + cluster + "&AppName=" + app + "&ServiceName=" + service,
+                "type": 'get'
+            },
+            "columns": [ // 数据映射
+                {
+                    "data": "ContainerName", "sWidth": "16%", "mRender": function (data, type, full) {
+                        return "<a href='javascript:void(0)' onclick='toContainerDetail(\"" + data + "\")'>" + data + "</a><br><span class='text-default brtop5'>" + full["Entname"] + "</span>";
+                    }
+                },
+                {
+                    "data": "Status", "sWidth": "10%", "mRender": function (data, type, full) {
+                        r = data;
+                        if (data == "Running") {
+                            var r = '<div class="Running"><div><i class="fa fa-circle"></i><span>&nbsp;运行中</span>' +
+                                    "<div class='text-default brtop5'>" + 1 + "/" + 1 + "&nbsp;共" + 1 + "个运行</div>"
+                                    + '</div></div>'
+                            return r;
+                        }
+                        if (data == "Pending") {
+                            var r = '<div class="text-warning"><div><i class="fa fa-circle"></i><span>&nbsp;等待中</span>&nbsp;' +
+                                    "<div class='text-default brtop5'>0/0&nbsp;共0个运行</div>"
+                                    + '</div>' +
+                                    '</div></div>'
+                        }
+                        if (data == "Failed") {
+                            var r = '<div class="Fail"><div><i class="fa fa-circle"></i><span>&nbsp;失败</span>&nbsp;' +
+                                    "<div class='text-default brtop5'>0/0&nbsp;共0个运行</div>"
+                                    + '</div>' +
+                                    '</div></div>'
+                        }
+                        if (r == "") {
+                            r = "<span class='text-danger'>删除中...</span>"
+                        }
+                        if (full["CreateTime"].indexOf("秒前") != -1) {
+                            return '<div class="Running" style="color: #3cbbb5ad !important;"><div><i class="fa fa-circle"></i><span>&nbsp;启动中</span>' +
+                                    '</div></div>';
+                        }
+                        var errmsg = full["ErrorMsg"];
+                        if (full["TerminatedMessages"] && full["TerminatedReason"] != "0" && full["TerminatedMessages"] != "") {
+                            errmsg = full["TerminatedReason"] + "\n" + full["TerminatedMessages"];
+                        }
+                        if (full["WaitingMessages"] && full["WaitingReason"] != "0" && full["WaitingMessages"] != "") {
+                            errmsg = full["WaitingReason"] + "\n" + full["WaitingMessages"];
+                        }
+                        if (errmsg) {
+                            return "<span title='" + errmsg + "' class='text-danger'>" + r + "</span>"
+                        } else {
+                            return "<span>" + r + "</span>"
+                        }
+                    }
+                },
+                {
+                    "data": "Image", "sWidth": "11%", "mRender": function (data) {
+                        return "<div style='word-wrap:break-word'><a>" + data + "</a></div>";
+                    }
+                },
+                {
+                    "data": "ContainerIp", "sWidth": "7%", "mRender": function (data, type, full) {
+                        return "<span class='text-default'>" + data + "</span><br><span class='brtop5'>" + full["ServerAddress"] + "</span>"
+                    }
+                },
+                {"data": "Restart", "sWidth": "5%"},
+                {"data": "CreateTime", "sWidth": "6%"},
+                {
+                    "sWidth": "9%", "data": "ContainerId", "mRender": function (data, type, full) {
+                        var event = encodeURI(full["Events"]);
+                        var html = "";
+                        if (full["Status"] == "Running") {
+                            html = '<button type="button" title="连接到容器终端" onclick="toTty(' + data + ')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-terminal"></i></button>&nbsp;';
+                        }
+                        return html + '<button type="button" title="显示容器事件信息" onclick="displayEvent(\'' + event + '\',\'' + full["ContainerName"] + '\')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-envelope"></i></button>&nbsp;' +
+                                '<button type="button" title="将容器保存为镜像" onclick="commitImages(' + data + ')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-compress"></i></button>&nbsp;' +
+                                '<button type="button" title="显示容器日志" onclick="displayLog(\'' + full["ContainerName"] + '\')" style="padding: 5px !important;" class="btn btn-xs rb-btn-oper"><i class="fa fa-history"></i></button>&nbsp;'
+                                ;
+                    }
+                },
+            ],
+            "fnRowCallback": function (row, data) { // 每行创建完毕的回调
+                $(row).data('recordId', data.recordId);
+            }
+        });
+        $("#app-data-table_wrapper").css("cssText", "margin-top:10px !important;");
+        $("")
+
+    }
+
+    loadContainerData("", "", "", 1);
+
+
+    /**
+     * 2018-09-05 108:04
+     * 显示容器日志
+     * */
+    function displayLog(name) {
+        window.open("/api/container/logs/" + name, "_blank");
+    }
+
+
+    /**
+     * 2018-08-17 13:52
+     * 显示容器事件
+     * */
+    function displayEvent(obj, name) {
+        $("#container-name-id").html(name);
+        var data = decodeURI(obj);
+        if (data) {
+            data = JSON.parse(data);
+            if (data.length == 0) {
+                faild("该容器没有事件");
+                return;
+            }
+            var template = $("#event-template").val();
+            var html = "";
+            for (var i = 0; i < data.length; i++) {
+                var temp = template.replace(/TIME/, data[i]["EventTime"]);
+                temp = temp.replace(/MESSAGES/, data[i]["Messages"]);
+                temp = temp.replace(/HOST/, data[i]["Host"]);
+                temp = temp.replace(/REASON/, data[i]["Reason"]);
+                temp = temp.replace(/TYPE/, data[i]["Type"]);
+                var obj = {};
+                obj = data[i];
+                if (obj.hasOwnProperty("Type")) {
+                    switch (data[i]["Type"]) {
+                        case "Normal":
+                            temp = temp.replace(/COLOR/, "success");
+                            break;
+                        case "Warning":
+                            temp = temp.replace(/COLOR/, "warning");
+                            break;
+                        default:
+                            temp = temp.replace(/COLOR/, "danger");
+                            break
+                    }
+                }
+                temp = temp.replace(/COLOR/, "success");
+                html += temp;
+            }
+            $("#show_events_html").html(html);
+            $("#show_events").modal("toggle");
+        } else {
+            faild("该容器没有事件");
+        }
+    }
+
+
+    var timer;
+    var count;
+    timer = setInterval(function () {
+        table.fnReloadAjax();
+        count += 1;
+        if (count > 300) {
+            clearInterval(timer);
+        }
+    }, 30000);
+</script>
+</html>

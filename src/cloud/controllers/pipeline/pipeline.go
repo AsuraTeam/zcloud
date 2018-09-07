@@ -39,6 +39,18 @@ func (this *ControllerPipeline) PipelineHistoryList() {
 	this.TplName = "pipeline/history.html"
 }
 
+// 2018-09-07 08:58
+// 获取任务容器状态数据
+// @router /pipeline/container/:id:int [get]
+func (this *ControllerPipeline) GetPipelineContainer() {
+	searchMap := sql.GetSearchMap("PipelineId", *this.Ctx)
+	q := sql.SearchSql(pipeline.CloudPipeline{}, pipeline.SelectCloudPipeline, searchMap)
+	data := pipeline.CloudPipeline{}
+	sql.Raw(q).QueryRow(&data)
+	this.Data["data"] = data
+	this.TplName = "pipeline/container.html"
+}
+
 // 流水线详情页面
 // @router /pipeline/detail/:hi(.*) [get]
 func (this *ControllerPipeline) PipelineDetail() {

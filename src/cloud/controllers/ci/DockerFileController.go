@@ -177,7 +177,6 @@ func (this *DockerFileController) DockerFileDatas() {
 	}
 	user := getDockerfileUser(this)
 
-	searchMap.Put("CreateUser", user)
 	searchSql := sql.SearchSql(
 		ci.CloudCiDockerfile{},
 		ci.SelectCloudCiDockerfile,
