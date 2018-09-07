@@ -114,7 +114,7 @@
                                                                 class="text-danger">*</span></label>
                                                         <div class="col-md-9">
                                                             <select class="selectpicker" name="ClusterName"
-                                                                    onchange="setAppRegistryServer($(this).val())"
+                                                                    onchange="setAppRegistryServer($(this).val(),'{{.data.ImageRegistry}}', '{{.data.ImageTag}}')"
                                                                     data-live-search="true" data-style="btn-default"
                                                                     id="select-cluster-id">
                                                                 <option>请选择</option>
@@ -664,7 +664,11 @@ evn=prod"
      * 2018-01-27 18:18
      * @param cluster
      */
-    function setAppRegistryServer(cluster) {
+    function setAppRegistryServer(cluster, imgServer, imgTag) {
+        if (imgTag){
+            $("#image-select-title").html("已选择镜像" + imgServer + " 该镜像可选版本有" + imgTag.split("\n").length + "   个");
+            return;
+        }
         var url = "/api/registry";
         var result = get({ClusterName: cluster}, url);
         var data = result["data"];

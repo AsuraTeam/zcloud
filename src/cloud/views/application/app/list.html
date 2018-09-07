@@ -139,8 +139,8 @@
                     return html;
                 }
                 },
-                {"data": "Entname","sWidth": "6%"},
-                {"data": "ClusterName","sWidth": "6%"},
+                {"data": "Entname","sWidth": "7%"},
+                {"data": "ClusterName","sWidth": "7%"},
                 {
                     "data": "AppName","sWidth": "10%", "mRender": function (data,type,full) {
                     return "<div style='height:10px;margin-top: -5px;'>&nbsp;</div><a href='javascript:void(0)' onclick='toAppDetail(\"" + full["AppId"] + "\")'>" + data + "</a>";
@@ -168,11 +168,11 @@
                 }
                 },
                 {
-                    "data": "ContainerNumber", "sWidth": "6%","mRender": function (data) {
+                    "data": "ContainerNumber", "sWidth": "7%","mRender": function (data) {
                     return "<div style='height: 10px;margin-top: -5px;margin-left: 10px;'>&nbsp;"+data+"</div>";
                 }
                 },
-                {"data": "Access","sWidth": "15%",},
+                {"data": "Access","sWidth": "12%",},
                 {
                     "data": "CreateTime", "sWidth": "8%","mRender": function (data) {
                     return "<div style='height: 10px;margin-top: -8px;'>&nbsp;</div>"+data;
@@ -180,7 +180,7 @@
                 },
 
                 {
-                    "sWidth": "6%", "data": "AppId", "mRender": function (data, type, full) {
+                    "sWidth": "5%", "data": "AppId", "mRender": function (data, type, full) {
                     return '<button type="button"  title="强制删除,无法连接到k8s集群时可用" onClick="deleteAppSwal(' + data + ',1)" class="delete-template btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>&nbsp;' +
                         '<button type="button"  title="查看yaml文件" onClick="toAppDetail(\'' + full["AppName"] + '\',1)" class="delete-template btn btn-xs rb-btn-oper"><i class="fa fa-usb"></i></button>';
                 }

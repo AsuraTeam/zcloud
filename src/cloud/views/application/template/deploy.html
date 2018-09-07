@@ -30,6 +30,20 @@
                         </div>
                     </div>
                     <div class="row top10">
+                    <div class="col-md-12 top10">
+                        <div class="form-group">
+                            <label for="EnvVar"
+                                   class="col-md-3 fw100 control-label">环境变量</label>
+                            <div class="col-md-9">
+                                                            <textarea type="number"
+                                                                      name="Envs" placeholder="变量名=变量值
+evn=prod"
+                                                                      class="form-control" id="EnvVar"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="row top10">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="field-1" class="col-md-3 fw100 control-label">域名后缀<span class="text-danger">*</span></label>
@@ -90,6 +104,9 @@
                             <br>
                             应用拉起注意<br>
                             拉起应用等于新建了一套服务,服务端口都会改变<br>
+                            <br>
+                            环境变量<br>
+                            一套应用使用相同的环境变量,如果不填写则使用原有的环境变量<br>
                             <br>
                             域名后缀<br>
                             在此次部署后,自动会在负载均衡生成配置<br>

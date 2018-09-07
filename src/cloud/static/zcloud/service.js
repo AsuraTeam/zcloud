@@ -1150,9 +1150,9 @@ function loadServiceData(key,name) {
             }
             },
             {
-                "data": "ServiceName", "sWidth": "8%", "mRender": function (data, type, full) {
-                return "<a href='javascript:void(0)' oncl1ick='toServiceDetail(\"" + data + "\")'>" + data + "<br></a><span class='text-default'>应用:&nbsp;" + full["AppName"] + "</span>";
-            }
+                "data": "ServiceName", "sWidth": "10%", "mRender": function (data, type, full) {
+                    return "<a href='javascript:void(0)' onc1lick='toServiceDetail(\"" + data + "\")'>" + data + "<br></a><span class='text-default'>应用:&nbsp;" + full["AppName"] + "</span><br><span class='text-default'>环境:&nbsp;" + full["Entname"] + "</span>";
+                }
             },
             {
                 "data": "Status", "sWidth": "8%", "mRender": function (data, type, full) {
@@ -1184,7 +1184,7 @@ function loadServiceData(key,name) {
             }
             },
             {
-                "data": "ResourceName", "sWidth": "13%", "mRender": function (data, type, full) {
+                "data": "ResourceName", "sWidth": "11%", "mRender": function (data, type, full) {
                 return "<a href='/base/quota/detail/" + data + "'>" + data + "</a><br>集群名称:&nbsp;" + full["ClusterName"]
             }
             },
