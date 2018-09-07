@@ -337,8 +337,8 @@ func (this *JobController) JobDatas() {
 
 	clusterMap := cluster.GetClusterMap()
 	result := make([]ci.CloudBuildJob, 0)
-	perm := userperm.GetResourceName("构建项目", getUser(this))
 	user := getUser(this)
+	perm := userperm.GetResourceName("构建项目", user)
 	for _, d := range data {
 		d.ClusterName = clusterMap.GetVString(d.ClusterName)
 		// 不是自己创建的才检查
@@ -352,7 +352,7 @@ func (this *JobController) JobDatas() {
 
 	r := util.GetResponseResult(err,
 		this.GetString("draw"),
-		data,
+		result,
 		sql.Count("cloud_build_job", int(num), key))
 	setJson(this, r)
 }
@@ -602,7 +602,7 @@ func writeJobHistory(jobData ci.CloudBuildJob, jobId string, username string, re
 
 // 2018-02-03 22:13
 // 执行构建任务
-func JobExecStart(jobData ci.CloudBuildJob, username string, jobname string, registryAuth string) string {
+func JobExecStart(jobData ci.CloudBuildJob, username string, jobName string, registryAuth string) string {
 	jobData = updateJobContent(jobData)
 	// 按时间戳自动生成
 	jobData.LastTag = jobData.ImageTag
@@ -620,7 +620,7 @@ func JobExecStart(jobData ci.CloudBuildJob, username string, jobname string, reg
 	}
 	logs.Info("获取到仓库地址", groupData)
 
-	param := getJobParam(jobData, jobname, groupData.ServerAddress, groupData)
+	param := getJobParam(jobData, jobName, groupData.ServerAddress, groupData)
 	param.RegistryIp = nodeIp
 	param.AuthServerIp = authServer
 	param.AuthServerDomain = authDomain
@@ -637,7 +637,7 @@ func JobExecStart(jobData ci.CloudBuildJob, username string, jobname string, reg
 	searchMap.Put("JobId", jobData.JobId)
 	u := sql.UpdateSql(jobData,
 		ci.UpdateCloudBuildJob,
-		searchMap, ci.UpdateCloudBuildJobExclude)
+		searchMap, ci.UpdateCloudBuildJobExclude1)
 	sql.Raw(u).Exec()
 	return jobId
 }

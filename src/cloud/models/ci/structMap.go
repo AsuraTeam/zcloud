@@ -22,7 +22,8 @@ const UpdateCloudBuildJob = "update cloud_build_job"
 const UpdateCloudBuildJobExclude2 = "CreateTime,CreateUser,RegistryServer,ClusterName"
 const InsertCloudBuildJob = "insert into cloud_build_job" 
 const DeleteCloudBuildJob = "delete from cloud_build_job"
-const UpdateCloudBuildJobExclude  = "ImageTag,CreateTime,CreateUser,DockerFile,Content,TimeOut,BaseImage,Script,Env"
+const UpdateCloudBuildJobExclude  = "ImageTag,CreateTime,CreateUser,DockerFile,Content,TimeOut,BaseImage,Script,Env,LastTag"
+const UpdateCloudBuildJobExclude1  = "ImageTag,CreateTime,CreateUser,DockerFile,Content,TimeOut,BaseImage,Script,Env"
 const SelectCloudBuildJobWhere  =  ` and (item_name like "%?%" or description like "%?%" or create_user like "%?%")`
 const SelectUserJobs  = "select job_id from cloud_build_job where create_user in (?)"
 

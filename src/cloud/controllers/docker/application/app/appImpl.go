@@ -17,7 +17,6 @@ import (
 // 获取应用数据
 func getApp(this *AppController) (app.CloudApp, sql.SearchMap) {
 	searchMap := sql.GetSearchMap("AppId", *this.Ctx)
-	searchMap.Put("CreateUser", getUser(this))
 	d := app.CloudApp{}
 	q := sql.SearchSql(d, app.SelectCloudApp, searchMap)
 	sql.Raw(q).QueryRow(&d)
