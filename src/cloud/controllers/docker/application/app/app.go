@@ -92,14 +92,25 @@ func (this *AppController) AppScale() {
 // @param ClusterName
 // @router /api/app/name [get]
 func (this *AppController) GetAppName() {
-	data := make([]app.CloudAppName, 0)
+	datas := make([]app.CloudAppName, 0)
+	result := make([]app.CloudAppName, 0)
 	searchMap := sql.SearchMap{}
 	q := strings.Split("Entname,ClusterName", ",")
 	searchMap = sql.GetSearchMapValue(q, *this.Ctx, searchMap)
-	searchMap.Put("CreateUser", getUser(this))
 	searchSql := sql.SearchSql(app.CloudAppService{}, app.SelectCloudApp, searchMap)
-	sql.Raw(searchSql).QueryRows(&data)
-	SetAppDataJson(this, data)
+	sql.Raw(searchSql).QueryRows(&datas)
+	permApp := userperm.GetResourceName("应用", getUser(this))
+	// 不是自己创建的才检查
+	user :=  getUser(this)
+	for _, data := range datas {
+		if data.CreateUser != getUser(this) &&  user != "admin"{
+			if ! userperm.CheckPerm(data.AppName, data.ClusterName, data.Entname, permApp) {
+				continue
+			}
+		}
+		result = append(result, data)
+	}
+	SetAppDataJson(this, result)
 }
 
 

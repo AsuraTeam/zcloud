@@ -10,6 +10,7 @@ import (
 	"github.com/cesanta/docker_auth/auth_server"
 	"cloud/crontab"
 
+	"cloud/controllers/perm"
 )
 
 
@@ -27,11 +28,10 @@ import (
 
 
 func main() {
-	//data := k8s.GetNodeImage("10.16.55.114","6443","10.16.55.115")
-	//logs.Info(util.ObjToString(data))
 	beego.ErrorController(&index.ErrorController{})
 	beego.BConfig.WebConfig.Session.SessionProvider = "redis"
 	beego.BConfig.WebConfig.Session.SessionProviderConfig = beego.AppConfig.String("redis")
+	go perm.UpdateResource()
 	go tty.TtyStart()
 	go auth_server.StartRegistryAuthServer()
 	go crontab.CronStart()

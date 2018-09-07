@@ -23,7 +23,7 @@ func getUserGroups(username string) []string {
 	return make([]string, 0)
 }
 
-const QUERY = ` and (user_name like "%?" or user_name like "%?," or user_name like ",%?," or user_name like ",%?" GROUP)`
+const QUERY = `  (user_name like "%?" or user_name like "%?," or user_name like ",%?," or user_name like ",%?")`
 
 //  2018-08-24 16:00
 // 获取资源名称
@@ -31,16 +31,19 @@ func GetResourceName(tp string, user string) util.Lock {
 	data := make([]CloudUserPerm, 0)
 	searchMap := sql.SearchMap{}
 	searchMap.Put("ResourceType", tp)
-	q := sql.SearchSql(CloudUserPerm{}, SelectCloudUserPerm, searchMap)
-	//q += fmt.Sprintf(` and ( user_name in (%v) or group_name in (%v))`,`"`+user+`"`, getUserGroups(user))
-	q += strings.Replace(QUERY, "?", user, -1)
+	q := sql.SearchSql(CloudUserPerm{}, SelectCloudUserPerm , searchMap)
+	q =  q + " and (" + strings.Replace(QUERY, "?", user, -1)
 	groups := make([]string, 0)
 	for _, v := range getUserGroups(user) {
 		g := strings.Replace(QUERY, "user_name", "group_name", -1)
-		g = strings.Replace(g, "?", v, -1)
+		g = strings.Replace(g, "?", strings.Replace(v,"\"", "", -1) , -1)
 		groups = append(groups, g)
 	}
-	q = strings.Replace(q, "GROUP", strings.Join(groups, "or"), -1)
+
+	if len(groups) > 0 {
+		q += fmt.Sprintf(" or %v ", strings.Join(groups, "or"))
+	}
+	q += ")"
 	sql.Raw(q).QueryRows(&data)
 	lock := util.Lock{}
 	for _, v := range data{

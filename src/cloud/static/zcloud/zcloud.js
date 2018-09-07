@@ -638,10 +638,14 @@ function checkBoxChange(obj) {
  * @param failmsg
  * @param func
  * @param reload
+ * @param timer
  */
-function Swal(title,type,yes,no,okmsg, failmsg, func, reload) {
+function Swal(title,type,yes,no,okmsg, failmsg, func, reload, timer) {
     if(!type){
         type  = "warning"
+    }
+    if (!timer){
+        timer = 7000;
     }
     !function ($) {
         "use strict";
@@ -656,6 +660,7 @@ function Swal(title,type,yes,no,okmsg, failmsg, func, reload) {
                 title: title,
                 text: "",
                 type: type,
+
                 showCancelButton: true,
                 confirmButtonText: yes,
                 cancelButtonText: no,
@@ -667,9 +672,12 @@ function Swal(title,type,yes,no,okmsg, failmsg, func, reload) {
                 var result = eval(func);
                 if (JSON.stringify(result).indexOf(okmsg) != -1) {
                     swal(
-                        okmsg,
-                        result,
-                        'success'
+                        {
+                            title:okmsg,
+                            text:result,
+                            type:'success',
+                            timer: timer,
+                        },
                     )
                     eval(reload);
                     setTimeout(function () {

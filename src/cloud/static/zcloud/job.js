@@ -73,7 +73,7 @@ function deleteJobSwal(id, detail) {
  * @param id
  */
 function startExecJob(id) {
-    Swal("是否执行该构建", "warning", "确认操作", "不操作", "成功", "失败", " execJob(" + id + ")", "loadJobData()");
+    Swal("是否执行该构建", "warning", "确认操作", "不操作", "成功", "失败", " execJob(" + id + ")", "loadJobData()", 1000);
 }
 
 /**

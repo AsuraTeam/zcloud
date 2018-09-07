@@ -13,7 +13,7 @@ import (
 func init() {
 	orm.Debug = true
 	orm.RegisterDriver("mysql", orm.DRMySQL)
-	orm.RegisterDataBase("default", "mysql", "user:pass@tcp(1.1.1.1:3306)/cloud?charset=utf8")
+	orm.RegisterDataBase("default", "mysql", "zhaoyun1:zhaoyun1@tcp(192.168.54.30:3306)/zcloud?charset=utf8")
 }
 
 func StringToUpper(str string) string {
@@ -52,8 +52,8 @@ func getType(tp string) string {
 }
 
 func main() {
-	var table = "cloud_ci_service"
-	var packageName = "ci"
+	var table = "cloud_user_perm"
+	var packageName = "perm"
 	var maps []orm.Params
 	var keyMaps []orm.Params
 	keySql := " desc " + table
@@ -86,7 +86,7 @@ func main() {
 	//		primaryKey = k["Field"].(string)
 	//	}
 	//}
-	path := "D:\\F\\code\\workspace\\zcloud\\src\\cloud\\models\\" + packageName + "\\"
+	path := "E:\\zcloud\\src\\cloud\\models\\" + packageName + "\\"
 	structName := StringToUpper(table)
 	column = column[0:len(column)-1]
 	baseSql   := "\nconst Select"+structName+" = \"select " + column + " from " + table +"\""
