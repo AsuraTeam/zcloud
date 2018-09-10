@@ -23,23 +23,23 @@ $( document ).ready(function() {
         'plugins' : ['types']
     });
     
-    // Checkbox
-    $('#checkTree').jstree({
-		'core' : {
-			'themes' : {
-				'responsive': false
-			}
-		},
-        'types' : {
-            'default' : {
-                'icon' : 'fa fa-folder'
-            },
-            'file' : {
-                'icon' : 'fa fa-file'
-            }
-        },
-        'plugins' : ['types', 'checkbox']
-    });
+    // // Checkbox
+    // $('#checkTree').jstree({
+		// 'core' : {
+		// 	'themes' : {
+		// 		'responsive': false
+		// 	}
+		// },
+    //     'types' : {
+    //         'default' : {
+    //             'icon' : 'fa fa-folder'
+    //         },
+    //         'file' : {
+    //             'icon' : 'fa fa-file'
+    //         }
+    //     },
+    //     'plugins' : ['types', 'checkbox']
+    // });
     
     // Drag & Drop
     $('#dragTree').jstree({

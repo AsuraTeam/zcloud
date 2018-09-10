@@ -122,8 +122,10 @@ func UpdateResource() {
 func (this *ResourceController) GetResourceTree() {
 	data3 := make([]perm.CloudApiResource, 0)
 	data4 := make([]perm.CloudApiResource, 0)
+	data5 := make([]perm.CloudApiResource, 0)
 	sql.Raw(perm.SelectPerm3).QueryRows(&data3)
 	sql.Raw(perm.SelectPerm4).QueryRows(&data4)
+	sql.Raw(perm.SelectPerm4).QueryRows(&data5)
 	d := map[string]interface{}{
 	}
 	// 获取一级菜单
@@ -131,24 +133,27 @@ func (this *ResourceController) GetResourceTree() {
 		if _, ok := d[v.Parent]; !ok {
 			d[v.Parent] = map[string]interface{}{
 				v.ApiType: map[string]interface{}{
-					v.Name: map[string]interface{}{
-					},
 				},
 			}
-		} else {
-			d[v.Parent].(map[string]interface{})[v.ApiType] = map[string]interface{}{
-				v.Name: map[string]interface{}{
-				},
+		}
+		if _, ok := d[v.Parent].(map[string]interface{})[v.ApiType]; !ok {
+			d[v.Parent].(map[string]interface{})[v.ApiType] = map[string]interface{}{}
+
+		}
+		if _, ok := d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name]; !ok {
+			d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name] = map[string]interface{}{
 			}
 		}
 		for _, v2 := range data4 {
 			if v2.ApiType == v.Name  {
-				if _, ok := 	d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name] ; !ok {
-					d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name] = map[string]interface{}{
-						v2.Name: map[string]interface{}{},
-					}
-				}else {
 					d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name].(map[string]interface{})[v2.Name] = map[string]interface{}{
+					}
+			}
+			for _, v3 := range data5 {
+				if v3.ApiType == v2.Name  {
+					if _, ok := d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name].(map[string]interface{})[v2.Name] ; ok {
+						d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name].(map[string]interface{})[v2.Name].(map[string]interface{})[v3.Name] = map[string]interface{}{
+						}
 					}
 				}
 			}
