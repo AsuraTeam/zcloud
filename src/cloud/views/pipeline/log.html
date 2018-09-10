@@ -19,7 +19,7 @@
     if (logs.indexOf("构建成功") == -1 && logs.indexOf("构建失败") == -1 && logs.indexOf("构建完成") == -1){
         timer = setInterval(function () {
             loadLog("{{.data.JobId}}");
-            if ( counter > 10 ){
+            if ( counter > 30 ){
                 clearInterval(timer);
             }
         }, 5000);

@@ -6,69 +6,19 @@
             <div class="panel panel-color panel-default">
                 <div class="panel-heading">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <span class="modal-title">修改添加用户</span>
+                    <span class="modal-title">修改添加角色</span>
                 </div>
                 <form class="cluster-form">
                     <div class="panel-body font-12 ">
                         <div class="row top10">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="field-1" class="col-md-2 fw100 control-label">登录名<span
+                                    <label for="field-1" class="col-md-2 fw100 control-label">角色名<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-10">
-                                        <input type="text" nullmsg="必须填写" value="{{.data.UserName}}"
-                                               onchange="checkChange('UserName')" name="UserName"
+                                        <input type="text" nullmsg="必须填写" value="{{.data.RoleName}}"
+                                               onchange="checkChange('RoleName')" name="RoleName"
                                                class="form-control" id="field-1" placeholder="必须为全英文">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row top10">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="field-3" class="col-md-2 fw100 control-label">真实姓名<span
-                                            class="text-danger">*</span></label>
-                                    <div class="col-md-10">
-                                        <input type="text" nullmsg="必须填写" value="{{.data.RealName}}"
-                                               onchange="checkChange('RealName')" name="RealName" id="RealName"
-                                               class="form-control" id="field-3" placeholder="必须为全英文">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row top10">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="field-13" class="col-md-2 fw100 control-label">邮箱地址<span
-                                            class="text-danger">*</span></label>
-                                    <div class="col-md-10">
-                                        <input type="email" nullmsg="必须填写" value="{{.data.UserEmail}}"
-                                               onchange="checkChange('UserEmail')" name="UserEmail" id="UserEmail"
-                                               class="form-control" id="field-13" placeholder="用户邮箱地址">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row top10">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="field-14" class="col-md-2 fw100 control-label">手机号<span
-                                            class="text-danger">*</span></label>
-                                    <div class="col-md-10">
-                                        <input type="number" nullmsg="必须填写" value="{{.data.UserMobile}}"
-                                               onchange="checkChange('UserMobile')" name="UserMobile" id="UserMobile"
-                                               class="form-control" id="field-14" placeholder="用户手机号">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row top10">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="field-12" class="col-md-2 fw100 control-label">用户密码</label>
-                                    <div class="col-md-10">
-                                        <input type="password" value="{{.data.Pwd}}" name="Pwd"
-                                               class="form-control" id="field-12" placeholder="登录密码">
                                     </div>
                                 </div>
                             </div>
@@ -104,7 +54,7 @@
                         <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
                                 class="fa fa-times"></i>&nbsp;&nbsp;取消
                         </button>
-                        <button type="button" onclick="saveUser('{{.data.UserId}}')"
+                        <button type="button" onclick="saveRole('{{.data.RoleId}}')"
                                 class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp; 保存
                         </button>
                     </div>

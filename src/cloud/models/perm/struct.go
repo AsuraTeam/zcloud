@@ -18,6 +18,8 @@ type CloudPermRole struct {
     Permissions string
     //创建用户
     CreateUser string
+    // 是否删除
+    IsDel int64
 }
 
 //2018-02-06 08:22:40.5954731 +0800 CST

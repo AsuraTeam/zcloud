@@ -756,6 +756,8 @@ func init() {
 					beego.NSRouter("/list", &perm.PermRoleController{}, "get:PermRoleList", "角色管理列表", "角色管理", "权限管理"),
 					// 权限添加
 					beego.NSRouter("/add", &perm.PermRoleController{}, "get:PermRoleAdd", "创建角色", "角色管理", "权限管理"),
+					// 权限添加
+					beego.NSRouter("/perm/add", &perm.PermRoleController{}, "get:PermRoleAddList", "分配权限", "角色管理", "权限管理"),
 				),
 				// api资源配额
 				beego.NSNamespace("/resource",

@@ -1,0 +1,88 @@
+<!-- Treeview css -->
+<link href="/static/plugins/jstree/style.css" rel="stylesheet" type="text/css" />
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">修改添加角色权限</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="col-md-12">
+                            <div class="card-box">
+                                <div id="checkTree">
+                                    <ul>
+                                        <li>权限
+                                            <ul>
+                                                <li data-jstree='{"opened":true}'>Assets
+                                                    <ul>
+                                                        <li data-jstree='{"type":"file"}'>Css</li>
+                                                        <li data-jstree='{"opened":true}'>Plugins
+                                                            <ul>
+                                                                <li data-jstree='{"selected":true,"type":"file"}'>Plugin one</li>
+                                                                <li data-jstree='{"type":"file"}'>Plugin two</li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li data-jstree='{"opened":true}'>Email Template
+                                                    <ul>
+                                                        <li data-jstree='{"type":"file"}'>Email one</li>
+                                                        <li data-jstree='{"type":"file"}'>Email two</li>
+                                                    </ul>
+                                                </li>
+                                                <li data-jstree='{"icon":"mdi mdi-view-dashboard"}'>Dashboard</li>
+                                                <li data-jstree='{"icon":"mdi mdi-format-float-right"}'>Typography</li>
+                                                <li data-jstree='{"opened":true}'>User Interface
+                                                    <ul>
+                                                        <li data-jstree='{"opened":true}'>Buttons
+                                                            <ul>
+                                                                <li data-jstree='{"type":"file"}'>Buttons111
+                                                                </li>
+                                                                <li data-jstree='{"type":"file"}'>Card1111s</li>
+                                                            </ul>
+                                                        </li>
+                                                        <li data-jstree='{"type":"file"}'>Cards</li>
+                                                    </ul>
+                                                </li>
+                                                <li data-jstree='{"icon":"mdi mdi-foursquare"}'>Forms</li>
+                                                <li data-jstree='{"icon":"mdi mdi-format-list-bulleted"}'>Tables</li>
+                                            </ul>
+                                        </li>
+                                        <li data-jstree='{"type":"file"}'>Frontend</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div><!-- end col -->
+                    </div>
+                    <!-- end row -->
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveRole('{{.data.RoleId}}')"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp; 保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Tree view js -->
+<script src="/static/plugins/jstree/jstree.min.js"></script>
+<script src="/static/pages/jquery.tree.js"></script>
+        <script>
+
+            /**
+             * 加载权限树资源
+             */
+            function loadTree() {
+                var url = "/api/perm/resource/tree";
+            }
+        </script>

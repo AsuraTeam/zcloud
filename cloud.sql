@@ -1680,6 +1680,7 @@ alter table cloud_api_resource add method varchar(32) comment "请求方法";
 alter table cloud_api_resource add parent varchar(132) comment "父节点";
 alter table cloud_code_repostitory add branch  text ;
 alter table cloud_code_repostitory add tag text ;
+alter table cloud_perm_role add is_del int comment "是否删除";
  alter table cloud_container add service varchar(300);
 alter table cloud_app_service add termination_seconds int comment "pod关闭时间";
 alter table cloud_api_resource add unique index uidx_api_url_name_method(api_url,name,method);

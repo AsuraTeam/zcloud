@@ -109,7 +109,7 @@ func getServiceYaml(serviceName string, clusterName string) string {
 
 //  2018-08-16 10:31
 // 拉起应用模板环境
-func startDeploy(yaml string, appName string, ent string, clusterName string, resourceName string, user string, templateName string, domain string) {
+func startDeploy(yaml string, appName string, ent string, clusterName string, resourceName string, user string, templateName string, domain string, envs string) {
 	services := make([]app.CloudAppService, 0)
 	err := json.Unmarshal([]byte(util.Base64Decoding(yaml)), &services)
 	if err != nil {
@@ -136,6 +136,9 @@ func startDeploy(yaml string, appName string, ent string, clusterName string, re
 		service.ClusterName = clusterName
 		service.ResourceName = resourceName
 		service.CreateUser = user
+		if len(envs) > 0 {
+			service.Envs = envs
+		}
 		service.CreateTime = util.GetDate()
 		history := app.CloudTemplateDeployHistory{AppName: appName,
 			Entname: ent,
@@ -223,12 +226,13 @@ func createLbConfig(service app.CloudAppService, clusterName string, ent string,
 // @router /api/template/deploy/:id:int [post]
 func (this *AppController) StartDeploy() {
 	d := app.CloudAppTemplate{}
+	envs := this.GetString("Envs")
 	this.ParseForm(&d)
 	searchMap := sql.SearchMap{}
 	id := this.Ctx.Input.Param(":id")
 	searchMap.Put("TemplateId", id)
 	template := getTemplateData(searchMap)
-	go startDeploy(template.Yaml, d.AppName, d.Ent, d.Cluster, d.ResourceName, util.GetUser(this.GetSession("username")), d.TemplateName, d.Domain)
+	go startDeploy(template.Yaml, d.AppName, d.Ent, d.Cluster, d.ResourceName, util.GetUser(this.GetSession("username")), d.TemplateName, d.Domain, envs)
 	this.Data["json"] = util.ApiResponse(true, "保存成功,正在拉起环境,请耐心等待")
 	this.ServeJSON(false)
 }

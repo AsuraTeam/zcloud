@@ -1,6 +1,6 @@
 package perm
 
-const SelectCloudPermRole = "select create_time,last_modify_time,last_modify_user,description,role_id,role_name,permissions,create_user from cloud_perm_role"
+const SelectCloudPermRole = "select create_time,is_del,last_modify_time,last_modify_user,description,role_id,role_name,permissions,create_user from cloud_perm_role"
 const UpdateCloudPermRole = "update cloud_perm_role"
 const InsertCloudPermRole = "insert into cloud_perm_role" 
 const DeleteCloudPermRole = "delete from cloud_perm_role" 

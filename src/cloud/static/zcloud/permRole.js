@@ -1,14 +1,25 @@
 // 添加权限资源
-function addRole(userId) {
-    if(!userId){
-        userId = 0
+function addRole(roleId) {
+    if(!roleId){
+        roleId = 0
     }
-    var url = "/system/perm/role/add"
-    var result = get({RoleId:userId}, url)
-    $("#add_groups_html").html(result)
+    var url = "/system/perm/role/add";
+    var result = get({RoleId:roleId}, url);
+    $("#add_groups_html").html(result);
     $("#add_post_html").modal("toggle")
 }
 
+// 2018-09-10 08:23
+// 添加角色权限资源
+function addRolePerm(roleId) {
+    if(!roleId){
+        roleId = 0
+    }
+    var url = "/system/perm/role/perm/add";
+    var result = get({RoleId:roleId}, url);
+    $("#add_groups_html").html(result);
+    $("#add_post_html").modal("toggle")
+}
 
 /**
  * 删除角色管理弹出框
@@ -37,7 +48,7 @@ function loadRoleData(key) {
 
     $("#user-data-table").dataTable({
         "filter": false,//去掉搜索框
-        "ordering": false, // 是否允许排序
+        "ordering": false, // 是否允许7排序
         "paginationType": "full_numbers", // 页码类型
         "destroy": true,
         "processing": true,
@@ -52,14 +63,15 @@ function loadRoleData(key) {
             "type": 'get'
         },
         "columns": [ // 数据映射
-            {"data": "RealName"},
+            {"data": "RoleName"},
+            {"data": "RoleName"},
             {"data": "Description"},
             {"data": "CreateTime"},
-            {"data": "LastModifyTime"},
             {
                 "sWidth": "150px", "data": "RoleId", "mRender": function (data) {
-                    return '<button type="button" title="更新" onclick="addRole(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
-                        '<button type="button"  title="删除" onClick="deleteRoleSwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
+                    return '<button type="button" title="更新" onclick="addRole(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>' +
+                        '<button type="button"  title="分配权限" onClick="addRolePerm(' + data + ')" class="delete-groups m-l-5 btn btn-xs rb-btn-oper"><i class="fa fa-send-o"></i></button>'+
+                        '<button type="button"  title="删除" onClick="deleteRoleSwal(' + data + ')" class="delete-groups m-l-5 btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
             }
             },
         ],
@@ -77,9 +89,9 @@ function loadRoleData(key) {
  * @return {*}
  */
 function deleteRole(id) {
-    var url = "/api/perm/role/"+id
-    var result = del({}, url)
-    result = JSON.stringify(result)
+    var url = "/api/perm/role/"+id;
+    var result = del({}, url);
+    result = JSON.stringify(result);
     return result
 }
 
@@ -88,12 +100,12 @@ function deleteRole(id) {
 /**
  * 保存角色管理
  */
-function saveRole(userId) {
-    if(!userId){
-        userId = 0
+function saveRole(roleId) {
+    if(!roleId){
+        roleId = 0
     }
     var data = get_form_data();
-    data["RoleId"] = parseInt(userId);
+    data["RoleId"] = parseInt(roleId);
     if(!checkValue(data,"RoleName")){
         return
     }
