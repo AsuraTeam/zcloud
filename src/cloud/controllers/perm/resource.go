@@ -125,34 +125,37 @@ func (this *ResourceController) GetResourceTree() {
 	data5 := make([]perm.CloudApiResource, 0)
 	sql.Raw(perm.SelectPerm3).QueryRows(&data3)
 	sql.Raw(perm.SelectPerm4).QueryRows(&data4)
-	sql.Raw(perm.SelectPerm4).QueryRows(&data5)
+	sql.Raw(perm.SelectPerm5).QueryRows(&data5)
 	d := map[string]interface{}{
 	}
 	// 获取一级菜单
 	for _, v := range data3 {
-		if _, ok := d[v.Parent]; !ok {
-			d[v.Parent] = map[string]interface{}{
+		if _, ok := d[v.Parent ]; !ok {
+			if v.Parent == "网络管理" || v.Parent == "集群管理" || v.Parent == "" {
+				continue
+			}
+			d[v.Parent ] = map[string]interface{}{
 				v.ApiType: map[string]interface{}{
 				},
 			}
 		}
-		if _, ok := d[v.Parent].(map[string]interface{})[v.ApiType]; !ok {
-			d[v.Parent].(map[string]interface{})[v.ApiType] = map[string]interface{}{}
+		if _, ok := d[v.Parent ].(map[string]interface{})[v.ApiType ]; !ok {
+			d[v.Parent ].(map[string]interface{})[v.ApiType ] = map[string]interface{}{}
 
 		}
-		if _, ok := d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name]; !ok {
-			d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name] = map[string]interface{}{
+		if _, ok := d[v.Parent ].(map[string]interface{})[v.ApiType ].(map[string]interface{})[v.Name ]; !ok {
+			d[v.Parent ].(map[string]interface{})[v.ApiType ].(map[string]interface{})[v.Name ] = map[string]interface{}{
 			}
 		}
 		for _, v2 := range data4 {
-			if v2.ApiType == v.Name  {
-					d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name].(map[string]interface{})[v2.Name] = map[string]interface{}{
-					}
+			if v2.ApiType == v.Name {
+				d[v.Parent].(map[string]interface{})[v.ApiType ].(map[string]interface{})[v.Name ].(map[string]interface{})[v2.Name ] = map[string]interface{}{
+				}
 			}
 			for _, v3 := range data5 {
-				if v3.ApiType == v2.Name  {
-					if _, ok := d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name].(map[string]interface{})[v2.Name] ; ok {
-						d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name].(map[string]interface{})[v2.Name].(map[string]interface{})[v3.Name] = map[string]interface{}{
+				if v3.ApiType == v2.Name {
+					if _, ok := d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name].(map[string]interface{})[v2.Name]; ok {
+						d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name].(map[string]interface{})[v2.Name].(map[string]interface{})[v3.Name + v3.ApiUrl] = map[string]interface{}{
 						}
 					}
 				}

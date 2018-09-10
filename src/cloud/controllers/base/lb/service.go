@@ -12,7 +12,6 @@ import (
 	"golang.org/x/crypto/openpgp/errors"
 	"strings"
 	"github.com/astaxie/beego/logs"
-	app2 "cloud/models/app"
 )
 
 type ServiceController struct {
@@ -119,7 +118,7 @@ func (this *ServiceController) ServiceSave() {
 		*this.Ctx, "保存负载均衡服务配置 "+msg, 
 		d.LbName)
 	setServiceJson(this, data)
-	updateServiceDomain()
+	app.UpdateServiceDomain()
 	go k8s.CreateNginxConf("")
 	go k8s.CreateNginxConf("-test")
 }
@@ -206,32 +205,6 @@ func getNginxConf(this *ServiceController) k8s.CloudLbNginxConf {
 	return conf
 }
 
-// 2018-08-21 11:16
-// 更新服务域名
-func updateServiceDomain()  {
-	logs.Info("更新服务域名")
-	data := make([]k8s.CloudLbService, 0)
-	q := sql.SearchSql(k8s.CloudLbService{}, k8s.SelectCloudLbService, sql.SearchMap{})
-	sql.Raw(q).QueryRows(&data)
-	for _, v := range data {
-		service := app2.CloudAppService{}
-		searchMap := sql.SearchMap{}
-		searchMap.Put("ClusterName", v.ClusterName)
-		searchMap.Put("AppName", v.AppName)
-		searchMap.Put("ServiceName", v.ServiceName)
-		searchMap.Put("ResourceName", v.ResourceName)
-		if len(v.ServiceVersion) == 0 {
-			v.ServiceVersion = "1"
-		}
-		searchMap.Put("ServiceVersion", v.ServiceVersion)
-		q = sql.SearchSql(app2.CloudAppService{}, app2.SelectCloudAppService, searchMap)
-		sql.Raw(q).QueryRow(&service)
-		service.Domain = v.Domain
-		if service.ServiceId != 0 {
-			sql.Exec(sql.UpdateSql(service, app2.UpdateCloudAppService, searchMap, ""))
-		}
-	}
-}
 
 // 2018-02-01 21:39
 // 获取nginx配置文件信息

@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"cloud/k8s"
 	"strconv"
+	"time"
 )
 
 // 模板管理入口页面
@@ -218,7 +219,35 @@ func createLbConfig(service app.CloudAppService, clusterName string, ent string,
 
 	q := fmt.Sprintf(app.UpdateServiceDomain, domain, appName, clusterName, service.ServiceName, resourceName)
 	sql.Exec(q)
+	time.Sleep(time.Second * 6)
+	UpdateServiceDomain()
+}
 
+// 2018-08-21 11:16
+// 更新服务域名
+func UpdateServiceDomain()  {
+	logs.Info("更新服务域名")
+	data := make([]k8s.CloudLbService, 0)
+	q := sql.SearchSql(k8s.CloudLbService{}, k8s.SelectCloudLbService, sql.SearchMap{})
+	sql.Raw(q).QueryRows(&data)
+	for _, v := range data {
+		service := app.CloudAppService{}
+		searchMap := sql.SearchMap{}
+		searchMap.Put("ClusterName", v.ClusterName)
+		searchMap.Put("AppName", v.AppName)
+		searchMap.Put("ServiceName", v.ServiceName)
+		searchMap.Put("ResourceName", v.ResourceName)
+		if len(v.ServiceVersion) == 0 {
+			v.ServiceVersion = "1"
+		}
+		searchMap.Put("ServiceVersion", v.ServiceVersion)
+		q = sql.SearchSql(app.CloudAppService{}, app.SelectCloudAppService, searchMap)
+		sql.Raw(q).QueryRow(&service)
+		service.Domain = v.Domain
+		if service.ServiceId != 0 {
+			sql.Exec(sql.UpdateSql(service, app.UpdateCloudAppService, searchMap, ""))
+		}
+	}
 }
 
 // 2018-08-16 10:35

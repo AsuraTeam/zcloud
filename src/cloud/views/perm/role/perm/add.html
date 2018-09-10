@@ -91,6 +91,14 @@
 <script src="/static/pages/jquery.tree.js"></script>
 <script>
 
+    function joinName(p) {
+        var r = [];
+        for (var i1=1;i1<p.length;i1++){
+            r.push(p[i1]);
+        }
+        return r.join("/");
+    }
+
     /**2018-09-10 09:09
      * 加载权限树资源
      */
@@ -101,34 +109,40 @@
                 '    <li data-jstree=\'{"opened":true}\'>权限' +
                 '     <ul>';
         $.each(result, function (index, item) {
-            html += "<li data-jstree='{\"opened\":false}'>" + index;
+            var indexs = index.split("/");
+            html += "<li data-jstree='{\"opened\":false}' tree-data='"+joinName(indexs)+"'>" + indexs[0];
             html += "<ul>";
             $.each(item, function (index, itemobj) {
-                html += "<li data-jstree='{\"opened\":true}'>" + index;
+                var indexs1 = index.split("/");
+                html += "<li tree-data='"+joinName(indexs1)+"' data-jstree='{\"opened\":true}'>" + indexs1[0];
                 if (JSON.stringify(itemobj).length > 2) {
                     html += "<ul>";
                     $.each(itemobj, function (index1, itemobj1) {
+                        var indexs2 = index1.split("/");
                         if (JSON.stringify(itemobj).length > 2) {
-                            html += "<li data-jstree='{\"opened\":true}'>" + index1;
+
+                            html += "<li tree-data='"+joinName(indexs2)+"' data-jstree='{\"opened\":true}'>" + indexs2[0];
                             html += "<ul>";
                             $.each(itemobj1, function (index2, itemobj2) {
+                                var indexs3 = index2.split("/");
                                 if (JSON.stringify(itemobj2).length > 2) {
-                                    html += "<li data-jstree='{\"opened\":true}'>" + index2;
+                                    html += "<li tree-data='"+joinName(indexs3)+"' data-jstree='{\"opened\":true}'>" + indexs3[0];
                                     html += "<ul>";
                                     $.each(itemobj2, function (index3, itemobj3) {
-                                        html += "<li data-jstree='{\"type\":\"file\"}'>" + index3 + "</li>";
+                                        var indexs4 = index3.split("/");
+                                        html += "<li tree-data='"+joinName(indexs4)+"' data-jstree='{\"type\":\"file\"}'>" + indexs4[0] + "</li>";
                                     });
                                     html += "</ul>";
                                     html += "</li>"
                                 }else{
-                                    html += "<li data-jstree='{\"type\":\"file\"}'>" + index2 + "</li>";
+                                    html += "<li tree-data='"+joinName(indexs3)+"' data-jstree='{\"type\":\"file\"}'>" + indexs3[0] + "</li>";
                                 }
 
                             });
                             html += "</ul>";
                             html += "</li>"
                         }else{
-                            html += "<li data-jstree='{\"type\":\"file\"}'>" + index1 + "</li>";
+                            html += "<li tree-data='"+joinName(indexs2)+"' data-jstree='{\"type\":\"file\"}'>" + indexs2[0] + "</li>";
                         }
                     });
                     html += "</ul>";

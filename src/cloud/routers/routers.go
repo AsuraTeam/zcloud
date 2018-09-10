@@ -686,9 +686,9 @@ func init() {
 				beego.NSNamespace("/lb",
 					beego.NSNamespace("/service",
 						// 负载均衡服务管理,
-						beego.NSRouter("/:id:int", &lb.ServiceController{}, "delete:ServiceDelete", "删除服务数据", "负载均衡详情", "负载均衡列表"),
+						beego.NSRouter("/:id:int", &lb.ServiceController{}, "delete:ServiceDelete", "删除负载均衡服务数据", "负载均衡详情", "负载均衡列表"),
 						// 负载均衡服务保存,
-						beego.NSRouter("", &lb.ServiceController{}, "post:ServiceSave", "保存服务数据", "负载均衡详情", "负载均衡列表"),
+						beego.NSRouter("", &lb.ServiceController{}, "post:ServiceSave", "保存负载均衡服务数据", "负载均衡详情", "负载均衡列表"),
 					),
 					beego.NSNamespace("/nginx",
 						// 获取nginx配置
