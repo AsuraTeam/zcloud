@@ -842,6 +842,8 @@ func init() {
 					beego.NSRouter("", &perm.PermRoleController{}, "post:PermRoleSave", "角色保存", "角色管理", "权限管理"),
 					// 角色保存,
 					beego.NSRouter("/perm", &perm.PermRoleController{}, "post:PermRoleSavePerm", "保存角色权限", "角色管理", "权限管理"),
+					// 角色保存,
+					beego.NSRouter("/user", &perm.PermRoleController{}, "post:PermRoleSaveUser", "保存角色用户", "角色管理", "权限管理"),
 					// 删除角色,
 					beego.NSRouter("/:id:int", &perm.PermRoleController{}, "delete:PermRoleDelete", "删除角色", "角色管理", "权限管理"),
 					// 获取角色数据单条数据,

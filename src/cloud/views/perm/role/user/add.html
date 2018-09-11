@@ -99,7 +99,7 @@
                         <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
                                 class="fa fa-times"></i>&nbsp;&nbsp;取消
                         </button>
-                        <button type="button" onclick="saveRegistryPerm('{{.data.RoleId}}')"
+                        <button type="button" onclick="saveRoleUser('{{.data.RoleId}}')"
                                 class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;保存
                         </button>
                     </div>
@@ -131,5 +131,39 @@
 
     setGroupsData();
     searchGroups("",'undo_perm_group_redo');
-    setSelectGroups("{{.data.GroupName}}")
+    setSelectGroups("{{.data.GroupName}}");
+
+
+    /**
+     *  2018-09-11 10:32
+     * 保存角色用户
+     */
+    function saveRoleUser(roleId) {
+        if(!roleId){
+            roleId = 0
+        }
+        var data = get_form_data();
+        data["RoleId"] = parseInt(roleId);
+        var users = [];
+        $("#undo_contact_group_redo_to option").each(function () {
+            users.push($(this).val());
+        });
+        data["UserName"] = users.join(",");
+
+        var groups = [];
+        $("#undo_perm_group_redo_to option").each(function () {
+            groups.push($(this).val());
+        });
+        data["GroupName"] = groups.join(",");
+
+        var url = "/api/perm/role/user";
+        var result = post(data, url);
+        result = JSON.stringify(result);
+        if (result.indexOf("保存成功") != -1){
+            $("#add_post_html").modal("toggle");
+            success(result);
+        }else{
+            faild(result);
+        }
+    }
 </script>

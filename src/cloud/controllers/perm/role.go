@@ -43,6 +43,8 @@ func (this *PermRoleController) PermRoleUserList() {
 		return
 	}
 	update.RoleId = id
+	u, g := GetRoleUserMap(id)
+	update.UserName , update.GroupName =u, g
 	this.Data["data"] = update
 	this.TplName = "perm/role/user/add.html"
 }
@@ -60,6 +62,27 @@ func GetRolePermMap(roleId int64)  map[string]interface{} {
 		roleMap[v.PermName] = "1"
 	}
 	return roleMap
+}
+
+// 2018-09-11 10:54
+// 获取权限map
+func GetRoleUserMap(roleId int64) (string, string) {
+	rolePerm := make([]perm.CloudPermRoleUser, 0)
+	searchMap := sql.SearchMap{}
+	searchMap.Put("RoleId", roleId)
+	q := sql.SearchSql(perm.CloudPermRoleUser{}, perm.SelectCloudPermRoleUser, searchMap)
+	sql.Raw(q).QueryRows(&rolePerm)
+	userData := make([]string, 0)
+	groupData := make([]string, 0)
+	for _, v := range rolePerm {
+		if len(v.UserName) > 0 {
+			userData = append(userData, v.UserName)
+		}
+		if len(v.GroupName) > 0 {
+			groupData = append(groupData, v.GroupName)
+		}
+	}
+	return strings.Join(userData, ","), strings.Join(groupData, ",")
 }
 
 // 角色管理添加页面
@@ -114,7 +137,7 @@ func (this *PermRoleController) PermRoleSave() {
 
 // 2018-09-11 08:17
 // 角色权限保存
-// @router /api/perm/role/perm/:id:int [post]
+// @router /api/perm/role/perm [post]
 func (this *PermRoleController) PermRoleSavePerm() {
 	d := perm.CloudPermRolePerm{}
 	err := this.ParseForm(&d)
@@ -153,6 +176,65 @@ func (this *PermRoleController) PermRoleSavePerm() {
 
 	data, msg := util.SaveResponse(err, "名称已经被使用")
 	util.SaveOperLog(this.GetSession("username"), *this.Ctx, "保存角色权限 "+msg, "")
+	setPermRoleJson(this, data)
+}
+
+
+// 2018-09-11 08:17
+// 角色权限保存
+// @router /api/perm/role/perm  [post]
+func (this *PermRoleController) PermRoleSaveUser() {
+	d := perm.CloudPermRoleUser{}
+	err := this.ParseForm(&d)
+	if err != nil {
+		this.Ctx.WriteString("参数错误" + err.Error())
+		return
+	}
+
+	user := util.GetUser(this.GetSession("username"))
+	util.SetPublicData(d, user, &d)
+
+
+	if d.RoleId > 0 {
+		searchMap := sql.SearchMap{}
+		searchMap.Put("RoleId", d.RoleId)
+		if user != "admin" {
+			searchMap.Put("CreateUser", user)
+		}
+		q := sql.DeleteSql(perm.DeleteCloudPermRoleUser, searchMap)
+		sql.Exec(q)
+	}
+
+	role := this.GetString("UserName")
+	if len(role) > 0 {
+		roles := strings.Split(role, ",")
+		for _, v := range roles {
+			i := perm.CloudPermRoleUser{}
+			i.CreateTime = d.CreateTime
+			i.CreateUser = d.CreateUser
+			i.RoleId = d.RoleId
+			i.UserName = v
+			insert := sql.InsertSql(i, perm.InsertCloudPermRoleUser)
+			sql.Exec(insert)
+		}
+	}
+
+	group := this.GetString("GroupName")
+	if len(group) > 0 {
+		roles := strings.Split(group, ",")
+		for _, v := range roles {
+			i := perm.CloudPermRoleUser{}
+			i.CreateTime = d.CreateTime
+			i.CreateUser = d.CreateUser
+			i.RoleId = d.RoleId
+			i.GroupName = v
+			insert := sql.InsertSql(i, perm.InsertCloudPermRoleUser)
+			sql.Exec(insert)
+		}
+	}
+
+	data, msg := util.SaveResponse(err, "名称已经被使用")
+	util.SaveOperLog(this.GetSession("username"), *this.Ctx, "保存角色用户 "+msg, "")
 	setPermRoleJson(this, data)
 }
 
