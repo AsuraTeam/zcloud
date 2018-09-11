@@ -5,8 +5,7 @@
         width: 0.2em;
     }
 
-    ::-webkit-scrollbar:horizontal
-    {
+    ::-webkit-scrollbar:horizontal {
         height: 0.2em;
     }
 </style>
@@ -25,15 +24,16 @@
                         <div class="col-md-12">
                             <div class="card-box">
                                 <div id="checkTree" style="height: 800px;overflow: scroll;">
-                                    {{/*<ul>*/}}
+
+                                {{/*<ul>*/}}
                                         {{/*<li>权限*/}}
                                             {{/*<ul>*/}}
                                                 {{/*<li data-jstree='{"opened":true}'>Assets*/}}
                                                     {{/*<ul>*/}}
                                                         {{/*<li data-jstree='{"type":"file"}'>Css</li>*/}}
-                                                        {{/*<li data-jstree='{"opened":true}'>Plugins*/}}
+                                                        {{/*<li data-jstree='{"opened":false}'>Plugins*/}}
                                                             {{/*<ul>*/}}
-                                                                {{/*<li data-jstree='{"selected":true,"type":"file"}'>Plugin*/}}
+                                                                {{/*<li data-jstree='{"type":"file","selected":true}'>Plugin*/}}
                                                                     {{/*one*/}}
                                                                 {{/*</li>*/}}
                                                                 {{/*<li data-jstree='{"type":"file"}'>Plugin two</li>*/}}
@@ -77,7 +77,7 @@
                 <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
                         class="fa fa-times"></i>&nbsp;&nbsp;取消
                 </button>
-                <button type="button" onclick="saveRole('{{.data.RoleId}}')"
+                <button type="button" onclick="saveRolePerm('{{.data.RoleId}}')"
                         class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp; 保存
                 </button>
             </div>
@@ -92,17 +92,36 @@
 <script>
 
     function joinName(p) {
-        var r = [];
-        for (var i1=1;i1<p.length;i1++){
-            r.push(p[i1]);
+        return p[0];
+    }
+
+    /**
+     * 2018-09-11 07:57
+     * 保存角色权限
+     * */
+    function saveRolePerm(id) {
+        var r = $('#checkTree').jstree().get_checked(true);
+        var data = [];
+        $.each(r, function (k, v) {
+            data.push(v["text"]);
+        });
+        data = data.join(",");
+        var url = "/api/perm/role/perm/";
+        var result = post({RoleId: id, PermName:data}, url);
+        result = JSON.stringify(result);
+        if (result.indexOf("保存成功") != -1) {
+            $("#add_post_html").modal("toggle");
+            success(result);
+        } else {
+            faild(result);
         }
-        return r.join("/");
     }
 
     /**2018-09-10 09:09
      * 加载权限树资源
      */
     function loadTree() {
+        var perm = JSON.parse('{{.data.Permissions}}');
         var url = "/api/perm/resource/tree";
         var result = get({}, url);
         var html = '   <ul>' +
@@ -110,39 +129,48 @@
                 '     <ul>';
         $.each(result, function (index, item) {
             var indexs = index.split("/");
-            html += "<li data-jstree='{\"opened\":false}' tree-data='"+joinName(indexs)+"'>" + indexs[0];
+            html += "<li data-jstree='{\"opened\":true}' tree-data='" + joinName(indexs) + "'>" + indexs[0];
             html += "<ul>";
             $.each(item, function (index, itemobj) {
                 var indexs1 = index.split("/");
-                html += "<li tree-data='"+joinName(indexs1)+"' data-jstree='{\"opened\":true}'>" + indexs1[0];
+                html += "<li tree-data='" + joinName(indexs1) + "' data-jstree='{\"opened\":false}'>" + indexs1[0];
                 if (JSON.stringify(itemobj).length > 2) {
                     html += "<ul>";
                     $.each(itemobj, function (index1, itemobj1) {
                         var indexs2 = index1.split("/");
                         if (JSON.stringify(itemobj).length > 2) {
 
-                            html += "<li tree-data='"+joinName(indexs2)+"' data-jstree='{\"opened\":true}'>" + indexs2[0];
+                            html += "<li tree-data='" + joinName(indexs2) + "' data-jstree='{\"opened\":true}'>" + indexs2[0];
                             html += "<ul>";
                             $.each(itemobj1, function (index2, itemobj2) {
                                 var indexs3 = index2.split("/");
                                 if (JSON.stringify(itemobj2).length > 2) {
-                                    html += "<li tree-data='"+joinName(indexs3)+"' data-jstree='{\"opened\":true}'>" + indexs3[0];
+                                    html += "<li tree-data='" + joinName(indexs3) + "' data-jstree='{\"opened\":true}'>" + indexs3[0];
                                     html += "<ul>";
                                     $.each(itemobj2, function (index3, itemobj3) {
                                         var indexs4 = index3.split("/");
-                                        html += "<li tree-data='"+joinName(indexs4)+"' data-jstree='{\"type\":\"file\"}'>" + indexs4[0] + "</li>";
+                                        if(perm[indexs4[0]]){
+                                            html += "<li tree-data='" + joinName(indexs4) + "' data-jstree='{\"type\":\"file\", \"selected\":true}'>" + indexs4[0] + "</li>";
+                                        }else{
+                                            html += "<li  data-jstree='{\"type\":\"file\"}'>" + indexs4[0] + "</li>";
+                                        }
                                     });
                                     html += "</ul>";
                                     html += "</li>"
-                                }else{
-                                    html += "<li tree-data='"+joinName(indexs3)+"' data-jstree='{\"type\":\"file\"}'>" + indexs3[0] + "</li>";
+                                } else {
+
+                                    if(perm[indexs3[0]]) {
+                                        html += "<li data-jstree='{\"type\":\"file\",\"selected\":true}'>" + indexs3[0] + "</li>";
+                                    }else{
+                                        html += "<li data-jstree='{\"type\":\"file\"}'>" + indexs3[0] + "</li>";
+                                    }
                                 }
 
                             });
                             html += "</ul>";
                             html += "</li>"
-                        }else{
-                            html += "<li tree-data='"+joinName(indexs2)+"' data-jstree='{\"type\":\"file\"}'>" + indexs2[0] + "</li>";
+                        } else {
+                            html += "<li data-jstree='{\"type\":\"file\"}'>" + indexs2[0] + "</li>";
                         }
                     });
                     html += "</ul>";
@@ -159,20 +187,20 @@
         $("#checkTree").html(html);
         // Checkbox
         $('#checkTree').jstree({
-            'core' : {
-                'themes' : {
+            'core': {
+                'themes': {
                     'responsive': false
                 }
             },
-            'types' : {
-                'default' : {
-                    'icon' : 'fa fa-folder'
+            'types': {
+                'default': {
+                    'icon': 'fa fa-folder'
                 },
-                'file' : {
-                    'icon' : 'fa fa-file'
+                'file': {
+                    'icon': 'fa fa-file'
                 }
             },
-            'plugins' : ['types', 'checkbox']
+            'plugins': ['types', 'checkbox']
         });
     }
 

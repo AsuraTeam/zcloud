@@ -104,3 +104,29 @@ type CloudUserPerm struct {
     //
     GroupName string
 }
+
+//2018-09-11 08:14:56.2238194 +0800 CST
+type CloudPermRolePerm struct {
+    //
+    CreateUser string
+    //
+    CreateTime string
+    //
+    RoleId int64
+    //
+    PermName string
+}
+
+//2018-09-11 10:20:19.8537039 +0800 CST
+type CloudPermRoleUser struct {
+    //
+    RoleId int64
+    //
+    UserName string
+    //
+    GroupName string
+    //
+    CreateUser string
+    //
+    CreateTime string
+}

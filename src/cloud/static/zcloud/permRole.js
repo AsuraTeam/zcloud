@@ -17,6 +17,18 @@ function addRolePerm(roleId) {
     }
     var url = "/system/perm/role/perm/add";
     var result = get({RoleId:roleId}, url);
+    $("#add_post_html").modal("toggle")
+    $("#add_groups_html").html(result);
+}
+
+// 2018-09-11 10:11
+// 添加角色用户
+function addRolePermUser(roleId) {
+    if(!roleId){
+        roleId = 0
+    }
+    var url = "/system/perm/role/user/add";
+    var result = get({RoleId:roleId}, url);
     $("#add_groups_html").html(result);
     $("#add_post_html").modal("toggle")
 }
@@ -71,6 +83,7 @@ function loadRoleData(key) {
                 "sWidth": "150px", "data": "RoleId", "mRender": function (data) {
                     return '<button type="button" title="更新" onclick="addRole(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>' +
                         '<button type="button"  title="分配权限" onClick="addRolePerm(' + data + ')" class="delete-groups m-l-5 btn btn-xs rb-btn-oper"><i class="fa fa-send-o"></i></button>'+
+                        '<button type="button"  title="分配角色用户" onClick="addRolePermUser(' + data + ')" class="delete-groups m-l-5 btn btn-xs rb-btn-oper"><i class="fa fa-user-o"></i></button>'+
                         '<button type="button"  title="删除" onClick="deleteRoleSwal(' + data + ')" class="delete-groups m-l-5 btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
             }
             },

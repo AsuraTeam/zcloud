@@ -131,7 +131,7 @@ func (this *ResourceController) GetResourceTree() {
 	// 获取一级菜单
 	for _, v := range data3 {
 		if _, ok := d[v.Parent ]; !ok {
-			if v.Parent == "网络管理" || v.Parent == "集群管理" || v.Parent == "" {
+			if v.Parent == "网络管理" || v.Parent == "集群管理" || v.Parent == "" || v.Parent == "用户中心"{
 				continue
 			}
 			d[v.Parent ] = map[string]interface{}{
@@ -155,7 +155,7 @@ func (this *ResourceController) GetResourceTree() {
 			for _, v3 := range data5 {
 				if v3.ApiType == v2.Name {
 					if _, ok := d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name].(map[string]interface{})[v2.Name]; ok {
-						d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name].(map[string]interface{})[v2.Name].(map[string]interface{})[v3.Name + v3.ApiUrl] = map[string]interface{}{
+						d[v.Parent].(map[string]interface{})[v.ApiType].(map[string]interface{})[v.Name].(map[string]interface{})[v2.Name].(map[string]interface{})[v3.Name ] = map[string]interface{}{
 						}
 					}
 				}

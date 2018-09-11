@@ -67,6 +67,7 @@ func (this *PermController) PermSave() {
 	setPermJson(this, data)
 }
 
+
 // 获取权限数据
 // 2018-02-06 08:30
 // router /api/perms/name [get]

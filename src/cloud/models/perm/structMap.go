@@ -21,3 +21,13 @@ const SelectCloudUserPerm = "select create_time,cluster_name,perm_id,group_name,
 const UpdateCloudUserPerm = "update cloud_user_perm"
 const InsertCloudUserPerm = "insert into cloud_user_perm" 
 const DeleteCloudUserPerm = "delete from cloud_user_perm" 
+
+const SelectCloudPermRolePerm = "select role_id,perm_name,create_user,create_time from cloud_perm_role_perm"
+const UpdateCloudPermRolePerm = "update cloud_perm_role_perm"
+const InsertCloudPermRolePerm = "insert into cloud_perm_role_perm" 
+const DeleteCloudPermRolePerm = "delete from cloud_perm_role_perm" 
+
+const SelectCloudPermRoleUser = "select role_id,user_name,group_name,create_user,create_time from cloud_perm_role_user"
+const UpdateCloudPermRoleUser = "update cloud_perm_role_user"
+const InsertCloudPermRoleUser = "insert into cloud_perm_role_user" 
+const DeleteCloudPermRoleUser = "delete from cloud_perm_role_user" 

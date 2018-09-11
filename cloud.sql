@@ -1664,6 +1664,22 @@ CREATE TABLE `cloud_user_perm` (
   PRIMARY KEY (`perm_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
+create table cloud_perm_role_perm(
+`role_id` int ,
+`perm_name` varchar(200),
+`create_user` varchar(32) DEFAULT NULL,
+`create_time` varchar(32) DEFAULT NULL,
+ UNIQUE KEY `uidx_cloud_perm_role_perm_perm_name_role_id` (`role_id`,`perm_name`)
+ );
+
+CREATE TABLE `cloud_perm_role_user` (
+  `role_id` int(11) DEFAULT NULL,
+  `user_name` varchar(200) DEFAULT NULL,
+  `group_name` varchar(200) DEFAULT NULL,
+  `create_user` varchar(32) DEFAULT NULL,
+  `create_time` varchar(32) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- Dump completed on 2018-03-09 12:30:13
 alter table cloud_cluster_hosts add unique index uidx_cloud_cluster_hosts_ip_api_port_host_type(host_ip,api_port,host_type);
 alter table cloud_app_template add cluster varchar(130) comment "集群名称";
@@ -1681,7 +1697,7 @@ alter table cloud_api_resource add parent varchar(132) comment "父节点";
 alter table cloud_code_repostitory add branch  text ;
 alter table cloud_code_repostitory add tag text ;
 alter table cloud_perm_role add is_del int comment "是否删除";
- alter table cloud_container add service varchar(300);
+alter table cloud_container add service varchar(300);
 alter table cloud_app_service add termination_seconds int comment "pod关闭时间";
 alter table cloud_api_resource add unique index uidx_api_url_name_method(api_url,name,method);
 alter table cloud_build_job add unique index uidx_cloud_build_job_item_name (item_name);

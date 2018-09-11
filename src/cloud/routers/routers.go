@@ -755,9 +755,11 @@ func init() {
 					// 权限入口
 					beego.NSRouter("/list", &perm.PermRoleController{}, "get:PermRoleList", "角色管理列表", "角色管理", "权限管理"),
 					// 权限添加
-					beego.NSRouter("/add", &perm.PermRoleController{}, "get:PermRoleAdd", "创建角色", "角色管理", "权限管理"),
+					beego.NSRouter("/add", &perm.PermRoleController{}, "get:PermRoleAdd", "创建角色页面", "角色管理", "权限管理"),
 					// 权限添加
-					beego.NSRouter("/perm/add", &perm.PermRoleController{}, "get:PermRoleAddList", "分配权限", "角色管理", "权限管理"),
+					beego.NSRouter("/perm/add", &perm.PermRoleController{}, "get:PermRoleAddList", "分配角色权限页面", "角色管理", "权限管理"),
+					// 角色分配用户页面
+					beego.NSRouter("/user/add", &perm.PermRoleController{}, "get:PermRoleUserList", "分配角色用户页面", "角色管理", "权限管理"),
 				),
 				// api资源配额
 				beego.NSNamespace("/resource",
@@ -838,6 +840,8 @@ func init() {
 				beego.NSNamespace("/role",
 					// 角色保存,
 					beego.NSRouter("", &perm.PermRoleController{}, "post:PermRoleSave", "角色保存", "角色管理", "权限管理"),
+					// 角色保存,
+					beego.NSRouter("/perm", &perm.PermRoleController{}, "post:PermRoleSavePerm", "保存角色权限", "角色管理", "权限管理"),
 					// 删除角色,
 					beego.NSRouter("/:id:int", &perm.PermRoleController{}, "delete:PermRoleDelete", "删除角色", "角色管理", "权限管理"),
 					// 获取角色数据单条数据,

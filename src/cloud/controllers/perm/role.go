@@ -5,6 +5,7 @@ import (
 	"cloud/util"
 	"github.com/astaxie/beego"
 	"cloud/models/perm"
+	"strings"
 )
 
 type PermRoleController struct {
@@ -19,7 +20,46 @@ func (this *PermRoleController) PermRoleList() {
 
 // @router /perm/role/perm/add [get]
 func (this *PermRoleController) PermRoleAddList() {
+	update := perm.CloudPermRole{}
+	id , err := this.GetInt64("RoleId")
+	if err != nil {
+		setPermRoleJson(this, util.ApiResponse(false, "资源不存在"))
+		return
+	}
+	update.RoleId = id
+	update.Permissions =  util.ObjToString(GetRolePermMap(id))
+	this.Data["data"] = update
 	this.TplName = "perm/role/perm/add.html"
+}
+
+// 角色分配用户页面
+// 2018-09-11 10:22
+// @router /perm/role/user/add [get]
+func (this *PermRoleController) PermRoleUserList() {
+	update := perm.CloudPermRoleUser{}
+	id , err := this.GetInt64("RoleId")
+	if err != nil {
+		setPermRoleJson(this, util.ApiResponse(false, "资源不存在"))
+		return
+	}
+	update.RoleId = id
+	this.Data["data"] = update
+	this.TplName = "perm/role/user/add.html"
+}
+
+// 2018-09-11 08:44
+// 获取权限map
+func GetRolePermMap(roleId int64)  map[string]interface{} {
+	rolePerm := make([]perm.CloudPermRolePerm, 0)
+	searchMap := sql.SearchMap{}
+	searchMap.Put("RoleId", roleId)
+	q := sql.SearchSql(perm.CloudPermRolePerm{}, perm.SelectCloudPermRolePerm, searchMap)
+	sql.Raw(q).QueryRows(&rolePerm)
+	roleMap := map[string]interface{}{}
+	for _, v := range rolePerm {
+		roleMap[v.PermName] = "1"
+	}
+	return roleMap
 }
 
 // 角色管理添加页面
@@ -63,12 +103,56 @@ func (this *PermRoleController) PermRoleSave() {
 	if d.RoleId > 0 {
 		searchMap := sql.SearchMap{}
 		searchMap.Put("RoleId", d.RoleId)
-		q = sql.UpdateSql(d, perm.UpdateCloudPermRole, searchMap, "CreateTime,CreatePermRole")
+		q = sql.UpdateSql(d, perm.UpdateCloudPermRole, searchMap, "CreateTime,CreateUser")
 	}
 	_, err = sql.Raw(q).Exec()
 
 	data, msg := util.SaveResponse(err, "名称已经被使用")
 	util.SaveOperLog(this.GetSession("username"), *this.Ctx, "保存角色配置 "+msg, d.RoleName)
+	setPermRoleJson(this, data)
+}
+
+// 2018-09-11 08:17
+// 角色权限保存
+// @router /api/perm/role/perm/:id:int [post]
+func (this *PermRoleController) PermRoleSavePerm() {
+	d := perm.CloudPermRolePerm{}
+	err := this.ParseForm(&d)
+	if err != nil {
+		this.Ctx.WriteString("参数错误" + err.Error())
+		return
+	}
+
+	user := util.GetUser(this.GetSession("username"))
+	util.SetPublicData(d, user, &d)
+
+
+	if d.RoleId > 0 {
+		searchMap := sql.SearchMap{}
+		searchMap.Put("RoleId", d.RoleId)
+		if user != "admin" {
+			searchMap.Put("CreateUser", user)
+		}
+		q := sql.DeleteSql(perm.DeleteCloudPermRolePerm, searchMap)
+		sql.Exec(q)
+	}
+
+	role := this.GetString("PermName")
+	if len(role) > 0 {
+		roles := strings.Split(role, ",")
+		for _, v := range roles {
+			i := perm.CloudPermRolePerm{}
+			i.CreateTime = d.CreateTime
+			i.CreateUser = d.CreateUser
+			i.RoleId = d.RoleId
+			i.PermName = v
+			insert := sql.InsertSql(i, perm.InsertCloudPermRolePerm)
+			sql.Exec(insert)
+		}
+	}
+
+	data, msg := util.SaveResponse(err, "名称已经被使用")
+	util.SaveOperLog(this.GetSession("username"), *this.Ctx, "保存角色权限 "+msg, "")
 	setPermRoleJson(this, data)
 }
 
