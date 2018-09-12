@@ -210,7 +210,6 @@ func (this *IndexController) Login() {
 		return
 	}
 	r, err := RecordLoginUser(util.GetUser(username), password)
-	r = true
 	ip := this.Ctx.Request.RemoteAddr
 	o := sql.GetOrm()
 	data := index.CloudLoginRecord{
