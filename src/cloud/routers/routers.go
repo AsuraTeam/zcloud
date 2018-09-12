@@ -520,7 +520,7 @@ func init() {
 				// 08-2-7 11:20
 				// 在安装应用时候选择的镜像数据
 				beego.NSNamespace("/deploy",
-					beego.NSRouter("/images", &registry.RegistryGroupController{}, "get:GetDeployImage"),
+					beego.NSRouter("/images", &registry.RegistryGroupController{}, "get:GetDeployImage", "获取部署镜像", "应用管理", "容器治理"),
 				),
 			),
 		)

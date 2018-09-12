@@ -242,13 +242,13 @@ func (this *IndexController) Login() {
 
 // 快捷入口页面
 // @router /shortcut [get]
-func (this *IndexController) Shortcut() {
+func (this *IndexController) Index() {
 	// 获取全部集群数据
 	this.TplName = "index/shortcut.html"
 }
 
 // @router /index [get]
-func (this *IndexController) Index() {
+func (this *IndexController) Shortcut() {
 	// 获取全部集群数据
 	this.TplName = "index/index.html"
 }

@@ -32,6 +32,45 @@ func (this *PermRoleController) PermRoleAddList() {
 	this.TplName = "perm/role/perm/add.html"
 }
 
+// 2018-09-11 13:40
+// 默认角色不允许删除
+// 初始化默认角色
+func InitRole()  {
+	defaultRole := make([]string, 0)
+	defaultRole = append(defaultRole, "超级管理员")
+	defaultRole = append(defaultRole, "普通用户")
+	defaultRole = append(defaultRole, "应用管理员")
+	defaultRole = append(defaultRole, "系统管理员")
+	data := make([]perm.CloudPermRole, 0)
+	existsRole := make([]string, 0)
+	q := sql.SearchSql(perm.CloudPermRole{}, perm.SelectCloudPermRole, sql.SearchMap{})
+	sql.Raw(q).QueryRows(&data)
+
+	for _, v := range data{
+		existsRole = append(existsRole, v.RoleName)
+	}
+
+	for _, v := range defaultRole{
+		if ! util.ListExistsString(existsRole, v) {
+			o := perm.CloudPermRole{}
+			o.RoleName = v
+			o.CreateTime = util.GetDate()
+			o.CreateUser = "admin"
+			o.Description = "系统默认角色"
+			sql.Exec(sql.InsertSql(o, perm.InsertCloudPerm))
+			searchMap := sql.SearchMap{}
+			searchMap.Put("RoleName", v)
+			sql.Raw(sql.SearchSql(o, perm.SelectCloudPermRole, searchMap)).QueryRow(&o)
+			insertRoleUsers(v, "admin", o.RoleId)
+		}
+	}
+}
+
+// 2018-09-12 09:23
+// 获取用户角色
+func GetUserRole(user string)  {
+}
+
 // 角色分配用户页面
 // 2018-09-11 10:22
 // @router /perm/role/user/add [get]
@@ -179,6 +218,17 @@ func (this *PermRoleController) PermRoleSavePerm() {
 	setPermRoleJson(this, data)
 }
 
+// 2018-09-12 08:54
+// 插入角色用户
+func insertRoleUsers(user string, createUser string, roleId int64)  {
+	i := perm.CloudPermRoleUser{}
+	i.CreateTime = util.GetDate()
+	i.CreateUser = createUser
+	i.RoleId = roleId
+	i.UserName = user
+	insert := sql.InsertSql(i, perm.InsertCloudPermRoleUser)
+	sql.Exec(insert)
+}
 
 // 2018-09-11 08:17
 // 角色权限保存
@@ -205,17 +255,11 @@ func (this *PermRoleController) PermRoleSaveUser() {
 		sql.Exec(q)
 	}
 
-	role := this.GetString("UserName")
-	if len(role) > 0 {
-		roles := strings.Split(role, ",")
-		for _, v := range roles {
-			i := perm.CloudPermRoleUser{}
-			i.CreateTime = d.CreateTime
-			i.CreateUser = d.CreateUser
-			i.RoleId = d.RoleId
-			i.UserName = v
-			insert := sql.InsertSql(i, perm.InsertCloudPermRoleUser)
-			sql.Exec(insert)
+	roleUsers := this.GetString("UserName")
+	if len(roleUsers) > 0 {
+		users := strings.Split(roleUsers, ",")
+		for _, v := range users {
+			insertRoleUsers(v, user, d.RoleId)
 		}
 	}
 
