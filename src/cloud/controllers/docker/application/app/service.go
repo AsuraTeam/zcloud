@@ -287,7 +287,7 @@ func (this *ServiceController) ServiceData() {
 		util.GetResponseResult(err, this.GetString("draw"),
 			result,
 			sql.CountSearchMap("cloud_app_service",
-				sql.GetSearchMapV("CreateUser", user),
+				sql.SearchMap{},
 				int(num), key)))
 
 	go GoServerThread(data)

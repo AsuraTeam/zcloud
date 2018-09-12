@@ -229,7 +229,7 @@ func (this *ControllerPipeline) PipelineData() {
 			v.Status = "false"
 		}
 		// 不是自己创建的才检查
-		if v.CreateUser != user {
+		if v.CreateUser != user  && user != "admin"{
 			if ! userperm.CheckPerm(v.PipelineName, v.ClusterName, "", perm) && len(user) > 0 {
 				continue
 			}

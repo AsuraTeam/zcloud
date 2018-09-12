@@ -335,14 +335,14 @@ func (this *JobController) JobDatas() {
 		&data,
 		ci.CloudBuildJob{})
 
-	clusterMap := cluster.GetClusterMap()
+	//clusterMap := cluster.GetClusterMap()
 	result := make([]ci.CloudBuildJob, 0)
 	user := getUser(this)
 	perm := userperm.GetResourceName("构建项目", user)
 	for _, d := range data {
-		d.ClusterName = clusterMap.GetVString(d.ClusterName)
+		//d.ClusterName = clusterMap.GetVString(d.ClusterName)
 		// 不是自己创建的才检查
-		if d.CreateUser != user {
+		if d.CreateUser != user  && user != "admin" {
 			if ! userperm.CheckPerm(d.ItemName, d.ClusterName, "", perm) && len(user) > 0 {
 				continue
 			}

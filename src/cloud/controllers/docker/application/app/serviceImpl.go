@@ -154,7 +154,7 @@ func GetServiceRunData(data []app.CloudAppService, user string) []k8s.CloudApp {
 	result := make([]k8s.CloudApp, 0)
 	for _, d := range data {
 		// 不是自己创建的才检查
-		if d.CreateUser != user {
+		if d.CreateUser != user && user != "admin"{
 			if ! userperm.CheckPerm(d.AppName+";"+d.ResourceName+";"+d.ServiceName, d.ClusterName, d.Entname, perm) && len(user) > 0 {
 				if ! userperm.CheckPerm(d.AppName, d.ClusterName, d.Entname, permApp) {
 					continue
@@ -319,7 +319,7 @@ func serviceToRedis(namespace string, id int64, sv k8s.CloudApp) {
 	cache.ServiceCache.Put(
 		namespace+strconv.FormatInt(id, 10),
 		util.ObjToString(sv),
-		time.Second*86400)
+		time.Second* 120)
 }
 
 // 2018-01-31 16:04

@@ -974,8 +974,8 @@ function serviceCpuSave() {
     var cpu = $("input[name='Cpu']").val();
     var mem = $("input[name='Memory']").val();
     var id = $("#scale_service_id").val();
-    var url = "/api/service/update/" + id
-    var result = post({cpu: cpu, mem: mem, type: "config"}, url)
+    var url = "/api/service/update/" + id;
+    var result = post({cpu: cpu, mem: mem, type: "config"}, url);
     saveMsg(result);
 }
 
@@ -988,16 +988,18 @@ function updateServiceImage() {
     var version = $("#update_image_version_id").val();
     var interval = $("#update_interval_id").val();
     if (!version) {
-        setInputError($("#update_image_version_id"), "errmsg")
+        setInputError($("#update_image_version_id"), "errmsg");
         return
     }
     if (!interval) {
-        setInputError($("#update_interval_id"), "errmsg")
+        setInputError($("#update_interval_id"), "errmsg");
         return
     }
-    var url = "/api/service/update/" + id
-    var result = post({version: version, type: "image", MinReady: interval}, url)
+    var url = "/api/service/update/" + id;
+    var result = post({version: version, type: "image", MinReady: interval}, url);
     saveMsg(result);
+    $("#add_post_html").modal("toggle");
+    loadServiceData();
 }
 
 /**

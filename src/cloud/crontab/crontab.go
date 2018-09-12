@@ -35,7 +35,7 @@ func CronStart() {
 		hosts.CronCache()
 	}, "NodeStatusCache")
 	// 服务数据写入到缓存
-	cron.AddFunc("40 */2 * * * ?", func() {
+	cron.AddFunc("40 * * * * ?", func() {
 		app.CronServiceCache()
 	}, "CronServiceCache")
 	// 仓库镜像写入缓存
