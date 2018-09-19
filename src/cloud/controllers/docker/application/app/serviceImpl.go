@@ -155,7 +155,8 @@ func GetServiceRunData(data []app.CloudAppService, user string) []k8s.CloudApp {
 	for _, d := range data {
 		// 不是自己创建的才检查
 		if d.CreateUser != user && user != "admin"{
-			if ! userperm.CheckPerm(d.AppName+";"+d.ResourceName+";"+d.ServiceName, d.ClusterName, d.Entname, perm) && len(user) > 0 {
+			pName := d.AppName+";"+d.ResourceName+";"+d.ServiceName
+			if ! userperm.CheckPerm(pName, d.ClusterName, d.Entname, perm) && len(user) > 0 {
 				if ! userperm.CheckPerm(d.AppName, d.ClusterName, d.Entname, permApp) {
 					continue
 				}
@@ -164,7 +165,7 @@ func GetServiceRunData(data []app.CloudAppService, user string) []k8s.CloudApp {
 
 		namespace := util.Namespace(d.AppName, d.ResourceName) +
 			d.ServiceName
-		if d.ServiceVersion != "" {
+		if len(d.ServiceVersion) > 0 {
 			namespace = util.Namespace(namespace, d.ServiceVersion)
 		}
 		namespace += strconv.FormatInt(d.ServiceId, 10)
@@ -172,6 +173,7 @@ func GetServiceRunData(data []app.CloudAppService, user string) []k8s.CloudApp {
 		r := cache.ServiceCache.Get(namespace)
 		var v = k8s.CloudApp{}
 		status := util.RedisObj2Obj(r, &v)
+		logs.Info(status)
 		if status {
 			result = append(result, v)
 		} else {
@@ -319,7 +321,7 @@ func serviceToRedis(namespace string, id int64, sv k8s.CloudApp) {
 	cache.ServiceCache.Put(
 		namespace+strconv.FormatInt(id, 10),
 		util.ObjToString(sv),
-		time.Second* 120)
+		time.Minute * 10)
 }
 
 // 2018-01-31 16:04

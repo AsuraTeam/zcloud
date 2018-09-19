@@ -80,7 +80,6 @@
                             <th>应用名称</th>
                             <th>运行状态</th>
                             <th>容器数量</th>
-                            <th>访问地址</th>
                             <th>创建时间</th>
                             <th>操作</th>
                         </tr>
@@ -129,7 +128,7 @@
             },
             "columns": [ // 数据映射
                 {
-                    "data": "AppId", "sWidth": "4%", "mRender": function (data) {
+                    "data": "AppId",  "mRender": function (data) {
                     var html = '<div class="checkbox checkbox-primary ">' +
                         '<input id="checkbox0" onchange="checkBoxChange($(this))" type="checkbox" class="all" value="' + data + '">' +
                         '<label for="checkbox0">' +
@@ -139,16 +138,16 @@
                     return html;
                 }
                 },
-                {"data": "Entname","sWidth": "7%"},
-                {"data": "ClusterName","sWidth": "7%"},
+                {"data": "Entname"},
+                {"data": "ClusterName"},
                 {
-                    "data": "AppName","sWidth": "10%", "mRender": function (data,type,full) {
+                    "data": "AppName", "mRender": function (data,type,full) {
                     return "<div style='height:10px;margin-top: -5px;'>&nbsp;</div><a href='javascript:void(0)' onclick='toAppDetail(\"" + full["AppId"] + "\")'>" + data + "</a>";
                 }
                 },
 
                 {
-                    "data": "Status", "sWidth": "8%","mRender": function (data, type, full) {
+                    "data": "Status", "mRender": function (data, type, full) {
                         if (full["ContainerNumber"] == "0"){
                             return  '<div class="Fail"><div><i class="fa fa-circle"></i><span>&nbsp;已停止</span>&nbsp;</div></div>'
                         }
@@ -168,19 +167,18 @@
                 }
                 },
                 {
-                    "data": "ContainerNumber", "sWidth": "7%","mRender": function (data) {
+                    "data": "ContainerNumber", "mRender": function (data) {
                     return "<div style='height: 10px;margin-top: -5px;margin-left: 10px;'>&nbsp;"+data+"</div>";
                 }
                 },
-                {"data": "Access","sWidth": "12%",},
                 {
-                    "data": "CreateTime", "sWidth": "8%","mRender": function (data) {
+                    "data": "CreateTime", "mRender": function (data) {
                     return "<div style='height: 10px;margin-top: -8px;'>&nbsp;</div>"+data;
                 }
                 },
 
                 {
-                    "sWidth": "5%", "data": "AppId", "mRender": function (data, type, full) {
+                    "data": "AppId", "mRender": function (data, type, full) {
                     return '<button type="button"  title="强制删除,无法连接到k8s集群时可用" onClick="deleteAppSwal(' + data + ',1)" class="delete-template btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>&nbsp;' +
                         '<button type="button"  title="查看yaml文件" onClick="toAppDetail(\'' + full["AppName"] + '\',1)" class="delete-template btn btn-xs rb-btn-oper"><i class="fa fa-usb"></i></button>';
                 }

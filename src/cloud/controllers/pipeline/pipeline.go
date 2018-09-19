@@ -56,7 +56,7 @@ func (this *ControllerPipeline) GetPipelineContainer() {
 func (this *ControllerPipeline) PipelineDetail() {
 	data,_ := getPipeData(this)
 	jobName := this.Ctx.Input.Param("JobName")
-	searchMap := sql.GetSearchMapV("CreateUser", getUser(this))
+	searchMap := sql.SearchMap{}
 	if jobName != ""{
 		searchMap.Put("JobName", jobName)
 	}
@@ -178,8 +178,6 @@ func (this *ControllerPipeline) PipelineHistoryData() {
 	data := make([]pipeline.CloudPipelineLog, 0)
 	searchMap := sql.SearchMap{}
 	key := this.GetString("key")
-	user := getUser(this)
-	searchMap.Put("CreateUser", user)
 
 	searchSql := sql.SearchSql(pipeline.CloudPipelineLog{}, pipeline.SelectCloudPipelineLog, searchMap)
 	if key != "" {
@@ -194,7 +192,7 @@ func (this *ControllerPipeline) PipelineHistoryData() {
 		pipeline.CloudPipelineLog{})
 
 	r := util.ResponseMap(data,
-		sql.CountSearchMap("cloud_pipeline_log", sql.GetSearchMapV("CreateUser", user), len(data), key),
+		sql.CountSearchMap("cloud_pipeline_log", sql.SearchMap{}, len(data), key),
 		this.GetString("draw"))
 	setPipelineJson(this, r)
 }
@@ -238,7 +236,7 @@ func (this *ControllerPipeline) PipelineData() {
 	}
 
 	r := util.ResponseMap(result,
-		sql.CountSearchMap("cloud_pipeline", sql.GetSearchMapV("CreateUser", user), len(data), key),
+		sql.CountSearchMap("cloud_pipeline", sql.SearchMap{}, len(data), key),
 		this.GetString("draw"))
 	setPipelineJson(this, r)
 }

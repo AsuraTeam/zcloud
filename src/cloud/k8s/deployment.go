@@ -256,14 +256,14 @@ func DeletelDeployment(namespace string, isService bool, name string, clusterNam
 // svc {"metadata":{"name":"auto-nginx-3","namespace":"auto-nginx-3--dfsad","selfLink":"/api/v1/namespaces/auto-nginx-3--dfsad/services/auto-nginx-3","uid":"2c62631d-f773-11e7-8d1c-0894ef37b2d2","resourceVersion":"4030027","creationTimestamp":"2018-01-12T08:32:49Z","labels":{"app":"auto-nginx-3"}},"spec":{"ports":[{"name":"auto-nginx-3-0","protocol":"TCP","port":49873,"targetPort":80,"nodePort":49873}],"selector":{"name":"auto-nginx-3"},"clusterIP":"172.16.1.62","type":"NodePort","sessionAffinity":"None","externalTrafficPolicy":"Cluster"},"status":{"loadBalancer":{}}}
 // deploy {"metadata":{"name":"auto-3","namespace":"auto-3--dfsad","selfLink":"/apis/apps/v1beta1/namespaces/auto-3--dfsad/deployments/auto-3","uid":"ee1a2658-f780-11e7-8d1c-0894ef37b2d2","resourceVersion":"4037873","generation":1,"creationTimestamp":"2018-01-12T10:11:18Z","labels":{"name":"auto-3"},"annotations":{"deployment.kubernetes.io/revision":"1"}},"spec":{"replicas":1,"selector":{"matchLabels":{"name":"auto-3"}},"template":{"metadata":{"creationTimestamp":null,"labels":{"name":"auto-3"}},"spec":{"containers":[{"name":"auto-3","image":"nginx:1.10","ports":[{"containerPort":80,"protocol":"TCP"}],"resources":{"limits":{"cpu":"1","memory":"2Gi"},"requests":{"cpu":"1","memory":"2Gi"}},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}},"strategy":{"type":"RollingUpdate","rollingUpdate":{"maxUnavailable":"25%","maxSurge":"25%"}},"revisionHistoryLimit":2,"progressDeadlineSeconds":600},"status":{"observedGeneration":1,"replicas":1,"updatedReplicas":1,"readyReplicas":1,"availableReplicas":1,"conditions":[{"type":"Available","status":"True","lastUpdateTime":"2018-01-12T10:11:20Z","lastTransitionTime":"2018-01-12T10:11:20Z","reason":"MinimumReplicasAvailable","message":"Deployment has minimum availability."},{"type":"Progressing","status":"True","lastUpdateTime":"2018-01-12T10:11:20Z","lastTransitionTime":"2018-01-12T10:11:18Z","reason":"NewReplicaSetAvailable","message":"ReplicaSet \"auto-3-8548fd9d57\" has successfully progressed."}]}}
 // 获取自己创建的namespace应用, 规则是app名加资源名区分
-func GetDeploymentApp(clientset kubernetes.Clientset, namespace string, service string) map[string]CloudApp {
+func GetDeploymentApp(clientSet kubernetes.Clientset, namespace string, service string) map[string]CloudApp {
 	result := map[string]CloudApp{}
 
 	deployments := make([]v1beta12.Deployment, 0)
 	if service != "" {
-		deployments = GetDeploymentsService(namespace, clientset, service)
+		deployments = GetDeploymentsService(namespace, clientSet, service)
 	} else {
-		deployments = GetDeployments(namespace, clientset)
+		deployments = GetDeployments(namespace, clientSet)
 	}
 	//datas := []CloudApp{}
 	for _, v := range deployments {
@@ -280,14 +280,14 @@ func GetDeploymentApp(clientset kubernetes.Clientset, namespace string, service 
 
 		access := make([]string, 0)
 		if service != "" {
-			svc := GetAppService(clientset, v.Namespace, service)
+			svc := GetAppService(clientSet, v.Namespace, service)
 			for _, svcport := range svc.Spec.Ports {
 				a := svc.Name + "." + v.Namespace + ":" + strconv.Itoa(int(svcport.NodePort))
 				access = append(access, a)
 			}
 			data.ServiceNumber = 1
 		} else {
-			svcs, _ := GetServices(clientset, v.Namespace)
+			svcs, _ := GetServices(clientSet, v.Namespace)
 			if len(svcs) > 0 {
 				for _, svc := range svcs[0].Spec.Ports {
 					a := svcs[0].Name + "." + v.Namespace + ":" + strconv.Itoa(int(svc.NodePort))
@@ -299,7 +299,7 @@ func GetDeploymentApp(clientset kubernetes.Clientset, namespace string, service 
 		data.Access = access
 
 		//data.LastUpdateTime = v.Status.
-		pods := GetPods(v.Namespace, clientset)
+		pods := GetPods(v.Namespace, clientSet)
 		if service == "" {
 			data.ContainerNumber = len(pods)
 		}
@@ -322,6 +322,7 @@ func GetDeploymentApp(clientset kubernetes.Clientset, namespace string, service 
 		data.ClusterName = name[1]
 		result[v.Namespace+service] = data
 	}
+
 	return result
 }
 

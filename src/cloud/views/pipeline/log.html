@@ -16,15 +16,17 @@
     var logs = "请稍等";
     logs = logs.replace(/\n/g, "<br>");
     $("#history_log_id").html(logs);
-    if (logs.indexOf("构建成功") == -1 && logs.indexOf("构建失败") == -1 && logs.indexOf("构建完成") == -1){
+    setTimeout(function () {
         timer = setInterval(function () {
             loadLog("{{.data.JobId}}");
             if ( counter > 30 ){
                 clearInterval(timer);
             }
+            setScrollBottom();
         }, 5000);
-    }
-    setScrollBottom();
+    }, 3000);
+
+
 
     /**
      *  让滚动条到底部

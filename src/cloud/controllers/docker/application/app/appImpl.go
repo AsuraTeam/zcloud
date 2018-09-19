@@ -44,6 +44,7 @@ func getCacheAppData(data []app.CloudApp) []k8s.CloudApp {
 			if redisAppData != nil {
 				tempAppData := k8s.CloudApp{}
 				status := util.RedisObj2Obj(redisAppData, &tempAppData)
+				logs.Info("app", status, util.ObjToString(tempAppData))
 				if  status {
 					cloudApps = append(cloudApps, tempAppData)
 				}
@@ -65,7 +66,7 @@ func CacheAppData()  {
 // 将应用数据写入到redis
 func putAppDataToRedis(id int64, app interface{})  {
 	key := strconv.FormatInt(id, 10)
-	cache.AppCache.Put(key, util.ObjToString(app), time.Second * 300)
+	cache.AppCache.Put(key, util.ObjToString(app), time.Minute * 10)
 }
 
 // 2018-09-04 08:06
@@ -75,7 +76,7 @@ func getK8sAppData(data []app.CloudApp)  {
 	for _, d := range data {
 		putAppDataToRedis(d.AppId, d)
 		namespace := util.Namespace(d.AppName, d.ResourceName)
-		sNamespace := namespace + d.ClusterName
+		sNamespace := namespace + d.ClusterName + d.Entname
 		number := 0
 		if _, ok := allData.Get(sNamespace); !ok {
 			c, err := k8s.GetClient(d.ClusterName)
@@ -83,6 +84,7 @@ func getK8sAppData(data []app.CloudApp)  {
 				logs.Error("获取客户端失败", err.Error())
 				continue
 			}
+
 			cloudAppData := k8s.GetDeploymentApp(c, namespace, "")
 			for _, app := range cloudAppData {
 				app.ResourceName = d.ResourceName
@@ -96,6 +98,8 @@ func getK8sAppData(data []app.CloudApp)  {
 				allData.Put(sNamespace, "1")
 				number += app.ContainerNumber
 			}
+
+			allData.Put(sNamespace, "1")
 		}
 	}
 }
