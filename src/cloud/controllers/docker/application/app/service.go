@@ -270,7 +270,9 @@ func (this *ServiceController) ServiceData() {
 		app.CloudAppService{},
 		app.SelectCloudAppService,
 		searchMap)
-
+	if len(searchMap.GetData()) == 0 {
+		searchSql += " where 1=1 "
+	}
 	if key != "" {
 		q := `and (service_name like "%?%") `
 		searchSql += strings.Replace(q, "?", sql.Replace(key), -1)

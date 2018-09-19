@@ -134,11 +134,13 @@ func (this *AppController) ContainerData() {
 		*this.Ctx,
 		sql.SearchMap{})
 
-	//searchMap.Put("CreateUser", getUser(this))
-
 	searchSql := sql.SearchSql(app.CloudContainer{},
 		app.SelectCloudContainer,
 		searchMap)
+
+	if len(searchMap.GetData()) == 0 {
+		searchSql += " where 1=1 "
+	}
 
 	if search != "" {
 		q := ` and container_name like "%?%"`

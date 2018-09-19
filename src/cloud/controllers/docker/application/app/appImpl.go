@@ -23,7 +23,6 @@ func getApp(this *AppController) (app.CloudApp, sql.SearchMap) {
 	return d, searchMap
 }
 
-
 // 将数据写入到应用表中
 // 2018-01-16 17:23
 func saveAppData(service app.CloudAppService) {
@@ -44,8 +43,7 @@ func getCacheAppData(data []app.CloudApp) []k8s.CloudApp {
 			if redisAppData != nil {
 				tempAppData := k8s.CloudApp{}
 				status := util.RedisObj2Obj(redisAppData, &tempAppData)
-				logs.Info("app", status, util.ObjToString(tempAppData))
-				if  status {
+				if status {
 					cloudApps = append(cloudApps, tempAppData)
 				}
 			}
@@ -56,7 +54,7 @@ func getCacheAppData(data []app.CloudApp) []k8s.CloudApp {
 
 // 2018-02-22 18:18
 // 任务计划app数据缓存
-func CacheAppData()  {
+func CacheAppData() {
 	data := make([]app.CloudApp, 0)
 	sql.Raw(app.SelectCloudApp).QueryRows(&data)
 	getK8sAppData(data)
@@ -64,43 +62,34 @@ func CacheAppData()  {
 
 // 2018-02-27 11:21
 // 将应用数据写入到redis
-func putAppDataToRedis(id int64, app interface{})  {
+func putAppDataToRedis(id int64, app interface{}) {
 	key := strconv.FormatInt(id, 10)
-	cache.AppCache.Put(key, util.ObjToString(app), time.Minute * 10)
+	cache.AppCache.Put(key, util.ObjToString(app), time.Minute*10)
 }
 
 // 2018-09-04 08:06
 // 生产应用缓存数据
-func getK8sAppData(data []app.CloudApp)  {
-	allData := util.Lock{}
+func getK8sAppData(data []app.CloudApp) {
+
 	for _, d := range data {
-		putAppDataToRedis(d.AppId, d)
+		//putAppDataToRedis(d.AppId, d)
 		namespace := util.Namespace(d.AppName, d.ResourceName)
-		sNamespace := namespace + d.ClusterName + d.Entname
-		number := 0
-		if _, ok := allData.Get(sNamespace); !ok {
-			c, err := k8s.GetClient(d.ClusterName)
-			if err != nil {
-				logs.Error("获取客户端失败", err.Error())
-				continue
-			}
-
-			cloudAppData := k8s.GetDeploymentApp(c, namespace, "")
-			for _, app := range cloudAppData {
-				app.ResourceName = d.ResourceName
-				app.AppId = d.AppId
-				app.Entname = d.Entname
-				app.ClusterName = d.ClusterName
-				app.CreateUser = d.CreateUser
-				if cache.AppCacheErr == nil {
-					putAppDataToRedis(app.AppId, app)
-				}
-				allData.Put(sNamespace, "1")
-				number += app.ContainerNumber
-			}
-
-			allData.Put(sNamespace, "1")
+		c, err := k8s.GetClient(d.ClusterName)
+		if err != nil {
+			logs.Error("获取客户端失败", err.Error())
+			continue
 		}
+
+		cloudAppData := k8s.GetDeploymentApp(c, namespace, "")
+		for _, app := range cloudAppData {
+			app.ResourceName = d.ResourceName
+			app.AppId = d.AppId
+			app.Entname = d.Entname
+			app.ClusterName = d.ClusterName
+			app.CreateUser = d.CreateUser
+			putAppDataToRedis(app.AppId, app)
+		}
+
 	}
 }
 
@@ -140,13 +129,13 @@ func makeImageTags(tag string) string {
 
 // 2018-02-26 09:32
 // 获取重建的应用信息
-func getRedeployApp(v string, user string) ([]app.CloudAppName,bool) {
+func getRedeployApp(v string, user string) ([]app.CloudAppName, bool) {
 	searchMap := sql.SearchMap{}
 	searchMap.Put("AppId", v)
 	searchMap.Put("CreateUser", user)
 	r := getAppDataQ(searchMap)
 	if len(r) == 0 {
-		return []app.CloudAppName{},false
+		return []app.CloudAppName{}, false
 	}
 	return r, true
 }
@@ -155,7 +144,7 @@ func getRedeployApp(v string, user string) ([]app.CloudAppName,bool) {
 // 获取重建应用的服务信息
 func getRedeployService(v string, user string) ([]app.CloudAppService, bool) {
 	logs.Info("开始重建服务", util.ObjToString(v))
-	data,status := getRedeployApp(v, user)
+	data, status := getRedeployApp(v, user)
 	if ! status {
 		return []app.CloudAppService{}, false
 	}
@@ -193,7 +182,7 @@ func GetAppHtml(cluster string, username string) string {
 
 // 2018-02-27 11:45
 // 加载应用数据
-func selectAppData(searchMap sql.SearchMap)[]app.CloudApp  {
+func selectAppData(searchMap sql.SearchMap) []app.CloudApp {
 	data := make([]app.CloudApp, 0)
 	searchSql := sql.SearchSql(app.CloudApp{}, app.SelectCloudApp, searchMap)
 	sql.Raw(searchSql).QueryRows(&data)

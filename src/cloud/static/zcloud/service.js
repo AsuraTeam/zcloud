@@ -1104,6 +1104,9 @@ function deleteContainer(id) {
 
 
 function loadServiceData(key,name) {
+    if(!key){
+        key = $("#search-service-name-id").val();
+    }
     if (!key) {
         key = ""
     } else {

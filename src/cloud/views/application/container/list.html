@@ -78,7 +78,7 @@
                         </button>
                     </div>
                     <div class="col-md-2 pull-right" style="margin-top:0px;">
-                        <input type="text" onkeyup="loadContainerData($(this).val())" class="form-control"
+                        <input type="text" onkeyup="loadContainerData($(this).val())" class="form-control" id="search-c-name-id"
                                placeholder="搜索名称">
                         <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
                     </div>
@@ -181,6 +181,9 @@
     });
     var table;
     function loadContainerData(key, app, service, init) {
+        if(!key){
+            key = $("#search-c-name-id").val();
+        }
         key = getValue(key);
         if (key != "" && key.length < 4) {
             return
