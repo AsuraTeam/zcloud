@@ -57,7 +57,7 @@
                         </button>
                     </div>
                     <div class="col-md-3 pull-right">
-                    <input type="text" onkeyup="loadAppData($(this).val())" class="form-control"
+                    <input type="text" onkeyup="loadAppData($(this).val())" class="form-control" id="search-app-name-id"
                     placeholder="搜索名称">
                     <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
                     </div>
@@ -101,11 +101,14 @@
 <script>
 
 
-    function loadAppData(ip) {
-        if (!ip) {
-            ip = ""
+    function loadAppData(key) {
+        if(!key){
+            key = $("#search-app-name-id").val();
+        }
+        if (!key) {
+            key = ""
         } else {
-            if (ip.length < 4) {
+            if (key.length < 4) {
                 return
             }
         }
@@ -123,7 +126,7 @@
             "bLengthChange":false,
             "displayLength": 10, // 默认长度
             "ajax": { // 请求地址
-                "url": "/api/app?t=" + new Date().getTime() + "&ip=" + ip + "&cluster=" + getClusterName(),
+                "url": "/api/app?t=" + new Date().getTime() + "&key=" + key + "&cluster=" + getClusterName(),
                 "type": 'get'
             },
             "columns": [ // 数据映射

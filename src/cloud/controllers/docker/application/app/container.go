@@ -138,10 +138,7 @@ func (this *AppController) ContainerData() {
 		app.SelectCloudContainer,
 		searchMap)
 
-	if len(searchMap.GetData()) == 0 {
-		searchSql += " where 1=1 "
-	}
-
+	searchSql = sql.GetWhere(searchSql, searchMap)
 	if search != "" {
 		q := ` and container_name like "%?%"`
 		searchSql += strings.Replace(q, "?", sql.Replace(search), -1)

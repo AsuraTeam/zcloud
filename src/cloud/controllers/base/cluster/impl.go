@@ -11,18 +11,22 @@ import (
 	"cloud/sql"
 	"encoding/json"
 	"cloud/cache"
+	"github.com/astaxie/beego/logs"
 )
 
 // 2018-02-19 09:37
 // 获取集群数据
 func GetClusterDetailData(name string) cluster.CloudClusterDetail {
+	logs.Info(util.GetDate())
 	detail := cluster.CloudClusterDetail{}
 	r := cache.ClusterCache.Get("detail"+name)
 	status := util.RedisObj2Obj(r, &detail)
 	if ! status {
 		go CacheClusterDetailData(name)
 	}
+	logs.Info(util.GetDate())
 	detail.Health = k8s.GetClusterStatus(name)
+	logs.Info(util.GetDate())
 	return detail
 }
 

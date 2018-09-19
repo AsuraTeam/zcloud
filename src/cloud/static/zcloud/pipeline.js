@@ -250,23 +250,23 @@ function loadPipelineHistoryData(key) {
         },
         "columns": [ // 数据映射
             {
-                "data": "PipelineName", "sWidth": "8%", "mRender": function (data, type, full) {
+                "data": "PipelineName", "mRender": function (data, type, full) {
                     var jobname = full["JobName"];
                 return "<a href='/pipeline/detail/" + jobname+ "?JobName="+jobname+"'>" + data + "</a><br>" + full["ClusterName"]
             }
             },
             {
-                "data": "ServiceName", "sWidth": "9%", "mRender": function (data, type, full) {
+                "data": "ServiceName",  "mRender": function (data, type, full) {
                 return "<a href='/application/app/list'>" + full["AppName"] + "</a><br><a style='color:#ffa91c ;' href='/application/service/list'>" + data+"</a>";
             }
             },
+            // {
+            //     "data": "JobName",  "mRender": function (data) {
+            //     return "<div style='word-wrap:break-word'>" + data + "</div>";
+            // }
+            // },
             {
-                "data": "JobName", "sWidth": "17%", "mRender": function (data) {
-                return "<div style='word-wrap:break-word'>" + data + "</div>";
-            }
-            },
-            {
-                "data": "Status", "sWidth": "7%", "mRender": function (data) {
+                "data": "Status", "mRender": function (data) {
                 if (data == "执行失败") {
                     return "<span class='Fail'>" + data + "</span>"
                 }
@@ -274,14 +274,15 @@ function loadPipelineHistoryData(key) {
             }
             },
             {
-                "data": "RunTime", "sWidth": "8%", "mRender": function (data) {
+                "data": "RunTime", "mRender": function (data) {
                 return "<span class='left10'>" + data + "</span>";
             }
             },
-            {"data": "StartTime", "sWidth": "8%"},
-            {"data": "EndTime", "sWidth": "7%"},
+            {"data": "StartTime"},
+            {"data": "EndTime"},
+            {"data": "CreateUser"},
             {
-                "data": "JobId", "sWidth": "9%", "mRender": function (data, type,full) {
+                "data": "JobId",  "mRender": function (data, type,full) {
                 var r = '<button type="button"  title="流水线日志" onClick="jobnameLog(' + data + ',\''+full["JobName"]+'\')" class="delete-groups btn btn-xs rb-btn-oper left10"><i class="fa fa-hospital-o"></i></button>&nbsp;' +
                     '<button type="button"  title="Dockerfile" onClick="showPipelineDockerfile(\'' + full["JobName"] + '\')" class="delete-groups btn btn-xs rb-btn-oper "><i class=" mdi mdi-file-tree"></i></button>&nbsp;'
                 return r;

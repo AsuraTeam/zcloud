@@ -317,16 +317,16 @@ func (this *AppController) AppDelete() {
 func (this *AppController) AppData() {
 	data := make([]app.CloudApp, 0)
 	searchMap := sql.SearchMap{}
-	ip := this.GetString("ip")
+	key := this.GetString("key")
 	searchMap = sql.GetSearchMapValue(
 		sql.MKeyV("AppName"),
 		*this.Ctx, searchMap)
 
-	//searchMap.Put("CreateUser", getUser(this))
 	searchSql := sql.SearchSql(app.CloudApp{}, app.SelectCloudApp, searchMap)
-	if ip != "" {
+	searchSql = sql.GetWhere(searchSql, searchMap)
+	if key != "" {
 		q := ` and (app_name like "%?%")`
-		searchSql += strings.Replace(q, "?", sql.Replace(ip), -1)
+		searchSql += strings.Replace(q, "?", sql.Replace(key), -1)
 	}
 
 	sql.OrderByPagingSql(searchSql, "app_id",

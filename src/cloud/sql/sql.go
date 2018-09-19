@@ -188,6 +188,13 @@ func UpdateSql(obj interface{}, sql string, data SearchMap, extCloumnt string) s
 	return getReturnSql(tempSql)
 }
 
+func GetWhere(searchSql string, searchMap SearchMap) string  {
+	if len(searchMap.GetData()) == 0 {
+		searchSql += " where 1=1 "
+	}
+	return  searchSql
+}
+
 func getSearchSql(obj interface{}, sql string, data SearchMap) string {
 	searchMap := data.GetData()
 	sql += " where 1=1 and "
