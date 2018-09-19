@@ -16,17 +16,15 @@
     var logs = "请稍等";
     logs = logs.replace(/\n/g, "<br>");
     $("#history_log_id").html(logs);
-    setTimeout(function () {
         timer = setInterval(function () {
             loadLog("{{.data.JobId}}");
             if ( counter > 30 ){
                 clearInterval(timer);
             }
-            setScrollBottom();
+
         }, 5000);
-    }, 3000);
 
-
+    setScrollBottom();
 
     /**
      *  让滚动条到底部
@@ -46,7 +44,6 @@
         if(id==0){
             $("#history_log_id").html("<span class='left80 text-danger top10' ><p><p><p style='margin-left: 54px;'>无法找到构建日志!</span>");
             clearInterval(timer);
-            loadLog(id)
             return
         }
         var url = "/api/ci/job/logs/" + id;
@@ -56,7 +53,6 @@
 
         if (result.indexOf("构建完成") != -1 || result.indexOf("构建失败") != -1 || result.indexOf("构建成功") != -1){
             clearInterval(timer);
-            loadLog(id)
             return;
         }
         $("#history_log_id").append("<div style='align-content: center;'><br><img src='/static/img/logloading.gif' /><br></div>");

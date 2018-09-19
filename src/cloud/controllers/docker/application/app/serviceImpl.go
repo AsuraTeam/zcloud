@@ -173,7 +173,6 @@ func GetServiceRunData(data []app.CloudAppService, user string) []k8s.CloudApp {
 		r := cache.ServiceCache.Get(namespace)
 		var v = k8s.CloudApp{}
 		status := util.RedisObj2Obj(r, &v)
-		logs.Info(status)
 		if status {
 			result = append(result, v)
 		} else {

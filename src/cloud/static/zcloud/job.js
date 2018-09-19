@@ -102,7 +102,7 @@ function loadJobData(key) {
         "serverSide": true,
         "bInfo": true, //是否显示页脚信息，DataTables插件左下角显示记录数
         "scrollX": true, // 是否允许左右滑动
-        "displayLength": 10, // 默认长度
+        "displayLength": 100, // 默认长度
         "ajax": { // 请求地址
             "url": "/api/ci/job?t=" + new Date().getTime() + "&search=" + key,
             "type": 'get'

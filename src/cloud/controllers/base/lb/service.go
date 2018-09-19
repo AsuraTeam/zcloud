@@ -139,8 +139,8 @@ func (this *ServiceController) ServiceData() {
 		return
 	}
 
-	user := getServiceUser(this)
-	searchMap.Put("CreateUser", user)
+	//user := getServiceUser(this)
+	//searchMap.Put("CreateUser", user)
 	if domain != "" {
 		searchMap.Put("Domain", domain)
 	}
@@ -157,7 +157,7 @@ func (this *ServiceController) ServiceData() {
 
 	sql.Raw(searchSql).QueryRows(&data)
 	r := util.ResponseMap(data,
-		sql.CountSearchMap("cloud_lb_service", sql.GetSearchMapV("CreateUser", user), len(data), key),
+		sql.CountSearchMap("cloud_lb_service", sql.SearchMap{}, len(data), key),
 		this.GetString("draw"))
 	setServiceJson(this, r)
 }
