@@ -164,7 +164,7 @@ func GetServiceRunData(data []app.CloudAppService, user string) []k8s.CloudApp {
 		}
 
 		namespace := util.Namespace(d.AppName, d.ResourceName) +
-			d.ServiceName
+			d.ServiceName  + d.Entname + d.ClusterName
 		if len(d.ServiceVersion) > 0 {
 			namespace = util.Namespace(namespace, d.ServiceVersion)
 		}
@@ -336,10 +336,11 @@ func GoServerThread(data []app.CloudAppService) {
 	for {
 		result = make([]interface{}, 0)
 		for _, d := range data {
-			namespace := util.Namespace(d.AppName, d.ResourceName) + d.ServiceName
+			namespace := util.Namespace(d.AppName, d.ResourceName) + d.ServiceName + d.Entname + d.ClusterName
 			if d.ServiceVersion != "" {
 				namespace = util.Namespace(namespace, d.ServiceVersion)
 			}
+
 			v, ok := appDatas.Get(namespace)
 			if ok {
 				sv := v.(k8s.CloudApp)
@@ -354,7 +355,7 @@ func GoServerThread(data []app.CloudAppService) {
 				r := cache.ServiceCache.Get(namespace + strconv.FormatInt(d.ServiceId, 10))
 				s := util.RedisObj2Obj(r, &sv)
 				now := time.Now().Unix()
-				if s && now-sv.CheckTime > 300 {
+				if s && now-sv.CheckTime > 60 * 15 {
 					sv.Status = "False"
 					sv.AvailableReplicas = 0
 					serviceToRedis(namespace, d.ServiceId, sv)
@@ -377,7 +378,7 @@ func GoServerThread(data []app.CloudAppService) {
 func goServiceData(d app.CloudAppService, appDatas *util.Lock) {
 
 	namespace := util.Namespace(d.AppName, d.ResourceName)
-	sname := namespace + d.ServiceName
+	sname := namespace + d.ServiceName + d.Entname + d.ClusterName
 	if d.ServiceVersion != "" {
 		sname = util.Namespace(sname, d.ServiceVersion)
 	}

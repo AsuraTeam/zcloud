@@ -84,6 +84,7 @@ func getLbServiceData() []CloudLbService {
 // 创建nginx配置信息
 // 2018-02-03 07:48
 func makeNgxinConfMap(clusterName string, nginxConfigMap []ConfigureData) {
+	logs.Info("开始更新configmap", clusterName)
 	serviceParam := ServiceParam{}
 	clientSet, _ := GetClient(clusterName)
 	cl2, _ := GetYamlClient(clusterName, "", "v1", "api")
@@ -92,6 +93,7 @@ func makeNgxinConfMap(clusterName string, nginxConfigMap []ConfigureData) {
 	serviceParam.ConfigureData = nginxConfigMap
 	serviceParam.Namespace = nginxLbNamespace
 	CreateConfigmap(serviceParam)
+	logs.Info("结束更新configmap", clusterName, util.ObjToString(nginxConfigMap))
 }
 
 // 2018-02-03 07:51
@@ -150,25 +152,38 @@ func makePodUpstream(client kubernetes.Clientset, serviceName string, namespace 
 		for _, add := range sets.Addresses {
 			if len(sets.Ports) > 0 {
 				port := strconv.Itoa(int(sets.Ports[0].Port))
-				ips = append(ips, "    server "+add.IP+":"+port+" max_fails=8 fail_timeout=3s;")
+				ips = append(ips, "    server "+add.IP+":"+port+" max_fails=5 fail_timeout=3s;")
 			}
 		}
 	}
 	return ips
 }
 
+var NGINX_NODES = util.Lock{}
+
 // 2018-02-02 08:22
 // 生成node节点方式的upstream
-func makeNodeUpstream(clientset kubernetes.Clientset, svcPort string, ips []string) []string {
-	nodes := GetNodes(clientset, "lb=nginx")
-	if len(nodes) == 0 {
-		nodes = GetNodes(clientset, "")
-	}
-	for _, v := range nodes {
-		for _, c := range v.Status.Conditions {
-			if c.Type == "Ready" && c.Status == "True" {
-				ips = append(ips, "    server "+v.Name+":"+svcPort+";")
+func makeNodeUpstream(clientset kubernetes.Clientset, svcPort string, ips []string, cluster string) []string {
+	if _, ok := NGINX_NODES.Get(cluster) ; !ok {
+		nodes := GetNodes(clientset, "lb=nginx")
+		if len(nodes) == 0 {
+			nodes = GetNodes(clientset, "")
+		}
+		ipAdds := make([]string, 0)
+		for _, v := range nodes {
+			for _, c := range v.Status.Conditions {
+				if c.Type == "Ready" && c.Status == "True" {
+					ipAdds = append(ipAdds, v.Name)
+				}
 			}
+		}
+		logs.Info("生成集群node信息", cluster)
+		NGINX_NODES.Put(cluster, ipAdds)
+	}
+	ipAdds, ok := NGINX_NODES.Get(cluster)
+	if ok {
+		for _, ip := range ipAdds.([]string) {
+			ips = append(ips, "    server "+ip+":"+svcPort+";")
 		}
 	}
 	return ips
@@ -200,10 +215,10 @@ func getServiceName(v CloudLbService) string {
 
 // 2018-02-16 14:43
 // 获取服务的ip地址和端口
-func getServiceIps(client kubernetes.Clientset, svc v12.Service, ips []string) []string {
+func getServiceIps(client kubernetes.Clientset, svc v12.Service, ips []string, cluster string) []string {
 	if len(svc.Spec.Ports) > 0 {
 		port := strconv.Itoa(int(svc.Spec.Ports[0].NodePort))
-		ips = makeNodeUpstream(client, port, ips)
+		ips = makeNodeUpstream(client, port, ips, cluster)
 	}
 	return ips
 }
@@ -232,13 +247,13 @@ func getFlowTempIps(tempIps []string, percent int, ips []string) []string {
 
 // 2018-02-16 14:61
 // 获取流量切入服务ip和端口
-func getFlowServicePort(v CloudLbService, client kubernetes.Clientset, ips []string) []string {
+func getFlowServicePort(v CloudLbService, client kubernetes.Clientset, ips []string, cluster string) []string {
 	percent := v.Percent
 	logs.Info("获取流量切入", percent)
 	if percent > 0 {
 		namespace := util.Namespace(v.AppName, v.ResourceName)
 		svc := GetServicePort(client, namespace, v.FlowServiceName)
-		tempIps := getServiceIps(client, *svc, ips)
+		tempIps := getServiceIps(client, *svc, ips, cluster)
 		logs.Info("获取切入流量", namespace, v.FlowServiceName,tempIps)
 		ips = getFlowTempIps(tempIps, percent, ips)
 	}
@@ -258,6 +273,7 @@ func getLbNginxUpstream(client kubernetes.Clientset) (bool, map[string]string) {
 // 2018-02-17 21:10
 // 更新nginx的upstream
 func UpdateNginxLbUpstream(param UpdateLbNginxUpstream) error{
+	cluster := param.ClusterName
 	cl, err := GetClient(param.ClusterName)
 	if err != nil {
 		logs.Error("获取k8s客户端失败", err)
@@ -271,9 +287,9 @@ func UpdateNginxLbUpstream(param UpdateLbNginxUpstream) error{
 
 	ips := make([]string, 0)
 	//  切入流量的地址
-	ips = getFlowServicePort(param.V, cl, ips)
+	ips = getFlowServicePort(param.V, cl, ips, cluster)
 	svc := GetServicePort(cl, param.Namespace, util.Namespace(param.V.ServiceName, param.V.ServiceVersion))
-	ips = getServiceIps(cl, *svc, ips)
+	ips = getServiceIps(cl, *svc, ips, cluster)
 
 	upstreamTemp := strings.Replace(upstreamTemplate, "DOMAIN", param.Domain, -1)
 	upstreamTemp = strings.Replace(upstreamTemp, "POD", strings.Join(ips, "\n"), -1)
@@ -324,7 +340,7 @@ func CreateNginxConf(confType string) {
 	clusters := getClusters(data)
 
 	certLock := util.Lock{}
-
+	logs.Info("获取到集群信息", util.ObjToString(clusters))
 	for _, cluster := range clusters {
 		var upstreamTemp string
 		var vhostTemp string
@@ -353,10 +369,10 @@ func CreateNginxConf(confType string) {
 				ips = makePodUpstream(client, serviceName, namespace)
 			} else {
 				//  切入流量的地址
-				ips = getFlowServicePort(v, client, ips)
+				ips = getFlowServicePort(v, client, ips, cluster)
 				svc := GetServicePort(client, namespace, serviceName)
 				logs.Info("获取到负载均衡版本号", serviceName, util.ObjToString(svc))
-				ips = getServiceIps(client, *svc, ips)
+				ips = getServiceIps(client, *svc, ips, cluster)
 			}
 			logs.Info("获取到IPs", util.ObjToString(ips))
 			if len(ips) == 0 {
@@ -384,7 +400,9 @@ func CreateNginxConf(confType string) {
 			configDbName[v.Domain+".conf"] = vhostTemp
 			writeNginxConfToDb(v, nginxMap, vhostTemp)
 		}
+		logs.Info("开始makeNginxConfigMap...", cluster)
 		makeNginxConfigMap(configDbName, upstreamDbName, sslDbName, cluster, confType)
+		logs.Info("结束makeNginxConfigMap...", cluster)
 	}
 }
 
@@ -432,7 +450,9 @@ func selectNginxConfFromDb() util.Lock {
 func getClusters(data []CloudLbService) []string {
 	result := make([]string, 0)
 	for _, v := range data {
-		result = append(result, v.ClusterName)
+		if  ! util.ListExistsString(result, v.ClusterName) {
+			result = append(result, v.ClusterName)
+		}
 	}
 	return result
 }

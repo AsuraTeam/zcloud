@@ -84,7 +84,7 @@ func (this *AppController) AppScale() {
 		responseAppData(nil, this, d.AppName, "操作成功")
 		return
 	}
-	responseAppData(nil, this, d.AppName, "操作成操作失败")
+	responseAppData(nil, this, d.AppName, "操作失败")
 }
 
 // 2018-02-03 19:03
