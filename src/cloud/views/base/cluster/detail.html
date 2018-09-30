@@ -512,11 +512,13 @@
         for (var i = 0; i < health.length; i++) {
             html += "<tr>";
             html += "<td><span class='m-l-15'>" + health[i]["Name"] + "</span></td>";
-            html += "<td><span class='m-l-15'>" + health[i]["Message"] + "</span></td>";
             var status =  health[i]["Status"].replace(/"/g,"");
             if(status=="True"){
+
+                html += "<td><span class='m-l-15'>" + health[i]["Message"] + "</span></td>";
                 html += "<td><span class='m-l-15 Running'><i class='fa fa-circle m-r-10'></i>" + status + "</span></td>";
             }else{
+                html += "<td><span class='m-l-15 text-danger'>" + health[i]["Message"] + "</span></td>";
                 html += "<td><span class='m-l-15 Fail'><i class='fa fa-circle m-r-10'></i>" + status + "</span></td>";
             }
             html += "</tr>"

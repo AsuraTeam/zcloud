@@ -12,21 +12,20 @@ import (
 	"encoding/json"
 	"cloud/cache"
 	"github.com/astaxie/beego/logs"
+	"github.com/garyburd/redigo/redis"
 )
 
 // 2018-02-19 09:37
 // 获取集群数据
 func GetClusterDetailData(name string) cluster.CloudClusterDetail {
-	logs.Info(util.GetDate())
 	detail := cluster.CloudClusterDetail{}
-	r := cache.ClusterCache.Get("detail"+name)
-	status := util.RedisObj2Obj(r, &detail)
+	status := util.RedisObj2Obj(cache.ClusterCache.Get("detail"+name), &detail)
 	if ! status {
 		go CacheClusterDetailData(name)
 	}
-	logs.Info(util.GetDate())
-	detail.Health = k8s.GetClusterStatus(name)
-	logs.Info(util.GetDate())
+	r := cache.ClusterComponentStatusesCache.Get(name)
+	health, _ := redis.String(r, nil)
+	detail.Health = health
 	return detail
 }
 
@@ -196,7 +195,18 @@ func getUsername(this *ClusterController) string {
 	return util.GetUser(this.GetSession("username"))
 }
 
-
+// 2018-02-20 08:46
+// 缓存集群信息到redis中,不用每次查库
+// 任务计划自动更新数据
+// 每一分钟一次
+func CacheClusterHealthData() {
+	logs.Info("生成组件健康数据")
+	data := make([]cluster.CloudClusterDetail, 0)
+	sql.Raw(cluster.SelectCloudCluster).QueryRows(&data)
+	for _, k := range data {
+		go k8s.GetClusterStatus(k.ClusterName)
+	}
+}
 
 // 2018-02-19 08:46
 // 缓存集群信息到redis中,不用每次查库
@@ -208,6 +218,7 @@ func CacheClusterData() {
 	for _, k := range data {
 		go CacheClusterDetailData(k.ClusterName)
 		go GetClusterInfo(k, &cData)
+
 	}
 	counter := 0
 	for {

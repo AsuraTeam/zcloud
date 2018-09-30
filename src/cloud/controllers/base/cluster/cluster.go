@@ -56,7 +56,7 @@ func (this *ClusterController) Add() {
 }
 
 
-// @router /base/cluster/detail [get]
+// @router /base/cluster/detail/:hi(.*) [get]
 func (this *ClusterController) DetailPage() {
 	name := this.Ctx.Input.Param(":hi")
 	if len(name) < 1 {

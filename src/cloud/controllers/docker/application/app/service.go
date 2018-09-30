@@ -164,10 +164,18 @@ func (this *ServiceController) ServiceSave() {
 		this.Ctx.WriteString("参数错误" + err.Error())
 		return
 	}
-	util.SetPublicData(d, getServiceUser(this), &d)
+	oldUser := d.CreateUser
+	user := getServiceUser(this)
+
+	util.SetPublicData(d, user, &d)
+	if user == "admin" {
+		if len(oldUser) > 0 && oldUser != "admin"{
+			d.CreateUser = oldUser
+		}
+	}
 
 	serviceData := GetServiceData(d.ServiceName, d.ClusterName, d.AppName)
-
+	logs.Info("创建服务数据", util.ObjToString(d))
 	if serviceData.ServiceId > 0 {
 		logs.Error("创建服务失败", "该服务已经存在")
 		responseData(err, this, d.ServiceName, "该服务已经存在")
@@ -175,7 +183,7 @@ func (this *ServiceController) ServiceSave() {
 	}
 
 	status, msg := k8s.CheckQuota(
-		getServiceUser(this), d.Replicas,
+		d.CreateUser, d.Replicas,
 		int64(d.Cpu), d.Memory,
 		d.ResourceName)
 
@@ -193,12 +201,12 @@ func (this *ServiceController) ServiceSave() {
 	}
 
 	if len(d.Domain) > 0 {
-		createLbConfig(d, d.ClusterName, d.Entname, d.AppName, d.Domain, getServiceUser(this), d.ResourceName)
+		createLbConfig(d, d.ClusterName, d.Entname, d.AppName, d.Domain, d.CreateUser, d.ResourceName)
 		go k8s.CreateNginxConf("")
 	}
 
 	data, msg := util.SaveResponse(nil, "保存成功")
-	util.SaveOperLog(getServiceUser(this), *this.Ctx,
+	util.SaveOperLog(d.CreateUser, *this.Ctx,
 		"保存Service 配置 "+msg, d.ServiceName)
 	setServiceJson(this, data)
 	saveAppData(d)

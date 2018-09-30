@@ -14,6 +14,8 @@ var (
 	AppCache, AppCacheErr = util.RedisCacheClient("cloud_k8s_app_")
 	// 集群数据缓存
 	ClusterCache, ClusterCacheErr = util.RedisCacheClient("cloud_cluster_cache_")
+	// 集群组件监控状态数据
+	ClusterComponentStatusesCache, _ = util.RedisCacheClient("cloud_component_statuses_cache_")
 	// 自动扩容缓存
     AutoScaleCache, AutoScaleCacheErr = util.RedisCacheClient("cloud_auto_scale_")
 	// 仓库认证缓存数据

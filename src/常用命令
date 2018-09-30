@@ -1,0 +1,8 @@
+systemctl restart flanneld
+systemctl restart docker
+systemctl restart kubelet
+systemctl restart kube-proxy
+systemctl enable kube-proxy
+systemctl enable docker
+systemctl enable kubelet
+systemctl enable flanneld

@@ -169,10 +169,10 @@ func GetServiceRunData(data []app.CloudAppService, user string) []k8s.CloudApp {
 			namespace = util.Namespace(namespace, d.ServiceVersion)
 		}
 		namespace += strconv.FormatInt(d.ServiceId, 10)
-
 		r := cache.ServiceCache.Get(namespace)
 		var v = k8s.CloudApp{}
 		status := util.RedisObj2Obj(r, &v)
+
 		if status {
 			result = append(result, v)
 		} else {

@@ -46,6 +46,12 @@ func CronStart() {
 	cron.AddFunc("1 */5 * * * ?", func() {
 		cluster.CacheClusterData()
 	}, "CacheClusterData")
+
+	// 集群数据写入缓存
+	cron.AddFunc("1 */1 * * * ?", func() {
+		cluster.CacheClusterHealthData()
+	}, "CacheClusterHealthData")
+
 	// 监控自动扩容
 	cron.AddFunc("*/30 * * * * ?", func() {
 		monitor.CronAutoScale()

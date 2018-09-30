@@ -4,6 +4,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"cloud/util"
 	"github.com/astaxie/beego/logs"
+	"cloud/cache"
+	"time"
 )
 
 type ClusterHealth struct {
@@ -38,5 +40,6 @@ func GetClusterStatus(clusterName string) string {
 			health = append(health, temp)
 		}
 	}
+	cache.ClusterComponentStatusesCache.Put(clusterName, util.ObjToString(health), time.Minute * 10)
 	return util.ObjToString(health)
 }

@@ -60,6 +60,9 @@ func GetMinTime(ctime string) string {
 		}
 	}
 	sort.Ints(sortt)
+	if len(sortt) == 0 {
+		return "未知"
+	}
 	tr := timeMap.GetV(strconv.Itoa(sortt[0]))
 	var r string
 	max := 0
