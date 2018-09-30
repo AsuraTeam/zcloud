@@ -145,6 +145,12 @@ type ServiceParam struct {
 	TerminationSeconds int
     // session 亲和性
 	SessionAffinity  string
+	// kafka 地址
+	Kafka string
+	// 日志路径,文件或目录,目录以/结尾
+	LogPath string
+	// 环境名称
+	Ent string
 }
 
 // 配置服务健康检查使用的

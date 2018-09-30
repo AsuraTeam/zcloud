@@ -759,6 +759,12 @@ func CreateServicePod(param ServiceParam) (string, error) {
 		},
 	}
 
+	// 绑定filebeat容器
+	if len(param.Kafka) > 0 && len(param.LogPath) > 0 {
+		filebeatContainer := CreateFilebeatConfig(param)
+		v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["containers"].([]map[string]interface{})[1] = filebeatContainer
+	}
+
 	healthdata, ok := getHealthData(param.HealthData)
 	if ok {
 		// readinessProbe

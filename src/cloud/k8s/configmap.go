@@ -99,6 +99,50 @@ func getConfigKey(keys string) []map[string]interface{} {
 }
 
 // 加工磁盘卷数据
+// 2018-09-30 20:57 -6
+func getFilebeatVolumes(storagesData string) ([]map[string]interface{}, []map[string]interface{}) {
+	if storagesData == ""{
+		storagesData = `[]`
+	}
+	storages := make([]map[string]interface{}, 0)
+	voluments := make([]map[string]interface{}, 0)
+	data := make([]StorageData, 0)
+	err := json.Unmarshal([]byte(storagesData), &data)
+	if err != nil {
+		logs.Error("处理Volumes失败", err)
+		return storages, voluments
+	}
+
+	for k, p := range data {
+		data := make(map[string]interface{}, 0)
+		is := false
+		// 使用物理机的存储
+		if len(p.HostPath) > 0 && strings.Contains(p.HostPath, "/") {
+			data = map[string]interface{}{
+				"name": "volume-filebeat-" + strconv.Itoa(k),
+				"emptyDir": map[string]interface{}{
+				},
+			}
+
+			is = true
+		}
+
+		if ! is {
+			continue
+		}
+		volumeMountsData := map[string]interface{}{
+			"name":      "volume-filebeat-" + strconv.Itoa(k),
+			"mountPath": p.ContainerPath,
+		}
+		storages = append(storages, data)
+		voluments = append(voluments, volumeMountsData)
+	}
+
+	fmt.Println(storages, voluments)
+	return storages, voluments
+}
+
+// 加工磁盘卷数据
 // 2018-01-11 13::57
 func getVolumes(storagesData string, configData []ConfigureData, param ServiceParam) ([]map[string]interface{}, []map[string]interface{}) {
 	if storagesData == ""{
@@ -106,7 +150,7 @@ func getVolumes(storagesData string, configData []ConfigureData, param ServicePa
 	}
 	storages := make([]map[string]interface{}, 0)
 	voluments := make([]map[string]interface{}, 0)
-	data := []StorageData{}
+	data := make([]StorageData, 0)
 	err := json.Unmarshal([]byte(storagesData), &data)
 	if err != nil {
 		logs.Error("处理Volumes失败", err)
@@ -228,7 +272,7 @@ func WriteMountDataToDb(configname string, dataName string, cluster string, name
 	if dataName != "" {
 		searchMap.Put("DataName", dataName)
 	}
-	mounts := []CloudConfigureMount{}
+	mounts := make([]CloudConfigureMount, 0)
 	sql.Raw(sql.SearchSql(mountData, SelectCloudConfigureMount, searchMap)).QueryRows(&mounts)
 	var action string
 	if len(mounts) > 0 {
