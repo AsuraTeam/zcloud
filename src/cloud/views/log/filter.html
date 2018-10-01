@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Tooltipster css -->
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page">
+    <div class="container">
+    <!-- Start content -->
+    <div class="content">
+            <div id="add_pipeline_html"></div>
+            <div class="row ">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">日志过滤器</span>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+            <div class="row ">
+                <div class="col-sm-12 top-10">
+
+                    <div class="col-sm-1 cluster-search pull-right">
+                        <button type="button" class="btn btn-default waves-effect waves-light"
+                                onclick="logFilter()"
+                                style="border-radius: 5px;">
+                            <i class="fa fa fa-refresh"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-3 pull-right">
+                        <input type="text" onchange="logFilter($(this).val())" class="form-control" id="search_user_id"
+                               placeholder="搜索语句,ip,应用名称">
+                        <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
+                    </div>
+                </div>
+                <br>
+                <div class="col-sm-12 app-table" >
+                    <br>
+                    <table id="history-data-table" class="table table-hover" >
+                        <thead>
+                        <tr>
+                            <th>环境</th>
+                            <th>应用名称</th>
+                            <th>主机名</th>
+                            <th>ip地址</th>
+                            <th>查询语句</th>
+                            <th>搜索用户</th>
+                            <th>创建时间</th>
+                            <th>查询/删除</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end col -->
+{{template "template/bottom.html" .}}
+</body>
+</div>
+
+<script>
+
+    function query(id) {
+        var url = "/log/filter/"+id;
+        window.open(url, "_blank")
+    }
+
+    /**
+     * 删除过滤器
+     * @param id
+     * @return {*}
+     */
+    function deleteFilter(id) {
+        var url = "/api/log/filter/" + id;
+        var result = del({}, url);
+        result = JSON.stringify(result);
+        logFilter();
+        return result
+    }
+
+    /**
+     * 加载数据
+     * @param key
+     */
+    function logFilter(key) {
+        if (!key) {
+            key = $("#search_user_id").val();
+        } else {
+            if (key.length < 4) {
+                return
+            }
+        }
+        if (!key) {
+            key = "";
+        }
+
+        $("#history-data-table").dataTable({
+            "filter": false,//去掉搜索框
+            "ordering": false, // 是否允许排序
+            "paginationType": "full_numbers", // 页码类型
+            "destroy": true,
+            "bLengthChange": true,
+            "processing": true,
+            "bPaginate": true, //是否显示（应用）分页器
+            "serverSide": true,
+            "bInfo": true, //是否显示页脚信息，DataTables插件左下角显示记录数
+            "scrollX": true, // 是否允许左右滑动
+            "displayLength": 100, // 默认长度
+            "ajax": { // 请求地址
+                "url": "/api/log/filter?t=" + new Date().getTime() + "&search=" + key,
+                "type": 'get'
+            },
+            "columns": [ // 数据映射
+                {
+                    "data": "Env",  "mRender": function (data) {
+                    return data
+                }
+                },
+                {"data": "Appname"},
+                {"data": "Hostname"},
+                {"data": "Ip"},
+                {"data": "Query"},
+                {"data": "CreateUser"},
+                {"data": "CreateTime"},
+                {"data": "Id", "mRender": function (data) {
+                        return '<button type="button" title="查询" onclick="query(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-search"></i></button>&nbsp;' +
+                                '<button type="button"  title="删除" onClick="deleteFilter(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
+                    }
+                },
+            ],
+            "fnRowCallback": function (row, data) { // 每行创建完毕的回调
+                $(row).data('recordId', data.recordId);
+            }
+        });
+    }
+    logFilter();
+</script>
+</html>

@@ -10,6 +10,11 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"os"
+	"fmt"
+	"net/http"
+	"bytes"
+	"github.com/astaxie/beego/logs"
+	"gopkg.in/square/go-jose.v1/json"
 )
 
 
@@ -171,3 +176,24 @@ func GetResponseResult(err error,draw interface{}, returnData interface{}, totle
 	return r
 }
 
+
+// 2018-03-24 17:03
+// 发送json请求
+func HttpGetJson(data string, url string) map[string]interface{} {
+	fmt.Println("URL:>", url)
+	//var jsonStr, _ = json.Marshal(data)
+	v := map[string]interface{}{}
+	req, err := http.NewRequest("GET", url, bytes.NewBuffer([]byte(data)))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		logs.Error("GET请求异常", err)
+		return v
+	}
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	json.Unmarshal(body, &v)
+	return v
+}

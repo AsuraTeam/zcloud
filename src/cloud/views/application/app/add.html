@@ -497,10 +497,26 @@
                                                         <label for="EnvVar"
                                                                class="col-md-2 fw100 control-label">环境变量</label>
                                                         <div class="col-md-10">
-                                                            <textarea type="number"
+                                                            <textarea
                                                                       name="Envs" placeholder="变量名=变量值
 evn=prod"
                                                                       class="form-control" id="EnvVar"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-10 top10">
+                                                    <div class="form-group">
+                                                        <label for="EnvVar"
+                                                               class="col-md-2 fw100 control-label">日志路径</label>
+                                                        <div class="col-md-10">
+                                                            <textarea
+                                                                      name="LogPath" placeholder="/usr/local/tomcat/logs/
+/var/log/yum.log
+/var/log/messages
+/tmp/gc.log
+多个日志按换行填入,目录以/结尾,路径可以使用$item变量,$item为服务名称
+配置时需要先配置kfak地址信息,filebeat将日志输出到kafka中"
+                                                                      class="form-control" ></textarea>
                                                         </div>
                                                     </div>
                                                 </div>

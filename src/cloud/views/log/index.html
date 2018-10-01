@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html>
+{{template "template/head.html" .}}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<style>
+    .a-select {
+        color: #2db7f5;
+        font-size: 12px;
+    }
+</style>
+<link href="/static/plugins/date/css/datepicker.css" rel="stylesheet" type="text/css"/>
+<div class="content-page">
+    <!-- Start content -->
+    <div class="content">
+        <div class="container">
+            <div id="add_cluster_html"></div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="page-title-box">
+                        <span class="dashabord-title">日志搜索</span>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li>
+                                <a href="#"></a>
+                            </li>
+                        </ol>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="border: 1px solid #c9c9c9;padding: 10px;">
+                <!-- end row -->
+
+                    {{/*<div class="col-md-6" style="margin-left:3px;">*/}}
+                        {{/*<div class="form-group">*/}}
+                            {{/*<label class="col-sm-2  control-label top10">开始时间:</label>*/}}
+                            {{/*<div class="col-sm-4">*/}}
+                                {{/*<input type="date" name="beginTime1" class="form-control" id="beginTime1"*/}}
+                                       {{/*value="">*/}}
+                            {{/*</div>*/}}
+                            {{/*<div class="col-sm-4">*/}}
+                                {{/*<input type="time" name="beginTime2" class="form-control" id="beginTime2"*/}}
+                                       {{/*value="">*/}}
+                            {{/*</div>*/}}
+                        {{/*</div>*/}}
+                    {{/*</div>*/}}
+                    {{/*<div class="col-md-6" style="margin-left:-55px;">*/}}
+                        {{/*<div class="form-group">*/}}
+                            {{/*<label class="col-sm-3  control-label top10">结束时间:</label>*/}}
+                            {{/*<div class="col-sm-4">*/}}
+                                {{/*<input type="date" name="endTime1" class="form-control" id="endTime1"*/}}
+                                       {{/*value="">*/}}
+                            {{/*</div>*/}}
+                            {{/*<div class="col-sm-4">*/}}
+                                {{/*<input type="time" name="endTime2" class="form-control" id="endTime2"*/}}
+                                       {{/*value="">*/}}
+                            {{/*</div>*/}}
+                        {{/*</div>*/}}
+                    {{/*</div>*/}}
+                {{/*</div>*/}}
+
+                <div class="col-sm-12 top-10">
+                    <div class="m-t-15 m-l-10">
+                        <label class="col-sm-1  control-label top10">时间选择:</label>
+                        <div class="c-datepicker-date-editor J-datepicker-range mt10">
+                            <i class="c-datepicker-range__icon kxiconfont icon-clock"></i>
+                            <input placeholder="自定义开始日期" name="" id="beginTime" class="c-datepicker-data-input"
+                                   value="">
+                            <span class="c-datepicker-range-separator">-</span>
+                            <input placeholder="自定义结束日期" name="" id="endTime" class="c-datepicker-data-input"
+                                   value="">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 top-10"><br></div>
+
+                <div class="col-md-8 top10" style="margin-left:0px;">
+                    <div class="col-md-6" style="margin-left:0px;">
+                        <div class="form-group">
+                            <label class="col-sm-3 fw100control-label top10">环境名称:</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="env">
+                                    <option value="prod">prod</option>
+                                    <option value="">--请选择--</option>
+                                    <option value="dev">dev</option>
+                                    <option value="test">test</option>
+                                    <option value="ontest">ontest</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 " style="margin-left:0px;">
+                        <div class="form-group">
+                            <label class="col-sm-3 fw100control-label top10">应用名称:</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="beginTime1" class="form-control" id="appname"
+                                       onkeyup="search_data($(this).val(),'show_search_appname', 'appname')"
+                                       placeholder="可模糊搜索应用名称"
+                                       value="">
+                                <div class="col-md-2 clickhide" id="show_search_appname"
+                                     style="display:none;position:absolute;margin-top:5px;background-color:#FFFFD8;margin-left:2px;z-index:999999">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="col-md-4 top10">
+                        <span class="a-select" onclick='change_time_style($(this), 300)'>最近5分钟</span><br>
+                        <span class="a-select" style="color: #32c861;"
+                              onclick='change_time_style($(this), 900)'>最近15分钟</span><br>
+                        <span class="a-select" onclick='change_time_style($(this), 1800)'>最近30分钟</span><br>
+                        <br>
+                        <label class="fw100control-label">刷新间隔(秒):</label>
+                    </div>
+                    <div class="col-md-4 top10">
+                        <span class="a-select" onclick='change_time_style($(this), 3600)'>最近1小时</span><br>
+                        <span class="a-select" onclick='change_time_style($(this), 3600 * 5)'>最近5小时</span><br>
+                        <span class="a-select" onclick='change_time_style($(this), 3600 * 12)'>最近12小时</span><br>
+                        <br>
+                        <input type="number" max="30" min="3" class="form-control" style="margin-top: -10px;"
+                               id="auto_load_time"
+                               placeholder="5"
+                               value="5">
+                    </div>
+                    <div class="col-md-3 top10">
+                        <span class="a-select" onclick='change_time_style($(this), 3600 * 24)'>最近1天</span><br>
+                        <span class="a-select" onclick='change_time_style($(this), 3600 * 24 * 5)'>最近5天</span><br>
+                        <span class="a-select" onclick='change_time_style($(this), 3600 * 24 * 10)'>最近10天</span><br>
+                        <button class="btn btn-default btn-sm" style="margin-top: 10px;" id="auto_load_id"
+                                onclick='auto_load()'><i class="fa fa-play" id="auto_load_id_text">点击启动</i></button>
+                        <br>
+                    </div>
+                </div>
+
+
+                <div class="col-md-8" style="margin-left:0px;margin-top: -60px;">
+                    <div class="col-md-6 " style="margin-left:0px;">
+                        <div class="form-group">
+                            <label class="col-sm-3 fw100control-label top10">ip地址:</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="beginTime1" class="form-control" id="ip"
+                                       onkeyup="search_data($(this).val(),'show_search_ip', 'ip')"
+                                       placeholder="可模糊搜索IP"
+                                       value="">
+                                <div class="col-md-2 clickhide" id="show_search_ip"
+                                     style="overflow:scroll;display:none;position:absolute;margin-top:5px;background-color:#FFFFD8;margin-left:2px;z-index:999999">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {{/*<div class="col-md-6 " style="margin-left:0px;">*/}}
+                {{/*<div class="form-group">*/}}
+                {{/*<label class="col-sm-3 fw100control-label top10">主机名:</label>*/}}
+                {{/*<div class="col-sm-8">*/}}
+                {{/*<input type="text" name="beginTime1" class="form-control" id="hostname"*/}}
+                {{/*onkeyup="search_data($(this).val(),'show_search_hostname', 'hostname')"*/}}
+                {{/*placeholder="可模糊搜索主机名"*/}}
+                {{/*value="">*/}}
+                {{/*<div class="col-md-2 clickhide" id="show_search_hostname"*/}}
+                {{/*style="display:none;position:absolute;margin-top:5px;background-color:#FFFFD8;margin-left:2px;z-index:999999">*/}}
+                {{/*</div>*/}}
+                {{/*</div>*/}}
+                {{/*</div>*/}}
+                {{/*</div>*/}}
+                </div>
+
+                <div style="border: 2px solid #f0f0ee;">&nbsp;</div>
+
+                <div class="col-md-12 " style="margin-left:0px;margin-top: -15px;">
+                    <div class="col-md-12 " style="margin-left:0px;">
+                        <div class="form-group">
+                            <label class="col-sm-1 fw100control-label top10">关键字:</label>
+                            <div class="col-sm-5">
+                                <input type="text" name="beginTime1" class="form-control" id="query"
+                                       placeholder="ERROR"
+                                       value="">
+                                <div class="col-md-2" id="show_search_ip"
+                                     style="display:none;position:absolute;margin-top:5px;background-color:#FFFFD8;margin-left:2px;z-index:999999">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <button type="button" onclick="queryDefault()"
+                                        class="btn btn-default waves-effect  waves-light"><i class="fa fa-search"></i>&nbsp;&nbsp;
+                                    查询
+                                </button>
+                                <button type="button" onclick="saveQuery()"
+                                        class="btn btn-default waves-effect  waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;
+                                    搜藏
+                                </button>
+                                <button type="button" onclick="queryAd()"
+                                        class="btn btn-default waves-effect  waves-light"><i class="fa fa-search"></i>&nbsp;&nbsp;
+                                    高级查询
+                                </button>
+                                <button type="button" onclick="queryDefault(1)"
+                                        class="btn btn-default waves-effect  waves-light"><i
+                                        class="fa fa-pagelines"></i>&nbsp;&nbsp;
+                                    新页面显示日志
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-12" style="margin-left:0px;"><br></div>
+                <div id="log-show-id" style="padding: 30px;height: 700px;overflow: scroll;">
+                </div>
+                <!-- end row -->
+            </div><!-- end col -->
+            <!-- end row -->
+        </div>
+    </div> <!-- container -->
+    <input id="query-time" type="hidden" value="900">
+</div> <!-- content -->
+{{template "template/bottom.html" .}}
+
+<script src="/static/plugins/date/js/moment.min.js"></script>
+<script src="/static/plugins/date/js/datepicker.all.js"></script>
+
+</body>
+</div>
+
+<script>
+
+    var auto_load_timer;
+    var count = 0;
+
+    /**
+     * 2018-09-17
+     * 自动刷新数据
+     * */
+    function auto_load() {
+        var v = $("#auto_load_time").val();
+        v = parseInt(v);
+        if (v < 3) {
+            return
+        }
+        var button = $("#auto_load_id_text").html();
+        if (button == "点击启动") {
+            $("#auto_load_id_text").html("点击停止");
+        } else {
+            $("#auto_load_id_text").html("点击启动");
+            clearInterval(auto_load_timer);
+            return
+        }
+        if (auto_load_timer) {
+            clearInterval(auto_load_timer);
+        }
+        auto_load_timer = setInterval(function () {
+            queryDefault("", 1);
+            count += 1;
+            if (count > 1000) {
+                clearInterval(auto_load_timer);
+            }
+        }, v * 1000);
+    }
+
+    function queryAd() {
+        var env = $("#env").val();
+        if (env == "prod") {
+            var url = "http://kibana-prod.chj.cloud/";
+        } else {
+            var url = "http://kibana.chj.cloud/";
+        }
+
+        window.open(url, "_blank");
+    }
+
+    /**
+     *  2018-09-14 14:21
+     *  保存查询
+     * */
+    function saveQuery(tp) {
+        var query = $("#query").val();
+        var data = {
+            env: $("#env").val(),
+            ip: $("#ip").val(),
+            hostname: $("#hostname").val(),
+            appname: $("#appname").val(),
+            query: query,
+            type: tp,
+        };
+        var url = "/api/log/filter";
+        var result = post(data, url);
+        if (tp != "history") {
+            success(result);
+        }
+    }
+
+    /**
+     * 2018-09-14 08:18
+     * 日志查询
+     * */
+    function queryDefault(o, auto) {
+        if (!auto) {
+            setTimeout(function () {
+                $("#log-show-id").html("正在查询中, 请稍后....");
+                success('正在查询,请稍后');
+            }, 1);
+        }
+        setTimeout(function () {
+            var starts = $("#beginTime").val() ;
+            var end = $("#endTime").val() ;
+            var start = new Date(starts).getTime();
+            var end = new Date(end).getTime();
+            if (start == NaN || !start) {
+                start = new Date().getTime() - (parseInt($("#query-time").val()) * 1000);
+                end = new Date().getTime();
+            }
+            var query = $("#query").val();
+            var data = {
+                env: $("#env").val(),
+                ip: $("#ip").val(),
+                hostname: $("#hostname").val(),
+                appname: $("#appname").val(),
+                start: start,
+                end: end,
+                query: query,
+            };
+            var url = "/api/log/query?q=n";
+            if (o) {
+                $.each(data, function (k, v) {
+                    url += "&" + k + "=" + v
+                });
+                window.open(url, "_blank");
+                return
+            }
+
+            var result = get(data, url);
+            $("#log-show-id").html("<br><br>");
+            // result = result.replace(/@kibana-highlighted-field@/g, "<span style='color:red'>");
+            // result = result.replace(/@\/kibana-highlighted-field@/g, "</span>");
+            result = result.replace(/\\n/g, "<br>");
+            $("#log-show-id").append(result);
+            if (result.length == 0) {
+                $("#log-show-id").append("<span class='text-danger'>没有搜索到相关日志记录</span>");
+            }
+            saveQuery("history")
+        }, 100);
+    }
+
+    /**
+     * @param inputTime
+     *  时间格式化
+     * */
+    function formatDateTime(inputTime) {
+        var date = new Date(inputTime);
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        m = m < 10 ? ('0' + m) : m;
+        var d = date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+        var h = date.getHours();
+        h = h < 10 ? ('0' + h) : h;
+        var minute = date.getMinutes();
+        var second = date.getSeconds();
+        minute = minute < 10 ? ('0' + minute) : minute;
+        second = second < 10 ? ('0' + second) : second;
+        return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
+    };
+
+
+    function calc_time() {
+        var starts = $("#beginTime1").val() + " " + $("#beginTime2").val();
+        var end = $("#endTime1").val() + " " + $("#endTime2").val();
+        var value = ((new Date(end).getTime() / 1000) - (new Date(starts).getTime() / 1000)) / 60;
+        $("#faultTime").val(value);
+    }
+
+    $("#beginTime1").change(function () {
+        calc_time();
+    });
+
+    $("#beginTime2").change(function () {
+        calc_time();
+    });
+
+    $("#endTime1").change(function () {
+        calc_time();
+    });
+
+    $("#endTime2").change(function () {
+        calc_time();
+    });
+
+    /**
+     *
+     * 获取当前时间
+     */
+    function p(s) {
+        return s < 10 ? '0' + s : s;
+    }
+
+    var myDate = new Date();
+    //获取当前年
+    var year = myDate.getFullYear();
+    //获取当前月
+    var month = myDate.getMonth() + 1;
+    //获取当前日
+    var str_date = myDate.getDate();
+    var h = myDate.getHours();       //获取当前小时数(0-23)
+    var m = myDate.getMinutes();     //获取当前分钟数(0-59)
+    var s = myDate.getSeconds();
+
+    if (parseInt(h) < 10) {
+        h = "0" + h
+    }
+    if (parseInt(m) < 10) {
+        m = "0" + m
+    }
+    var endTimeStamp = year + "-" + p(month) + "-" + p(str_date) +" "+ h + ":" + m + ":00";
+
+
+    var beginTimeStamp = new Date(endTimeStamp).getTime() - parseInt($("#query-time").val()) * 1000;
+    // $("#beginTime").prop("value", formatDateTime(beginTimeStamp));
+    // $("#endTime").prop("value", endTimeStamp);
+
+
+    {{/*dates = "{{.beginTime}}".split(" ");*/}}
+    {{/*$("#beginTime1").val(dates[0]);*/}}
+    {{/*$("#beginTime2").val(dates[1]);*/}}
+    {{/*dates = "{{.endTime}}".split(" ");*/}}
+    {{/*$("#endTime1").val(dates[0]);*/}}
+    {{/*$("#endTime2").val(dates[1]);*/}}
+
+    /**
+     * 2018-09-14 08:37
+     * 修改a标签样式
+     */
+    function change_time_style(obj, t) {
+        $(".a-select").css("color", "#2db7f5");
+        obj.css("color", "#32c861");
+
+        $("#query-time").val(t);
+        var endTimeStamp = year + "-" + p(month) + "-" + p(str_date) +" "+ h + ":" + m + ":00";
+        $("#endTime").prop("value", endTimeStamp);
+
+        var beginTimeStamp = new Date(endTimeStamp).getTime() - parseInt($("#query-time").val()) * 1000;
+        $("#beginTime").prop("value", formatDateTime(beginTimeStamp));
+
+    }
+
+
+    /**
+     * 2018-09-14 09:16
+     * 动态数据搜索
+     * */
+    function search_data(value, id, name) {
+        var appname = $("#appname").val();
+        if (!appname) {
+            appname = "";
+        }
+        $("#" + id).show();
+        var url = "/api/log/search";
+        var result = get({"key": value, type: name, appname: appname}, url);
+        var data = result;
+        var width = $("#" + name).css("width").replace(/px/, "");
+        $("#" + id).css("width", width);
+        var html = "";
+        for (var i = 0; i < data.length; i++) {
+            html += "<div class='clickhide' style='float:left;text-align:left;margin-left:-8px;background-color: #FFFFD8;'><span onclick='search_ip_load(\"" + data[i]["Value"] + "\",\"" + id + "\",\"" + name + "\")'> " + data[i]["Value"] + "</span></div><br>";
+        }
+        $("#" + id).html(html);
+        $("#" + id).hide();
+        $("#" + id).show();
+    }
+
+    /**
+     * ip动态搜索
+     * @param ip
+     */
+    function search_ip_load(ip, id, name) {
+        $("#" + name).val(ip);
+        $("#" + id).hide();
+    }
+
+    var id = "{{.data.Id}}";
+    if (id != "0") {
+        var env = "{{.data.Env}}";
+        var app = "{{.data.Appname}}";
+        var hostname = "{{.data.Hostname}}";
+        var ip = "{{.data.Ip}}";
+        var query = "{{.data.Query}}";
+        if (env) {
+            $("#env").val(env);
+        }
+        if (app) {
+            $("#appname").val(app);
+        }
+        if (ip) {
+            $("#ip").val(ip);
+        }
+        if (hostname) {
+            $("#hostname").val(hostname);
+        }
+        if (query) {
+            $("#query").val(query);
+        }
+    }
+
+    queryDefault();
+
+
+    $(document).ready(function () {
+
+        $("body").click(function () {
+            $(".clickhide").hide();
+        });
+    });
+
+    var endTimeStamp = year + "-" + p(month) + "-" + p(str_date) +" "+ h + ":" + m + ":00";
+    $("#endTime").prop("value", endTimeStamp);
+
+    var beginTimeStamp = new Date(endTimeStamp).getTime() - parseInt($("#query-time").val()) * 1000;
+    $("#beginTime").prop("value", formatDateTime(beginTimeStamp));
+    $(function(){
+        var DATAPICKERAPI = {
+            // 默认input显示当前月,自己获取后填充
+            activeMonthRange: function () {
+                return {
+                    begin: moment().set({ 'date': 1, 'hour': 0, 'minute': 0, 'second': 0 }).format('YYYY-MM-DD HH:mm:ss'),
+                    end: moment().set({ 'hour': 23, 'minute': 59, 'second': 59 }).format('YYYY-MM-DD HH:mm:ss')
+                }
+            },
+            shortcutMonth: function () {
+                // 当月
+                var nowDay = moment().get('date');
+                var prevMonthFirstDay = moment().subtract(1, 'months').set({ 'date': 1 });
+                var prevMonthDay = moment().diff(prevMonthFirstDay, 'days');
+                return {
+                    now: '-' + nowDay + ',0',
+                    prev: '-' + prevMonthDay + ',-' + nowDay
+                }
+            },
+            // 快捷选项option
+            rangeShortcutOption1: [{
+                name: '最近一周',
+                day: '-7,0'
+            }, {
+                name: '最近一个月',
+                day: '-30,0'
+            }, {
+                name: '最近三个月',
+                day: '-90, 0'
+            }],
+            singleShortcutOptions1: [{
+                name: '今天',
+                day: '0'
+            }, {
+                name: '昨天',
+                day: '-1',
+                time: '00:00:00'
+            }, {
+                name: '一周前',
+                day: '-7'
+            }]
+        };
+
+
+        //十分秒年月日范围，包含最大最小值
+        $('.J-datepicker-range').datePicker({
+            hasShortcut: true,
+            // min: '2018-09-01 06:00:00',
+            // max: '2020-04-29 20:59:59',
+            isRange: true,
+            shortcutOptions: [{
+                name: '昨天',
+                day: '-1,-1',
+                time: '00:00:00,23:59:59'
+            },{
+                name: '最近一周',
+                day: '-7,0',
+                time:'00:00:00,'
+            }, {
+                name: '最近一个月',
+                day: '-30,0',
+                time: '00:00:00,'
+            }, {
+                name: '最近三个月',
+                day: '-90, 0',
+                time: '00:00:00,'
+            }]
+        });
+    });
+
+    var endTimeStamp = year + "-" + p(month) + "-" + p(str_date) +" "+ h + ":" + m + ":00";
+    $("#endTime").prop("value", endTimeStamp);
+
+    var beginTimeStamp = new Date(endTimeStamp).getTime() - parseInt($("#query-time").val()) * 1000;
+    $("#beginTime").prop("value", formatDateTime(beginTimeStamp));
+
+    $("[class='c-datepicker-button c-datepicker-picker__link-btn confirm']").click(function () {
+        $(".a-select").css("color", "#2db7f5");
+        console.log("click")
+    })
+</script>
+
+</html>

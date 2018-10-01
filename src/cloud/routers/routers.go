@@ -31,6 +31,7 @@ import (
 	"cloud/controllers/resource"
 	"fmt"
 	"cloud/sql"
+	"cloud/controllers/log"
 )
 
 func init() {
@@ -771,6 +772,34 @@ func init() {
 			),
 		)
 
+	logNs :=
+		beego.NewNamespace("/log",
+			beego.NSRouter("/index", &log.ControllerLog{}, "get:Index"),
+			beego.NSRouter("/filter", &log.ControllerLog{}, "get:FilterList"),
+			// 日志搜索
+			beego.NSRouter("/filter/:id:int", &log.ControllerLog{}, "get:QueryFilter"),
+			// 添加监控配置页面,
+			beego.NSRouter("/history", &log.ControllerLog{}, "get:HistoryList"),
+		)
+
+	logApi :=
+		beego.NewNamespace("/api",
+			beego.NSNamespace("/log",
+				// 日志搜索
+				beego.NSRouter("/query", &log.ControllerLog{}, "post,get:Query"),
+
+				// 日志搜索
+				beego.NSRouter("/search", &log.ControllerLog{}, "get:Search"),
+				// 日志搜索
+				beego.NSRouter("/history", &log.ControllerLog{}, "get:LogShowHistoryData"),
+				// 日志搜索
+				beego.NSRouter("/filter", &log.ControllerLog{}, "get:LogShowFilterData"),
+				// 日志搜索
+				beego.NSRouter("/filter", &log.ControllerLog{}, "post:SaveFilter"),
+				// 日志删除
+				beego.NSRouter("/filter/:id:int", &log.ControllerLog{}, "delete:LogShowFilterDelete"),
+			),
+		)
 	// 系统设置
 	systemApi :=
 		beego.NewNamespace("/api",
@@ -906,6 +935,8 @@ func init() {
 
 	beego.AddNamespace(monitorApi)
 	beego.AddNamespace(monitorNs)
+	beego.AddNamespace(logNs)
+	beego.AddNamespace(logApi)
 	beego.AddNamespace(pipelineNs)
 	beego.AddNamespace(ciNs)
 	beego.AddNamespace(registryNs)

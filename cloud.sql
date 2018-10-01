@@ -156,6 +156,7 @@ CREATE TABLE `cloud_app_service` (
   `container_port` varchar(100) DEFAULT NULL COMMENT '容器端口,多个逗号分隔',
   `lb_name` varchar(400) DEFAULT NULL COMMENT '负载均衡名称',
   `lb_data` text COMMENT '负载均衡数据',
+  `log_path` text COMMENT '日志路径',
   `image_tag` varchar(300) DEFAULT NULL,
   `deploy_type` varchar(50) DEFAULT NULL COMMENT '部署模式, deployment daemonset statefulset',
   `replicas` int(11) DEFAULT NULL COMMENT '容器副本数量',
@@ -184,6 +185,49 @@ CREATE TABLE `cloud_app_service` (
 --
 -- Dumping data for table `cloud_app_service`
 --
+CREATE TABLE `log_show_appname` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `appname` varchar(232) DEFAULT NULL,
+  `create_time` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uidx_appname` (`appname`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `log_show_ip` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ip` varchar(32) DEFAULT NULL,
+  `create_time` varchar(32) DEFAULT NULL,
+  `app_name` varchar(200) DEFAULT NULL,
+  `env` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uidx_ip_appname` (`ip`,`app_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `log_show_filter` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `appname` varchar(232) DEFAULT NULL,
+  `env` varchar(32) DEFAULT NULL,
+  `hostname` varchar(232) DEFAULT NULL,
+  `ip` varchar(32) DEFAULT NULL,
+  `create_time` varchar(32) DEFAULT NULL,
+  `create_user` varchar(32) DEFAULT NULL,
+  `query` varchar(240) DEFAULT NULL,
+  `click` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uidx_log_show_filter` (`appname`,`env`,`hostname`,`ip`,`create_user`,`query`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 ;
+
+ CREATE TABLE `log_show_history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `appname` varchar(232) DEFAULT NULL,
+  `env` varchar(32) DEFAULT NULL,
+  `hostname` varchar(232) DEFAULT NULL,
+  `ip` varchar(32) DEFAULT NULL,
+  `create_time` varchar(32) DEFAULT NULL,
+  `create_user` varchar(32) DEFAULT NULL,
+  `query` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 
 LOCK TABLES `cloud_app_service` WRITE;
 /*!40000 ALTER TABLE `cloud_app_service` DISABLE KEYS */;

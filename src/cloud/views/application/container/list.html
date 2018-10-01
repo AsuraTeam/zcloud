@@ -142,8 +142,7 @@
                             <th class="th">镜像</th>
                             <th class="th">资源</th>
                             <th class="th">IP地址</th>
-                            <th class="th">重启</th>
-                            <th class="th">创建时间</th>
+                            <th class="th">创建时间/重启</th>
                             <th class="th">终端/事件/镜像/日志</th>
                         </tr>
                         </thead>
@@ -294,10 +293,13 @@
                     return "<span class='text-default'>" + data + "</span><br><span class='brtop5'>" + full["ServerAddress"] + "</span>"
                 }
                 },
-                {"data": "Restart", "sWidth": "5%"},
-                {"data": "CreateTime", "sWidth": "6%"},
                 {
-                    "sWidth": "9%", "data": "ContainerId", "mRender": function (data,type,full) {
+                    "data": "ContainerIp", "sWidth": "12%", "mRender": function (data, type, full) {
+                        return full["CreateTime"]+"<br>" + full["Restart"] + "次"
+                    }
+                },
+                {
+                    "sWidth": "11%", "data": "ContainerId", "mRender": function (data,type,full) {
                         var event =  encodeURI(full["Events"]);
                         var html = "";
                         if (full["Status"] == "Running"){

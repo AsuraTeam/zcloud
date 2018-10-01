@@ -1220,7 +1220,7 @@ function loadServiceData(key,name) {
             $(row).data('recordId', data.recordId);
         }
     });
-    $("#app-data-table_wrapper").css("cssText", "margin-top:-20px !important;");
+    // $("#app-data-table_wrapper").css("cssText", "margin-top:-20px !important;");
 
 }
 

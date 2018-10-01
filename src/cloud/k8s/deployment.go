@@ -763,6 +763,12 @@ func CreateServicePod(param ServiceParam) (string, error) {
 	if len(param.Kafka) > 0 && len(param.LogPath) > 0 {
 		filebeatContainer := CreateFilebeatConfig(param)
 		v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["containers"].([]map[string]interface{})[1] = filebeatContainer
+		filebeatVolumes, _ := getFilebeatStorage(param)
+		if len(filebeatVolumes) > 0 {
+			oldvolumes :=  	v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["volumes"].([]map[string]interface{})
+			oldvolumes = append(oldvolumes, filebeatVolumes...)
+			v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["volumes"] = oldvolumes
+		}
 	}
 
 	healthdata, ok := getHealthData(param.HealthData)
