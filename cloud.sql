@@ -217,6 +217,20 @@ CREATE TABLE `log_show_filter` (
   UNIQUE KEY `uidx_log_show_filter` (`appname`,`env`,`hostname`,`ip`,`create_user`,`query`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 ;
 
+
+create table `log_data_source` (
+    `data_source_id` int primary key  AUTO_INCREMENT COMMENT '主键',
+    `create_user` varchar(32) DEFAULT NULL,
+    `name`  varchar(132) DEFAULT NULL comment "数据源名称",
+    `address`  varchar(232) DEFAULT NULL comment "数据源地址",
+    `description` varchar(300)  comment " 描述信息",
+    `create_time` varchar(32) DEFAULT NULL,
+    `cluster_name` varchar(232) DEFAULT NULL,
+    `ent` varchar(132) DEFAULT NULL,
+    `last_modify_user` varchar(32) DEFAULT NULL,
+    `last_modify_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最近修改时间'
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
  CREATE TABLE `log_show_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `appname` varchar(232) DEFAULT NULL,

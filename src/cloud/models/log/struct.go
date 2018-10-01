@@ -18,6 +18,10 @@ type LogDataSource struct {
     CreateTime string
     //
     LastModifyUser string
+    //
+    Ent string
+    //
+    ClusterName string
 }
 
 type LogShowFilter struct {
