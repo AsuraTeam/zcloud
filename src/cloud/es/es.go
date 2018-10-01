@@ -130,7 +130,7 @@ func getEsValues(data map[string]interface{}, query string) (int64, []string) {
 	return int64(total), result
 }
 
-// 2018-09-13 09:56
+// 2018-03-13 19:26
 // 获取监控数据es
 func RequestEs(query, index, q, env string) (int64, []string) {
 	//data := map[string]interface{}{}

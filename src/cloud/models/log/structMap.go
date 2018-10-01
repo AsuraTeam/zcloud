@@ -1,4 +1,8 @@
 package log
+const SelectAlarmDataSource = "select name,description,create_time,last_modify_user,last_modify_time,create_user,address,data_source_id from log_data_source"
+const UpdateAlarmDataSource = "update log_data_source"
+const InsertAlarmDataSource = "insert into log_data_source"
+const DeleteAlarmDataSource = "delete from log_data_source"
 
 const SelectLogShowFilter = "select query,appname,env,ip,create_time,create_user,id,hostname,click from log_show_filter"
 const UpdateLogShowFilter = "update log_show_filter"

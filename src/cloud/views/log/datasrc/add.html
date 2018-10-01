@@ -1,0 +1,65 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;top:20%;">
+    <div class="modal-dialog " style="width: 60%">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">修改添加数据源</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-1" class="col-md-2 fw100 control-label">数据源名称<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.Name}}"
+                                               onchange="checkChange('Name')" name="Name"
+                                               class="form-control" id="field-1" placeholder="必须为全英文">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-13" class="col-md-2 fw100 control-label">数据源地址<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="email" nullmsg="必须填写" value="{{.data.Address}}"
+                                               onchange="checkChange('Address')" name="Address" id="Address"
+                                               class="form-control" id="field-13" placeholder="数据源地址 http://192.168.1.11:8080">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top10">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-14" class="col-md-2 fw100 control-label">备注信息<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" nullmsg="必须填写" value="{{.data.Description}}"
+                                               onchange="checkChange('Description')" name="Description" id="Description"
+                                               class="form-control" id="field-14" placeholder="备注信息">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default btn-lg waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;取消
+                        </button>
+                        <button type="button" onclick="saveDataSource('{{.data.DataSourceId}}')"
+                                class="btn btn-info waves-effect btn-lg waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp; 保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
