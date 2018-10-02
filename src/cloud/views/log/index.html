@@ -190,10 +190,6 @@
                                         class="btn btn-default waves-effect  waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp;
                                     搜藏
                                 </button>
-                                <button type="button" onclick="queryAd()"
-                                        class="btn btn-default waves-effect  waves-light"><i class="fa fa-search"></i>&nbsp;&nbsp;
-                                    高级查询
-                                </button>
                                 <button type="button" onclick="queryDefault(1)"
                                         class="btn btn-default waves-effect  waves-light"><i
                                         class="fa fa-pagelines"></i>&nbsp;&nbsp;
@@ -257,16 +253,7 @@
         }, v * 1000);
     }
 
-    function queryAd() {
-        var env = $("#env").val();
-        if (env == "prod") {
-            var url = "http://kibana-prod.chj.cloud/";
-        } else {
-            var url = "http://kibana.chj.cloud/";
-        }
 
-        window.open(url, "_blank");
-    }
 
     /**
      *  2018-09-14 14:21
