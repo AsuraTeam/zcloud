@@ -1,7 +1,7 @@
 <div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true"
      style="display: none;top:20%;">
-    <div class="modal-dialog " style="width: 60%">
+    <div class="modal-dialog " style="width: 50%">
         <div class="modal-content p-0 b-0 ">
             <div class="panel panel-color panel-default">
                 <div class="panel-heading">
@@ -10,33 +10,66 @@
                 </div>
                 <form class="cluster-form">
                     <div class="panel-body font-12 ">
-                        <div class="row top10">
-                            <div class="col-md-12">
+                        <div class="row top10" title="">
+                            <div class="col-md-12 top10">
                                 <div class="form-group">
-                                    <label for="field-1" class="col-md-2 fw100 control-label">数据源名称<span
+                                    <label for="select-cluster-id"
+                                           class="col-md-2 fw100 control-label">环境选择<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-10">
-                                        <input type="text" nullmsg="必须填写" value="{{.data.Name}}"
-                                               onchange="checkChange('Name')" name="Name"
-                                               class="form-control" id="field-1" placeholder="必须为全英文">
+                                        <select class="form-control" name="Ent"
+                                                onchange="getEntClusterData($(this).val())"
+                                                data-live-search="true" data-style="btn-default"
+                                                id="select-entname-id">
+                                            <option>请选择</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row top10">
+                        <div class="row top15" title="集群选择后不可修改">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="select-cluster-id"
+                                           class="col-md-2 fw100 control-label">所属集群<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        <select class="form-control" name="ClusterName"
+                                                data-live-search="true" data-style="btn-default"
+                                                id="select-cluster-id">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top15">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="field-13" class="col-md-2 fw100 control-label">数据源地址<span
+                                    <label for="field-1" class="col-md-2 fw100 control-label">数据源类型<span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                      <select class="form-control" name="DriverType" id="driver-type">
+                                          <option value="elasticsearch">elasticsearch</option>
+                                      </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top15">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-13" class="col-md-2 fw100 control-label">驱动地址<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-10">
                                         <input type="email" nullmsg="必须填写" value="{{.data.Address}}"
                                                onchange="checkChange('Address')" name="Address" id="Address"
-                                               class="form-control" id="field-13" placeholder="数据源地址 http://192.168.1.11:8080">
+                                               class="form-control" id="field-13" placeholder="驱动地址 192.168.1.11:8080,192.168.1.12:8080">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row top10">
+                        <div class="row top15">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="field-14" class="col-md-2 fw100 control-label">备注信息<span
@@ -54,7 +87,7 @@
                         <button type="button" class="btn btn-default btn-lg waves-effect" data-dismiss="modal"><i
                                 class="fa fa-times"></i>&nbsp;&nbsp;取消
                         </button>
-                        <button type="button" onclick="saveDataSource('{{.data.DataSourceId}}')"
+                        <button type="button" onclick="saveDriver('{{.data.DataSourceId}}')"
                                 class="btn btn-info waves-effect btn-lg waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp; 保存
                         </button>
                     </div>
@@ -63,3 +96,14 @@
         </div>
     </div>
 </div>
+<script src="/static/zcloud/registrySelect.js"></script>
+        <script>
+            setEntname();
+            var id = "{{.data.DataSourceId}}";
+            if(id){
+                var ent = "{{.data.Ent}}";
+                var cluster = "{{.data.ClusterName}}";
+                $("#select-entname-id").html("<option value='"+ent+"'>"+ent+"</option>");
+                $("#select-cluster-id").html("<option value='"+cluster+"'>"+cluster+"</option>");
+            }
+        </script>

@@ -5,7 +5,7 @@ function addDriver(userId) {
         userId = 0
     }
     var url = "/log/driver/add";
-    var result = get({DriverId:userId}, url);
+    var result = get({DataSourceId:userId}, url);
     $("#add_groups_html").html(result);
     $("#add_post_html").modal("toggle")
 }
@@ -52,12 +52,13 @@ function loadDriverData(key) {
             "type": 'get'
         },
         "columns": [ // 数据映射
-            {"data": "Name"},
+            {"data": "Ent"},
+            {"data": "ClusterName"},
             {"data": "Address"},
             {"data": "Description"},
             {"data": "LastModifyTime"},
             {
-                "sWidth": "150px", "data": "DriverId", "mRender": function (data) {
+                "sWidth": "150px", "data": "DataSourceId", "mRender": function (data) {
                     return '<button type="button" title="更新" onclick="addDriver(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
                         '<button type="button"  title="删除" onClick="deleteDriverSwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
             }
@@ -95,7 +96,7 @@ function saveDriver(userId) {
     }
     var data = get_form_data();
     data["DriverId"] = parseInt(userId);
-    if(!checkValue(data,"Name,Address,Description")){
+    if(!checkValue(data,"DriverType,Ent,ClusterName,Address,Description")){
         return
     }
     var url = "/api/log/datasrc";
