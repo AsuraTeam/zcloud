@@ -198,13 +198,13 @@ function loadTemplateData(key) {
             {"data": "CreateTime"},
             {"data": "LastModifyTime"},
             {
-                "sWidth": "150px", "data": "TemplateId", "mRender": function (data) {
+                "data": "TemplateId", "mRender": function (data) {
                        return '<button type="button" title="编辑数据文件" onclick="addTemplateUpdate(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-edit"></i></button>&nbsp;' +
                         '<button type="button"  title="删除" onClick="setDeleteId(' + data + ')" class="delete-template btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
             }
             },
             {
-                "sWidth": "150px", "data": "TemplateId", "mRender": function (data) {
+                "data": "TemplateId", "mRender": function (data) {
                     return '<button type="button" title="应用拉起" onclick="addTemplateDeploy(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-send-o"></i></button>&nbsp;' ;
                 }
             },

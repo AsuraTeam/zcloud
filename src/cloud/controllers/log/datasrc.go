@@ -19,6 +19,31 @@ func (this *DataSourceController) DataSourceList() {
 	this.TplName = "log/datasrc/list.html"
 }
 
+// 日志驱动管理入口页面
+// @router /log/driver/list [get]
+func (this *DataSourceController) DriverList() {
+	this.TplName = "log/datasrc/list-driver.html"
+}
+
+// 数据源管理添加页面
+// @router /log/driver/add [get]
+func (this *DataSourceController) DriverAdd() {
+	id := this.GetString("DataSourceId")
+	update := log.LogDataSource{}
+
+	// 更新操作
+	if id != "" {
+		searchMap := sql.GetSearchMap("DataSourceId", *this.Ctx)
+		q := sql.SearchSql(
+			log.LogDataSource{},
+			log.SelectAlarmDataSource,
+			searchMap)
+		sql.Raw(q).QueryRow(&update)
+	}
+	this.Data["data"] = update
+	this.TplName = "log/datasrc/add-driver.html"
+}
+
 // 数据源管理添加页面
 // @router /log/datasrc/add [get]
 func (this *DataSourceController) DataSourceAdd() {

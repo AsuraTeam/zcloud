@@ -781,9 +781,14 @@ func init() {
 			// 添加监控配置页面,
 			beego.NSRouter("/history", &log.ControllerLog{}, "get:HistoryList"),
 			beego.NSNamespace("/datasrc",
-				beego.NSRouter("/list", &log.DataSourceController{}, "get:DataSourceList"),
+				beego.NSRouter("/list", &log.DataSourceController{}, "get:DataSourceList","数据源配置列表","数据源配置","应用日志"),
 				// 添加监控配置页面,
-				beego.NSRouter("/add", &log.DataSourceController{}, "get:DataSourceAdd"),
+				beego.NSRouter("/add", &log.DataSourceController{}, "get:DataSourceAdd","数据源配置添加","数据源配置","应用日志"),
+			),
+			beego.NSNamespace("/driver",
+				beego.NSRouter("/list", &log.DataSourceController{}, "get:DriverList","日志驱动配置列表","数据源配置","应用日志"),
+				// 添加监控配置页面,
+				beego.NSRouter("/add", &log.DataSourceController{}, "get:DriverAdd","日志驱动添加","数据源配置","应用日志"),
 			),
 		)
 

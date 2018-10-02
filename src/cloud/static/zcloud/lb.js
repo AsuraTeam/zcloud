@@ -187,7 +187,7 @@ function loadLbData(ip) {
             {"data": "ServiceNumber"},
             {"data": "LastModifyTime"},
             {
-                "sWidth": "150px", "data": "LbId", "mRender": function (data, type, full) {
+                "data": "LbId", "mRender": function (data, type, full) {
                 if ("master" != full["HostType"]) {
                     return '<button type="button" title="更新" onclick="addLb(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
                         '<button type="button"  title="删除" onClick="setDeletelbId(' + data + ')" class="delete-template btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';

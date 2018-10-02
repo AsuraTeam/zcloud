@@ -81,7 +81,7 @@ function loadUserData(key) {
             {"data": "CreateTime"},
             {"data": "LastModifyTime"},
             {
-                "sWidth": "150px", "data": "UserId", "mRender": function (data) {
+                "data": "UserId", "mRender": function (data) {
                     return '<button type="button" title="更新" onclick="addUser(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>' +
                         '<button type="button"  title="删除" onClick="deleteUserSwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper m-l-5"><i class="fa fa-trash-o"></i></button>'+
                         '<button type="button"  title="显示用户token" onClick="showToken(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper m-l-5"><i class="fa fa-user-secret"></i></button>';
