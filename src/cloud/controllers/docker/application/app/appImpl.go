@@ -11,6 +11,7 @@ import (
 	"strings"
 	"cloud/cache"
 	"github.com/astaxie/beego/logs"
+	"cloud/userperm"
 )
 
 // 2018-02-19 10:40
@@ -162,10 +163,27 @@ func getRedeployService(v string, user string) ([]app.CloudAppService, bool) {
 
 // 获取应用名称信息
 func getAppDataQ(searchMap sql.SearchMap) []app.CloudAppName {
+	userInterface := searchMap.Get("CreateUser")
+	searchMap.Put("CreateUser", nil)
 	data := make([]app.CloudAppName, 0)
+	dataApp := make([]app.CloudAppName, 0)
 	searchSql := sql.SearchSql(app.CloudAppName{}, app.GetAppName, searchMap)
 	logs.Info("searchSql", searchSql, searchMap)
 	sql.Raw(searchSql).QueryRows(&data)
+
+	if userInterface != nil {
+		user := userInterface.(string)
+		permApp := userperm.GetResourceName("应用", user)
+		for _, v := range data {
+			// 不是自己创建的才检查
+			if v.CreateUser != user && user != "admin" {
+				if ! userperm.CheckPerm(v.AppName, v.ClusterName, v.Entname, permApp) {
+					continue
+				}
+			}
+			dataApp = append(dataApp, v)
+		}
+	}
 	return data
 }
 

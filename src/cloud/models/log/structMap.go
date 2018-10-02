@@ -1,5 +1,5 @@
 package log
-const SelectAlarmDataSource = "select name,cluster_name,ent,description,create_time,last_modify_user,last_modify_time,create_user,address,data_source_id from log_data_source"
+const SelectAlarmDataSource = "select name,cluster_name,ent,driver_type,data_type,description,create_time,last_modify_user,last_modify_time,create_user,address,data_source_id from log_data_source"
 const UpdateAlarmDataSource = "update log_data_source"
 const InsertAlarmDataSource = "insert into log_data_source"
 const DeleteAlarmDataSource = "delete from log_data_source"

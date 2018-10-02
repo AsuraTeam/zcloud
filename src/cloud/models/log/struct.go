@@ -22,6 +22,8 @@ type LogDataSource struct {
     Ent string
     //
     ClusterName string
+    //
+    DataType string
 }
 
 type LogShowFilter struct {

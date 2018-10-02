@@ -119,8 +119,20 @@ func (this *AppController) GetAppName() {
 // 2018-01-15 14:57
 // @router /application/container/list
 func (this *AppController) ContainerList() {
+	serviceId, err := this.GetInt("serviceId")
 	this.Data["Entname"] = ent.GetEntnameSelect()
 	this.Data["AppData"] = GetAppSelect(sql.GetSearchMapV("CreateUser", getUser(this)))
+	if err == nil {
+		searchMap := sql.SearchMap{}
+		searchMap.Put("ServiceId", serviceId)
+		data := getServiceData(searchMap, app.SelectCloudAppService)
+		if len(data) > 0 {
+			this.Data["Entname"] = util.GetSelectOptionName(data[0].Entname)
+			this.Data["AppData"] = util.GetSelectOptionName(data[0].AppName)
+			this.Data["ServiceName"] = util.GetSelectOptionName(data[0].ServiceName)
+			this.Data["serviceId"] = serviceId
+		}
+	}
 	this.TplName = "application/container/list.html"
 }
 

@@ -133,6 +133,9 @@ func getValue(v interface{}) string {
 
 func getSql(searchMap map[string]interface{}, k string, tempSql string, connect string) string {
 	v := searchMap[k]
+	if v == nil {
+		return tempSql
+	}
 	k = StringToLower(k)
 	switch v.(type) {
 	case int:

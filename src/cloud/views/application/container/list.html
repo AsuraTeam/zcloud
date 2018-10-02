@@ -54,7 +54,7 @@
                                 <a href="#">容器治理</a>
                             </li>
                             <li>
-                                <a href="#">容器管理</a>
+                                <a href="/application/container/list">容器管理</a>
                             </li>
                         </ol>
                         <div class="clearfix"></div>
@@ -179,7 +179,20 @@
         size: 3
     });
     var table;
+    var serviceId = "{{.serviceId}}";
+    if(serviceId){
+        $("#select-ent-select").html("{{.Entname}}");
+        $("#select-app-select").html("{{.AppData}}");
+        setTimeout(function () {
+            $("#select-service-id").html("{{.ServiceName}}");
+            $(".selectpicker").selectpicker('refresh');
+            loadContainerData("", "", "", "");
+        }, 100);
+    }else{
+        loadContainerData("", "", "", 1);
+    }
     function loadContainerData(key, app, service, init) {
+
         if(!key){
             key = $("#search-c-name-id").val();
         }
@@ -188,7 +201,7 @@
             return
         }
         if (init) {
-            app = getValue(app)
+            app = getValue(app);
             service = getValue(service)
         } else {
             app = getValue($("#select-app-select").val());
@@ -205,6 +218,9 @@
         if (entname == "--请选择--") {
             entname = "";
         }
+
+
+
         table = $("#app-data-table").dataTable({
             "filter": false,//去掉搜索框
             "ordering": false, // 是否允许排序
@@ -320,7 +336,7 @@
 
     }
 
-    loadContainerData("", "", "", 1);
+
 
     function setServiceName(change) {
         var entname = getValue($("#select-ent-select").val());
@@ -465,5 +481,7 @@
             clearInterval(timer);
         }
     }, 30000);
+
+
 </script>
 </html>

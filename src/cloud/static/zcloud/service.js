@@ -1102,6 +1102,16 @@ function deleteContainer(id) {
     }
 }
 
+/**
+ * 跳转到容器页面
+ * @param id
+ */
+function toContainer(serviceId) {
+    var url = "/application/container/list?serviceId="+serviceId;
+    console.log(url)
+    window.location.href = url;
+}
+
 
 function loadServiceData(key,name) {
     if(!key){
@@ -1156,7 +1166,7 @@ function loadServiceData(key,name) {
             },
             {
                 "data": "ServiceName", "sWidth": "10%", "mRender": function (data, type, full) {
-                    return "<a href='javascript:void(0)' onc1lick='toServiceDetail(\"" + data + "\")'>" + data + "<br></a><span class='text-default'>应用:&nbsp;" + full["AppName"] + "</span><br><span class='text-default'>环境:&nbsp;" + full["Entname"] + "</span>";
+                    return "<a href='javascript:void(0)' onclick='toContainer(" + full["ServiceId"] + ")'>" + data + "<br></a><span class='text-default'>应用:&nbsp;" + full["AppName"] + "</span><br><span class='text-default'>环境:&nbsp;" + full["Entname"] + "</span>";
                 }
             },
             {

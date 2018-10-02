@@ -226,6 +226,8 @@ create table `log_data_source` (
     `description` varchar(300)  comment " 描述信息",
     `create_time` varchar(32) DEFAULT NULL,
     `cluster_name` varchar(232) DEFAULT NULL,
+    `driver_type` varchar(232) DEFAULT NULL  comment "数据驱动类型,有es,kafka",
+    `data_type` varchar(232) DEFAULT NULL  comment "日志读取或者写入",
     `ent` varchar(132) DEFAULT NULL,
     `last_modify_user` varchar(32) DEFAULT NULL,
     `last_modify_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最近修改时间'

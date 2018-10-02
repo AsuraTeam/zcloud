@@ -47,6 +47,9 @@
 <script src="/static/plugins/ion-rangeslider/ion.rangeSlider.min.js"></script>
 
 <script>
+
+
+
     var table;
     function loadServiceData(key,name) {
         if(!key){
@@ -96,7 +99,7 @@
                 },
                 {
                     "data": "ServiceName", "sWidth": "10%", "mRender": function (data, type, full) {
-                        return "<a href='javascript:void(0)' onc1lick='toServiceDetail(\"" + data + "\")'>" + data + "<br></a><span class='text-default'>应用:&nbsp;" + full["AppName"] + "</span><br><span class='text-default'>环境:&nbsp;" + full["Entname"] + "</span>";
+                        return "<a href='javascript:void(0)' onclick='toContainer(" + full["ServiceId"] + ")'>" + data + "<br></a><span class='text-default'>应用:&nbsp;" + full["AppName"] + "</span><br><span class='text-default'>环境:&nbsp;" + full["Entname"] + "</span>";
                     }
                 },
                 {
