@@ -29,7 +29,7 @@ func (this *ControllerLog) Index() {
 	q = strings.Replace(q, "{0}", util.GetUser(this.GetSession("username")), -1)
 	sql.Raw(q).QueryRow(&o)
 	this.Data["data"] = o
-	this.TplName = "log/index.html"
+	this.TplName = "log/log.html"
 }
 
 // 2018-03-01 13:22
