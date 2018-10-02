@@ -2,8 +2,6 @@ package log
 
 import (
 	"github.com/astaxie/beego"
-	"strings"
-	"strconv"
 	"cloud/sql"
 	"cloud/util"
 	"cloud/models/log"
@@ -63,44 +61,6 @@ func (this *DataSourceController) DataSourceAdd() {
 	this.TplName = "log/datasrc/add.html"
 }
 
-// 获取数据源数据
-func GetDataSourceSelect(searchMap sql.SearchMap) string {
-	html := make([]string, 0)
-	html = append(html, "<option>--请选择--</option>")
-	data := getDataSourceData(searchMap)
-	for _, v := range data {
-		html = append(html, util.GetSelectOption(v.Name, strconv.FormatInt(v.DataSourceId, 10), v.Name))
-	}
-	return strings.Join(html, "\n")
-}
-
-func getDataSourceData(searchMap sql.SearchMap) []log.LogDataSource {
-	// 数据源数据
-	data := make([]log.LogDataSource, 0)
-	q := sql.SearchSql(
-		log.LogDataSource{},
-		log.SelectAlarmDataSource,
-		searchMap)
-	sql.Raw(q).QueryRows(&data)
-	return data
-}
-
-// 获取数据源名称对应关系
-func GetDataSourceMap() util.Lock {
-	data := getDataSourceData(sql.SearchMap{})
-	r := util.Lock{}
-	for _, v := range data {
-		r.Put(strconv.FormatInt(v.DataSourceId, 10), v.Name)
-	}
-	return r
-}
-
-// 获取数据源数据
-// router /api/log/datasrc [get]
-func (this *DataSourceController) DataSourceData() {
-	data := getDataSourceData(sql.SearchMap{})
-	setDataSourceJson(this, data)
-}
 
 // 数据源保存
 // @router /api/log/datasrc [post]
@@ -130,13 +90,10 @@ func (this *DataSourceController) DataSourceSave() {
 // 数据源数据
 // @router /api/log/datasrc [get]
 func (this *DataSourceController) DataSourceDatas() {
+	tp := this.GetString("type")
 	data := make([]log.LogDataSource, 0)
 	searchMap := sql.SearchMap{}
-	id := this.Ctx.Input.Param(":id")
 	key := this.GetString("search")
-	if id != "" {
-		searchMap.Put("DataSourceId", id)
-	}
 	searchSql := sql.SearchSql(
 		log.LogDataSource{},
 		log.SelectAlarmDataSource,

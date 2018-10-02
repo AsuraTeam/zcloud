@@ -48,19 +48,20 @@ function loadDataSourceData(key) {
         "scrollX": true, // 是否允许左右滑动
         "displayLength": 10, // 默认长度
         "ajax": { // 请求地址
-            "url": "/api/log/datasrc?t=" + new Date().getTime() + "&search=" + key ,
+            "url": "/api/log/datasrc?t=" + new Date().getTime() + "&search=" + key +"&type=datasrc",
             "type": 'get'
         },
         "columns": [ // 数据映射
-            {"data": "Name"},
+            {"data": "Ent"},
+            {"data": "ClusterName"},
             {"data": "Address"},
             {"data": "Description"},
             {"data": "LastModifyTime"},
             {
                 "sWidth": "150px", "data": "DataSourceId", "mRender": function (data) {
-                    return '<button type="button" title="更新" onclick="addDataSource(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
-                        '<button type="button"  title="删除" onClick="deleteDataSourceSwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
-            }
+                    return '<button type="button" title="更新" onclick="addDriver(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
+                        '<button type="button"  title="删除" onClick="deleteDriverSwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
+                }
             },
         ],
         "fnRowCallback": function (row, data) { // 每行创建完毕的回调

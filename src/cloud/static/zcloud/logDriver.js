@@ -48,7 +48,7 @@ function loadDriverData(key) {
         "scrollX": true, // 是否允许左右滑动
         "displayLength": 10, // 默认长度
         "ajax": { // 请求地址
-            "url": "/api/log/datasrc?t=" + new Date().getTime() + "&search=" + key ,
+            "url": "/api/log/datasrc?t=" + new Date().getTime() + "&search=" + key +"&type=driver",
             "type": 'get'
         },
         "columns": [ // 数据映射

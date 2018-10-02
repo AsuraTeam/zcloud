@@ -29,19 +29,19 @@
                 <div class="col-sm-12 top-10">
                     <button type="button" onclick="addDataSource()"
                             class="btn btn-primary btn-sm waves-effect waves-light">
-                        创建日志驱动
+                        创建数据源
                     </button>
 
                     <div class="col-sm-1 cluster-search pull-right">
                         <button type="button" class="btn btn-default waves-effect waves-light"
-                                onclick="loadDriverData()"
+                                onclick="loadDataSourceData()"
                                 style="border-radius: 5px;">
                             <i class="fa fa fa-refresh"></i>
                         </button>
                     </div>
 
                     <div class="col-md-3 pull-right">
-                        <input type="text" onchange="loadDriverData($(this).val())" class="form-control" id="search_user_id"
+                        <input type="text" onchange="loadDataSourceData($(this).val())" class="form-control" id="search_user_id"
                                placeholder="搜索名称">
                         <i class="fa fa-search form-control-feedback l-h-34 right15"></i>
                     </div>
@@ -77,6 +77,6 @@
 
 <script src="/static/zcloud/datasrc.js"></script>
 <script>
-    loadDriverData();
+    loadDataSourceData();
 </script>
 </html>
