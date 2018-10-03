@@ -49,7 +49,7 @@
                                     <label for="field-1" class="col-md-2 fw100 control-label">数据源类型<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-10">
-                                      <select class="form-control" name="DriverType" id="driver-type">
+                                      <select class="form-control" name="DataType" id="driver-type">
                                           <option value="elasticsearch">elasticsearch</option>
                                       </select>
                                     </div>
@@ -87,7 +87,7 @@
                         <button type="button" class="btn btn-default btn-lg waves-effect" data-dismiss="modal"><i
                                 class="fa fa-times"></i>&nbsp;&nbsp;取消
                         </button>
-                        <button type="button" onclick="saveDriver('{{.data.DataSourceId}}')"
+                        <button type="button" onclick="saveDataSource('{{.data.DataSourceId}}')"
                                 class="btn btn-info waves-effect btn-lg waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp; 保存
                         </button>
                     </div>

@@ -151,6 +151,8 @@ type ServiceParam struct {
 	LogPath string
 	// 环境名称
 	Ent string
+	// es地址
+	ElasticSearch string
 }
 
 // 配置服务健康检查使用的

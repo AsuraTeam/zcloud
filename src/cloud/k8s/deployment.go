@@ -750,7 +750,8 @@ func CreateServicePod(param ServiceParam) (string, error) {
 							},
 							"env":          getEnv(param.Envs),
 							"volumeMounts": volumeMounts,
-
+						},
+						map[string]interface{}{
 						},
 					},
 					"volumes": volumes,
@@ -761,13 +762,23 @@ func CreateServicePod(param ServiceParam) (string, error) {
 
 	// 绑定filebeat容器
 	if len(param.Kafka) > 0 && len(param.LogPath) > 0 {
+		spec := v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"]  .(map[string]interface{})
 		filebeatContainer := CreateFilebeatConfig(param)
-		v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["containers"].([]map[string]interface{})[1] = filebeatContainer
-		filebeatVolumes, _ := getFilebeatStorage(param)
+	    spec["containers"].([]map[string]interface{})[1] = filebeatContainer
+		filebeatVolumes, filebeatMount := getFilebeatStorage(param)
+		logs.Info("filebeatMount", filebeatMount)
 		if len(filebeatVolumes) > 0 {
-			oldvolumes :=  	v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["volumes"].([]map[string]interface{})
+			oldvolumes :=  spec["volumes"].([]map[string]interface{})
 			oldvolumes = append(oldvolumes, filebeatVolumes...)
-			v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["volumes"] = oldvolumes
+			oldvolumes = append(oldvolumes, getFilebeatConfig(param))
+			spec["volumes"] = oldvolumes
+			filebeatOldVolumeMounts := spec["containers"].([]map[string]interface{})[1]["volumeMounts"].([]map[string]interface{})
+			filebeatOldVolumeMounts = append(filebeatOldVolumeMounts, filebeatMount...)
+			spec["containers"].([]map[string]interface{})[1]["volumeMounts"] = filebeatOldVolumeMounts
+
+			serviceOldVolumeMounts := spec["containers"].([]map[string]interface{})[0]["volumeMounts"].([]map[string]interface{})
+			serviceOldVolumeMounts = append(serviceOldVolumeMounts, filebeatMount...)
+			spec["containers"].([]map[string]interface{})[0]["volumeMounts"] = serviceOldVolumeMounts
 		}
 	}
 
@@ -785,6 +796,8 @@ func CreateServicePod(param ServiceParam) (string, error) {
 	if param.Privileged {
 		v = setPrivileged(param, v)
 	}
+
+	logs.Info(util.ObjToString(v))
 
 	yamldata = append(yamldata, v)
 	t, _ := json.Marshal(v)

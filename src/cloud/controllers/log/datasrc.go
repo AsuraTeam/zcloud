@@ -34,7 +34,7 @@ func (this *DataSourceController) DriverAdd() {
 		searchMap := sql.GetSearchMap("DataSourceId", *this.Ctx)
 		q := sql.SearchSql(
 			log.LogDataSource{},
-			log.SelectAlarmDataSource,
+			log.SelectLogDataSource,
 			searchMap)
 		sql.Raw(q).QueryRow(&update)
 	}
@@ -53,7 +53,7 @@ func (this *DataSourceController) DataSourceAdd() {
 		searchMap := sql.GetSearchMap("DataSourceId", *this.Ctx)
 		q := sql.SearchSql(
 			log.LogDataSource{},
-			log.SelectAlarmDataSource,
+			log.SelectLogDataSource,
 			searchMap)
 		sql.Raw(q).QueryRow(&update)
 	}
@@ -73,12 +73,12 @@ func (this *DataSourceController) DataSourceSave() {
 	}
 	util.SetPublicData(d, util.GetUser(this.GetSession("username")), &d)
 
-	q := sql.InsertSql(d, log.InsertAlarmDataSource)
+	q := sql.InsertSql(d, log.InsertLogDataSource)
 	if d.DataSourceId > 0 {
 		searchMap := sql.SearchMap{}
 		searchMap.Put("DataSourceId", d.DataSourceId)
 		q = sql.UpdateSql(
-			d, log.UpdateAlarmDataSource, searchMap, "CreateTime,CreateUser")
+			d, log.UpdateLogDataSource, searchMap, "CreateTime,CreateUser")
 	}
 	_, err = sql.Exec(q)
 
@@ -90,13 +90,12 @@ func (this *DataSourceController) DataSourceSave() {
 // 数据源数据
 // @router /api/log/datasrc [get]
 func (this *DataSourceController) DataSourceDatas() {
-	tp := this.GetString("type")
 	data := make([]log.LogDataSource, 0)
 	searchMap := sql.SearchMap{}
 	key := this.GetString("search")
 	searchSql := sql.SearchSql(
 		log.LogDataSource{},
-		log.SelectAlarmDataSource,
+		log.SelectLogDataSource,
 		searchMap)
 
 	num, _ := sql.OrderByPagingSql(
@@ -119,10 +118,10 @@ func (this *DataSourceController) DataSourceDelete() {
 	searchMap := sql.GetSearchMap("DataSourceId", *this.Ctx)
 	data := log.LogDataSource{}
 
-	q := sql.SearchSql(data, log.SelectAlarmDataSource, searchMap)
+	q := sql.SearchSql(data, log.SelectLogDataSource, searchMap)
 	sql.Raw(q).QueryRow(&data)
 
-	q = sql.DeleteSql(log.DeleteAlarmDataSource, searchMap)
+	q = sql.DeleteSql(log.DeleteLogDataSource, searchMap)
 	r, err := sql.Exec(q)
 
 	datar := util.DeleteResponse(

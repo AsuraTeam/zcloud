@@ -24,6 +24,8 @@ type LogDataSource struct {
     ClusterName string
     //
     DataType string
+    // 数据驱动类型
+    DriverType string
 }
 
 type LogShowFilter struct {

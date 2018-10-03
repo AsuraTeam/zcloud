@@ -15,6 +15,7 @@ import (
 	"cloud/models/ci"
 	"cloud/cache"
 	"cloud/userperm"
+	"cloud/models/log"
 )
 
 // 2018-02-13 16:36
@@ -195,6 +196,18 @@ func setChangeData(this *ServiceController) app.CloudAppService {
 	return service
 }
 
+// 2018-10-03 14:57
+// 获取日志驱动
+func getLogDriver(ent string, cluster string) log.LogDataSource {
+	searchMap :=  sql.SearchMap{}
+	searchMap.Put("Ent", ent)
+	searchMap.Put("ClusterName", cluster)
+	q := sql.SearchSql(log.LogDataSource{}, log.SelectLogDataSource,searchMap)
+	data := log.LogDataSource{}
+	sql.Raw(q).QueryRow(&data)
+	return data
+}
+
 // 获取创建服务的配置参数
 // 2018-01-12 8:56
 func getParam(d app.CloudAppService, user string) k8s.ServiceParam {
@@ -217,6 +230,16 @@ func getParam(d app.CloudAppService, user string) k8s.ServiceParam {
 	param.ResourceName = d.ResourceName
 	param.StorageData = d.StorageData
 	param.PortYaml = d.Yaml
+
+	if len(d.LogPath) > 0 {
+		dataDriver := getLogDriver(d.Entname, param.ClusterName)
+		param.LogPath = d.LogPath
+		param.Kafka = dataDriver.Address
+		if dataDriver.DriverType == "elasticsearch"{
+			param.ElasticSearch = dataDriver.Address
+		}
+		param.Ent = d.Entname
+	}
 
 	// 关闭容器时间
 	if param.TerminationSeconds == 0 {

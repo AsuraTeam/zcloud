@@ -100,14 +100,14 @@ func getConfigKey(keys string) []map[string]interface{} {
 
 // 加工磁盘卷数据
 // 2018-09-30 20:57 -6
-func getFilebeatVolumes(storagesData string) ([]map[string]interface{}, []map[string]interface{}) {
-	if storagesData == ""{
-		storagesData = `[]`
+func getFilebeatVolumes(storageData string) ([]map[string]interface{}, []map[string]interface{}) {
+	if storageData == ""{
+		storageData = `[]`
 	}
 	storages := make([]map[string]interface{}, 0)
 	voluments := make([]map[string]interface{}, 0)
 	data := make([]StorageData, 0)
-	err := json.Unmarshal([]byte(storagesData), &data)
+	err := json.Unmarshal([]byte(storageData), &data)
 	if err != nil {
 		logs.Error("处理Volumes失败", err)
 		return storages, voluments
@@ -123,7 +123,6 @@ func getFilebeatVolumes(storagesData string) ([]map[string]interface{}, []map[st
 				"emptyDir": map[string]interface{}{
 				},
 			}
-
 			is = true
 		}
 
@@ -138,7 +137,7 @@ func getFilebeatVolumes(storagesData string) ([]map[string]interface{}, []map[st
 		voluments = append(voluments, volumeMountsData)
 	}
 
-	fmt.Println(storages, voluments)
+	fmt.Println("filebeat-", storages, voluments)
 	return storages, voluments
 }
 
@@ -241,6 +240,9 @@ func getVolumes(storagesData string, configData []ConfigureData, param ServicePa
 				mountData := map[string]interface{}{
 					"name":      "configmap-volume-"+strconv.Itoa(id),
 					"mountPath": conf.ContainerPath,
+				}
+				if conf.ContainerPath == "/etc/filebeat/" {
+					mountData["name"] = "filebeat-config-" + param.ServiceName
 				}
 				WriteMountDataToDb(conf.DataName, "", param.ClusterName, param.Namespace, conf.ContainerPath, param.Name)
 				voluments = append(voluments, mountData)

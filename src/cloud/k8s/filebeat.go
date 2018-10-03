@@ -37,10 +37,16 @@ func getLogPaths(param ServiceParam)  string {
 	if len(param.LogPath) ==0 {
 		return ""
 	}
-	paths := strings.Split(param.LogPath, ",")
+	paths := strings.Split(param.LogPath, "\n")
 	path := make([]string, 0)
+	counter := 0
 	for _, v := range paths {
-		path = append(path, "- " + v)
+		if counter == 0 {
+			path = append(path, "- "+v)
+		}else{
+			path = append(path, "    - "+v)
+		}
+		counter += 1
 	}
 	return strings.Join(path, "\n")
 }
@@ -73,7 +79,9 @@ KAFKA
 `
 
 	temp = strings.Replace(temp, "KAFKA", getKafka(param), -1)
+	item :=  strings.Replace(param.ServiceName,"--1","", -1)
 	temp = strings.Replace(temp, "PATHS", getLogPaths(param), -1)
+	temp = strings.Replace(temp, "$item", item, -1)
 	temp = strings.Replace(temp, "APP_NAME", param.ServiceName, -1)
 	temp = strings.Replace(temp, "RUN_TIME_ENV", param.Ent, -1)
 	conf := map[string]interface{}{
@@ -91,6 +99,17 @@ KAFKA
 	return getFilebeatContainer(param)
 }
 
+// filebeat
+func getFilebeatConfig(param ServiceParam)  map[string]interface{}{
+	v := map[string]interface{}{
+		"name": "filebeat-config-"+ param.ServiceName,
+		"configMap": map[string]interface{}{
+			"name": "filebeat-config-" + param.ServiceName,
+		},
+	}
+	return v
+}
+
 // 2018-09-30 20:37 -6
 // filebeat容器启动
 func getFilebeatContainer(param ServiceParam)  map[string]interface{}{
@@ -100,6 +119,7 @@ func getFilebeatContainer(param ServiceParam)  map[string]interface{}{
 		"name":  "filebeat",
 		"imagePullPolicy": "Always",
 		"volumeMounts": volumeMounts,
+		"command": strings.Split("filebeat,-e,-c,/etc/filebeat/filebeat.yml", ","),
 	}
 	return data
 }
