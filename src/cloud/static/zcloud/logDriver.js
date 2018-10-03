@@ -54,7 +54,9 @@ function loadDriverData(key) {
         "columns": [ // 数据映射
             {"data": "Ent"},
             {"data": "ClusterName"},
-            {"data": "Address"},
+            {"data": "Address","mRender":function (data) {
+                return data.replace(/,/g, "<br>")
+            }},
             {"data": "Description"},
             {"data": "LastModifyTime"},
             {
@@ -95,7 +97,7 @@ function saveDriver(userId) {
         userId = 0
     }
     var data = get_form_data();
-    data["DriverId"] = parseInt(userId);
+    data["DataSourceId"] = parseInt(userId);
     if(!checkValue(data,"DriverType,Ent,ClusterName,Address,Description")){
         return
     }

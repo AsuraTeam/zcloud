@@ -128,7 +128,7 @@ func getFilebeatContainer(param ServiceParam)  map[string]interface{}{
 // 获取filebeat挂载的路径信息
 func getFilebeatStorage(param ServiceParam) ([]map[string]interface{},[]map[string]interface{} ) {
 	data := make([]StorageData, 0)
-	paths := strings.Split(param.LogPath, ",")
+	paths := strings.Split(param.LogPath, "\n")
 	for _, v := range paths{
 		data = append(data,  StorageData{ContainerPath:v, HostPath:v})
 	}
