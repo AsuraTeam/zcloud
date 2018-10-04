@@ -238,7 +238,6 @@ func getParam(d app.CloudAppService, user string) k8s.ServiceParam {
 		param.Kafka = dataDriver.Address
 		if dataDriver.DriverType == "elasticsearch"{
 			param.ElasticSearch = dataDriver.Address
-			param.Kafka = ""
 		}
 		param.Ent = d.Entname
 	}

@@ -45,6 +45,10 @@ func getFilebeatPaths(param ServiceParam)  map[string][]string {
 		logs.Info(v[len(v)-1:len(v)] == "/", v, v[len(v)-1:len(v)])
 		if v[len(v)-1:len(v)] == "/" {
 			dir[v] = []string{}
+		}else{
+			p := strings.Split(v, "/")
+			r := strings.Join(p[0:len(p)-1], "/") + "/"
+			dir[r] = []string{}
 		}
 	}
 	for _, v := range paths{
@@ -57,6 +61,24 @@ func getFilebeatPaths(param ServiceParam)  map[string][]string {
 		}
 	}
 	return dir
+}
+
+// 2018-10-04 15:24
+// 获取所有需要挂载的目录
+func resetFilebeatPath(param ServiceParam)  []string {
+	path := make([]string, 0)
+	paths := strings.Split(param.LogPath, "\n")
+	for _, v := range paths {
+		if v[len(v)-1:len(v)] == "/" {
+			continue
+		}
+		p := strings.Split(v, "/")
+		r := strings.Join(p[0:len(p)-1], "/") + "/"
+		if !util.ListExistsString(path, r) {
+			path = append(path, r)
+		}
+	}
+	return path
 }
 
 // 2018-03-30 14:01
@@ -169,9 +191,12 @@ func getFilebeatContainer(param ServiceParam)  map[string]interface{}{
 // 获取filebeat挂载的路径信息
 func getFilebeatStorage(param ServiceParam) ([]map[string]interface{},[]map[string]interface{} ) {
 	data := make([]StorageData, 0)
-	paths := strings.Split(param.LogPath, "\n")
+	//paths := strings.Split(param.LogPath, "\n")
+	paths := resetFilebeatPath(param)
 	for _, v := range paths{
 		data = append(data,  StorageData{ContainerPath:v, HostPath:v})
 	}
+
+	logs.Info("获取到需要挂载的路径", util.ObjToString(data))
 	return getFilebeatVolumes(util.ObjToString(data))
 }

@@ -153,6 +153,8 @@ type ServiceParam struct {
 	Ent string
 	// es地址
 	ElasticSearch string
+	// 日志挂载路径
+	LogDir string
 }
 
 // 配置服务健康检查使用的
