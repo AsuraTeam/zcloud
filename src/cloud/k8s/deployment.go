@@ -751,8 +751,6 @@ func CreateServicePod(param ServiceParam) (string, error) {
 							"env":          getEnv(param.Envs),
 							"volumeMounts": volumeMounts,
 						},
-						map[string]interface{}{
-						},
 					},
 					"volumes": volumes,
 				},
@@ -762,7 +760,8 @@ func CreateServicePod(param ServiceParam) (string, error) {
 
 	// 绑定filebeat容器
 	if len(param.Kafka) > 0 && len(param.LogPath) > 0 {
-		spec := v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"]  .(map[string]interface{})
+		spec := v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})
+		spec["containers"] = append(spec["containers"].([]map[string]interface{}), map[string]interface{}{})
 		filebeatContainer := CreateFilebeatConfig(param)
 	    spec["containers"].([]map[string]interface{})[1] = filebeatContainer
 		filebeatVolumes, filebeatMount := getFilebeatStorage(param)

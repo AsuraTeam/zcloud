@@ -116,6 +116,11 @@ func getFilebeatVolumes(storageData string) ([]map[string]interface{}, []map[str
 	for k, p := range data {
 		data := make(map[string]interface{}, 0)
 		is := false
+
+		v := p.HostPath
+		if v[len(v)-1:len(v)] != "/" {
+			continue
+		}
 		// 使用物理机的存储
 		if len(p.HostPath) > 0 && strings.Contains(p.HostPath, "/") {
 			data = map[string]interface{}{

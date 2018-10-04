@@ -4,12 +4,13 @@ import (
 	"strings"
 	"cloud/util"
 	"github.com/astaxie/beego/logs"
+	"path/filepath"
 )
 
 // 2018-03-30 13:36
 // 配置kafka
-func getKafka(param ServiceParam) string  {
-	kafka := `
+func getFilebeatOutput(param ServiceParam) string  {
+	template := `
 output.kafka:
   enable: True
   hosts: HOSTS
@@ -19,16 +20,43 @@ output.kafka:
   #required_acks: 1
   #compression: gzip
   #max_message_bytes: 1000000`
-  if len(param.Kafka) > 0 && len(param.LogPath) > 0 {
+  if len(param.Kafka) > 0 && len(param.LogPath) > 0 || (len(param.ElasticSearch) >0 && len(param.LogPath) > 0 ) {
   	addrs := strings.Split(param.Kafka, ",")
   	// ["kafka-node-01:9092"]
   	host := util.ObjToString(addrs)
   	host = strings.Replace(host, "\\\"", "\"", -1)
   	logs.Info(host)
-  	kafka = strings.Replace(kafka, "HOSTS", host , -1)
-  	return kafka
+	  template = strings.Replace(template, "HOSTS", host , -1)
+  	if len(param.ElasticSearch) > 0 {
+		template = strings.Replace(template, "output.kafka", "output.elasticsearch" , -1)
+	}
+	  return template
   }
 	return ""
+}
+
+// 检查日志路径是否包含文件
+// 如果不包含文件那么只有目录
+func getFilebeatPaths(param ServiceParam)  map[string][]string {
+	paths := strings.Split(param.LogPath, "\n")
+	dir := map[string][]string{}
+	//file := map[string]string{}
+	for _, v := range paths{
+		logs.Info(v[len(v)-1:len(v)] == "/", v, v[len(v)-1:len(v)])
+		if v[len(v)-1:len(v)] == "/" {
+			dir[v] = []string{}
+		}
+	}
+	for _, v := range paths{
+		if v[len(v)-1:len(v)] == "/" {
+			continue
+		}
+		dirname := strings.Replace(filepath.Dir(v) + "/", "\\", "/", -1)
+		if _, ok := dir[dirname] ; ok {
+			dir[dirname] = append(dir[dirname], v)
+		}
+	}
+	return dir
 }
 
 // 2018-03-30 14:01
@@ -37,16 +65,29 @@ func getLogPaths(param ServiceParam)  string {
 	if len(param.LogPath) ==0 {
 		return ""
 	}
-	paths := strings.Split(param.LogPath, "\n")
+	paths := getFilebeatPaths(param)
 	path := make([]string, 0)
 	counter := 0
-	for _, v := range paths {
-		if counter == 0 {
-			path = append(path, "- "+v)
+	logs.Info("获取到日志文件", util.ObjToString(paths))
+	for dir, file := range paths {
+		logs.Info(dir,file)
+		if len(file) > 0 {
+			for _, v := range file{
+				if counter == 0 {
+					path = append(path, "- "+v)
+				}else{
+					path = append(path, "    - "+v)
+				}
+			}
 		}else{
-			path = append(path, "    - "+v)
+			if counter == 0 {
+				path = append(path, "- "+dir+"*")
+			}else{
+				path = append(path, "    - "+dir+"*")
+			}
 		}
 		counter += 1
+
 	}
 	return strings.Join(path, "\n")
 }
@@ -78,7 +119,7 @@ registry_file: /dev/shm/registry
 KAFKA
 `
 
-	temp = strings.Replace(temp, "KAFKA", getKafka(param), -1)
+	temp = strings.Replace(temp, "KAFKA", getFilebeatOutput(param), -1)
 	item :=  strings.Replace(param.ServiceName,"--1","", -1)
 	temp = strings.Replace(temp, "PATHS", getLogPaths(param), -1)
 	temp = strings.Replace(temp, "$item", item, -1)

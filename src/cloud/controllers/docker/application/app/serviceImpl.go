@@ -202,6 +202,7 @@ func getLogDriver(ent string, cluster string) log.LogDataSource {
 	searchMap :=  sql.SearchMap{}
 	searchMap.Put("Ent", ent)
 	searchMap.Put("ClusterName", cluster)
+	searchMap.Put("DataType", "driver")
 	q := sql.SearchSql(log.LogDataSource{}, log.SelectLogDataSource,searchMap)
 	data := log.LogDataSource{}
 	sql.Raw(q).QueryRow(&data)
@@ -237,6 +238,7 @@ func getParam(d app.CloudAppService, user string) k8s.ServiceParam {
 		param.Kafka = dataDriver.Address
 		if dataDriver.DriverType == "elasticsearch"{
 			param.ElasticSearch = dataDriver.Address
+			param.Kafka = ""
 		}
 		param.Ent = d.Entname
 	}
