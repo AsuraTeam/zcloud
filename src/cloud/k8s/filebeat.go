@@ -5,6 +5,7 @@ import (
 	"cloud/util"
 	"github.com/astaxie/beego/logs"
 	"path/filepath"
+	"github.com/astaxie/beego"
 )
 
 // 2018-03-30 13:36
@@ -34,6 +35,8 @@ output.kafka:
   }
 	return ""
 }
+
+
 
 // 检查日志路径是否包含文件
 // 如果不包含文件那么只有目录
@@ -119,6 +122,7 @@ func CreateFilebeatConfig(param ServiceParam)  map[string]interface{} {
 	if len(param.Kafka) == 0 || len(param.LogPath) == 0 {
 		return  map[string]interface{}{}
 	}
+
 	temp := `
 filebeat.prospectors:
 - input_type: log
@@ -128,7 +132,7 @@ filebeat.prospectors:
   fields:
     runtime_env: RUN_TIME_ENV 
     appname: APP_NAME
-
+    ip_address: IP_ADDRESS
 
   include_lines: ^(\[201|201)
   multiline.pattern: ^(\[201|201)
@@ -176,11 +180,15 @@ func getFilebeatConfig(param ServiceParam)  map[string]interface{}{
 // 2018-09-30 20:37 -6
 // filebeat容器启动
 func getFilebeatContainer(param ServiceParam)  map[string]interface{}{
+	image := beego.AppConfig.String("filebeat.image")
+	if len(image) == 0 {
+		image = "prima/filebeat"
+	}
 	_, volumeMounts := getVolumes(param.StorageData, param.ConfigureData, param)
 	data := map[string]interface{}{
-		"image": "prima/filebeat",
+		"image": ""+image+"",
 		"name":  "filebeat",
-		"imagePullPolicy": "Always",
+		"imagePullPolicy": "IfNotPresent",
 		"volumeMounts": volumeMounts,
 		"command": strings.Split("filebeat,-e,-c,/etc/filebeat/filebeat.yml", ","),
 	}

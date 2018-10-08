@@ -16,6 +16,7 @@ import (
 	"cloud/cache"
 	"cloud/userperm"
 	"cloud/models/log"
+	"cloud/models/ent"
 )
 
 // 2018-02-13 16:36
@@ -209,6 +210,25 @@ func getLogDriver(ent string, cluster string) log.LogDataSource {
 	return data
 }
 
+// 设置filebeat需要的参数
+func setFilebeatParam(param k8s.ServiceParam, d app.CloudAppService)   k8s.ServiceParam{
+	if len(d.LogPath) > 0 {
+		dataDriver := getLogDriver(d.Entname, param.ClusterName)
+		param.LogPath = d.LogPath
+		param.Kafka = dataDriver.Address
+		if dataDriver.DriverType == "elasticsearch"{
+			param.ElasticSearch = dataDriver.Address
+		}
+		searchMap := sql.SearchMap{}
+		searchMap.Put("entname", d.Entname)
+		q := sql.SearchSql(ent.CloudEnt{}, ent.SelectCloudEnt, searchMap)
+		e := ent.CloudEnt{}
+		sql.Raw(q).QueryRow(&e)
+		param.Ent = e.Description
+	}
+	return param
+}
+
 // 获取创建服务的配置参数
 // 2018-01-12 8:56
 func getParam(d app.CloudAppService, user string) k8s.ServiceParam {
@@ -232,15 +252,7 @@ func getParam(d app.CloudAppService, user string) k8s.ServiceParam {
 	param.StorageData = d.StorageData
 	param.PortYaml = d.Yaml
 
-	if len(d.LogPath) > 0 {
-		dataDriver := getLogDriver(d.Entname, param.ClusterName)
-		param.LogPath = d.LogPath
-		param.Kafka = dataDriver.Address
-		if dataDriver.DriverType == "elasticsearch"{
-			param.ElasticSearch = dataDriver.Address
-		}
-		param.Ent = d.Entname
-	}
+	param = setFilebeatParam(param, d)
 
 	// 关闭容器时间
 	if param.TerminationSeconds == 0 {

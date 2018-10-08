@@ -56,12 +56,12 @@ function loadEntData(key) {
             {"data": "Entname","mRender":function (data) {
                 return data;
             }},
+            {"data": "Description"},
             {"data": "Clusters", "mRender":function (data) {
                 return data.split(",").join("<br>");
             }},
             {"data": "CreateTime"},
             {"data": "LastModifyTime"},
-            {"data": "Description"},
             {
                 "sWidth": "150px", "data": "EntId", "mRender": function (data) {
                     return '<button type="button" title="更新" onclick="addEnt(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
