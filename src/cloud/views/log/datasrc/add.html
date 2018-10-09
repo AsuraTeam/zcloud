@@ -13,7 +13,7 @@
                         <div class="row top10" title="">
                             <div class="col-md-12 top10">
                                 <div class="form-group">
-                                    <label for="select-cluster-id"
+                                    <label for="select-entname-id"
                                            class="col-md-2 fw100 control-label">环境选择<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-10">
@@ -59,12 +59,12 @@
                         <div class="row top15">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="field-13" class="col-md-2 fw100 control-label">驱动地址<span
+                                    <label for="field-13" class="col-md-2 fw100 control-label">数据源地址<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-10">
-                                        <input type="email" nullmsg="必须填写" value="{{.data.Address}}"
+                                        <input type="email" maxlength="100" nullmsg="必须填写" value="{{.data.Address}}"
                                                onchange="checkChange('Address')" name="Address" id="Address"
-                                               class="form-control" id="field-13" placeholder="驱动地址 192.168.1.11:8080,192.168.1.12:8080">
+                                               class="form-control" id="field-13" placeholder="驱动地址 http://192.168.1.11:9200">
                                     </div>
                                 </div>
                             </div>
@@ -83,7 +83,7 @@
                             </div>
                         </div>
                     </div>
-                    <input type="hidden" name="DataType" value="driver">
+                    <input type="hidden" name="DataType" value="datasrc">
 
                     <div class="panel-footer">
                         <button type="button" class="btn btn-default btn-lg waves-effect" data-dismiss="modal"><i
@@ -99,13 +99,13 @@
     </div>
 </div>
 <script src="/static/zcloud/registrySelect.js"></script>
-        <script>
-            setEntname();
-            var id = "{{.data.DataSourceId}}";
-            if(id){
-                var ent = "{{.data.Ent}}";
-                var cluster = "{{.data.ClusterName}}";
-                $("#select-entname-id").html("<option value='"+ent+"'>"+ent+"</option>");
-                $("#select-cluster-id").html("<option value='"+cluster+"'>"+cluster+"</option>");
-            }
-        </script>
+<script>
+    setEntname();
+    var id = "{{.data.DataSourceId}}";
+    if(id && id != "0"){
+        var ent = "{{.data.Ent}}";
+        var cluster = "{{.data.ClusterName}}";
+        $("#select-entname-id").html("<option value='"+ent+"'>"+ent+"</option>");
+        $("#select-cluster-id").html("<option value='"+cluster+"'>"+cluster+"</option>");
+    }
+</script>

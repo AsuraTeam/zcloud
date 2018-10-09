@@ -59,8 +59,8 @@ function loadDataSourceData(key) {
             {"data": "LastModifyTime"},
             {
                 "sWidth": "150px", "data": "DataSourceId", "mRender": function (data) {
-                    return '<button type="button" title="更新" onclick="addDriver(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
-                        '<button type="button"  title="删除" onClick="deleteDriverSwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
+                    return '<button type="button" title="更新" onclick="addDataSource(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
+                        '<button type="button"  title="删除" onClick="deleteDataSourceSwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
                 }
             },
         ],
@@ -96,7 +96,7 @@ function saveDataSource(userId) {
     }
     var data = get_form_data();
     data["DataSourceId"] = parseInt(userId);
-    if(!checkValue(data,"Name,Address,Description")){
+    if(!checkValue(data,"Ent,ClusterName,Address,Description")){
         return
     }
     var url = "/api/log/datasrc";

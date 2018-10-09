@@ -92,7 +92,9 @@ func (this *DataSourceController) DataSourceSave() {
 func (this *DataSourceController) DataSourceDatas() {
 	data := make([]log.LogDataSource, 0)
 	searchMap := sql.SearchMap{}
+	tp := this.GetString("type")
 	key := this.GetString("search")
+	searchMap.Put("DataType", tp)
 	searchSql := sql.SearchSql(
 		log.LogDataSource{},
 		log.SelectLogDataSource,

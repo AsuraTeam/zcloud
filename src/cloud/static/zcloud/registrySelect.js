@@ -27,7 +27,7 @@ function selectImageGroup(registryName, target) {
 function setEntname() {
     var url = "/api/ent/name";
     var result = get({}, url);
-    var html = "{{.entname}}<option>--请选择--</option>";
+    var html = "<option>--请选择--</option>";
     for (var i = 0; i < result.length; i++) {
         var t = result[i]["Entname"];
         if (html.indexOf("'" + t) == -1 ) {

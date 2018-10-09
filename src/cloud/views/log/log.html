@@ -32,34 +32,6 @@
             <div class="row" style="border: 1px solid #c9c9c9;padding: 10px;">
                 <!-- end row -->
 
-                    {{/*<div class="col-md-6" style="margin-left:3px;">*/}}
-                        {{/*<div class="form-group">*/}}
-                            {{/*<label class="col-sm-2  control-label top10">开始时间:</label>*/}}
-                            {{/*<div class="col-sm-4">*/}}
-                                {{/*<input type="date" name="beginTime1" class="form-control" id="beginTime1"*/}}
-                                       {{/*value="">*/}}
-                            {{/*</div>*/}}
-                            {{/*<div class="col-sm-4">*/}}
-                                {{/*<input type="time" name="beginTime2" class="form-control" id="beginTime2"*/}}
-                                       {{/*value="">*/}}
-                            {{/*</div>*/}}
-                        {{/*</div>*/}}
-                    {{/*</div>*/}}
-                    {{/*<div class="col-md-6" style="margin-left:-55px;">*/}}
-                        {{/*<div class="form-group">*/}}
-                            {{/*<label class="col-sm-3  control-label top10">结束时间:</label>*/}}
-                            {{/*<div class="col-sm-4">*/}}
-                                {{/*<input type="date" name="endTime1" class="form-control" id="endTime1"*/}}
-                                       {{/*value="">*/}}
-                            {{/*</div>*/}}
-                            {{/*<div class="col-sm-4">*/}}
-                                {{/*<input type="time" name="endTime2" class="form-control" id="endTime2"*/}}
-                                       {{/*value="">*/}}
-                            {{/*</div>*/}}
-                        {{/*</div>*/}}
-                    {{/*</div>*/}}
-                {{/*</div>*/}}
-
                 <div class="col-sm-12 top-10">
                     <div class="m-t-15 m-l-10">
                         <label class="col-sm-1  control-label top10">时间选择:</label>
@@ -81,11 +53,6 @@
                             <label class="col-sm-3 fw100control-label top10">环境名称:</label>
                             <div class="col-sm-8">
                                 <select class="form-control" id="env">
-                                    <option value="prod">prod</option>
-                                    <option value="">--请选择--</option>
-                                    <option value="dev">dev</option>
-                                    <option value="test">test</option>
-                                    <option value="ontest">ontest</option>
                                 </select>
                             </div>
                         </div>
@@ -401,16 +368,7 @@
 
 
     var beginTimeStamp = new Date(endTimeStamp).getTime() - parseInt($("#query-time").val()) * 1000;
-    // $("#beginTime").prop("value", formatDateTime(beginTimeStamp));
-    // $("#endTime").prop("value", endTimeStamp);
 
-
-    {{/*dates = "{{.beginTime}}".split(" ");*/}}
-    {{/*$("#beginTime1").val(dates[0]);*/}}
-    {{/*$("#beginTime2").val(dates[1]);*/}}
-    {{/*dates = "{{.endTime}}".split(" ");*/}}
-    {{/*$("#endTime1").val(dates[0]);*/}}
-    {{/*$("#endTime2").val(dates[1]);*/}}
 
     /**
      * 2018-09-14 08:37
@@ -580,8 +538,10 @@
 
     $("[class='c-datepicker-button c-datepicker-picker__link-btn confirm']").click(function () {
         $(".a-select").css("color", "#2db7f5");
-        console.log("click")
-    })
+    });
+
+    var env = "{{.ent}}";
+    $("#env").html(env);
 </script>
 
 </html>

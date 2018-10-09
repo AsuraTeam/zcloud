@@ -87,16 +87,24 @@ func (this *EntController) EntSave() {
 	setEntJson(this, data)
 }
 
-// 获取select选项
-// 2018-02-06 15:32
-func GetEntnameSelect() string {
+func GetEntnameSelectData(isLog bool)  string {
 	html := make([]string, 0)
 	html = append(html, "<option>--请选择--</option>")
 	data := getEntdata()
 	for _, v := range data {
-		html = append(html, util.GetSelectOption(v.Entname, v.Entname, v.Entname))
+		e := util.GetSelectOptionName(v.Entname)
+		if isLog {
+			e =  util.GetSelectOptionName(v.Description)
+		}
+		html = append(html, e)
 	}
 	return strings.Join(html, "\n")
+}
+
+// 获取select选项
+// 2018-02-06 15:32
+func GetEntnameSelect() string {
+	return GetEntnameSelectData(false)
 }
 
 // 2018-02-06 15:30

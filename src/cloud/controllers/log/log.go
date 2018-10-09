@@ -10,6 +10,7 @@ import (
 	"cloud/util"
 	"cloud/models/log"
 	"cloud/es"
+	"cloud/controllers/ent"
 )
 
 type ControllerLog struct {
@@ -29,6 +30,7 @@ func (this *ControllerLog) Index() {
 	q = strings.Replace(q, "{0}", util.GetUser(this.GetSession("username")), -1)
 	sql.Raw(q).QueryRow(&o)
 	this.Data["data"] = o
+	this.Data["ent"] = ent.GetEntnameSelectData(true)
 	this.TplName = "log/log.html"
 }
 

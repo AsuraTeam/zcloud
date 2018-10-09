@@ -65,7 +65,7 @@
                                     <div class="col-md-10">
                                         <input type="email" nullmsg="必须填写" value="{{.data.Address}}"
                                                onchange="checkChange('Address')" name="Address" id="Address"
-                                               class="form-control" id="field-13" placeholder="驱动地址 192.168.1.11:8080,192.168.1.12:8080">
+                                               class="form-control" id="field-13" placeholder="数据源地址 192.168.1.11:8080,192.168.1.12:8080">
                                     </div>
                                 </div>
                             </div>
@@ -102,7 +102,7 @@
         <script>
             setEntname();
             var id = "{{.data.DataSourceId}}";
-            if(id){
+            if(id && id != "0"){
                 var ent = "{{.data.Ent}}";
                 var cluster = "{{.data.ClusterName}}";
                 var driver = "{{.data.DriverType}}";
