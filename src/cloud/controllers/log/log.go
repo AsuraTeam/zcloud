@@ -11,6 +11,7 @@ import (
 	"cloud/models/log"
 	"cloud/es"
 	"cloud/controllers/ent"
+	app2 "cloud/controllers/docker/application/app"
 )
 
 type ControllerLog struct {
@@ -31,6 +32,12 @@ func (this *ControllerLog) Index() {
 	sql.Raw(q).QueryRow(&o)
 	this.Data["data"] = o
 	this.Data["ent"] = ent.GetEntnameSelectData(true)
+	env := this.GetString("env")
+	app := this.GetString("app")
+	if len(env) > 0 && len(app) > 0 {
+		this.Data["selectEnt"] = app2.GetEntDescription(env)
+		this.Data["selectApp"] = app
+	}
 	this.TplName = "log/log.html"
 }
 
@@ -58,76 +65,6 @@ func (this *ControllerLog) HistoryList() {
 	this.TplName = "log/history.html"
 }
 
-func QueryAppData() {
-	//fields := "fields.appname.keyword,beat.hostname.keyword,fields.ip_address.keyword"
-	fields := "fields.appname.keyword"
-	q := `{
-    "aggs": {
-        "1": {
-            "terms": {
-                "field": "NAME",
-                "order": {
-                    "_term": "asc"
-                },
-                "size": 5000
-            }
-        }
-    },
-    "query": {
-        "bool": {
-            "filter": [
-                {
-                    "query_string": {
-                        "analyze_wildcard": true,
-                        "query": "*"
-                    }
-                }
-            ]
-        }
-    },
-    "size": 0
-}`
-	for _, env := range strings.Split("prod,aa", ",") {
-		for _, field := range strings.Split(fields, ",") {
-			qs := strings.Replace(q, "NAME", field, -1)
-			_, r := es.RequestEs(qs, "*", "buckets", env)
-			for _, v := range r {
-				switch field {
-				case "fields.appname.keyword":
-					obj := log.LogShowAppname{
-						Appname:    v,
-						CreateTime: util.GetDate(),
-					}
-					sql.Exec(sql.InsertSql(obj, log.InsertLogShowAppname))
-
-					break
-
-				}
-			}
-		}
-
-		apps := make([]log.LogShowAppname, 0)
-		q1 := sql.SearchSql(log.LogShowAppname{}, log.SelectLogShowAppname, sql.SearchMap{})
-		sql.Raw(q1).QueryRows(&apps)
-		for _, v := range apps {
-			qs := strings.Replace(q, "NAME", "fields.ip_address.keyword", -1)
-			qs = strings.Replace(qs, `"query": "*"`, `"query": "fields.appname.keyword: \"`+v.Appname+`\""`, -1)
-			_, r := es.RequestEs(qs, "*", "buckets", env)
-			for _, v1 := range r {
-				obj2 := log.LogShowIp{
-					Ip:         v1,
-					AppName:    v.Appname,
-					CreateTime: util.GetDate(),
-				}
-				sql.Exec(sql.InsertSql(obj2, log.InsertLogShowIp))
-			}
-		}
-	}
-	q = `update log_show_filter set appname="" where appname is null`
-	sql.Exec(q)
-	q = `update log_show_filter set ip="" where ip is null`
-	sql.Exec(q)
-}
 
 // 2018-09-14 14:23
 // 日志条件搜索
@@ -171,9 +108,8 @@ func (this *ControllerLog) SaveFilter() {
 // @router /api/log/query [get]
 func (this *ControllerLog) Query() {
 	env := this.GetString("env")
+	cluster := this.GetString("cluster")
 	app := this.GetString("appname")
-	ip := this.GetString("ip")
-	//hostname := this.GetString("hostname")
 	query := this.GetString("query")
 	start := this.GetString("start")
 	end := this.GetString("end")
@@ -190,13 +126,6 @@ func (this *ControllerLog) Query() {
 	if len(app) > 0 {
 		selectQuery = append(selectQuery, "fields.appname: \\\""+app+`\"`)
 	}
-	//if len(hostname) > 0 {
-	//	selectQuery = append(selectQuery, "fields.hostname: \\\"" + hostname+ `\"`)
-	//}
-	if len(ip) > 0 {
-		selectQuery = append(selectQuery, "fields.ip_address: \\\""+ip+`\"`)
-	}
-
 	if len(query) == 0 {
 		query = "*"
 	}
@@ -288,7 +217,7 @@ func (this *ControllerLog) Query() {
     ],
     "version": true
 }`
-	total, r := es.RequestEs(q, "*", query, env)
+	total, r := es.RequestEs(q, "*", query, env, cluster)
 	r1 := strings.Join(r, "<br>")
 	this.Ctx.ResponseWriter.Header().Add("Content-Type", "text/html; charset=utf-8")
 	this.Ctx.WriteString(fmt.Sprintf("共匹配到<span class='text-danger'>%d</span>", total) +"行,最多显示500行<br>" +  r1)

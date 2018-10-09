@@ -210,6 +210,16 @@ func getLogDriver(ent string, cluster string) log.LogDataSource {
 	return data
 }
 
+// 获取环境英文名称
+func GetEntDescription(entname string)  string{
+	searchMap := sql.SearchMap{}
+	searchMap.Put("entname", entname)
+	q := sql.SearchSql(ent.CloudEnt{}, ent.SelectCloudEnt, searchMap)
+	e := ent.CloudEnt{}
+	sql.Raw(q).QueryRow(&e)
+	return e.Description
+}
+
 // 设置filebeat需要的参数
 func setFilebeatParam(param k8s.ServiceParam, d app.CloudAppService)   k8s.ServiceParam{
 	if len(d.LogPath) > 0 {
@@ -219,12 +229,7 @@ func setFilebeatParam(param k8s.ServiceParam, d app.CloudAppService)   k8s.Servi
 		if dataDriver.DriverType == "elasticsearch"{
 			param.ElasticSearch = dataDriver.Address
 		}
-		searchMap := sql.SearchMap{}
-		searchMap.Put("entname", d.Entname)
-		q := sql.SearchSql(ent.CloudEnt{}, ent.SelectCloudEnt, searchMap)
-		e := ent.CloudEnt{}
-		sql.Raw(q).QueryRow(&e)
-		param.Ent = e.Description
+		param.Ent = GetEntDescription(d.Entname)
 	}
 	return param
 }

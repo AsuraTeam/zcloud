@@ -3,9 +3,10 @@ package es
 import (
 	"fmt"
 	"github.com/astaxie/beego/logs"
-	"github.com/astaxie/beego"
 	"strings"
 	"cloud/util"
+	"cloud/sql"
+	"cloud/models/log"
 )
 
 // 获取es数据
@@ -130,17 +131,22 @@ func getEsValues(data map[string]interface{}, query string) (int64, []string) {
 	return int64(total), result
 }
 
+// 获取数据源地址
+func getDataSource(env string, cluster string)  string {
+	searchMap := sql.SearchMap{}
+	searchMap.Put("Ent", env)
+	searchMap.Put("ClusterName", cluster)
+	data := log.LogDataSource{}
+	sql.GetOrm().Raw(log.SelectDataSource, env, env, cluster).QueryRow(&data)
+	return data.Address
+}
+
 // 2018-03-13 19:26
 // 获取监控数据es
-func RequestEs(query, index, q, env string) (int64, []string) {
+func RequestEs(query, index, q, env string, cluster string) (int64, []string) {
 	//data := map[string]interface{}{}
 	//json.Unmarshal([]byte(query), &data)
-	var server string
-	if env == "prod" {
-		server = beego.AppConfig.String("es.addr.prod")
-	} else {
-		server = beego.AppConfig.String("es.addr")
-	}
+	server := getDataSource(env, cluster)
 	server = fmt.Sprintf("%s/%s/_search", server, index)
 	logs.Info(server, query)
 	result := util.HttpGetJson(query, server)
@@ -151,6 +157,5 @@ func RequestEs(query, index, q, env string) (int64, []string) {
 	} else {
 		total, r = getEsValues(result, q)
 	}
-	logs.Info(r)
 	return total, r
 }

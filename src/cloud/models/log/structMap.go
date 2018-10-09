@@ -28,4 +28,6 @@ const SelectLogShowHistory = "select env,create_time,create_user,query,appname,h
 const SelectLastSearch = `select env,create_time,create_user,query,appname,hostname,ip,id from log_show_history where create_user="{0}" order by id desc limit 1`
 const UpdateLogShowHistory = "update log_show_history"
 const InsertLogShowHistory = "insert into log_show_history" 
-const DeleteLogShowHistory = "delete from log_show_history" 
+const DeleteLogShowHistory = "delete from log_show_history"
+
+const SelectDataSource = `select a.address from log_data_source a, cloud_ent b where (a.ent=b.entname or a.ent=b.description) and  (a.ent=? or b.description =? ) and a.cluster_name=? and a.data_type="datasrc"`

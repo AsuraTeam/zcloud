@@ -143,7 +143,7 @@ func (this *AppController) ContainerData() {
 		searchSql += strings.Replace(q, "?", sql.Replace(search), -1)
 	}
 
-	sql.OrderByPagingSql(searchSql, "container_id",
+	sql.OrderByPagingSql(searchSql, "create_time",
 		*this.Ctx.Request,
 		&data,
 		app.CloudContainer{})
@@ -169,7 +169,6 @@ func (this *AppController) ContainerData() {
 		r := cache.ContainerCache.Get(key)
 		var v interface{}
 		status := util.RedisObj2Obj(r, &v)
-		logs.Info(key, util.ObjToString(v))
 		if status {
 			v.(map[string]interface{})["ContainerId"] = cv.ContainerId
 			v.(map[string]interface{})["CreateTime"] = util.GetMinTime(cv.CreateTime)
@@ -321,7 +320,7 @@ func setAppData(all app.CloudContainer, d app.CloudAppService, c kubernetes.Clie
 	all.AppName = d.AppName
 	all.CreateUser = d.CreateUser
 	all.Entname = d.Entname
-	all.ServiceName = d.ServiceName
+	all.ServiceName = util.Namespace(d.ServiceName, d.ServiceVersion)
 	events := k8s.GetEvents(namespace, all.ContainerName, c)
 	all.Events = util.ObjToString(events)
 	return all

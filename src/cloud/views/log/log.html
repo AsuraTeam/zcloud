@@ -52,23 +52,28 @@
                         <div class="form-group">
                             <label class="col-sm-3 fw100control-label top10">环境名称:</label>
                             <div class="col-sm-8">
-                                <select class="form-control" id="env">
+                                <select class="form-control" id="env"     onchange="getEntClusterData($(this).val())">
                                 </select>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-6 " style="margin-left:0px;">
+                    <div class="col-md-6" style="margin-left:0px;">
+                        <div class="form-group">
+                            <label class="col-sm-3 fw100control-label top10">集群名称:</label>
+                            <div class="col-sm-8">
+                                <select class="form-control"   id="select-cluster-id">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 m-t-15" style="margin-left:0px;">
                         <div class="form-group">
                             <label class="col-sm-3 fw100control-label top10">应用名称:</label>
                             <div class="col-sm-8">
-                                <input type="text" name="beginTime1" class="form-control" id="appname"
-                                       onkeyup="search_data($(this).val(),'show_search_appname', 'appname')"
-                                       placeholder="可模糊搜索应用名称"
-                                       value="">
-                                <div class="col-md-2 clickhide" id="show_search_appname"
-                                     style="display:none;position:absolute;margin-top:5px;background-color:#FFFFD8;margin-left:2px;z-index:999999">
-                                </div>
+                                <select class="form-control" id="appname" name="appname">
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -102,37 +107,6 @@
                     </div>
                 </div>
 
-
-                <div class="col-md-8" style="margin-left:0px;margin-top: -60px;">
-                    <div class="col-md-6 " style="margin-left:0px;">
-                        <div class="form-group">
-                            <label class="col-sm-3 fw100control-label top10">ip地址:</label>
-                            <div class="col-sm-8">
-                                <input type="text" name="beginTime1" class="form-control" id="ip"
-                                       onkeyup="search_data($(this).val(),'show_search_ip', 'ip')"
-                                       placeholder="可模糊搜索IP"
-                                       value="">
-                                <div class="col-md-2 clickhide" id="show_search_ip"
-                                     style="overflow:scroll;display:none;position:absolute;margin-top:5px;background-color:#FFFFD8;margin-left:2px;z-index:999999">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {{/*<div class="col-md-6 " style="margin-left:0px;">*/}}
-                {{/*<div class="form-group">*/}}
-                {{/*<label class="col-sm-3 fw100control-label top10">主机名:</label>*/}}
-                {{/*<div class="col-sm-8">*/}}
-                {{/*<input type="text" name="beginTime1" class="form-control" id="hostname"*/}}
-                {{/*onkeyup="search_data($(this).val(),'show_search_hostname', 'hostname')"*/}}
-                {{/*placeholder="可模糊搜索主机名"*/}}
-                {{/*value="">*/}}
-                {{/*<div class="col-md-2 clickhide" id="show_search_hostname"*/}}
-                {{/*style="display:none;position:absolute;margin-top:5px;background-color:#FFFFD8;margin-left:2px;z-index:999999">*/}}
-                {{/*</div>*/}}
-                {{/*</div>*/}}
-                {{/*</div>*/}}
-                {{/*</div>*/}}
-                </div>
 
                 <div style="border: 2px solid #f0f0ee;">&nbsp;</div>
 
@@ -181,7 +155,7 @@
 
 <script src="/static/plugins/date/js/moment.min.js"></script>
 <script src="/static/plugins/date/js/datepicker.all.js"></script>
-
+<script src="/static/zcloud/registrySelect.js"></script>
 </body>
 </div>
 
@@ -235,6 +209,7 @@
             appname: $("#appname").val(),
             query: query,
             type: tp,
+            cluster: $("#select-cluster-id").val(),
         };
         var url = "/api/log/filter";
         var result = post(data, url);
@@ -272,6 +247,7 @@
                 start: start,
                 end: end,
                 query: query,
+                cluster: $("#select-cluster-id").val(),
             };
             var url = "/api/log/query?q=n";
             if (o) {
@@ -284,8 +260,6 @@
 
             var result = get(data, url);
             $("#log-show-id").html("<br><br>");
-            // result = result.replace(/@kibana-highlighted-field@/g, "<span style='color:red'>");
-            // result = result.replace(/@\/kibana-highlighted-field@/g, "</span>");
             result = result.replace(/\\n/g, "<br>");
             $("#log-show-id").append(result);
             if (result.length == 0) {
@@ -388,38 +362,6 @@
     }
 
 
-    /**
-     * 2018-09-14 09:16
-     * 动态数据搜索
-     * */
-    function search_data(value, id, name) {
-        var appname = $("#appname").val();
-        if (!appname) {
-            appname = "";
-        }
-        $("#" + id).show();
-        var url = "/api/log/search";
-        var result = get({"key": value, type: name, appname: appname}, url);
-        var data = result;
-        var width = $("#" + name).css("width").replace(/px/, "");
-        $("#" + id).css("width", width);
-        var html = "";
-        for (var i = 0; i < data.length; i++) {
-            html += "<div class='clickhide' style='float:left;text-align:left;margin-left:-8px;background-color: #FFFFD8;'><span onclick='search_ip_load(\"" + data[i]["Value"] + "\",\"" + id + "\",\"" + name + "\")'> " + data[i]["Value"] + "</span></div><br>";
-        }
-        $("#" + id).html(html);
-        $("#" + id).hide();
-        $("#" + id).show();
-    }
-
-    /**
-     * ip动态搜索
-     * @param ip
-     */
-    function search_ip_load(ip, id, name) {
-        $("#" + name).val(ip);
-        $("#" + id).hide();
-    }
 
     var id = "{{.data.Id}}";
     if (id != "0") {
@@ -540,8 +482,17 @@
         $(".a-select").css("color", "#2db7f5");
     });
 
+
     var env = "{{.ent}}";
     $("#env").html(env);
+
+    var selectEnt = "{{.selectEnt}}";
+    var selectApp = "{{.selectApp}}";
+    if (selectEnt){
+        $("#env").html("<option value='"+selectEnt+"'>"+selectEnt+"</option>" + $("#env").html());
+        $("#appname").html("<option value='"+selectApp+"'>"+selectApp+"</option>" + $("#appname").html());
+
+    }
 </script>
 
 </html>

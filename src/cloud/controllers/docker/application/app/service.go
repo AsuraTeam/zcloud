@@ -527,6 +527,9 @@ func (this *ServiceController) ServiceUpdate() {
 	}
 
 	user := util.GetUser(this.GetSession("username"))
+
+	// 更新filebeat的配置文件
+	k8s.CreateFilebeatConfig(getParam(service, user))
 	err := ExecUpdate(service, updateType, user)
 	if err == nil {
 		responseData(err, this, service.ServiceName, "操作成功")

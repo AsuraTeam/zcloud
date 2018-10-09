@@ -29,9 +29,18 @@ function deleteService(id, force) {
  * @param id
  */
 function setServiceDeleteId(id, force) {
-    $("#delete_service_id").val(id)
-    $("#delete_service_force_id").val(id)
+    $("#delete_service_id").val(id);
+    $("#delete_service_force_id").val(id);
     deleteServiceSwal();
+}
+
+/**
+ * 2018-10-08 20:11
+ * 跳到日志查看页面
+ */
+function toLog(env, service, cluster) {
+    var url = "/log/index?env="+env+"&app="+service+"&cluster="+cluster;
+    window.open(url, "_black");
 }
 
 /**
@@ -1222,8 +1231,10 @@ function loadServiceData(key,name) {
             },
             {
                 "data": "ServiceId", "sWidth": "5%", "mRender": function (data) {
-                return '<button type="button"  title="强制删除" onClick="deleteServiceSwal(' + data + ',1)" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-bolt"></i></button>';
-            }
+                return '<button type="button"  title="强制删除" onClick="deleteServiceSwal(' + data + ',1)" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-bolt"></i></button>'+
+                    '<button type="button"  title="显示日志" onClick="toLog(\'' + full["Entname"]+ '\',\''+full["ServiceName"]+'\',\''+full["ClusterName"]+'\')" class="delete-groups btn btn-xs rb-btn-oper m-l-5"><i class="fa fa-history"></i></button>' ;
+
+                }
             },
         ],
         "fnRowCallback": function (row, data) { // 每行创建完毕的回调

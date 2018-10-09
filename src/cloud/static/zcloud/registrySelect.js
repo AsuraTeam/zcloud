@@ -69,9 +69,12 @@ function getEntClusterData(entname, target) {
     var data = result["data"];
     var html = "<option>--请选择--</option>";
     for (var i = 0; i < data.length; i++) {
-        if (data[i]["Entname"] == entname) {
+        if (data[i]["Entname"] == entname || data[i]["Description"] == entname) {
             var clusters = data[i]["Clusters"];
             var clusters = clusters.split(",");
+            if (clusters.length == 1){
+                html = "";
+            }
 
             for (var j = 0; j < clusters.length; j++) {
                 html += "<option value='" + clusters[j] + "'>" + clusters[j] + "</option>"
