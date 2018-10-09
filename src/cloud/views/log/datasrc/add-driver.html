@@ -105,7 +105,9 @@
             if(id){
                 var ent = "{{.data.Ent}}";
                 var cluster = "{{.data.ClusterName}}";
+                var driver = "{{.data.DriverType}}";
                 $("#select-entname-id").html("<option value='"+ent+"'>"+ent+"</option>");
                 $("#select-cluster-id").html("<option value='"+cluster+"'>"+cluster+"</option>");
+                $("#driver-type").html("<option value='"+driver+"'>"+driver+"</option>" + $("#driver-type").html());
             }
         </script>

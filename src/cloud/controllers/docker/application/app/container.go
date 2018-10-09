@@ -1,7 +1,6 @@
 package app
 
 import (
-	"time"
 	"cloud/k8s"
 	"cloud/sql"
 	"cloud/models/app"
@@ -14,10 +13,11 @@ import (
 	registry2 "cloud/controllers/image"
 	"github.com/astaxie/beego/logs"
 	"cloud/userperm"
+	"time"
 )
 
 // 获取详情数据
-func getContainerData(this *AppController)  app.CloudContainer{
+func getContainerData(this *AppController) app.CloudContainer {
 	data := app.CloudContainer{}
 	name := this.Ctx.Input.Param(":hi")
 	searchMap := sql.GetSearchMapV("ContainerName", name)
@@ -45,7 +45,7 @@ func (this *AppController) ContainerDetail() {
 // @router /application/container/image [get]
 func (this *AppController) ContainerImage() {
 	data := app.CloudContainer{}
-	id,err := this.GetInt("id")
+	id, err := this.GetInt("id")
 	if err != nil {
 		this.Ctx.WriteString("参数错误")
 		return
@@ -64,7 +64,6 @@ func (this *AppController) ContainerImage() {
 	this.Data["baseImage"] = registry2.GetBaseImageSelect()
 	this.TplName = "application/container/image.html"
 }
-
 
 // 2018-08-21 14:33
 // 容器提交镜像
@@ -170,6 +169,7 @@ func (this *AppController) ContainerData() {
 		r := cache.ContainerCache.Get(key)
 		var v interface{}
 		status := util.RedisObj2Obj(r, &v)
+		logs.Info(key, util.ObjToString(v))
 		if status {
 			v.(map[string]interface{})["ContainerId"] = cv.ContainerId
 			v.(map[string]interface{})["CreateTime"] = util.GetMinTime(cv.CreateTime)
@@ -200,9 +200,6 @@ func writeToDb(appData util.Lock, appDatasDb util.Lock) {
 			o.Events = ""
 			q := sql.InsertSql(o, app.InsertCloudContainer)
 			sql.Raw(q).Exec()
-		}
-		if cache.ContainerCacheErr == nil {
-			cache.ContainerCache.Put(sName, util.ObjToString(o), time.Second*3600)
 		}
 	}
 }
@@ -236,7 +233,7 @@ func (this *AppController) GetDockerLogs() {
 		this.Ctx.WriteString(err.Error())
 		return
 	}
-	line, err  := this.GetInt64("tailLine")
+	line, err := this.GetInt64("tailLine")
 	if err != nil {
 		line = 5000
 	}
@@ -251,7 +248,7 @@ func MakeContainerData(namespace string) {
 	if !util.WriteLock("last_update", &LockContainerUpdate, 10) {
 		return
 	}
-
+	logs.Info("生成容器数据")
 	searchMap := sql.SearchMap{}
 	if namespace != "" {
 		searchMap.Put("Namespace", namespace)
@@ -270,7 +267,7 @@ func MakeContainerData(namespace string) {
 		namespace := util.Namespace(d.AppName, d.ResourceName)
 		sName := namespace + d.ServiceName + d.ClusterName
 		if _, ok := lockData.Get(sName); !ok {
-			c,err := k8s.GetClient(d.ClusterName)
+			c, err := k8s.GetClient(d.ClusterName)
 			if err != nil {
 				logs.Error("获取客户端错误", err.Error())
 				continue
@@ -278,6 +275,7 @@ func MakeContainerData(namespace string) {
 			appData := k8s.GetContainerStatus(namespace, c)
 			for _, all := range appData {
 				all = setAppData(all, d, c)
+				cache.ContainerCache.Put(all.AppName+all.ContainerName, util.ObjToString(all), time.Second*3600)
 				appDataLock.Put(all.AppName+all.ContainerName, all)
 				containerDatas.Put(all.AppName+all.ContainerName, "1")
 				lockData.Put(sName, "1")
@@ -323,6 +321,7 @@ func setAppData(all app.CloudContainer, d app.CloudAppService, c kubernetes.Clie
 	all.AppName = d.AppName
 	all.CreateUser = d.CreateUser
 	all.Entname = d.Entname
+	all.ServiceName = d.ServiceName
 	events := k8s.GetEvents(namespace, all.ContainerName, c)
 	all.Events = util.ObjToString(events)
 	return all
@@ -342,11 +341,10 @@ func getRedisContainer(data app.CloudContainer, appName string, containerName st
 	if status && data.ContainerId > 0 {
 		v.ContainerId = data.ContainerId
 		v.CreateTime = util.GetMinTime(data.CreateTime)
-		v.Process = k8s.Exec(v.ClusterName, v.ContainerName, util.Namespace(data.AppName,data.ResourceName), data.ServiceName, cmd)
+		v.Process = k8s.Exec(v.ClusterName, v.ContainerName, util.Namespace(data.AppName, data.ResourceName), data.ServiceName, cmd)
 	}
 	return v
 }
-
 
 // 2018-08-22 11:17
 // 获取容器提交参数

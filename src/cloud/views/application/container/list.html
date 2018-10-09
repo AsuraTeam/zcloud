@@ -261,6 +261,12 @@
                             + '</div></div>'
                         return r;
                     }
+                        if (data == "False") {
+                            var r = '<div class="text-warning"><div><i class="fa fa-circle"></i><span>&nbsp; 未知</span>&nbsp;' +
+                                    "<div class='text-default brtop5'>0/0&nbsp;共0个运行</div>"
+                                    + '</div>' +
+                                    '</div></div>'
+                        }
                     if (data == "Pending") {
                         var r = '<div class="text-warning"><div><i class="fa fa-circle"></i><span>&nbsp;等待中</span>&nbsp;' +
                             "<div class='text-default brtop5'>0/0&nbsp;共0个运行</div>"

@@ -15,7 +15,7 @@ func getFilebeatOutput(param ServiceParam) string  {
 output.kafka:
   enable: True
   hosts: HOSTS
-  topic: 'access'
+  topic: 'k8s-app-log'
   partition.round_robin:
     reachable_only: false
   #required_acks: 1
@@ -72,9 +72,9 @@ func resetFilebeatPath(param ServiceParam)  []string {
 	path := make([]string, 0)
 	paths := strings.Split(param.LogPath, "\n")
 	for _, v := range paths {
-		if v[len(v)-1:len(v)] == "/" {
-			continue
-		}
+		//if v[len(v)-1:len(v)] == "/" {
+		//	continue
+		//}
 		p := strings.Split(v, "/")
 		r := strings.Join(p[0:len(p)-1], "/") + "/"
 		if !util.ListExistsString(path, r) {
@@ -128,7 +128,7 @@ filebeat.prospectors:
 - input_type: log
   paths:
     PATHS 
-  document_type: "java_access-APP_NAME"
+  document_type: "k8s-APP_NAME"
   fields:
     runtime_env: RUN_TIME_ENV 
     appname: APP_NAME
@@ -188,7 +188,7 @@ func getFilebeatContainer(param ServiceParam)  map[string]interface{}{
 	data := map[string]interface{}{
 		"image": ""+image+"",
 		"name":  "filebeat",
-		"imagePullPolicy": "IfNotPresent",
+		"imagePullPolicy": "Always",
 		"volumeMounts": volumeMounts,
 		"command": strings.Split("filebeat,-e,-c,/etc/filebeat/filebeat.yml", ","),
 	}

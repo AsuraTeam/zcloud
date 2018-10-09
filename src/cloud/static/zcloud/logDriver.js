@@ -54,10 +54,12 @@ function loadDriverData(key) {
         "columns": [ // 数据映射
             {"data": "Ent"},
             {"data": "ClusterName"},
+            {"data": "DriverType"},
             {"data": "Address","mRender":function (data) {
                 return data.replace(/,/g, "<br>")
             }},
             {"data": "Description"},
+
             {"data": "LastModifyTime"},
             {
                 "sWidth": "150px", "data": "DataSourceId", "mRender": function (data) {

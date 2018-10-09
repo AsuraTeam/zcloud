@@ -92,20 +92,20 @@ func GetPods(namespace string, clientSet kubernetes.Clientset) []v1.Pod {
 // 获取某个节点的数据
 func GetPodsFromNode(node string, clientSet kubernetes.Clientset) v1.PodList {
 	podData := v1.PodList{}
-	namespaces,err := GetNamespaces(clientSet)
-	if err != nil{
+	namespaces, err := GetNamespaces(clientSet)
+	if err != nil {
 		return podData
 	}
 
 	opt := metav1.ListOptions{}
 	//opt.FieldSelector = "status.hostIP=" + node
-	for _, name := range namespaces{
+	for _, name := range namespaces {
 		pods, err := clientSet.CoreV1().Pods(name.Name).List(opt)
 		if err != nil {
 			logs.Error(err)
 			continue
 		}
-		for _, item := range pods.Items{
+		for _, item := range pods.Items {
 			if node == item.Status.HostIP {
 				podData.Items = append(podData.Items, item)
 			}
@@ -119,9 +119,9 @@ func GetPodsFromNode(node string, clientSet kubernetes.Clientset) v1.PodList {
 // @param namespace
 // @param serviceName
 // 2018-01-18 9:53
-func GetPodsService(namespace string, serviceName string, clientSet kubernetes.Clientset) []v1.Pod  {
+func GetPodsService(namespace string, serviceName string, clientSet kubernetes.Clientset) []v1.Pod {
 	opt := metav1.ListOptions{}
-	opt.LabelSelector = "name="+ serviceName
+	opt.LabelSelector = "name=" + serviceName
 	pods, err := clientSet.CoreV1().Pods(namespace).List(opt)
 	if err != nil {
 		logs.Error("获取Pods错误", err.Error())
@@ -160,7 +160,6 @@ func GetPodStatus(namespace string, clientSet kubernetes.Clientset) []AppPodStat
 	}
 	return datas
 }
-
 
 // 获取容器挂载的目录信息
 // 2018-01-16 11:18
@@ -205,7 +204,7 @@ func podStatus(app app.CloudContainer, obj v1.ContainerStatus) app.CloudContaine
 		app.Status = app.WaitingReason
 	}
 
-	if 	obj.State.Terminated != nil{
+	if obj.State.Terminated != nil {
 		app.TerminatedMessages = obj.State.Terminated.Message
 		app.TerminatedReason = obj.State.Terminated.Reason
 		app.Status = app.TerminatedReason
@@ -241,7 +240,7 @@ func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.
 			}
 		}
 
-		if len( d.Status.ContainerStatuses) > 0 {
+		if len(d.Status.ContainerStatuses) > 0 {
 			app.Restart = d.Status.ContainerStatuses[0].RestartCount
 		}
 
@@ -256,8 +255,11 @@ func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.
 		}
 		app.StorageData = getMountPath(d)
 		app.Env = strings.Join(envS, " ")
-		if app.Status == "true" {
-			app.Status = strings.Replace(util.ObjToString(d.Status.Phase), "\"", "", -1)
+		app.Status = strings.Replace(util.ObjToString(d.Status.Phase), "\"", "", -1)
+		for _, s := range d.Status.Conditions {
+			if s.Status == v1.ConditionFalse {
+				app.Status = "False"
+			}
 		}
 		app.ContainerName = d.Name
 		app.Service = strings.Split(d.Name, "--")[0]
