@@ -273,7 +273,7 @@ func MakeContainerData(namespace string) {
 			}
 			appData := k8s.GetContainerStatus(namespace, c)
 			for _, all := range appData {
-				all = setAppData(all, d, c)
+				all = setAppData(all, d, c, util.Namespace(d.ServiceName, d.ServiceVersion))
 				cache.ContainerCache.Put(all.AppName+all.ContainerName, util.ObjToString(all), time.Second*3600)
 				appDataLock.Put(all.AppName+all.ContainerName, all)
 				containerDatas.Put(all.AppName+all.ContainerName, "1")
@@ -312,15 +312,14 @@ func SetAppDataJson(this *AppController, data interface{}) {
 // 填充容器数据
 var cmd = []string{"ps", "aux"}
 
-func setAppData(all app.CloudContainer, d app.CloudAppService, c kubernetes.Clientset) app.CloudContainer {
+func setAppData(all app.CloudContainer, d app.CloudAppService, c kubernetes.Clientset, serviceName string) app.CloudContainer {
 	namespace := util.Namespace(d.AppName, d.ResourceName)
-
 	all.ResourceName = d.ResourceName
 	all.ClusterName = d.ClusterName
 	all.AppName = d.AppName
 	all.CreateUser = d.CreateUser
 	all.Entname = d.Entname
-	all.ServiceName = util.Namespace(d.ServiceName, d.ServiceVersion)
+	all.ServiceName = serviceName
 	events := k8s.GetEvents(namespace, all.ContainerName, c)
 	all.Events = util.ObjToString(events)
 	return all
