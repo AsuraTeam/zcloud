@@ -34,9 +34,11 @@ func (this *ControllerLog) Index() {
 	this.Data["ent"] = ent.GetEntnameSelectData(true)
 	env := this.GetString("env")
 	app := this.GetString("app")
-	if len(env) > 0 && len(app) > 0 {
+	cluster := this.GetString("cluster")
+	if len(env) > 0 && len(app) > 0  && len(cluster) > 0 {
 		this.Data["selectEnt"] = app2.GetEntDescription(env)
 		this.Data["selectApp"] = app
+		this.Data["selectCluster"] = cluster
 	}
 	this.TplName = "log/log.html"
 }

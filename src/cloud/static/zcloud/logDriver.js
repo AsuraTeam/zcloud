@@ -62,7 +62,7 @@ function loadDriverData(key) {
 
             {"data": "LastModifyTime"},
             {
-                "sWidth": "150px", "data": "DataSourceId", "mRender": function (data) {
+                "data": "DataSourceId", "mRender": function (data) {
                     return '<button type="button" title="更新" onclick="addDriver(' + data + ')" class="btn btn-xs rb-btn-oper"><i class="fa fa-pencil"></i></button>&nbsp;' +
                         '<button type="button"  title="删除" onClick="deleteDriverSwal(' + data + ')" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-trash-o"></i></button>';
             }

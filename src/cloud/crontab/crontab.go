@@ -27,7 +27,7 @@ func CronStart() {
 		app.CacheAppData()
 	}, "CacheAppData")
 	// 容器
-	cron.AddFunc("30 */3 * * * ?", func() {
+	cron.AddFunc("30 * * * * ?", func() {
 		app.MakeContainerData("")
 	}, "MakeContainerData")
 	// node状态写入到缓存

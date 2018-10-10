@@ -213,7 +213,7 @@ func getLogDriver(ent string, cluster string) log.LogDataSource {
 // 获取环境英文名称
 func GetEntDescription(entname string)  string{
 	searchMap := sql.SearchMap{}
-	searchMap.Put("entname", entname)
+	searchMap.Put("Entname", entname)
 	q := sql.SearchSql(ent.CloudEnt{}, ent.SelectCloudEnt, searchMap)
 	e := ent.CloudEnt{}
 	sql.Raw(q).QueryRow(&e)
@@ -558,7 +558,7 @@ func CreateGreenService(ciData ci.CloudCiService, username string) (string, bool
 
 	serviceData.ImageTag = ciData.ImageName
 	serviceData.ServiceVersion = version
-	serviceData.ServiceName = serviceData.ServiceName
+	//serviceData.ServiceName = serviceData.ServiceName
 	serviceParam := getParam(serviceData, username)
 
 	yaml, err := k8s.CreateServicePod(serviceParam)

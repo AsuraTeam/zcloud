@@ -240,7 +240,7 @@
             }
             var query = $("#query").val();
             var data = {
-                env: $("#env").val(),
+                env: $("#env").val().replace(/--请选择--/g,""),
                 ip: $("#ip").val(),
                 hostname: $("#hostname").val(),
                 appname: $("#appname").val(),
@@ -361,6 +361,17 @@
 
     }
 
+    var env = "{{.ent}}";
+    $("#env").html(env);
+
+    var selectEnt = "{{.selectEnt}}";
+    var selectApp = "{{.selectApp}}";
+    var selectCluster = "{{.selectCluster}}";
+    if (selectEnt){
+        $("#env").html("<option value='"+selectEnt+"'>"+selectEnt+"</option>" + $("#env").html());
+        $("#select-cluster-id").html("<option value='"+selectCluster+"'>"+selectCluster+"</option>" + $("#select-cluster-id").html());
+        $("#appname").html("<option value='"+selectApp+"'>"+selectApp+"</option>" + $("#appname").html());
+    }
 
 
     var id = "{{.data.Id}}";
@@ -386,7 +397,9 @@
             $("#query").val(query);
         }
     }
-
+    if (!$("#select-cluster-id").val()) {
+        getEntClusterData($("#env").val());
+    }
     queryDefault();
 
 
@@ -483,16 +496,7 @@
     });
 
 
-    var env = "{{.ent}}";
-    $("#env").html(env);
 
-    var selectEnt = "{{.selectEnt}}";
-    var selectApp = "{{.selectApp}}";
-    if (selectEnt){
-        $("#env").html("<option value='"+selectEnt+"'>"+selectEnt+"</option>" + $("#env").html());
-        $("#appname").html("<option value='"+selectApp+"'>"+selectApp+"</option>" + $("#appname").html());
-
-    }
 </script>
 
 </html>

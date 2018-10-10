@@ -256,11 +256,14 @@ func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.
 		app.StorageData = getMountPath(d)
 		app.Env = strings.Join(envS, " ")
 		app.Status = strings.Replace(util.ObjToString(d.Status.Phase), "\"", "", -1)
-		for _, s := range d.Status.Conditions {
-			if s.Status == v1.ConditionFalse {
-				app.Status = "False"
+		if app.Status == "Running" {
+			for _, s := range d.Status.Conditions {
+				if s.Status == v1.ConditionFalse {
+					app.Status = "False"
+				}
 			}
 		}
+		//logs.Info(d.Name, util.ObjToString(d.Status))
 		app.ContainerName = d.Name
 		app.Service = strings.Split(d.Name, "--")[0]
 

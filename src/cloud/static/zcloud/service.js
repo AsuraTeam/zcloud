@@ -1203,11 +1203,10 @@ function loadServiceData(key,name) {
             }
             },
             {
-                "data": "Image", "sWidth": "12%", "mRender": function (data) {
+                "data": "Image", "sWidth": "11%", "mRender": function (data) {
                 return "<div style='word-wrap:break-word'><a>" + data + "</a></div>";
             }
-            },
-            {
+            }, {
                 "data": "ResourceName", "sWidth": "11%", "mRender": function (data, type, full) {
                 return "<a href='/base/quota/detail/" + data + "'>" + data + "</a><br>集群名称:&nbsp;" + full["ClusterName"]
             }
@@ -1230,7 +1229,7 @@ function loadServiceData(key,name) {
             }
             },
             {
-                "data": "ServiceId", "sWidth": "5%", "mRender": function (data) {
+                "data": "ServiceId", "sWidth": "6%", "mRender": function (data,type,full) {
                 return '<button type="button"  title="强制删除" onClick="deleteServiceSwal(' + data + ',1)" class="delete-groups btn btn-xs rb-btn-oper"><i class="fa fa-bolt"></i></button>'+
                     '<button type="button"  title="显示日志" onClick="toLog(\'' + full["Entname"]+ '\',\''+full["ServiceName"]+'\',\''+full["ClusterName"]+'\')" class="delete-groups btn btn-xs rb-btn-oper m-l-5"><i class="fa fa-history"></i></button>' ;
 
