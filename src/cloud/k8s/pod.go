@@ -210,7 +210,7 @@ func podStatus(app app.CloudContainer, obj v1.ContainerStatus) app.CloudContaine
 		app.Status = app.TerminatedReason
 	}
 	app.Image = obj.Image
-	app.AppName = obj.Name
+	//app.AppName = obj.Name
 	app.ServiceName = obj.Name
 	return app
 }
@@ -219,10 +219,16 @@ func podStatus(app app.CloudContainer, obj v1.ContainerStatus) app.CloudContaine
 // 获取某个namespace下面的服务
 func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.CloudContainer {
 	data := GetPods(namespace, clientSet)
+	//data := GetPodsService(namespace, serviceName, clientSet)
 	dataS := make([]app.CloudContainer, 0)
 	for _, d := range data {
 		app := app.CloudContainer{}
 		app.Status = "true"
+		app.AppName = strings.Split(namespace, "--")[0]
+		resource := strings.Split(namespace, "--")
+		if len(resource) > 1 {
+			app.ResourceName = resource[1]
+		}
 		app.ServerAddress = d.Status.HostIP
 		app.ContainerIp = d.Status.PodIP
 		if len(d.Status.ContainerStatuses) == 0 {
@@ -266,6 +272,9 @@ func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.
 		//logs.Info(d.Name, util.ObjToString(d.Status))
 		app.ContainerName = d.Name
 		app.Service = strings.Split(d.Name, "--")[0]
+		if len(strings.Split(d.Name, "--")) > 1 {
+			app.ServiceName = app.Service + "--" + strings.Split(strings.Split(d.Name, "--")[1], "-")[0]
+		}
 
 		app.CreateTime = util.ReplaceTime(d.CreationTimestamp.String())
 		dataS = append(dataS, app)

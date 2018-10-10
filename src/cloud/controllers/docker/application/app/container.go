@@ -7,13 +7,13 @@ import (
 	"cloud/util"
 	"database/sql/driver"
 	"strings"
-	"cloud/cache"
 	"k8s.io/client-go/kubernetes"
 	"cloud/models/registry"
 	registry2 "cloud/controllers/image"
 	"github.com/astaxie/beego/logs"
 	"cloud/userperm"
 	"time"
+	"cloud/cache"
 )
 
 // 获取详情数据
@@ -191,15 +191,10 @@ func (this *AppController) ContainerData() {
 
 // 2018-01-16 8:48
 // 更新或写入到数据库
-func writeToDb(appData util.Lock, appDatasDb util.Lock) {
-	for _, d := range appData.GetData() {
-		o := d.(app.CloudContainer)
-		sName := o.AppName + o.ContainerName
-		if _, ok := appDatasDb.Get(sName); !ok {
-			o.Events = ""
-			q := sql.InsertSql(o, app.InsertCloudContainer)
-			sql.Raw(q).Exec()
-		}
+func writeToDb(containerMap *util.Lock, all app.CloudContainer) {
+	if _, ok1 := containerMap.Get(all.ContainerName); !ok1 {
+		all.Events = ""
+		sql.Exec(sql.InsertSql(all, app.InsertCloudContainer))
 	}
 }
 
@@ -241,13 +236,35 @@ func (this *AppController) GetDockerLogs() {
 	this.Ctx.WriteString(log)
 }
 
-// 2018-01-15 15:25
-// 通过任务计划方式获取数据
-func MakeContainerData(namespace string) {
-	if !util.WriteLock("last_update", &LockContainerUpdate, 10) {
+// 容器名称数据
+func getContainerMap(data []app.CloudContainerName) util.Lock {
+	lock := util.Lock{}
+	for _, v := range data {
+		lock.Put(v.ContainerName, 1)
+	}
+	return lock
+}
+
+// 2018-10-10 22:15
+// 通过多线程获取数据
+func goGetContainer(d app.CloudAppService, containerMap, containerDatas *util.Lock)  {
+	namespace := d.ServiceName
+	c, err := k8s.GetClient(d.ClusterName)
+	if err != nil {
+		logs.Error("获取客户端错误", err.Error())
 		return
 	}
-	logs.Info("生成容器数据")
+
+	appData := k8s.GetContainerStatus(namespace, c)
+	for _, all := range appData {
+		all = setAppData(all, d, c)
+		containerDatas.Put(all.ContainerName, "1")
+		go writeToDb(containerMap, all)
+	}
+}
+
+// 获取namespace
+func getNamespace(namespace string) []app.CloudAppService  {
 	searchMap := sql.SearchMap{}
 	if namespace != "" {
 		searchMap.Put("Namespace", namespace)
@@ -255,50 +272,44 @@ func MakeContainerData(namespace string) {
 	data := make([]app.CloudAppService, 0)
 	searchSql := sql.SearchSql(
 		app.CloudAppService{},
-		app.SelectCloudAppService,
+		app.SelectServiceNameSpace,
 		searchMap)
 	sql.Raw(searchSql).QueryRows(&data)
+	return data
+}
 
-	containerDatas := util.Lock{}
-	appDataLock := util.Lock{}
-	lockData := util.Lock{}
-	for _, d := range data {
-		namespace := util.Namespace(d.AppName, d.ResourceName)
-		sName := namespace + d.ServiceName + d.ClusterName
-		if _, ok := lockData.Get(sName); !ok {
-			c, err := k8s.GetClient(d.ClusterName)
-			if err != nil {
-				logs.Error("获取客户端错误", err.Error())
-				continue
-			}
-			appData := k8s.GetContainerStatus(namespace, c)
-			for _, all := range appData {
-				all = setAppData(all, d, c, util.Namespace(d.ServiceName, d.ServiceVersion))
-				cache.ContainerCache.Put(all.AppName+all.ContainerName, util.ObjToString(all), time.Second*3600)
-				appDataLock.Put(all.AppName+all.ContainerName, all)
-				containerDatas.Put(all.AppName+all.ContainerName, "1")
-				lockData.Put(sName, "1")
-			}
-		}
+// 2018-01-15 15:25
+// 通过任务计划方式获取数据
+func MakeContainerData(namespace string) {
+	if !util.WriteLock("last_update", &LockContainerUpdate, 5) {
+		return
 	}
+	cacheServiceInfo()
+	logs.Info("生成容器数据")
 
-	// 要删除的数据
-	deleteData := util.Lock{}
-	appDataDb := util.Lock{}
 	dataS := make([]app.CloudContainerName, 0)
 	containerSql := sql.SearchSql(app.CloudContainer{}, app.SelectCloudContainer, sql.SearchMap{})
 	sql.Raw(containerSql).QueryRows(&dataS)
+
+	containerMap := getContainerMap(dataS)
+	containerDatas := util.Lock{}
+	for _, d := range getNamespace(namespace) {
+		go goGetContainer(d, &containerMap, &containerDatas)
+	}
+	time.Sleep(time.Second * 10)
+
+	// 要删除的数据
+	deleteData := util.Lock{}
+
 	for _, d := range dataS {
-		sName := d.AppName + d.ContainerName
-		appDataDb.Put(sName, "1") // 将这个名称写成真
-		// 如果k8s里的容器没有的话就删除掉
-		if _, ok := containerDatas.Get(sName); !ok {
-			deleteData.Put(sName, d)
+		r := cache.ContainerCache.Get(d.AppName+d.ContainerName)
+		c := app.CloudContainer{}
+		util.RedisObj2Obj(r, &c)
+		if time.Now().Unix() - c.LastUpdateTime > 100  && c.LastUpdateTime != 0 {
+			deleteData.Put( d.ContainerName, d)
 		}
 	}
 
-	// 更新或插入数据
-	go writeToDb(appDataLock, appDataDb)
 	// 删除数据
 	go deleteDbContainer(deleteData)
 }
@@ -312,16 +323,33 @@ func SetAppDataJson(this *AppController, data interface{}) {
 // 填充容器数据
 var cmd = []string{"ps", "aux"}
 
-func setAppData(all app.CloudContainer, d app.CloudAppService, c kubernetes.Clientset, serviceName string) app.CloudContainer {
-	namespace := util.Namespace(d.AppName, d.ResourceName)
-	all.ResourceName = d.ResourceName
+// 缓存服务数据
+func cacheServiceInfo()  {
+	data := getServiceData(sql.SearchMap{}, "")
+	for _, v := range data{
+		cache.ServiceInfoCache.Put(v.Entname+ v.ClusterName+ v.ServiceName+ v.ResourceName, util.ObjToString(v), time.Minute * 20)
+	}
+}
+
+// 设置app数据
+func setAppData(all app.CloudContainer, d app.CloudAppService, c kubernetes.Clientset) app.CloudContainer {
+	serviceData := app.CloudAppService{}
+	name := strings.Split(d.ServiceName, "--")
+	r := cache.ServiceInfoCache.Get(d.Entname+ d.ClusterName+ strings.Split(all.ServiceName,"--")[0] + name[1])
+
+	status := util.RedisObj2Obj(r, &serviceData)
+	if ! status{
+		return all
+	}
+	all.ResourceName = serviceData.ResourceName
 	all.ClusterName = d.ClusterName
-	all.AppName = d.AppName
-	all.CreateUser = d.CreateUser
-	all.Entname = d.Entname
-	all.ServiceName = serviceName
-	events := k8s.GetEvents(namespace, all.ContainerName, c)
+	all.CreateUser = serviceData.CreateUser
+	all.Entname = serviceData.Entname
+	all.ServiceName = serviceData.ServiceName
+	events := k8s.GetEvents(serviceData.ServiceName, all.ContainerName, c)
 	all.Events = util.ObjToString(events)
+	all.LastUpdateTime = time.Now().Unix()
+	cache.ContainerCache.Put(all.AppName+all.ContainerName, util.ObjToString(all), time.Second*3600)
 	return all
 }
 

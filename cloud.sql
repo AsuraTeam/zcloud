@@ -1758,6 +1758,7 @@ alter table cloud_code_repostitory add branch  text ;
 alter table cloud_code_repostitory add tag text ;
 alter table cloud_perm_role add is_del int comment "是否删除";
 alter table cloud_container add service varchar(300);
+alter table cloud_container add last_update_time bigint ;
 alter table cloud_app_service add termination_seconds int comment "pod关闭时间";
 alter table cloud_api_resource add unique index uidx_api_url_name_method(api_url,name,method);
 alter table cloud_build_job add unique index uidx_cloud_build_job_item_name (item_name);

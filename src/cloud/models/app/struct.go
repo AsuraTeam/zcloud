@@ -327,6 +327,8 @@ type CloudContainer struct {
 	Restart int32
 	// 服务信息
 	Service string
+	// 数据更新时间
+	LastUpdateTime int64
 }
 //2018-08-16 16:04:25.8692888 +0800 CST
 type CloudTemplateDeployHistory struct {

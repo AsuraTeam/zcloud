@@ -29,6 +29,7 @@ const DeleteCloudConfigData = "delete from cloud_config_data"
 const UpdateConfigDataExclude = "CreateTime,CreateUser,DataName"
 const SelectConfigDataWhere = ` where 1=1 and (configure_name like "%?%" or description like "%?%")`
 
+const SelectServiceNameSpace = `select distinct concat(app_name,"--",resource_name) as service_name, entname,cluster_name from cloud_app_service`
 const SelectCloudAppService = "select termination_seconds,log_path,max_surge,domain,service_version,entname,max_unavailable,min_ready,envs,app_name,service_lables_data,cluster_name,network_mode,config,replicas_min,health_data,service_id,status,image_tag,replicas_max,create_user,service_labels,lb_data,service_type,json_data,container_port,env_file,storage_data,resource_name,cpu,lb_name,app_labels,yaml,configure_data,create_time,last_modify_user,last_update_time,deploy_type,replicas,service_name,last_modify_time,memory from cloud_app_service"
 const UpdateCloudAppService = "update cloud_app_service"
 const UpdateCloudAppServiceWhere = "CreateTime,CreateUser"
