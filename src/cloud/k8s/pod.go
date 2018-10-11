@@ -215,6 +215,8 @@ func podStatus(app app.CloudContainer, obj v1.ContainerStatus) app.CloudContaine
 	return app
 }
 
+const NodeLost = "NodeLost"
+
 // {"name":"auto-service","image":"nginx:1.10","ports":[{"containerPort":80,"protocol":"TCP"}],"resources":{"limits":{"cpu":"1","memory":"2Gi"},"requests":{"cpu":"1","memory":"2Gi"}},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent"}
 // 获取某个namespace下面的服务
 func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.CloudContainer {
@@ -269,6 +271,18 @@ func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.
 				}
 			}
 		}
+		if d.Status.Reason == NodeLost {
+			app.Status = NodeLost
+			app.TerminatedMessages = d.Status.Message
+			app.TerminatedReason = NodeLost
+		}
+
+		if d.DeletionTimestamp != nil {
+			app.Status = "Delete"
+			app.TerminatedMessages = "删除执行时间" + util.ReplaceTime(d.DeletionTimestamp.String()) +"; 如果长时间未删除,请手动到宿主机杀死docker容器"
+			app.TerminatedReason = "Delete"
+		}
+
 		//logs.Info(d.Name, util.ObjToString(d.Status))
 		app.ContainerName = d.Name
 		app.Service = strings.Split(d.Name, "--")[0]

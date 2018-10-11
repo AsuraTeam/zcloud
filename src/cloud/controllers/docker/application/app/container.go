@@ -296,16 +296,14 @@ func MakeContainerData(namespace string) {
 	for _, d := range getNamespace(namespace) {
 		go goGetContainer(d, &containerMap, &containerDatas)
 	}
-	time.Sleep(time.Second * 10)
-
 	// 要删除的数据
 	deleteData := util.Lock{}
 
 	for _, d := range dataS {
 		r := cache.ContainerCache.Get(d.AppName+d.ContainerName)
 		c := app.CloudContainer{}
-		util.RedisObj2Obj(r, &c)
-		if time.Now().Unix() - c.LastUpdateTime > 100  && c.LastUpdateTime != 0 {
+		status := util.RedisObj2Obj(r, &c)
+		if !status {
 			deleteData.Put( d.ContainerName, d)
 		}
 	}
@@ -349,7 +347,7 @@ func setAppData(all app.CloudContainer, d app.CloudAppService, c kubernetes.Clie
 	events := k8s.GetEvents(serviceData.ServiceName, all.ContainerName, c)
 	all.Events = util.ObjToString(events)
 	all.LastUpdateTime = time.Now().Unix()
-	cache.ContainerCache.Put(all.AppName+all.ContainerName, util.ObjToString(all), time.Second*3600)
+	cache.ContainerCache.Put(all.AppName+all.ContainerName, util.ObjToString(all), time.Second*60)
 	return all
 }
 
