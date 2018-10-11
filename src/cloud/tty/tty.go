@@ -44,7 +44,11 @@ func Handler(r io.Reader, w io.Writer, containername string, podname string, nam
 		Name(podname).
 		Namespace(namespace).
 		SubResource("exec").Timeout(time.Second * 1)
-
+	names := strings.Split(podname, "--")
+	if len(names) > 1 {
+		version := strings.Split(strings.Split(podname, "--")[1], "-")[0]
+		containername = util.Namespace(names[0], version)
+	}
 	req.VersionedParams(
 		&v1.PodExecOptions{
 			Container: containername,

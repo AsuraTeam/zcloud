@@ -130,6 +130,20 @@ func GetPodsService(namespace string, serviceName string, clientSet kubernetes.C
 	return pods.Items
 }
 
+// 2018/10/11 11:00:30
+// 检查名称是否在pod中
+func CheckPodName(namespace string, serviceName string, clientSet kubernetes.Clientset, name string) bool {
+	pods := GetPodsService(namespace,serviceName, clientSet)
+	for _, v := range pods {
+		for _, k := range v.Status.ContainerStatuses{
+			if k.Name == name {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 // 获取某个服务器的pod数量
 func GetIpPodNumber(pods []v1.Pod, ip string) int {
 	var count int
@@ -268,9 +282,12 @@ func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.
 			for _, s := range d.Status.Conditions {
 				if s.Status == v1.ConditionFalse {
 					app.Status = "False"
+					app.TerminatedMessages = s.Message
+					app.TerminatedReason = s.Reason
 				}
 			}
 		}
+
 		if d.Status.Reason == NodeLost {
 			app.Status = NodeLost
 			app.TerminatedMessages = d.Status.Message

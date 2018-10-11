@@ -124,7 +124,6 @@ function getStorageData() {
     var count = 0;
     var d = {}
     $('.storagediv').each(function () {
-        console.log($(this).html())
         if (count == 0) {
             d["ContainerPath"] = $(this).html();
         }
@@ -138,7 +137,7 @@ function getStorageData() {
         }
         if (count == 2) {
             d["HostPath"] = $(this).html();
-            storage.push(d)
+            storage.push(d);
             d = {}
             count = 0;
         } else {
@@ -229,66 +228,6 @@ function saveService(serviceId) {
     }
 }
 
-// /**
-//  * 删除模板弹出框
-//  */
-// function deleteServiceSwal() {
-//     !function ($) {
-//         "use strict";
-//
-//         var SweetAlert = function () {
-//         };
-//         //examples
-//         SweetAlert.prototype.init = function () {
-//             // //Parameter
-//             // $('.delete-template').click(function () {
-//             swal({
-//                 title: '删除该应用',
-//                 text: "",
-//                 type: 'warning',
-//                 showCancelButton: true,
-//                 confirmButtonText: '确认删除',
-//                 cancelButtonText: '不删除',
-//                 confirmButtonClass: 'btn btn-success',
-//                 cancelButtonClass: 'btn btn-danger m-l-10',
-//                 buttonsStyling: false
-//             }).then(function () {
-//                 var forceId = $("#delete_service_force_id").val();
-//                 var result = deleteService($("#delete_service_id").val(), forceId);
-//                 if (result.indexOf("删除成功") != -1) {
-//                     swal(
-//                         '删除成功!',
-//                         result,
-//                         'success'
-//                     );
-//                     setTimeout(function () {
-//                         loadServiceData()
-//                     }, 2000);
-//                 } else {
-//                     swal(
-//                         '删除失败!',
-//                         result,
-//                         'error'
-//                     );
-//                 }
-//
-//             }, function (dismiss) {
-//                 // dismiss can be 'cancel', 'overlay',
-//                 // 'close', and 'timer'
-//                 $("#delete_service_id").val("")
-//                 $("#delete_service_force_id").val("")
-//             })
-//             // });
-//         },
-//             $.SweetAlert = new SweetAlert, $.SweetAlert.Constructor = SweetAlert
-//     }(window.jQuery),
-//
-// //initializing
-//         function ($) {
-//             "use strict";
-//             $.SweetAlert.init()
-//         }(window.jQuery);
-// }
 
 /**
  *
@@ -409,7 +348,7 @@ function setUpdateMode(t) {
 function addStorage() {
     var url = "/application/service/storage/add";
     var result = get({ClusterName:$("#select-cluster-id").val()}, url);
-    $("#add_health_html").html("")
+    $("#add_health_html").html("");
     $("#add_storage_html").html(result);
     $("#add_post_html").modal("toggle");
 }
@@ -433,7 +372,7 @@ function addPort() {
     if (!checkSignValue()) {
         return
     }
-    var id = getCheckInput("all")
+    var id = getCheckInput("all");
     var url = "/application/service/port/add/" + parseInt(id);
     var result = get({}, url);
     $("#add_scale_html").html(result);
@@ -448,7 +387,7 @@ function addScale() {
     if (!checkSignValue()) {
         return
     }
-    var id = getCheckInput("all")
+    var id = getCheckInput("all");
     var url = "/application/service/scale/add/" + parseInt(id);
     var result = get({}, url);
     $("#add_scale_html").html(result);
@@ -464,10 +403,25 @@ function changeHealth() {
     if (!checkSignValue()) {
         return
     }
-    var id = getCheckInput("all")
+    var id = getCheckInput("all");
     var url = "/application/service/health/add/" + parseInt(id);
     var result = get({}, url);
     $("#add_scale_html").html(result);
+    $("#add_post_html").modal("toggle");
+}
+
+/**
+ * 修改日志路径
+ * 2018-10-11 09:21
+ */
+function changeLogPath() {
+    if (!checkSignValue()) {
+        return
+    }
+    var id = getCheckInput("all");
+    var url = "/application/service/log/add/" + parseInt(id);
+    var result = get({}, url);
+    $("#add_log_html").html(result);
     $("#add_post_html").modal("toggle");
 }
 
@@ -479,7 +433,7 @@ function addCpuMemory() {
     if (!checkSignValue()) {
         return
     }
-    var id = getCheckInput("all")
+    var id = getCheckInput("all");
     var url = "/application/service/config/add/" + parseInt(id);
     var result = get({}, url);
     $("#add_scale_html").html(result);
@@ -1020,6 +974,18 @@ function envSave() {
     var id = $("#update_service_env_id").val();
     var url = "/api/service/update/" + id;
     var result = post({env: env, type: "env"}, url);
+    saveMsg(result);
+}
+
+/**
+ * 日志路径修改
+ * 2018-01-14 11:26
+ */
+function logPathSave() {
+    var logPath = $("#LogPath").val();
+    var id = $("#update_service_env_id").val();
+    var url = "/api/service/update/" + id;
+    var result = post({logPath: logPath, type: "log"}, url);
     saveMsg(result);
 }
 

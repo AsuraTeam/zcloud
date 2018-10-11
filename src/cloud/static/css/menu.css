@@ -914,6 +914,7 @@ body.enlarged.bg-transparent {
 .pre{
   background-color: #f0f0f0 !important;
   border: 1px solid #ccc !important;
+  padding: 5px;
 }
 
 .primary{

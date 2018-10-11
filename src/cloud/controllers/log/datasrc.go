@@ -84,6 +84,9 @@ func (this *DataSourceController) DataSourceSave() {
 
 	data, msg := util.SaveResponse(err, "名称已经被使用")
 	util.SaveOperLog(this.GetSession("username"), *this.Ctx, "保存数据源配置 "+msg, "")
+	if d.DataType == "driver" {
+
+	}
 	setDataSourceJson(this, data)
 }
 

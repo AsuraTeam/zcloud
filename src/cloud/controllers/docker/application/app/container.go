@@ -285,8 +285,6 @@ func MakeContainerData(namespace string) {
 		return
 	}
 	cacheServiceInfo()
-	logs.Info("生成容器数据")
-
 	dataS := make([]app.CloudContainerName, 0)
 	containerSql := sql.SearchSql(app.CloudContainer{}, app.SelectCloudContainer, sql.SearchMap{})
 	sql.Raw(containerSql).QueryRows(&dataS)
@@ -296,6 +294,11 @@ func MakeContainerData(namespace string) {
 	for _, d := range getNamespace(namespace) {
 		go goGetContainer(d, &containerMap, &containerDatas)
 	}
+	deleteDbContainerData(dataS)
+}
+
+// 删除数据库中的容器数据
+func deleteDbContainerData(dataS []app.CloudContainerName)  {
 	// 要删除的数据
 	deleteData := util.Lock{}
 
@@ -311,6 +314,7 @@ func MakeContainerData(namespace string) {
 	// 删除数据
 	go deleteDbContainer(deleteData)
 }
+
 
 func SetAppDataJson(this *AppController, data interface{}) {
 	this.Data["json"] = data

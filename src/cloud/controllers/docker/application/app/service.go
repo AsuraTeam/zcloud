@@ -109,6 +109,14 @@ func (this *ServiceController) HealthAdd() {
 	this.TplName = "application/service/add_health.html"
 }
 
+// Service 修改日志路径页面
+// @router /application/service/log/add/:id:int [get]
+func (this *ServiceController) LogPathChange() {
+	service := getService(this)
+	this.Data["data"] = service
+	this.TplName = "application/service/add_log.html"
+}
+
 // Service 创建服务添加健康检查页面
 // @router /application/service/health/add/:id:int [get]
 func (this *ServiceController) HealthChange() {
@@ -447,6 +455,7 @@ func (this *ServiceController) ServiceUpdate() {
 
 	service := getService(this)
 	updateType := this.GetString("type")
+	user := util.GetUser(this.GetSession("username"))
 
 	// 修改端口数据
 	if updateType == "port" {
@@ -477,11 +486,32 @@ func (this *ServiceController) ServiceUpdate() {
 	// 升级环境变量
 	if updateType == "env" {
 		env := this.GetString("env")
-		if env == "" || !strings.Contains(env, "=") || len(env) < 3 {
+		if !strings.Contains(env, "=") || len(env) < 3 {
 			responseData(errors.InvalidArgumentError("变量数据异常"), this, service.ServiceName, "操作失败")
 			return
 		}
 		service.Envs = env
+	}
+
+	// 2018-10-11 10:30
+	// 更新日志路径
+	if updateType == "log" {
+		logPath := this.GetString("logPath")
+		if len(logPath) < 3 {
+			responseData(errors.InvalidArgumentError("日志路径信息错误"), this, service.ServiceName, "操作失败")
+			return
+		}
+
+		service.LogPath = logPath
+		// 更新filebeat的配置文件
+		k8s.CreateFilebeatConfig(getParam(service, user))
+		namespace := util.Namespace(service.AppName, service.ResourceName)
+		client, _ := k8s.GetClient(service.ClusterName)
+		status := k8s.CheckPodName(namespace, util.Namespace(service.ServiceName, service.ServiceVersion), client, "filebeat")
+		if status {
+			responseData(nil, this, service.ServiceName, "操作完成")
+			return
+		}
 	}
 
 	// 升级镜像版本
@@ -492,10 +522,6 @@ func (this *ServiceController) ServiceUpdate() {
 		if version != tags[1] {
 			service.ImageTag = tags[0] + ":" + version
 		}
-		//} else {
-		//	responseData(errors.InvalidArgumentError("镜像版本一致"), this, service.ServiceName, "操作失败")
-		//	return
-		//}
 		interval, err := this.GetInt("MinReady")
 		if err != nil || interval > 60 || interval < 2 {
 			responseData(errors.InvalidArgumentError("更新间隔错误,可选范围为:2-60"), this, service.ServiceName, "操作失败")
@@ -525,15 +551,54 @@ func (this *ServiceController) ServiceUpdate() {
 			return
 		}
 	}
-
-	user := util.GetUser(this.GetSession("username"))
-
-	// 更新filebeat的配置文件
-	k8s.CreateFilebeatConfig(getParam(service, user))
+	
 	err := ExecUpdate(service, updateType, user)
 	if err == nil {
 		responseData(err, this, service.ServiceName, "操作成功")
 		return
 	}
 	responseData(err, this, service.ServiceName, "操作失败")
+}
+
+func getServiceName(name string) string  {
+  name = strings.Replace(name, "--1", "", -1)
+	name = strings.Replace(name, "--2", "", -1)
+	return name
+}
+
+// 2018/10/11 11:27:06
+// 批量更新和重启容器
+func MakeFilebeatConfig(Entname string, clusterName string)  {
+	ps := []string{"ps","aux"}
+
+	searchMap := sql.SearchMap{}
+	searchMap.Put("Entname", Entname)
+	searchMap.Put("ClusterName", clusterName)
+	data := getServiceData(searchMap, app.SelectCloudAppService)
+	for _, v := range data{
+		if len(v.LogPath) > 0 {
+			k8s.CreateFilebeatConfig(getParam(v, "admin"))
+			searchMap.Put("AppName", v.AppName)
+			searchMap.Put("ServiceName", getServiceName(v.ServiceName))
+			containers := make([]app.CloudContainerName, 0)
+			sql.Raw(sql.SearchSql(app.CloudContainerName{}, app.SelectCloudContainer, searchMap)).QueryRows(&containers)
+			for _, container := range containers{
+				process := k8s.Exec(v.ClusterName, container.ContainerName, util.Namespace(v.AppName, v.ResourceName), "filebeat", ps)
+				if len(process) > 0 {
+					p := strings.Split(process,"\n")
+					for _, rows := range p{
+						rows = strings.Replace(rows, "  ", " ", -1)
+						rows = strings.Replace(rows, "  ", " ", -1)
+						if strings.Contains(rows, " fifilebeat"){
+							pid := strings.Split(rows, " ")
+							if len(pid) > 2 {
+								kill := []string{"kill","-9",pid[1]}
+								k8s.Exec(v.ClusterName, container.ContainerName, util.Namespace(v.AppName, v.ResourceName), "filebeat", kill)
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }

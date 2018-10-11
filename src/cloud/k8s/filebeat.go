@@ -15,7 +15,7 @@ func getFilebeatOutput(param ServiceParam) string  {
 output.kafka:
   enable: True
   hosts: HOSTS
-  topic: 'k8s-app-log'
+  topic: 'k8s-%{[fields][appname]}''
   partition.round_robin:
     reachable_only: false
   #required_acks: 1

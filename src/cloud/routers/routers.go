@@ -91,6 +91,8 @@ func init() {
 				beego.NSRouter("/env/add/:id:int", &app.ServiceController{}, "get:EnvAdd", "服务环境变量", "服务管理列表", "容器治理"),
 				// 应用Service 修改健康检查页面,
 				beego.NSRouter("/health/add/:id:int", &app.ServiceController{}, "get:HealthChange", "服务健康检查", "服务管理列表", "容器治理"),
+				// 应用Service 修改日志路径页面,
+				beego.NSRouter("/log/add/:id:int", &app.ServiceController{}, "get:LogPathChange", "日志路径", "服务管理列表", "容器治理"),
 				// 应用Service 修改端口页面,
 				beego.NSRouter("/port/add/:id:int", &app.ServiceController{}, "get:PortChange", "服务端口修改", "服务管理列表", "容器治理"),
 				// 创建服务添加存储页面,

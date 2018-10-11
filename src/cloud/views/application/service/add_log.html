@@ -1,0 +1,71 @@
+<div id="add_post_html" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="modal-dialog " style="width: 60%;">
+        <div class="modal-content p-0 b-0 ">
+            <div class="panel panel-color panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span class="modal-title">修改日志路径</span>
+                </div>
+                <form class="cluster-form">
+                    <div class="panel-body font-12 ">
+                        <div class="row top10">
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="field-9" class="col-md-2 fw100 control-label">集群名称</label>
+                                    <div class="col-md-9" id="field-9">
+                                        <input class="form-control" readonly
+                                               value="{{.data.ClusterName}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="field-11" class="col-md-2 fw100 control-label">服务名称</label>
+                                    <div class="col-md-9" id="field-11">
+                                        <input class="form-control" type="hidden" id="update_service_env_id" readonly
+                                               name="ServiceId"
+                                               value="{{.data.ServiceId}}"/>
+                                        <input class="form-control" readonly name="ServiceName"
+                                               value="{{.data.ServiceName}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top10">
+                                <div class="form-group">
+                                    <label for="EnvVar"
+                                           class="col-md-2 fw100 control-label">日志路径</label>
+                                    <div class="col-md-9">
+                                                            <textarea rows="14" id="LogPath"
+                                                                      name="LogPath" placeholder="/usr/local/tomcat/logs/
+/var/log/yum.log
+/var/log/messages
+/tmp/gc.log
+多个日志按换行填入,目录以/结尾,路径可以使用$item变量,$item为服务名称
+配置时需要先配置kfak或es地址信息,filebeat将日志输出到kafka中"
+                                                                      class="form-control">{{.data.LogPath}}</textarea>
+                                        <br>
+                                        <span class="pre"><i class="fa fa-info m-r-10 text-warning"></i>修改后容器会重新部署,如果是修改不会重启,新添加会重启容器</span>
+                                        <br>
+                                        <br>
+                                        <a target="_blank" href="/log/driver/list" class="m-t-10">日志驱动配置</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"><i
+                                class="fa fa-times"></i>&nbsp;&nbsp;关闭
+                        </button>
+                        <button type="button" onclick="logPathSave()"
+                                class="btn btn-info waves-effect waves-light"><i class="fa fa-save"></i>&nbsp;&nbsp; 保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
