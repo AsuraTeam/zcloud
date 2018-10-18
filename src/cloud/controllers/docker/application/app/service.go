@@ -566,6 +566,33 @@ func getServiceName(name string) string  {
 	return name
 }
 
+// 替换空格
+func replaceStr(rows string) string {
+	for i :=0 ; i <= 3;i++ {
+		rows = strings.Replace(rows, "  ", " ", -1)
+	}
+	return rows
+}
+
+// 杀死容器filebeat命令
+func killContainer(process string, v app.CloudAppService , container app.CloudContainerName)  {
+	if len(process) > 0 {
+		p := strings.Split(process, "\n")
+		for _, rows := range p {
+			rows = replaceStr(rows)
+			if strings.Contains(rows, " filebeat") {
+				pid := strings.Split(rows, " ")
+				logs.Info(rows, pid, util.ObjToString(pid))
+				if len(pid) > 6 {
+					kill := []string{"kill", "-9", pid[1]}
+					r := k8s.Exec(v.ClusterName, container.ContainerName, util.Namespace(v.AppName, v.ResourceName), "filebeat", kill)
+					logs.Info(r, v.ClusterName, container.ContainerName)
+				}
+			}
+		}
+	}
+}
+
 // 2018/10/11 11:27:06
 // 批量更新和重启容器
 func MakeFilebeatConfig(Entname string, clusterName string)  {
@@ -577,6 +604,7 @@ func MakeFilebeatConfig(Entname string, clusterName string)  {
 	data := getServiceData(searchMap, app.SelectCloudAppService)
 	for _, v := range data{
 		if len(v.LogPath) > 0 {
+			logs.Info(v.LogPath, len(v.LogPath), v.ServiceName)
 			k8s.CreateFilebeatConfig(getParam(v, "admin"))
 			searchMap.Put("AppName", v.AppName)
 			searchMap.Put("ServiceName", getServiceName(v.ServiceName))
@@ -584,20 +612,8 @@ func MakeFilebeatConfig(Entname string, clusterName string)  {
 			sql.Raw(sql.SearchSql(app.CloudContainerName{}, app.SelectCloudContainer, searchMap)).QueryRows(&containers)
 			for _, container := range containers{
 				process := k8s.Exec(v.ClusterName, container.ContainerName, util.Namespace(v.AppName, v.ResourceName), "filebeat", ps)
-				if len(process) > 0 {
-					p := strings.Split(process,"\n")
-					for _, rows := range p{
-						rows = strings.Replace(rows, "  ", " ", -1)
-						rows = strings.Replace(rows, "  ", " ", -1)
-						if strings.Contains(rows, " fifilebeat"){
-							pid := strings.Split(rows, " ")
-							if len(pid) > 2 {
-								kill := []string{"kill","-9",pid[1]}
-								k8s.Exec(v.ClusterName, container.ContainerName, util.Namespace(v.AppName, v.ResourceName), "filebeat", kill)
-							}
-						}
-					}
-				}
+				logs.Info(process, v.ClusterName, container.ContainerName)
+				killContainer(process, v, container)
 			}
 		}
 	}

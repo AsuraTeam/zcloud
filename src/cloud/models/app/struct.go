@@ -272,6 +272,10 @@ type CloudContainerName struct {
 	ContainerName string
 	//应用名称
 	AppName string
+	//服务名称
+	ServiceName string
+	//集群名称
+	ClusterName string
 }
 
 

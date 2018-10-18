@@ -38,12 +38,12 @@ func Exec(clustername string, podname string, namespace string, containername st
 		logs.Error("执行docker命令失败", err)
 		return ""
 	}
-	names := strings.Split(podname, "--")
+	names := strings.Split(containername, "--")
 	if len(names) > 1 {
 		version := strings.Split(strings.Split(podname, "--")[1], "-")[0]
 		containername = util.Namespace(names[0], version)
 	}
-	logs.Info("执行容器命令", containername)
+	logs.Info("执行容器命令", containername, util.ObjToString(cmd))
 	req := restclient.Post().
 		Resource("pods").
 		Name(podname).

@@ -15,7 +15,7 @@ func getFilebeatOutput(param ServiceParam) string  {
 output.kafka:
   enable: True
   hosts: HOSTS
-  topic: 'k8s-%{[fields][appname]}''
+  topic: 'k8s-%{[fields][appname]}'
   partition.round_robin:
     reachable_only: false
   #required_acks: 1
@@ -36,6 +36,19 @@ output.kafka:
 	return ""
 }
 
+func filebeatCmd()  {
+	cmd :=  `#!/bin/bash
+cd /etc/filebeat-1
+export PATH=$PATH:/usr/local/share/filebeat/bin/
+parm=$(echo $* | sed 's#filebeat/filebeat.yml#filebeat-1/temp.yml#g')
+cp /etc/filebeat/filebeat.yml /etc/filebeat-1/temp.yml
+ip=$(ifconfig |awk '$0 ~ /broadcast/ {print $2}')
+sed -i "s/IP_ADDRESS/$ip/g" /etc/filebeat-1/temp.yml
+cat /etc/filebeat-1/temp.yml
+echo $parm
+filebeat-1 -e -c  /etc/filebeat-1/temp.yml`
+   logs.Info(cmd)
+}
 
 
 // 检查日志路径是否包含文件
