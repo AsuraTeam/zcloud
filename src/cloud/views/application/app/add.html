@@ -99,7 +99,7 @@
                                                                 class="text-danger">*</span></label>
                                                         <div class="col-md-9">
                                                             <select class="selectpicker" name="Entname"
-                                                                    onchange="getEntClusterData($(this).val())"
+                                                                    onchange="getEntClusterData($(this).val());setAppRegistryServer($('#select-cluster-id').val(),'{{.data.ImageRegistry}}', '{{.data.ImageTag}}')"
                                                                     data-live-search="true" data-style="btn-default"
                                                                     id="select-entname-id">
                                                                 <option>请选择</option>
@@ -304,7 +304,26 @@
                                         <fieldset title="3">
                                             <legend>网络设置</legend>
                                             <div class="row m-t-20 left80">
-                                                <div class="col-md-12 top10">
+
+                                                <div class="col-md-12 top10" title="pod中运行的应用程序可以直接看到宿主主机的网络接口，宿主主机所在的局域网上所有网络接口都可以访问到该应用程序。">
+                                                    <div class="form-group">
+                                                        <label class="col-md-3 fw100 control-label top10">hostNetwork<span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="col-md-2" style="margin-left: -1%;">
+                                                            <div class="checkbox checkbox-info left10">
+                                                                <input id="NetworkMode" value="1" type="checkbox"
+                                                                       name="NetworkMode">
+                                                                <label for="NetworkMode" class="fw100 control-label">
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-7" style="margin-left: -10%">
+                                                            <pre class="pre">pod中运行的应用程序可以直接看到宿主主机的网络接口，宿主主机所在的局域网上所有网络接口都可以访问到该应用程序<br>必须保证镜像端口在集群中是唯一的</pre>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12 top10" id="container-port-id">
                                                     <div class="form-group">
                                                         <label
                                                                 class="col-md-3 fw100 control-label">容器暴露端口<span
@@ -702,6 +721,16 @@ evn=prod"
         loadImageData("", cluster);
     }
 
+    /**
+     * 设置容器端口是否显示
+     */
+    function set_container_port() {
+        if ($("#NetworkMode").is(":checked")) {
+            $("#container-port-id").hide();
+        }else{
+            $("#container-port-id").show();
+        }
+    }
 
 </script>
 </body>

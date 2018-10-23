@@ -247,12 +247,35 @@ func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.
 		}
 		app.ServerAddress = d.Status.HostIP
 		app.ContainerIp = d.Status.PodIP
+		app.ContainerName = d.Name
+		app.CreateTime = util.ReplaceTime(d.CreationTimestamp.String())
+
+		if len(d.Spec.Containers) > 0 {
+			limit := d.Spec.Containers[0].Resources.Limits
+			app.Cpu = limit.Cpu().Value()
+			app.Image = d.Spec.Containers[0].Image
+			app.Memory = limit.Memory().Value() / 1024 / 1024
+			app.Service = strings.Split(d.Name, "--")[0]
+			if len(strings.Split(d.Name, "--")) > 1 {
+				app.ServiceName = app.Service + "--" + strings.Split(strings.Split(d.Name, "--")[1], "-")[0]
+			}
+
+		}
+
 		if len(d.Status.ContainerStatuses) == 0 {
+			logs.Info(d.Name, len(d.Status.Conditions))
+			if len(d.Status.Conditions) > 0 {
+				app.WaitingMessages = d.Status.Conditions[0].Message
+				app.WaitingReason = d.Status.Conditions[0].Reason
+				app.Status = "Pending"
+				dataS = append(dataS, app)
+			}
 			continue
 		}
 
 		obj := d.Status.ContainerStatuses[0]
 		app = podStatus(app, obj)
+
 		if app.WaitingMessages == "" {
 			for _, v := range d.Status.Conditions {
 				if v.Status == v1.ConditionFalse {
@@ -266,10 +289,7 @@ func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.
 			app.Restart = d.Status.ContainerStatuses[0].RestartCount
 		}
 
-		limit := d.Spec.Containers[0].Resources.Limits
-		app.Cpu = limit.Cpu().Value()
-		app.Image = d.Spec.Containers[0].Image
-		app.Memory = limit.Memory().Value() / 1024 / 1024
+
 
 		envS := make([]string, 0)
 		for _, v := range d.Spec.Containers[0].Env {
@@ -301,13 +321,10 @@ func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.
 		}
 
 		//logs.Info(d.Name, util.ObjToString(d.Status))
-		app.ContainerName = d.Name
-		app.Service = strings.Split(d.Name, "--")[0]
-		if len(strings.Split(d.Name, "--")) > 1 {
-			app.ServiceName = app.Service + "--" + strings.Split(strings.Split(d.Name, "--")[1], "-")[0]
-		}
+		//app.ContainerName = d.Name
 
-		app.CreateTime = util.ReplaceTime(d.CreationTimestamp.String())
+
+
 		dataS = append(dataS, app)
 	}
 	return dataS

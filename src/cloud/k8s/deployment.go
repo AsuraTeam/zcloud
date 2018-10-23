@@ -758,6 +758,11 @@ func CreateServicePod(param ServiceParam) (string, error) {
 		},
 	}
 
+	// 主机网络模式
+	if len(param.NetworkMode) > 0 {
+		v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["hostNetwork"] = true
+	}
+
 	// 绑定filebeat容器
 	if len(param.Kafka) > 0 && len(param.LogPath) > 0 {
 		spec := v["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})

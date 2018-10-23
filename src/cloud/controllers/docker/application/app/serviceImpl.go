@@ -256,6 +256,7 @@ func getParam(d app.CloudAppService, user string) k8s.ServiceParam {
 	param.ResourceName = d.ResourceName
 	param.StorageData = d.StorageData
 	param.PortYaml = d.Yaml
+	param.NetworkMode = d.NetworkMode
 
 	param = setFilebeatParam(param, d)
 

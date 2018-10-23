@@ -285,6 +285,7 @@ func MakeContainerData(namespace string) {
 		return
 	}
 	cacheServiceInfo()
+	logs.Info("生成容器缓存数据")
 	dataS := make([]app.CloudContainerName, 0)
 	containerSql := sql.SearchSql(app.CloudContainer{}, app.SelectCloudContainer, sql.SearchMap{})
 	sql.Raw(containerSql).QueryRows(&dataS)
