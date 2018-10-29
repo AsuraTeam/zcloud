@@ -740,6 +740,7 @@ body.enlarged.bg-transparent {
 .app-table {
   background-color: #ffffff;
   margin-top: 15px;
+  padding-top: 20px;
 }
 
 .noleft-radius{
