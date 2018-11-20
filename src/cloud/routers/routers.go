@@ -301,6 +301,7 @@ func init() {
 			beego.NSNamespace("/service",
 				// 获取应用Service数据所有数据,
 				beego.NSRouter("", &app.ServiceController{}, "get:ServiceData", "获取服务数据", "服务管理列表", "容器治理"),
+				beego.NSRouter("/:hi(.*)", &app.ServiceController{}, "get:ServiceInfo", "获取单个服务详情", "服务管理列表", "容器治理"),
 				// 获取应用Service数据所有数据的名称和ID,
 				beego.NSRouter("/name", &app.ServiceController{}, "get:GetServiceName", "获取服务名称", "服务管理列表", "容器治理"),
 				// 删除Service,

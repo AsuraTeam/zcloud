@@ -173,6 +173,10 @@ type CloudConfigData struct {
 	DataName string
 }
 
+// 响应命名空间数据
+type CloudAppServiceInfo struct {
+	Namespace string
+}
 //2018-01-11 11:40:10.8610181 +0800 CST
 type CloudAppService struct {
     //部署模式, deployment daemonset statefulset

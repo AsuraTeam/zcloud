@@ -272,6 +272,21 @@ func (this *ServiceController) GetServiceName() {
 	setServiceJson(this, result)
 }
 
+// Service 数据获取
+// @router /api/service/:hi [get]
+func (this *ServiceController) ServiceInfo() {
+	serviceName := this.Ctx.Input.Param(":hi")
+	env := this.GetString("env")
+	data := app.CloudAppServiceInfo{}
+	err := sql.GetOrm().Raw(app.SelectServiceInfo, env, env, serviceName).QueryRow(&data)
+	if err == nil {
+		setServiceJson(this, util.ApiResponse(true, data))
+	}else{
+		setServiceJson(this, util.ApiResponse(false, data))
+	}
+}
+
+
 // Service 数据
 // @router /api/service [get]
 func (this *ServiceController) ServiceData() {
