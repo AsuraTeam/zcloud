@@ -94,9 +94,9 @@ func (this *ClusterController) Save() {
 	_, err = sql.Raw(q).Exec()
 	// 删除已有的主机节点
 	searchMap := sql.SearchMap{}
-	searchMap.Put("ClusterMame", d.ClusterName)
-	searchMap.Put("HostIp", d.ApiAddress)
+	searchMap.Put("ClusterName", d.ClusterName)
 	sql.Exec(sql.DeleteSql(hosts2.DeleteCloudClusterHosts, searchMap))
+	cache.MasterCache.Delete(d.ClusterName)
 
 	// 插入集群节点数据
 	h := hosts2.CloudClusterHosts{}

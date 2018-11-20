@@ -156,7 +156,7 @@ func (this *AppController) ContainerData() {
 		key := cv.AppName + cv.ContainerName
 		d := cv
 		// 不是自己创建的才检查
-		if d.CreateUser != user {
+		if d.CreateUser != user  && user != util.ADMIN  {
 			service := strings.Replace(d.ServiceName, "--1", "", -1)
 			service = strings.Replace(service, "--2", "", -1)
 

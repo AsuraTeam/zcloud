@@ -461,7 +461,7 @@ func getService(this *ServiceController) app.CloudAppService {
 	q := sql.SearchSql(d, app.SelectCloudAppService, searchMap)
 	sql.Raw(q).QueryRow(&d)
 	// 不是自己创建的才检查
-	if d.CreateUser != user {
+	if d.CreateUser != user && user != util.ADMIN {
 		if ! userperm.CheckPerm(d.AppName+";"+d.ResourceName+";"+d.ServiceName, d.ClusterName, d.Entname, perm) {
 			if ! userperm.CheckPerm(d.AppName, d.ClusterName, d.Entname, permApp) {
 				return app.CloudAppService{}

@@ -351,7 +351,7 @@ func (this *AppController) AppData() {
 	result := make([]k8s.CloudApp, 0)
 	for _, d := range cloudApps{
 		// 不是自己创建的才检查
-		if d.CreateUser != user {
+		if d.CreateUser != user &&  user != util.ADMIN {
 				if ! userperm.CheckPerm(d.AppName, d.ClusterName, d.Entname, permApp) {
 					continue
 				}
