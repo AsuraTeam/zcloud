@@ -69,6 +69,10 @@ func ApiResponse(status bool, info interface{}) map[string]interface{} {
 	maps.Set("date",GetDate())
 	hostname,_ := os.Hostname()
 	maps.Set("server", hostname)
+	maps.Set("code", 0)
+	if !status{
+		maps.Set("code", -1)
+	}
 	return maps.Data
 }
 
