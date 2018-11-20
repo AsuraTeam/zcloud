@@ -176,6 +176,7 @@ type CloudConfigData struct {
 // 响应命名空间数据
 type CloudAppServiceInfo struct {
 	Namespace string
+	ServiceName string
 }
 //2018-01-11 11:40:10.8610181 +0800 CST
 type CloudAppService struct {

@@ -42,7 +42,7 @@ const ServiceSearchKey  = "ClusterName,Entname,ServiceName,AppName"
 const SelectUsersMemory  = `select sum(memory * replicas) as memory from cloud_app_service where create_user in (?) `
 const SelectUsersCpu = `select sum(cpu * replicas) as cpu from cloud_app_service where create_user in (?) `
 const SelectCurrentVersion = "select service_version,image_tag,service_id from cloud_app_service"
-const SelectServiceInfo = `select concat(app_name, "--",resource_name) as namespace from cloud_app_service a, cloud_ent b where (a.entname=b.entname or a.entname=b.description) and (b.description=? or b.entname=?) and a.service_name=?`
+const SelectServiceInfo = `select concat(app_name, "--",resource_name) as namespace,  concat(service_name, "--",service_version) as service_name from cloud_app_service a, cloud_ent b where (a.entname=b.entname or a.entname=b.description) and (b.description=? or b.entname=?) and a.service_name=?`
 
 const SelectCloudContainer = "select waiting_reason, service, restart, waiting_messages,terminated_messages,terminated_reason,process,storage_data,cpu,memory,env,resource_name,create_time,create_user,service_name,cluster_name,image,status,container_id,container_name,server_address,container_ip,app_name from cloud_container"
 const InsertCloudContainer = "insert into cloud_container"
