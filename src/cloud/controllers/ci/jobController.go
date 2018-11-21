@@ -143,7 +143,7 @@ func GetJobName(username string, clusterName string, itemName string) []ci.Cloud
 	sql.Raw(q).QueryRows(&data)
 	logs.Info("获取到job数据", util.ObjToString(data))
 	// 不是自己创建的才检查
-	if len(data) > 0 && data[0].CreateUser != username {
+	if len(data) > 0 && data[0].CreateUser != username && username != util.ADMIN {
 		if ! userperm.CheckPerm(data[0].ItemName, "", "", perm)  {
 			return make([]ci.CloudBuildJob, 0)
 		}
@@ -258,7 +258,7 @@ func (this *JobController) JobDataName() {
 	for _, d := range data {
 		d.ClusterName = clusterMap.GetVString(d.ClusterName)
 		// 不是自己创建的才检查
-		if d.CreateUser != user && user != "admin" {
+		if d.CreateUser != user  && user != util.ADMIN {
 			if ! userperm.CheckPerm(d.ItemName, d.ClusterName, "", perm) && len(user) > 0 {
 				continue
 			}
@@ -342,7 +342,7 @@ func (this *JobController) JobDatas() {
 	for _, d := range data {
 		//d.ClusterName = clusterMap.GetVString(d.ClusterName)
 		// 不是自己创建的才检查
-		if d.CreateUser != user  && user != "admin" {
+		if d.CreateUser != user   && user != util.ADMIN {
 			if ! userperm.CheckPerm(d.ItemName, d.ClusterName, "", perm) && len(user) > 0 {
 				continue
 			}
@@ -375,7 +375,7 @@ func getJobData(this *JobController) ci.CloudBuildJob {
 	searchMap.Put("JobId", id)
 	//searchMap.Put("CreateUser", getUser(this))
 	sql.Raw(sql.SearchSql(jobData, ci.SelectCloudBuildJob, searchMap)).QueryRow(&jobData)
-	if jobData.CreateUser != getUser(this) {
+	if jobData.CreateUser != getUser(this)  && getUser(this) != util.ADMIN {
 		if ! userperm.CheckPerm(jobData.ItemName, jobData.ClusterName, "", perm)  {
 			return ci.CloudBuildJob{}
 		}
