@@ -27,6 +27,7 @@ func writeHostToDb(lock util.Lock, host v1.Node, cl kubernetes.Clientset, nodeDa
 		hostD.HostIp = host.Name
 		hostD.ClusterName = v.ClusterName
 		hostD.HostType = "slave"
+		hostD.ApiPort = "0"
 		q := sql.InsertSql(hostD, hosts.InsertCloudClusterHosts)
 		sql.Raw(q).Exec()
 	}

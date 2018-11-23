@@ -7,4 +7,7 @@ systemctl enable docker
 systemctl enable kubelet
 systemctl enable flanneld
 
+echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
+echo "net.ipv6.conf.all.disable_ipv6 = 1"  >> /etc/sysctl.conf
+
 JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF8  -Duser.timezone=GMT+08"
