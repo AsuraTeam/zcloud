@@ -162,6 +162,7 @@ func getVolumes(storagesData string, configData []ConfigureData, param ServicePa
 	}
 
 	data = append(data,  StorageData{ContainerPath:"/etc/localtime",ReadOnly:true, Volume:"", HostPath:"/etc/localtime"})
+	data = append(data,  StorageData{ContainerPath:"/dev/random",ReadOnly:true, Volume:"", HostPath:"/dev/urandom"})
 
 	for k, p := range data {
 		data := make(map[string]interface{}, 0)

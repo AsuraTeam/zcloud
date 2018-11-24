@@ -251,15 +251,19 @@ func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.
 		app.CreateTime = util.ReplaceTime(d.CreationTimestamp.String())
 
 		if len(d.Spec.Containers) > 0 {
-			limit := d.Spec.Containers[0].Resources.Limits
-			app.Cpu = limit.Cpu().Value()
-			app.Image = d.Spec.Containers[0].Image
-			app.Memory = limit.Memory().Value() / 1024 / 1024
-			app.Service = strings.Split(d.Name, "--")[0]
-			if len(strings.Split(d.Name, "--")) > 1 {
-				app.ServiceName = app.Service + "--" + strings.Split(strings.Split(d.Name, "--")[1], "-")[0]
+			for _, c := range d.Spec.Containers  {
+				if c.Name == "filebeat" {
+					continue
+				}
+				limit := c.Resources.Limits
+				app.Cpu = limit.Cpu().Value()
+				app.Image = c.Image
+				app.Memory = limit.Memory().Value() / 1024 / 1024
+				app.Service = strings.Split(d.Name, "--")[0]
+				if len(strings.Split(d.Name, "--")) > 1 {
+					app.ServiceName = app.Service + "--" + strings.Split(strings.Split(d.Name, "--")[1], "-")[0]
+				}
 			}
-
 		}
 
 		if len(d.Status.ContainerStatuses) == 0 {
@@ -273,8 +277,12 @@ func GetContainerStatus(namespace string, clientSet kubernetes.Clientset) []app.
 			continue
 		}
 
-		obj := d.Status.ContainerStatuses[0]
-		app = podStatus(app, obj)
+		for _ , c:= range d.Status.ContainerStatuses {
+			if c.Name == "filebeat" {
+				continue
+			}
+			app = podStatus(app, c)
+		}
 
 		if app.WaitingMessages == "" {
 			for _, v := range d.Status.Conditions {

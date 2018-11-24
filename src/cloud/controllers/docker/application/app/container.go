@@ -300,6 +300,7 @@ func MakeContainerData(namespace string) {
 
 // 删除数据库中的容器数据
 func deleteDbContainerData(dataS []app.CloudContainerName)  {
+	time.Sleep(time.Second * 20)
 	// 要删除的数据
 	deleteData := util.Lock{}
 
@@ -308,6 +309,7 @@ func deleteDbContainerData(dataS []app.CloudContainerName)  {
 		c := app.CloudContainer{}
 		status := util.RedisObj2Obj(r, &c)
 		if !status {
+			logs.Info("获取缓存失败", status, d.AppName + d.ContainerName, r)
 			deleteData.Put( d.ContainerName, d)
 		}
 	}
@@ -330,7 +332,8 @@ var cmd = []string{"ps", "aux"}
 func cacheServiceInfo()  {
 	data := getServiceData(sql.SearchMap{}, "")
 	for _, v := range data{
-		cache.ServiceInfoCache.Put(v.Entname+ v.ClusterName+ v.ServiceName+ v.ResourceName, util.ObjToString(v), time.Minute * 20)
+		key := v.Entname+ v.ClusterName+ v.ServiceName+ v.ResourceName
+		cache.ServiceInfoCache.Put(key, util.ObjToString(v), time.Minute * 20)
 	}
 }
 
@@ -338,8 +341,8 @@ func cacheServiceInfo()  {
 func setAppData(all app.CloudContainer, d app.CloudAppService, c kubernetes.Clientset) app.CloudContainer {
 	serviceData := app.CloudAppService{}
 	name := strings.Split(d.ServiceName, "--")
-	r := cache.ServiceInfoCache.Get(d.Entname+ d.ClusterName+ strings.Split(all.ServiceName,"--")[0] + name[1])
-
+	key := d.Entname+ d.ClusterName+ strings.Split(all.ServiceName,"--")[0] + name[1]
+	r := cache.ServiceInfoCache.Get(key)
 	status := util.RedisObj2Obj(r, &serviceData)
 	if ! status{
 		return all
@@ -352,7 +355,7 @@ func setAppData(all app.CloudContainer, d app.CloudAppService, c kubernetes.Clie
 	events := k8s.GetEvents(serviceData.ServiceName, all.ContainerName, c)
 	all.Events = util.ObjToString(events)
 	all.LastUpdateTime = time.Now().Unix()
-	cache.ContainerCache.Put(all.AppName+all.ContainerName, util.ObjToString(all), time.Second*60)
+	cache.ContainerCache.Put(all.AppName+all.ContainerName, util.ObjToString(all), time.Second*120)
 	return all
 }
 
