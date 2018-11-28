@@ -179,10 +179,7 @@ func (this *AppController) ContainerData() {
 	}
 
 	r := util.ResponseMap(datas,
-		sql.CountSearchMap("cloud_container",
-			sql.SearchMap{},
-			len(datas),
-			search),
+		sql.CountSqlTotal(searchSql),
 		this.GetString("draw"))
 
 	SetAppDataJson(this, r)

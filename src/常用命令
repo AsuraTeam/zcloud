@@ -6,6 +6,7 @@ systemctl enable kube-proxy
 systemctl enable docker
 systemctl enable kubelet
 systemctl enable flanneld
+ grep $HOSTNAME /etc/hosts ||  (route -n |awk '$1 ~ /0.0.0.0/ {print "ifconfig "$NF" |grep inet"}'|bash|awk '{print $2}' && echo $HOSTNAME)|paste -s >> /etc/hosts
 
 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
 echo "net.ipv6.conf.all.disable_ipv6 = 1"  >> /etc/sysctl.conf

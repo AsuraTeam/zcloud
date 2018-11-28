@@ -240,6 +240,26 @@ func getCount(table string, searchMap SearchMap) int {
 	return 0
 }
 
+type Total struct {
+	Total int64
+}
+
+/**
+ 2018-11-27 09:09
+ 获取查询sql的总行数
+ */
+func CountSqlTotal(q string) int64  {
+	qs := strings.Split(q, " form ")
+	total :=  Total{}
+	if len(qs) > 1 {
+		f := qs[1]
+		q = strings.Split(f, " limit ")[0]
+		query := "select count(*) as total from (" + q + ") as temp"
+		GetOrm().Raw(query).QueryRow(&total)
+	}
+	return total.Total
+}
+
 // 2018-01-17 12:40
 // 获取表的行数
 func Count(table string, count int, search string) int {
