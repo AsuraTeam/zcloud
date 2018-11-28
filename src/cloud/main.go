@@ -11,7 +11,6 @@ import (
 	"cloud/crontab"
 
 	"cloud/controllers/perm"
-	"cloud/permdata"
 )
 
 
