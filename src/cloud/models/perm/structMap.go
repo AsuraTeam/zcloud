@@ -31,3 +31,5 @@ const SelectCloudPermRoleUser = "select role_id,user_name,group_name,create_user
 const UpdateCloudPermRoleUser = "update cloud_perm_role_user"
 const InsertCloudPermRoleUser = "insert into cloud_perm_role_user" 
 const DeleteCloudPermRoleUser = "delete from cloud_perm_role_user" 
+
+

@@ -23,6 +23,10 @@ func getUserGroups(username string) []string {
 	return make([]string, 0)
 }
 
+func GetUserGroups(username string) []string {
+	return getUserGroups(username)
+}
+
 const QUERY = `  (user_name like "%?" or user_name like "%?," or user_name like ",%?," or user_name like ",%?")`
 
 //  2018-08-24 16:00

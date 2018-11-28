@@ -248,12 +248,11 @@ type Total struct {
  2018-11-27 09:09
  获取查询sql的总行数
  */
-func CountSqlTotal(q string) int64  {
-	qs := strings.Split(q, " form ")
+func CountSqlTotal(query string) int64  {
+	qs := strings.Split(query, " from ")
 	total :=  Total{}
 	if len(qs) > 1 {
-		f := qs[1]
-		q = strings.Split(f, " limit ")[0]
+		q := strings.Split(query, " limit ")[0]
 		query := "select count(*) as total from (" + q + ") as temp"
 		GetOrm().Raw(query).QueryRow(&total)
 	}
@@ -463,6 +462,11 @@ func init() {
 func GetOrm() orm.Ormer {
 	var o = orm.NewOrm()
 	return o
+}
+
+// 插入数据
+func Insert(obj interface{}) (int64, error) {
+	return GetOrm().Insert(obj)
 }
 
 // 执行sql语句

@@ -11,6 +11,7 @@ import (
 	"cloud/crontab"
 
 	"cloud/controllers/perm"
+	"cloud/permdata"
 )
 
 
@@ -28,6 +29,7 @@ import (
 
 
 func main() {
+	permdata.MakeContainerData()
 	beego.ErrorController(&index.ErrorController{})
 	beego.BConfig.WebConfig.Session.SessionProvider = "redis"
 	beego.BConfig.WebConfig.Session.SessionProviderConfig = beego.AppConfig.String("redis")

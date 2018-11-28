@@ -669,7 +669,7 @@ CREATE TABLE `cloud_cluster` (
   `api_address` varchar(50) DEFAULT NULL COMMENT '集群APi地址',
   PRIMARY KEY (`cluster_id`),
   UNIQUE KEY `uidx_cloud_cluster_cluser_name` (`cluster_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -704,10 +704,10 @@ CREATE TABLE `cloud_cluster_hosts` (
   `mem_percent` varchar(10) DEFAULT NULL COMMENT '内使用百分比',
   `cpu_percent` varchar(10) DEFAULT NULL COMMENT 'cpu使用百分比',
   `cluster_name` varchar(36) DEFAULT NULL COMMENT '所属集群',
-  `api_port` varchar(8) DEFAULT NULL COMMENT 'k8sAPiç«¯å£,åªéœ€è¦masteræœ‰å°±è¡Œäº†',
+  `api_port` varchar(8) DEFAULT '0'  COMMENT 'k8s集群api端口',
   `image_num` int(11) DEFAULT NULL,
   PRIMARY KEY (`host_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -762,7 +762,7 @@ CREATE TABLE `cloud_config_data` (
   `data_name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`data_id`),
   UNIQUE KEY `uidx_config_name_data_name` (`configure_id`,`data_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -790,7 +790,7 @@ CREATE TABLE `cloud_configure_mount` (
   `service_name` varchar(300) DEFAULT NULL COMMENT '服务名称',
   PRIMARY KEY (`mount_id`),
   UNIQUE KEY `uidx_configure_mount_name_cluster_data_key` (`configure_name`,`data_name`,`cluster_name`,`namespace`)
-) ENGINE=InnoDB AUTO_INCREMENT=726 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1738,6 +1738,18 @@ CREATE TABLE `cloud_perm_role_user` (
   `group_name` varchar(200) DEFAULT NULL,
   `create_user` varchar(32) DEFAULT NULL,
   `create_time` varchar(32) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+| CREATE TABLE `cloud_user_perm_detail` (
+  `detail_id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(100) DEFAULT NULL,
+  `resource_type` varchar(100) DEFAULT NULL,
+  `group_name` varchar(200) DEFAULT NULL,
+  `name` varchar(200) DEFAULT NULL,
+  `cluster_name` varchar(200) DEFAULT NULL,
+  `ent` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`detail_id`),
+  UNIQUE KEY `uidx_username_group_name_name` (`username`,`group_name`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dump completed on 2018-03-09 12:30:13
